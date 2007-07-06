@@ -46,11 +46,11 @@
  * @author Wayne Wight
  * @author Lewis Zhang
  * @copyright 2005-2007 Tom Warmbrodt, Anthony Bush, Lewis Zhang. CoughPHP is open source protected by the FreeBSD License.
- * @package default
+ * @package CoughPHP
  **/
 
 // Dependencies
-ModuleFactory::loadModule('matt_database');
+// ModuleFactory::loadModule('matt_database');
 
 // Load the Cough framework
 include_once('CoughIterator.class.php');

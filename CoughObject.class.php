@@ -1,15 +1,13 @@
 <?php
 
 /**
- * undocumented class CoughObject
+ * CoughObject is the foundation for which all other "Model" / "ORM" classes
+ * extend.  There will usually be one class extending CoughObject for each table
+ * in the database that an ORM is needed for.
+ * 
+ * @package CoughPHP
  **/
 abstract class CoughObject {
-	/**
-	 * undocumented class variable
-	 *
-	 * @var array
-	 **/
-	protected $messages = array();
 	
 	/**
 	 * Stores validation errors set by `validateData` function.

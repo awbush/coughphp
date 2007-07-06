@@ -26,7 +26,7 @@
  * next. This allows it to work in cases where the sub class has no corresponding
  * generated class.
  *
- * @package cough
+ * @package CoughPHP
  * @author Anthony Bush
  **/
 class CoughLoader {

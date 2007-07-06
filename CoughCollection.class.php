@@ -2,6 +2,8 @@
 
 /**
  * undocumented abstract class CoughCollection
+ * 
+ * @package CoughPHP
  **/
 abstract class CoughCollection extends ArrayObject {
 	// Values for the collectionType;
