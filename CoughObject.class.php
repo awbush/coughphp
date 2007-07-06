@@ -951,13 +951,12 @@ abstract class CoughObject {
 
 	/**
 	 * Creates a new entry if needed, otherwise it updates an existing one.
-	 * During an update, it only updates the modified fields. If you pass a
-	 * list of fields to update, it will update those fields instead.
+	 * During an update, it only updates the modified fields.
 	 *
 	 * @return boolean - the result of the create/update.
 	 * @author Anthony Bush
 	 **/
-	public function save($fieldsToUpdate = null) {
+	public function save() {
 		
 		// Update the child with it's parent id
 		$this->setFieldsFromParentPk();
@@ -972,7 +971,7 @@ abstract class CoughObject {
 		if ($this->shouldCreate()) {
 			$result = $this->create();
 		} else {
-			$result = $this->update($fieldsToUpdate);
+			$result = $this->update();
 		}
 
 		// We have never said that this was okay, but this is how you would
@@ -1085,46 +1084,19 @@ abstract class CoughObject {
 		}
 	}
 	
-	/*
-	// ----------------------------------------------------------------------------------------------
-	 * update()
-	 * -------------------------
-	 * required args:		fieldsToUpdate as fieldName [string] or as fields [array]
-	 * optional args:		n/a
-	 * desc:
-	 * 						update() saves the object's current value of the passed field names to the database
-	 * note:
-	 * 						PLEASE READ!!!
-	 * 						you pass the NAMES OF THE FIELDS TO BE SAVED, -not- an associative array of the field names => field values.
-	 * 						THIS IS AN IMPORTANT DIFFERENCE!!!
-	*/
-	public function update($fieldsToUpdate = null) {
-
-		$fields = array();
-		if (is_null($fieldsToUpdate)) {
-			// Update only the fields that were changed, if any.
-			$fields = $this->getModifiedFields();
-			// If no fields because nothing was modified, return true.
-			if (empty($fields)) {
-				return true;
-			}
-		} else if (is_array($fieldsToUpdate)) {
-			// We are updating customized fields
-			foreach ($fieldsToUpdate as $fieldName) {
-				$fields[$fieldName] = $this->getField($fieldName);
-			}
-		} else {
-			// We are updating only one field
-			$fields[$fieldsToUpdate] = $this->getField($fieldsToUpdate);
-		}
-		if (count($fields) > 0) {
+	/**
+	 * Updates the database with modified values
+	 *
+	 * @return boolean
+	 **/
+	public function update() {
+		// Update only the fields that were changed, if any.
+		$fields = $this->getModifiedFields();
+		if (!empty($fields)) {
 			$this->db->selectDb($this->dbName);
 			$this->db->doUpdate($this->tableName, $fields, null, $this->getPk());
-			return true;
-		} else {
-			// no legal fields passed! do nothing.
-			return false;
 		}
+		return true;
 	}
 	/*
 	// ----------------------------------------------------------------------------------------------
