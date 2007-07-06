@@ -5,6 +5,10 @@
  * extend.  There will usually be one class extending CoughObject for each table
  * in the database that an ORM is needed for.
  * 
+ * It might be wise to add your own AppModel / AppCoughObject class that extends
+ * CoughObject and have all your classes extend that one; this way you can add
+ * custom functionality to Cough without modifying the Cough source.
+ * 
  * @package CoughPHP
  **/
 abstract class CoughObject {
@@ -121,6 +125,7 @@ abstract class CoughObject {
 	 * @var array
 	 **/
 	protected $collections = array();
+	protected $collectionDefinitions = array();
 
 	/**
 	 * An array of all the currently checked/populated collections.
@@ -139,25 +144,21 @@ abstract class CoughObject {
 	 * The information is used by CoughObject to instantiate and check the
 	 * objects.
 	 *
-	 * Format of "object_name" => array of attributes
+	 * Format of [objectName] => [array of attributes]
 	 *
 	 * TODO: Document that array of attributes. For now just look at the
 	 * woc_Product_Generated class (at the defineObjects() function).
 	 *
 	 * @var array
 	 **/
-	protected $objects = array();
-
+	protected $objectDefinitions = array();
+	
 	/**
-	 * An array of all the currently checked objects.
-	 *
-	 * An object that has not populated will not be be in the array at all.
-	 *
-	 * Format of "object_name" => true
-	 *
-	 * @var string
+	 * An array of all the checked objects in form [objectName] => [CoughObject]
+	 * 
+	 * @var array
 	 **/
-	protected $checkedObjects = array();
+	protected $objects = array();
 
 	/**
 	 * A reference to the DatabaseConnector object; used for executing the
@@ -930,7 +931,7 @@ abstract class CoughObject {
 	protected function setFieldsFromParentPk() {
 		if ($this->hasCollector()) {
 			$collector = $this->getCollector();
-			foreach ($this->objects as $objProperties) {
+			foreach ($this->objectDefinitions as $objProperties) {
 				if ($collector instanceof $objProperties['class_name']) {
 					$getter = $objProperties['get_id_method']; // TODO: Make multi-key PK compliant
 					if ($this->$getter() === null) {
@@ -1011,8 +1012,8 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	public function saveCheckedObjects() {
-		foreach (array_keys($this->checkedObjects) as $objectName) {
-			$this->$objectName->save();
+		foreach ($this->objects as $object) {
+			$object->save();
 		}
 	}
 
@@ -1212,7 +1213,7 @@ abstract class CoughObject {
 	 **/
 	public function checkAllObjects() {
 		//echo ("CoughObject::checkAllObjects() called for " . get_class($this) . "<br />\n");
-		foreach (array_keys($this->objects) as $objectName) {
+		foreach (array_keys($this->objectDefinitions) as $objectName) {
 			$this->checkObject($objectName);
 		}
 		//echo ("CoughObject::checkAllObjects() finished<br />\n");
@@ -1220,15 +1221,14 @@ abstract class CoughObject {
 
 	/**
 	 * Instantiates the given object name, using the information
-	 * specified in the `objects` array.
+	 * specified in the `objectDefinitions` array.
 	 *
 	 * @return void
 	 * @author Anthony Bush
 	 **/
 	protected function checkObject($objectName) {
-		$objectInfo = $this->objects[$objectName];
-		$this->$objectName = new $objectInfo['class_name']($this->$objectInfo['get_id_method']());
-		$this->checkedObjects[$objectName] = true;
+		$objectInfo = &$this->objectDefinitions[$objectName];
+		$this->objects[$objectName] = new $objectInfo['class_name']($this->$objectInfo['get_id_method']());
 	}
 
 	/**
@@ -1242,7 +1242,7 @@ abstract class CoughObject {
 	 **/
 	protected function checkOnceAndGetObject($objectName) {
 		$this->readyObject($objectName);
-		return $this->$objectName;
+		return $this->objects[$objectName];
 	}
 
 	protected function readyObject($objectName) {
@@ -1458,41 +1458,9 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function isObjectChecked($objectName) {
-		return isset($this->checkedObjects[$objectName]);
+		return isset($this->objects[$objectName]);
 	}
-
-	/**
-	 * Gets the checked objects
-	 *
-	 * @return array - the checked objects; each element is a string containing the object name.
-	 * @author Anthony Bush
-	 **/
-	public function getCheckedObjects() {
-		$checkedObjects = array();
-		foreach (array_keys($this->objects) as $objectName) {
-			if ($this->isObjectChecked($objectName)) {
-				$checkedObjects[] = $objectName;
-			}
-		}
-		return $checkedObjects;
-	}
-
-	/**
-	 * Gets the non-checked objects
-	 *
-	 * @return array - the non-checked objects; each element is a string containing the object name.
-	 * @author Anthony Bush
-	 **/
-	public function getNonCheckedObjects() {
-		$nonCheckedObjects = array();
-		foreach (array_keys($this->objects) as $objectName) {
-			if ( ! $this->isObjectChecked($objectName)) {
-				$nonCheckedObjects[] = $objectName;
-			}
-		}
-		return $nonCheckedObjects;
-	}
-
+	
 	/**
 	 * Gets the checked collections
 	 *
