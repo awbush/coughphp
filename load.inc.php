@@ -45,8 +45,7 @@
  * @author Tom Warmbrodt
  * @author Wayne Wight
  * @author Lewis Zhang
- * @version $Id: load.inc.php,v 1.6 2007/03/27 23:50:38 awbush Exp $
- * @copyright Academic Superstore,  7 July, 2006
+ * @copyright 2005-2007 Tom Warmbrodt, Anthony Bush, Lewis Zhang. CoughPHP is open source protected by the FreeBSD License.
  * @package default
  **/
 
@@ -54,17 +53,9 @@
 ModuleFactory::loadModule('matt_database');
 
 // Load the Cough framework
-include_once('Cough.class.php');
-include_once('Coughable.class.php');
 include_once('CoughIterator.class.php');
-
 include_once('CoughCollection.class.php');
 include_once('CoughObject.class.php');
-
-// 2007-03-27/AWB: FYI, don't know why these were being including because (1) they aren't used anywhere and (2) they aren't finished, LOL.
-// include_once('DynaCoughCollection.class.php');
-// include_once('DynaCoughObject.class.php');
-
 include_once('CoughLoader.class.php');
 
 ?>

@@ -3,7 +3,7 @@
 /**
  * undocumented class CoughObject
  **/
-abstract class CoughObject implements Coughable {
+abstract class CoughObject {
 	/**
 	 * undocumented class variable
 	 *
@@ -1336,10 +1336,6 @@ abstract class CoughObject implements Coughable {
 	// permittors, testors, & validators block ENDS
 	// ----------------------------------------------------------------------------------------------
 
-
-	public function jam() {
-		Cough::jam($this);
-	}
 
 	/**
 	 * Instantiates all objects and collections AND checks the database for

@@ -3,7 +3,7 @@
 /**
  * undocumented abstract class CoughCollection
  **/
-abstract class CoughCollection extends ArrayObject implements Coughable {
+abstract class CoughCollection extends ArrayObject {
 	// Values for the collectionType;
 	const KEYLESS = 0;
 	const KEYED   = 1;
@@ -45,9 +45,6 @@ abstract class CoughCollection extends ArrayObject implements Coughable {
 	
 	public function getIterator() {
 		return new CoughIterator( $this );
-	}
-	public function jam() {
-		Cough::jam($this);
 	}
 	
 	public function __construct($specialArgs=array(), $array=array()) {
