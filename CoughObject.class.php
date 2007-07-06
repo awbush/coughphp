@@ -78,13 +78,6 @@ abstract class CoughObject {
 	protected $keyColumn;
 
 	/**
-	 * The db column name of the "name" field.
-	 *
-	 * @var string
-	 **/
-	protected $nameColumn;
-
-	/**
 	 * The name of the database the table(s) is/are in.
 	 *
 	 * @var string
@@ -299,9 +292,6 @@ abstract class CoughObject {
 	protected function defineKeyColumn() {
 		$this->keyColumn = ''; // override this line in subclass
 	}
-	protected function defineNameColumn() {
-		$this->nameColumn = ''; // override this line in subclass
-	}
 	protected function defineTableName() {
 		$this->tableName = ''; // override this line in subclass
 	}
@@ -314,17 +304,6 @@ abstract class CoughObject {
 	protected function defineCollections() {
 		// override this in subclass if the subclass possesses collections
 	}
-
-	// defineTablesColumns() used for multi-table definitions; I'd ignore this for now. -Tom 6-7-06
-	/*
-	protected function defineTablesColumns($tablesColumns=array()) {
-		foreach ($tablesColumns as $tableName => $columns) {
-			foreach ($columns as $columnName => $boolean) {
-				$this->tablesColumns[$tableName][$columnName] = $boolean;
-			}
-		}
-	}
-	*/
 
 	/**
 	 * Clone only the non-primary key fields.
@@ -428,50 +407,6 @@ abstract class CoughObject {
 		return $this->collector;
 	}
 	
-	/**
-	 * setName()
-	 * -------------------------
-	 * required args:
-	 * 						name [string]
-	 * optional args:
-	 * 						n/a
-	 * desc:
-	 * 						setName() sets the object's "row name" field.
-	 */
-	public function setName($name) {
-		$this->setField($this->getNameColumn(), $name);
-	}
-	/**
-	 * getName()
-	 * -------------------------
-	 * required args:
-	 * 						n/a
-	 * optional args:
-	 * 						n/a
-	 * desc:
-	 * 						getName() returns the current value of the object's "row name" field
-	 */
-	public function getName() {
-		$nameColumn = $this->getNameColumn();
-		if (isset($this->fields[$nameColumn])) {
-			return ($this->fields[$nameColumn]);
-		} else {
-			return null;
-		}
-	}
-	/*
-	 * getNameColumn()
-	 * -------------------------
-	 * required args:
-	 * 						n/a
-	 * optional args:
-	 * 						n/a
-	 * desc:
-	 * 						getNameColumn() returns the value of the class's "row name" column
-	*/
-	public function getNameColumn() {
-		return ($this->nameColumn);
-	}
 	/*
 	 * setKeyID()
 	 * -------------------------
@@ -696,8 +631,6 @@ abstract class CoughObject {
 			if (isset($this->columns[$fieldName])) {
 				if ($this->isKey($fieldName)) {
 					$this->setKeyID($fieldValue);
-				} else if ($this->isNameColumn($fieldName)) {
-					$this->setName($fieldValue);
 				} else {
 					$this->setField($fieldName, $fieldValue);
 				}
@@ -830,8 +763,6 @@ abstract class CoughObject {
 				if (isset($this->columns[$fieldName])) {
 					if ($this->isKey($fieldName)) {
 						$this->setKeyID($fieldValue);
-					} else if ($this->isNameColumn($fieldName)) {
-						$this->setName($fieldValue);
 					} else {
 						$this->setField($fieldName, $fieldValue);
 					}
@@ -1264,21 +1195,6 @@ abstract class CoughObject {
 	*/
 	public function isKey($fieldName) {
 		if ($this->keyColumn == $fieldName) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	/*
-	 * isNameColumn()
-	 * -------------------------
-	 * required args:		fieldName
-	 * optional args:		n/a
-	 * desc:
-	 * 						isNameColumn() returns true if the passed value is the same as the class's "row name" column name
-	*/
-	public function isNameColumn($fieldName) {
-		if ($this->nameColumn == $fieldName) {
 			return true;
 		} else {
 			return false;

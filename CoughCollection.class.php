@@ -255,40 +255,6 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Returns an array containing the keys of all collected objects
-	 *
-	 * @return array - array containing the keys of all collected objects
-	 * @author Wayne Wight
-	 **/
-	public function getKeys() {
-		$keys = array();
-		$it = $this->getIterator();
-		while($it->valid()) {
-			$collected = $it->current();
-			$keys[] = $collected->getKeyID();
-			$it->next();
-		}
-		return $keys;
-	}
-	
-	/**
-	 * Returns a hash containing the key => name values of all collected objects
-	 *
-	 * @return array - hash containing the key => name values of all collected objects
-	 * @author Wayne Wight
-	 **/
-	public function getHash() {
-		$hash = array();
-		$it = $this->getIterator();
-		while($it->valid()) {
-			$collected = $it->current();
-			$hash[$collected->getKeyID()] = $collected->getName();
-			$it->next();
-		}
-		return $hash;
-	}
-	
-	/**
 	 * Returns the first element in the collection, or null if nothing in collection.
 	 *
 	 * @return mixed - first element in the collection, or null if nothing in collection.
