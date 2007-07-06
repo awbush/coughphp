@@ -253,11 +253,6 @@ abstract class CoughObject {
 	 *								_initializeDefinitions() sets the cough object's basic identity.
 	 */
 	protected function initializeDefinitions() {
-		$this->defineDBName();
-		$this->defineColumns();
-		$this->defineKeyColumn();
-		$this->defineNameColumn();
-		$this->defineTableName();
 		$this->initFieldsToDefaultValues();
 
 		// the below method is used only if your class has a special check query other than a select by PK

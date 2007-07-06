@@ -28,7 +28,14 @@ abstract class CoughCollection extends ArrayObject {
 	
 	protected $populated = false;
 	
-	protected $dbName;
+	/**
+	 * The database name to use to running queries.
+	 * 
+	 * Override in sub class.
+	 * 
+	 * @var string
+	 **/
+	protected $dbName = null;
 	protected $collectionSQL;
 	protected $elementClassName;
 	protected $orderBySQL;
@@ -50,22 +57,13 @@ abstract class CoughCollection extends ArrayObject {
 		$this->db = DatabaseFactory::getDatabase($this->dbName);
 	}
 	protected function initializeDefinitions($specialArgs=array()) {
-		$this->defineDBName();
 		$this->defineCollectionSQL();
 		$this->defineCollectionType();
 		$this->defineDefaultOrderClause();
 		$this->defineElementClassName();
 		$this->defineSpecialCriteria($specialArgs);
 	}
-	/**
-	 * Set the database name of the collection.
-	 * Override this in sub class.
-	 *
-	 * @return void
-	 **/
-	protected function defineDBName() {
-		$this->dbName = '';
-	}
+	
 	/**
 	 * Set custom SQL to be used when populating the collection.
 	 * Override this in sub class.
@@ -75,6 +73,7 @@ abstract class CoughCollection extends ArrayObject {
 	protected function defineCollectionSQL() {
 		$this->collectionSQL = '';
 	}
+	
 	/**
 	 * Set default ORDER BY clause to be used when populating the collection.
 	 * Override this in sub class.
@@ -85,6 +84,7 @@ abstract class CoughCollection extends ArrayObject {
 	protected function defineDefaultOrderClause() {
 		$this->orderBySQL = '';
 	}
+	
 	/**
 	 * Set the collection type of the collection, KEYED, or KEYLESS.
 	 * Override this in sub class.
@@ -97,6 +97,7 @@ abstract class CoughCollection extends ArrayObject {
 	protected function defineCollectionType() {
 		$this->collectionType = self::KEYED;
 	}
+	
 	/**
 	 * Set the name of the element class that will be used when adding new
 	 * elements to the collection (can be overridden when calling
@@ -108,6 +109,7 @@ abstract class CoughCollection extends ArrayObject {
 	protected function defineElementClassName() {
 		$this->elementClassName = '';
 	}
+	
 	/**
 	 * Modify the collectionSQL based on special parameters.
 	 * Override this in sub class.
