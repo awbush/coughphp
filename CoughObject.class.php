@@ -71,23 +71,28 @@ abstract class CoughObject {
 	protected $derivedFields = array();
 
 	/**
-	 * The db column name of the primary key field.
+	 * The primary key field names
 	 *
-	 * @var string
+	 * Override in sub class.
+	 * 
+	 * @var array
 	 **/
-	protected $keyColumn;
 	protected $pkFieldNames = array();
 
 	/**
-	 * The name of the database the table(s) is/are in.
-	 *
+	 * The name of the database the table is in.
+	 * 
+	 * Override in sub class.
+	 * 
 	 * @var string
 	 **/
 	protected $dbName = null;
 
 	/**
-	 * The name of table the object maps to, if applicable.
+	 * The name of table the object maps to.
 	 *
+	 * Override in sub class.
+	 * 
 	 * @var string
 	 **/
 	protected $tableName;
@@ -101,17 +106,6 @@ abstract class CoughObject {
 	 * @var string
 	 **/
 	protected $checkStatement = null;
-
-	/**
-	 * An array of each database tables' column names.
-	 *
-	 * Format of ["db table name"]["db column name"] => true
-	 *
-	 * NOTE: This and its related functions are not currently used.
-	 *
-	 * @var array of arrays
-	 **/
-	protected $tablesColumns = array();
 
 	/**
 	 * An array of all the collections and their attributes.
@@ -284,15 +278,6 @@ abstract class CoughObject {
 	}
 
  	// definition methods for object initilization called by initializeDefinitions()
-	protected function defineDBName() {
-		$this->dbName = ''; // override this line in subclass
-	}
-	protected function defineKeyColumn() {
-		$this->keyColumn = ''; // override this line in subclass
-	}
-	protected function defineTableName() {
-		$this->tableName = ''; // override this line in subclass
-	}
 	protected function defineCheckStatement() {
 		$this->checkStatement = ''; // override this line in subclass IF you need a special check query other than a select by PK
 	}
