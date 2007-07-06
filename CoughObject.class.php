@@ -42,7 +42,7 @@ abstract class CoughObject {
 	 *
 	 * @var array
 	 **/
-	protected $columns = array();
+	protected $fieldDefinitions = array();
 
 	/**
 	 * An array of all the currently initialized or set fields.
@@ -76,13 +76,14 @@ abstract class CoughObject {
 	 * @var string
 	 **/
 	protected $keyColumn;
+	protected $pkFieldNames = array();
 
 	/**
 	 * The name of the database the table(s) is/are in.
 	 *
 	 * @var string
 	 **/
-	protected $dbName;
+	protected $dbName = null;
 
 	/**
 	 * The name of table the object maps to, if applicable.
@@ -226,14 +227,14 @@ abstract class CoughObject {
 		// Should we handle case of when an object is passed in?
 		// } else if (get_class($fieldsOrID) && is_subclass_of($fieldsOrID, 'CoughObject')) {
 		// 	// Set to a copy or by reference to the other object?
-		// 	$this->setKeyID($fieldsOrID->getKeyID());
+		// 	$this->setKeyId($fieldsOrID->getKeyId());
 		// 	$this->check();
 		//  // Or user can use:
 		// 	//$new_product = clone $product;
 		//  // or
 		//  //$new_product = $product;
 		} else if ($fieldsOrID != '') {
-			$this->setKeyID($fieldsOrID);
+			$this->setKeyId($fieldsOrID);
 			$this->check();
 		} else {
 			// do nothing
@@ -286,9 +287,6 @@ abstract class CoughObject {
 	protected function defineDBName() {
 		$this->dbName = ''; // override this line in subclass
 	}
-	protected function defineColumns() {
-		$this->columns = array(); // override this line in subclass
-	}
 	protected function defineKeyColumn() {
 		$this->keyColumn = ''; // override this line in subclass
 	}
@@ -325,10 +323,12 @@ abstract class CoughObject {
 			}
 		}
 		
-		$this->setKeyID(null);
 		// Mark all fields as having been modified (except key ID) so that a call to save() will complete the clone.
 		$fields = $this->fields;
-		unset($fields[$this->getKeyName()]);
+		foreach ($this->pkFieldNames as $fieldName) {
+			unset($fields[$fieldName]);
+			$this->fields[$fieldName] = null;
+		}
 		$this->modifiedFields = array_keys($fields);
 	}
 	
@@ -346,11 +346,7 @@ abstract class CoughObject {
 	 **/
 	public function isEqualTo($coughObject) {
 		if (get_class($this) == get_class($coughObject)) {
-			$thisFields = $this->getFields();
-			unset($thisFields[$this->getKeyName()]);
-			$thoseFields = $coughObject->getFields();
-			unset($thoseFields[$coughObject->getKeyName()]);
-			if ($thisFields == $thoseFields) {
+			if ($this->getFieldsWithoutPk() == $coughObject->getFieldsWithoutPk()) {
 				return true;
 			}
 		}
@@ -407,18 +403,28 @@ abstract class CoughObject {
 		return $this->collector;
 	}
 	
-	/*
-	 * setKeyID()
-	 * -------------------------
-	 * required args:
-	 * 						id
-	 * optional args:
-	 * 						n/a
-	 * desc:
-	 * 						setKeyID() sets the object's primary key id to the passed value
-	*/
-	public function setKeyID($id) {
-		$this->setField($this->getKeyName(), $id);
+	/**
+	 * Sets the object's primary key id to the passed value.
+	 * 
+	 * If key is multi-key:
+	 * 
+	 *     * Call this with an array of [field_name] => [field_value] pairs to
+	 *       set all values uniquely.
+	 *     
+	 *     * Call this with a non-array value to set all keys to the same value.
+	 * 
+	 * @param mixed $id
+	 * @return void
+	 * @author Anthony Bush
+	 **/
+	public function setKeyId($id) {
+		if (is_array($id)) {
+			$this->setFields($id);
+		} else {
+			foreach ($this->getPkFieldNames() as $fieldName) {
+				$this->setField($fieldName, $id);
+			}
+		}
 	}
 
 	/**
@@ -427,71 +433,62 @@ abstract class CoughObject {
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function setPreknownKeyID($id) {
-		$this->setKeyID($id);
+	public function setPreknownKeyId($id) {
+		$this->setKeyId($id);
 		$this->isPreknownKeyIdSet = true;
 	}
-
-	/*
-	 * getKeyName()
-	 * -------------------------
-	 * required args:
-	 * 						n/a
-	 * optional args:
-	 * 						n/a
-	 * desc:
-	 * 						getKeyName() returns the name of the class's primary key column
-	*/
-	public function getKeyName() {
-		return ($this->keyColumn);
-	}
-	
-	/*
-	 * getKeyID()
-	 * -------------------------
-	 * required args:
-	 * 						n/a
-	 * optional args:
-	 * 						n/a
-	 * desc:
-	 * 						getKeyID() returns the current value of the object's primary key id
-	*/
-	public function getKeyID() {
-		$keyColumn = $this->getKeyName();
-		if (isset($this->fields[$keyColumn])) {
-			return $this->fields[$keyColumn];
-		} else {
-			return null;
-		}
-	}
 	
 	/**
-	 * Returns the primary key as an array of [field_name] => field_value
+	 * Returns the current value of the object's primary key id.
 	 * 
-	 * If the key is a multi-field primary key, then the array will contain
-	 * more than one element, obviously.
+	 * If the key is multi-key, then it returns the same thing as {@link getPk()}
 	 *
-	 * @return array - primary key as [field_name] => field_value
+	 * @return mixed
 	 * @author Anthony Bush
 	 **/
-	public function getKeyAsArray() {
-		// TODO: Cough: Update this once we get multi-field primary key going...
-		return array($this->getKeyName() => $this->getKeyID());
+	public function getKeyId() {
+		if (count($this->pkFieldNames) == 1) {
+			$fieldName = $this->pkFieldNames[0];
+			if (isset($this->fields[$fieldName])) {
+				return $this->fields[$fieldName];
+			} else {
+				return null;
+			}
+		} else {
+			return $this->getPk();
+		}
 	}
 	
 	/**
-	 * Abstract out the getKeyID() === null tests. Eventually, we'll have multi-key
-	 * PK support, making this function more useful.
+	 * Returns the primary key as an array of [field_name] => field_value pairs
 	 *
-	 * @return void
+	 * @return array
+	 * @author Anthony Bush
+	 * @since 2007-07-06
+	 **/
+	public function getPk() {
+		$pk = array();
+		foreach ($this->pkFieldNames as $fieldName) {
+			$pk[$fieldName] = $this->fields[$fieldName];
+		}
+		return $pk;
+	}
+	
+	/**
+	 * Returns true if all the key fields that make up the primary key are set
+	 * to non-null values.
+	 *
+	 * @return boolean
 	 * @author Anthony Bush
 	 **/
-	public function hasKeyID() {
-		if ($this->getKeyID() === null) {
-			return false;
-		} else {
-			return true;
+	public function hasKeyId() {
+		foreach ($this->pkFieldNames as $fieldName) {
+			if (!isset($this->fields[$fieldName])) {
+				return false;
+			}
 		}
+		// Search for non-set key exhausted.
+		return true;
 	}
 	
 	/**
@@ -525,6 +522,33 @@ abstract class CoughObject {
 		return $this->fields;
 	}
 	
+	/**
+	 * Get all non-primary key related fields and their values.
+	 *
+	 * @return array
+	 * @author Anthony Bush
+	 * @since 2007-07-06
+	 **/
+	public function getFieldsWithoutPk() {
+		$fields = $this->getFields();
+		foreach ($this->getPkFieldNames() as $fieldName) {
+			unset($fields[$fieldName]);
+		}
+		return $fields;
+	}
+	
+	/**
+	 * Get the primary key field names as an array.
+	 *
+	 * @return array
+	 * @author Anthony Bush
+	 * @since 2007-07-06
+	 **/
+	public function getPkFieldNames() {
+		return $this->pkFieldNames;
+	}
+	
+	
 	/*
 	 * getCheckStatement()
 	 * -------------------------
@@ -540,14 +564,12 @@ abstract class CoughObject {
 	protected function getCheckStatement() {
 		return ($this->checkStatement);
 	}
-	/*
-	 * getField()
-	 * -------------------------
-	 * required args:
-	 * 						field name
-	 * desc:
-	 * 						getField() returns the current value of the field name passed
-	*/
+	
+	/**
+	 * Returns the current value of the requested field name.
+	 *
+	 * @return mixed
+	 **/
 	protected function getField($fieldName) {
 		if (isset($this->fields[$fieldName])) {
 			return ($this->fields[$fieldName]);
@@ -566,31 +588,53 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function isNullAllowed($fieldName) {
-		if (isset($this->columns[$fieldName])) {
+		if (isset($this->fieldDefinitions[$fieldName])) {
 			// Temporary: the is_array check is there for backwards compatibility with old generated code.
-			if (is_array($this->columns[$fieldName]) && array_key_exists('default_value', $this->columns[$fieldName])) {
-				return $this->columns[$fieldName]['is_null_allowed'];
+			if (is_array($this->fieldDefinitions[$fieldName]) && array_key_exists('default_value', $this->fieldDefinitions[$fieldName])) {
+				return $this->fieldDefinitions[$fieldName]['is_null_allowed'];
 			}
 		}
 		return true; // backwards compatible default value
 	}
 	
+	/**
+	 * Sets the specified field name to it's default value.
+	 *
+	 * @return void
+	 * @author Anthony Bush
+	 * @todo deprecate this in favor of $fields being initialized to default values?
+	 **/
 	public function setFieldToDefaultValue($fieldName) {
 		$this->setField($fieldName, $this->getFieldDefaultValue($fieldName));
 	}
 	
+	/**
+	 * Gets the default value for the specified field name.
+	 *
+	 * @return void
+	 * @author Anthony Bush
+	 * @todo deprecate this in favor of $fields being initialized to default values?
+	 **/
 	public function getFieldDefaultValue($fieldName) {
-		if (isset($this->columns[$fieldName])) {
+		if (isset($this->fieldDefinitions[$fieldName])) {
 			// Temporary: the is_array check is there for backwards compatibility with old generated code.
-			if (is_array($this->columns[$fieldName]) && array_key_exists('default_value', $this->columns[$fieldName])) {
-				return $this->columns[$fieldName]['default_value'];
+			if (is_array($this->fieldDefinitions[$fieldName]) && array_key_exists('default_value', $this->fieldDefinitions[$fieldName])) {
+				return $this->fieldDefinitions[$fieldName]['default_value'];
 			}
 		}
 		return null; // backwards compatible default value
 	}
 	
+	/**
+	 * Initializes all fields to their default values (without marking them
+	 * modified).
+	 *
+	 * @return void
+	 * @author Anthony Bush
+	 * @todo deprecate this in favor of $fields being initialized to default values?
+	 **/
 	protected function initFieldsToDefaultValues() {
-		foreach ($this->columns as $fieldName => $fieldAttr) {
+		foreach ($this->fieldDefinitions as $fieldName => $fieldAttr) {
 			// Temporary: the is_array check is there for backwards compatibility with old generated code.
 			if (is_array($fieldAttr) && array_key_exists('default_value', $fieldAttr)) {
 				$this->fields[$fieldName] = $fieldAttr['default_value'];
@@ -598,42 +642,30 @@ abstract class CoughObject {
 		}
 	}
 	
-	
-	/*
-	 * setField()
-	 * -------------------------
-	 * required args:
-	 * 						field name
-	 * 						field value
-	 * desc:
-	 * 						setField() sets the current value of the field name passed to the value that was passed
-	*/
+	/**
+	 * Sets the current value of $fieldName to $value.
+	 * 
+	 * @param string $fieldName
+	 * @param mixed $value
+	 * @return void
+	 **/
 	protected function setField($fieldName, $value) {
 		$this->fields[$fieldName] = $value;
 		$this->setModified($fieldName);
 	}
-
-	/*
-	 * setFields()
-	 * -------------------------
-	 * required args:
-	 * 						n/a
-	 * optional args:
-	 * 						fields [assoc array]
-	 * desc:
-	 * 						setFields() sets the current value of the all the class's defined columns equal to the values passed in the fields assoc array
-	 * note:
-	 * 						1. if a field passed in the fields assoc array isn't in the class's defined columns, it will NOT BE SET
-	 * 						2. setFields automatically sets the object's primary key and "row name" if those values are passed in the fields assoc array
-	*/
-	public function setFields($fields = array()) {
+	
+	/**
+	 * Sets the current value of the all the object's defined fields equal to the values passed in the $fields associative array.
+	 * 
+	 * Note: if a field passed in the fields associative array isn't in the class's defined fields, it will NOT BE SET.
+	 * 
+	 * @param array $fields - format of [field_name] => [new_value]
+	 * @return void
+	 **/
+	public function setFields($fields) {
 		foreach ( $fields as $fieldName => $fieldValue ) {
-			if (isset($this->columns[$fieldName])) {
-				if ($this->isKey($fieldName)) {
-					$this->setKeyID($fieldValue);
-				} else {
-					$this->setField($fieldName, $fieldValue);
-				}
+			if (isset($this->fieldDefinitions[$fieldName])) {
+				$this->setField($fieldName, $fieldValue);
 			} else if (($pos = strpos($fieldName, '.')) !== false) {
 				// custom field
 				// $joinTableName = substr($fieldName, 0, $pos);
@@ -739,7 +771,7 @@ abstract class CoughObject {
 
 		// If the setting of the fields also set the primary key, then assume
 		// we pulled from the database and clear the modified fields
-		if ( ! is_null($this->getKeyID())) {
+		if ($this->hasKeyId()) {
 			$this->resetModified();
 		}
 	}
@@ -760,12 +792,8 @@ abstract class CoughObject {
 			while ($i->valid()) {
 				$fieldName = $i->key();
 				$fieldValue = $i->current();
-				if (isset($this->columns[$fieldName])) {
-					if ($this->isKey($fieldName)) {
-						$this->setKeyID($fieldValue);
-					} else {
-						$this->setField($fieldName, $fieldValue);
-					}
+				if (isset($this->fieldDefinitions[$fieldName])) {
+					$this->setField($fieldName, $fieldValue);
 				}
 				$i->next();
 			}
@@ -794,83 +822,32 @@ abstract class CoughObject {
 	public function check() {
 		if ($this->shouldCheckUsingCheckStatement()) {
 			// 2007-03-23/AWB: This has previously been un-used, and now that it will be, it needs to work by allowing FULL SQL customization.
-			// $sql = 'SELECT * FROM ' . $this->getCheckStatement() . ' WHERE ' . $this->getKeyName() . ' = "' . $this->getKeyID() . '"';
+			// $sql = 'SELECT * FROM ' . $this->getCheckStatement() . ' WHERE ' . $this->getKeyName() . ' = "' . $this->getKeyId() . '"';
 			$sql = $this->getCheckStatement();
 		} else if ($this->shouldCheckUsingTableName()) {
-			$sql = 'SELECT * FROM ' . $this->dbName . '.' . $this->tableName . ' WHERE ' . $this->getKeyName() . ' = ' . $this->db->quote($this->getKeyID());
+			$sql = 'SELECT * FROM ' . $this->dbName . '.' . $this->tableName . ' ' . $this->db->generateWhere($this->getPk());
 		} else {
 			// can't check.
 			return false;
 		}
-
-		$this->db->selectDb($this->dbName);
-		$result = $this->db->query($sql);
-		if ($result->numRows() == 1) {
-			$this->initFields($result->getRow());
-			$this->setCheckReturnedResult(true);
-		} else if ($result->numRows() == 0) {
-			// check failed because the unique dataset couldn't be selected
-			$this->setCheckReturnedResult(false);
-		} else if ($result->numRows() > 1) {
-			// check failed because the dataset returned was nonunique
-			//		todo: add optional summarizing behaviour
-			$this->setCheckReturnedResult(false);
-		}
-		$result->freeResult();
-		return $this->didCheckReturnResult();
+		return $this->checkBySql($sql);
 	}
-
-	/**
-	 * Provides a way to `check` by a unique key other than the primary key.
-	 *
-	 * @param string $uniqueKey - the db_column_name to compare with
-	 * @param string $uniqueValue - the value to look for
-	 * @return boolean - true if one row returned, false otherwise.
-	 * @author Anthony Bush
-	 **/
-	public function checkBy($uniqueKey, $uniqueValue) {
-		if ( ! empty($uniqueKey)) {
-			$whereSQL = $uniqueKey . " = " . $this->db->quote($uniqueValue);
-
-			// Run the query
-			$sql = 'SELECT * FROM ' . $this->dbName . '.' . $this->tableName . ' WHERE ' . $whereSQL;
-			$result = $this->db->query($sql);
-			if ($result->numRows() == 1) {
-				$this->initFields($result->getRow());
-				$this->setCheckReturnedResult(true);
-			} else {
-				$this->setCheckReturnedResult(false);
-			}
-			$result->freeResult();
-		} else {
-			$this->setCheckReturnedResult(false);
-		}
-		return $this->didCheckReturnResult();
-	}
-
+	
 	/**
 	 * Provides a way to `check` by an array of "key" => "value" pairs.
 	 *
 	 * @param array $where - an array of "key" => "value" pairs to search for
-	 * @param boolean $allowManyRows - set to true if you want to initialize from a record even if there was more than one record returned.
+	 * @param boolean $additionalSql - add ORDER BYs and LIMITs here.
 	 * @return boolean - true if initialized object with data, false otherwise.
 	 * @author Anthony Bush
 	 **/
-	public function checkByArray($where = array(), $allowManyRows = false) {
+	public function checkByCriteria($where = array(), $additionalSql = '') {
 		if ( ! empty($where)) {
-			$this->db->selectDb($this->dbName);
-			$result = $this->db->doSelect($this->tableName, array(), $where);
-			if ($result->numRows() == 1 || ($allowManyRows && $result->numRows() > 1)) {
-				$this->initFields($result->getRow());
-				$this->setCheckReturnedResult(true);
-			} else {
-				$this->setCheckReturnedResult(false);
-			}
-			$result->freeResult();
-		} else {
-			$this->setCheckReturnedResult(false);
+			$sql = 'SELECT * FROM ' . $this->dbName . '.' . $this->tableName
+			     . ' ' . $this->db->generateWhere($where) . ' ' . $additionalSql;
+			return $this->checkBySql($sql);
 		}
-		return $this->didCheckReturnResult();
+		return false;
 	}
 	
 	/**
@@ -881,14 +858,15 @@ abstract class CoughObject {
 	 * @return boolean - true if initialized object with data, false otherwise.
 	 * @author Anthony Bush
 	 **/
-	public function checkBySql($sql, $allowManyRows = false) {
+	public function checkBySql($sql) {
 		if ( ! empty($sql)) {
 			$this->db->selectDb($this->dbName);
 			$result = $this->db->doQuery($sql);
-			if ($result->numRows() == 1 || ($allowManyRows && $result->numRows() > 1)) {
+			if ($result->numRows() == 1) {
 				$this->initFields($result->getRow());
 				$this->setCheckReturnedResult(true);
 			} else {
+				// check failed because the unique dataset couldn't be selected
 				$this->setCheckReturnedResult(false);
 			}
 			$result->freeResult();
@@ -961,6 +939,28 @@ abstract class CoughObject {
 		}
 		return $fields;
 	}
+	
+	/**
+	 * If the object has a parent, then this method will update its foreign
+	 * key with the value from the parent's primary key.
+	 *
+	 * @return void
+	 * @author Anthony Bush
+	 **/
+	protected function setFieldsFromParentPk() {
+		if ($this->hasCollector()) {
+			$collector = $this->getCollector();
+			foreach ($this->objects as $objProperties) {
+				if ($collector instanceof $objProperties['class_name']) {
+					$getter = $objProperties['get_id_method']; // TODO: Make multi-key PK compliant
+					if ($this->$getter() === null) {
+						$this->setFields($collector->getPk());
+					}
+					break;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Creates a new entry if needed, otherwise it updates an existing one.
@@ -973,20 +973,7 @@ abstract class CoughObject {
 	public function save($fieldsToUpdate = null) {
 		
 		// Update the child with it's parent id
-		if ($this->hasCollector()) {
-			$collector = $this->getCollector();
-			foreach ($this->objects as $objProperties) {
-				if ($collector instanceof $objProperties['class_name']) {
-					$getter = $objProperties['get_id_method'];
-					$setter = $getter;
-					$setter[0] = 's';
-					if ($this->$getter() === null) {
-						$this->$setter($collector->getKeyId());
-					}
-					break;
-				}
-			}
-		}
+		$this->setFieldsFromParentPk();
 		
 		// Check for valid data.
 		$this->validateData($this->fields);
@@ -1029,7 +1016,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function shouldCreate() {
-		if ($this->getKeyID() === null || $this->isPreknownKeyIdSet === true) {
+		if (!$this->hasKeyId() || $this->isPreknownKeyIdSet === true) {
 			return true;
 		} else {
 			return false;
@@ -1097,14 +1084,14 @@ abstract class CoughObject {
 		}
 		
 		$this->db->selectDb($this->dbName);
-		if ($this->getKeyID() === null) {
+		if (!$this->hasKeyId()) {
 			$id = $this->db->doInsert($this->tableName, $fields);
 		} else {
-			$this->db->doInsertOrUpdate($this->tableName, $fields, null, $this->getKeyAsArray());
+			$this->db->doInsertOrUpdate($this->tableName, $fields, null, $this->getPk());
 			$id = null;
 		}
 		if ($id != '') {
-			$this->setKeyID($id);
+			$this->setKeyId($id); // TODO: What is $id set to when a multi-pk exists? as long as it's null or empty, we are okay.
 			return true;
 		} else {
 			return false;
@@ -1145,7 +1132,7 @@ abstract class CoughObject {
 		}
 		if (count($fields) > 0) {
 			$this->db->selectDb($this->dbName);
-			$this->db->doUpdate($this->tableName, $fields, null, $this->getKeyAsArray());
+			$this->db->doUpdate($this->tableName, $fields, null, $this->getPk());
 			return true;
 		} else {
 			// no legal fields passed! do nothing.
@@ -1185,21 +1172,6 @@ abstract class CoughObject {
 	// ----------------------------------------------------------------------------------------------
 	// permittors, testors, & validators block BEGINS
 	// ----------------------------------------------------------------------------------------------
-	/*
-	 * isKey()
-	 * -------------------------
-	 * required args:		fieldName
-	 * optional args:		n/a
-	 * desc:
-	 * 						isKey() returns true if the passed value is the same as the class's key column name
-	*/
-	public function isKey($fieldName) {
-		if ($this->keyColumn == $fieldName) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 
 	/**
 	 * Returns true if the class is set to run check() based on its key id and
@@ -1209,8 +1181,8 @@ abstract class CoughObject {
 	 **/
 	protected function shouldCheckUsingTableName() {
 		if ($this->tableName != '') {
-			if ($this->getKeyName()) {
-				if ($this->hasKeyID()) {
+			if (!empty($this->pkFieldNames)) {
+				if ($this->hasKeyId()) {
 					return true;
 				}
 			}
@@ -1225,8 +1197,8 @@ abstract class CoughObject {
 	 **/
 	protected function shouldCheckUsingCheckStatement() {
 		if ($this->checkStatement != '') {
-			if ($this->getKeyName()) {
-				if ($this->hasKeyID()) {
+			if (!empty($this->pkFieldNames)) {
+				if ($this->hasKeyId()) {
 					return true;
 				}
 			}
@@ -1366,7 +1338,7 @@ abstract class CoughObject {
 		if (isset($this->collections[$collectionName]['custom_check_function'])) {
 			$customCheckFunction = $this->collections[$collectionName]['custom_check_function'];
 			$this->$customCheckFunction();
-		} else if ($this->hasKeyID()) {
+		} else if ($this->hasKeyId()) {
 			// 2007-04-16/AWB: We should be calling the generated check method so that anytime the collection is checked it goes through a single point. This change fixes that issue:
 			$checkMethod = 'check' . ucwords($collectionName);
 			$this->$checkMethod();
@@ -1395,7 +1367,7 @@ abstract class CoughObject {
 		$sql = '
 			SELECT *
 			FROM ' . $collection['collection_table'] . '
-			WHERE ' . $collection['relation_key'] . ' = ' . $this->db->quote($this->getKeyID());
+			WHERE ' . $collection['relation_key'] . ' = ' . $this->db->quote($this->getKeyId());
 
 		if (isset($collection['retired_column']) && ! empty($collection['retired_column'])) {
 			$sql .= '
@@ -1421,7 +1393,7 @@ abstract class CoughObject {
 			FROM ' .$collection['join_table'] . '
 			INNER JOIN ' . $collection['collection_table'] . ' ON ' . $collection['join_table'] . '.' . $collection['collection_key']
 				. ' = ' . $collection['collection_table'] . '.' . $collection['collection_key'] . '
-			WHERE ' . $collection['join_table'] . '.' . $collection['relation_key'] . ' = ' . $this->db->quote($this->getKeyID());
+			WHERE ' . $collection['join_table'] . '.' . $collection['relation_key'] . ' = ' . $this->db->quote($this->getKeyId());
 		
 		if (isset($collection['retired_column']) && ! empty($collection['retired_column'])) {
 			$sql .= '
@@ -1756,7 +1728,7 @@ abstract class CoughObject {
 					$whereFields = array(
 						  // 2007-04-16/AWB: We should probably stop the remove functionality, or have it work on primary keys... or have the collection perform the remove. For example, allow end-users to override some remove-like function that specifies how a remove should occur, e.g. maybe a remove is $collectedElement->setJoinField('is_retired', 1); or maybe a remove is $collectedElement->setIsRetired(1); or $collectedElement->markForDelete();
 						  // $collection['join_primary_key'] => $elementID
-						  $collection['relation_key']   => $this->getKeyID()
+						  $collection['relation_key']   => $this->getKeyId()
 						, $collection['collection_key'] => $elementID
 						, $joinAttr['retired_column']   => $joinAttr['is_not_retired']
 					);
@@ -1770,7 +1742,7 @@ abstract class CoughObject {
 				// TODO: Add documentation for this... Also, add an option to the generator that allows this attribute to be added automatically for tables with no retired column.
 				if (isset($collection['allow_deletes']) && $collection['allow_deletes']) {
 					$whereFields = array(
-						  $collection['relation_key']   => $this->getKeyID()
+						  $collection['relation_key']   => $this->getKeyId()
 						, $collection['collection_key'] => $elementID
 					);
 					$this->db->doDelete($collection['join_table'], $whereFields);
@@ -1789,7 +1761,7 @@ abstract class CoughObject {
 		// First, build an array of value arrays to insert
 		$values = array();
 		foreach ($this->$collectionName->getAddedElements() as $elementID) {
-			$values[] = array($elementID, $this->getKeyID());
+			$values[] = array($elementID, $this->getKeyId());
 		}
 
 		// If we have some values to insert, insert them
@@ -1810,14 +1782,14 @@ abstract class CoughObject {
 		
 		if ($this->isJoinTableNew) {
 
-			$this->setJoinField($this->getKeyName(), $this->getKeyID());
-			$this->setJoinField($this->getCollector()->getKeyName(), $this->getCollector()->getKeyID());
+			$this->setJoinFields($this->getPk());
+			$this->setJoinFields($this->getCollector()->getPk());
 			$this->db->doInsertOnDupUpdate($this->getJoinTableName(),$this->getJoinFields());
 			
 		} else if ($this->isJoinTableModified) {
 
-			$this->setJoinField($this->getKeyName(), $this->getKeyID());
-			$this->setJoinField($this->getCollector()->getKeyName(), $this->getCollector()->getKeyID());
+			$this->setJoinFields($this->getPk());
+			$this->setJoinFields($this->getCollector()->getPk());
 			$fieldsToSave = array();
 			$whereFields = array();
 	
