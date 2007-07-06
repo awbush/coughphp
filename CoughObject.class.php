@@ -124,9 +124,15 @@ abstract class CoughObject {
 	 *
 	 * @var array
 	 **/
-	protected $collections = array();
 	protected $collectionDefinitions = array();
-
+	
+	/**
+	 * An array of all the checked collections in form [collectionName] => [CoughCollection]
+	 * 
+	 * @var array
+	 **/
+	protected $collections = array();
+	
 	/**
 	 * An array of all the currently checked/populated collections.
 	 *
@@ -1259,7 +1265,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	public function initAllCollections() {
-		foreach (array_keys($this->collections) as $collectionName) {
+		foreach (array_keys($this->collectionDefinitions) as $collectionName) {
 			$this->initCollection($collectionName);
 		}
 	}
@@ -1271,7 +1277,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function initCollection($collectionName) {
-		$collection =& $this->collections[$collectionName];
+		$collection =& $this->collectionDefinitions[$collectionName];
 		$this->$collectionName = new $collection['collection_class']();
 		
 		if (isset($collection['join_table'])) {
@@ -1298,7 +1304,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	public function checkAllCollections() {
-		foreach (array_keys($this->collections) as $collectionName) {
+		foreach (array_keys($this->collectionDefinitions) as $collectionName) {
 			$this->checkCollection($collectionName);
 		}
 	}
@@ -1315,14 +1321,14 @@ abstract class CoughObject {
 			$this->initCollection($collectionName);
 		}
 		// Only populate the collection (i.e. run a select on the database) if either a custom check function is set OR we have a KeyID.
-		if (isset($this->collections[$collectionName]['custom_check_function'])) {
-			$customCheckFunction = $this->collections[$collectionName]['custom_check_function'];
+		if (isset($this->collectionDefinitions[$collectionName]['custom_check_function'])) {
+			$customCheckFunction = $this->collectionDefinitions[$collectionName]['custom_check_function'];
 			$this->$customCheckFunction();
 		} else if ($this->hasKeyId()) {
 			// 2007-04-16/AWB: We should be calling the generated check method so that anytime the collection is checked it goes through a single point. This change fixes that issue:
 			$checkMethod = 'check' . ucwords($collectionName);
 			$this->$checkMethod();
-			// if (isset($this->collections[$collectionName]['join_table'])) {
+			// if (isset($this->collectionDefinitions[$collectionName]['join_table'])) {
 			// 	$this->checkManyToManyCollection($collectionName);
 			// } else {
 			// 	$this->checkOneToManyCollection($collectionName);
@@ -1342,7 +1348,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function checkOneToManyCollection($collectionName) {
-		$collection =& $this->collections[$collectionName];
+		$collection =& $this->collectionDefinitions[$collectionName];
 
 		$sql = '
 			SELECT *
@@ -1366,7 +1372,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function checkManyToManyCollection($collectionName) {
-		$collection =& $this->collections[$collectionName];
+		$collection =& $this->collectionDefinitions[$collectionName];
 
 		$sql = '
 			SELECT ' . $collection['collection_table'] . '.*' . $this->getJoinSelectSql($collectionName) . '
@@ -1408,7 +1414,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function getJoinSelectSql($collectionName) {
-		$collection =& $this->collections[$collectionName];
+		$collection =& $this->collectionDefinitions[$collectionName];
 		
 		// Get extra join fields on-the-fly
 		$joinFields = array();
@@ -1469,7 +1475,7 @@ abstract class CoughObject {
 	 **/
 	public function getCheckedCollections() {
 		$checkedCollections = array();
-		foreach (array_keys($this->collections) as $collectionName) {
+		foreach (array_keys($this->collectionDefinitions) as $collectionName) {
 			if ($this->isCollectionChecked($collectionName)) {
 				$checkedCollections[] = $collectionName;
 			}
@@ -1485,7 +1491,7 @@ abstract class CoughObject {
 	 **/
 	public function getNonCheckedCollections() {
 		$nonCheckedCollections = array();
-		foreach (array_keys($this->collections) as $collectionName) {
+		foreach (array_keys($this->collectionDefinitions) as $collectionName) {
 			if ( ! $this->isCollectionChecked($collectionName)) {
 				$nonCheckedCollections[] = $collectionName;
 			}
@@ -1590,7 +1596,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function saveCollection($collectionName) {
-		if (isset($this->collections[$collectionName]['join_table'])) {
+		if (isset($this->collectionDefinitions[$collectionName]['join_table'])) {
 			$this->saveManyToManyCollection($collectionName);
 		} else {
 			$this->saveOneToManyCollection($collectionName);
@@ -1616,7 +1622,7 @@ abstract class CoughObject {
 		// Update all removed items too by setting their foreign key id to NULL.
 		foreach ($this->$collectionName->getRemovedElements() as $elementID) {
 			// Build a custom update query based on the colleciton attributes
-			$collectionAttr =& $this->collections[$collectionName];
+			$collectionAttr =& $this->collectionDefinitions[$collectionName];
 			$collectionTable = $collectionAttr['collection_table'];
 			$relationKeyName = $collectionAttr['relation_key'];
 			$collectionKeyName = $collectionAttr['collection_key'];
@@ -1655,7 +1661,7 @@ abstract class CoughObject {
 		$this->$collectionName->save();
 
 		// Get easy access to the current collection attributes
-		$collection =& $this->collections[$collectionName];
+		$collection =& $this->collectionDefinitions[$collectionName];
 
 		/////////////////////////////////////////////////////////
 		// Save all the removed elements (update the join table)
