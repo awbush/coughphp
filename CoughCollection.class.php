@@ -635,7 +635,7 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Returns an array of KeyIDs that have been removed in comparision to what
+	 * Returns an array of KeyIDs that have been removed in comparison to what
 	 * was populated.
 	 *
 	 * @return array - element IDs for elements that have been removed.
@@ -652,7 +652,7 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Returns an array of KeyIDs that have been added in comparision to what
+	 * Returns an array of KeyIDs that have been added in comparison to what
 	 * was populated.
 	 *
 	 * @return array - element IDs for elements that have been added.

@@ -221,19 +221,8 @@ abstract class CoughObject {
 		$this->db = DatabaseFactory::getDatabase($this->dbName);
 		$this->db->selectDb($this->dbName);
 
-		if (get_class($fieldsOrID) && is_subclass_of($fieldsOrID, 'CoughCollection')) {
-			$this->setFieldsFromCollection($fieldsOrID);
-		} else if (is_array($fieldsOrID)) {
+		if (is_array($fieldsOrID)) {
 			$this->initFields($fieldsOrID);
-		// Should we handle case of when an object is passed in?
-		// } else if (get_class($fieldsOrID) && is_subclass_of($fieldsOrID, 'CoughObject')) {
-		// 	// Set to a copy or by reference to the other object?
-		// 	$this->setKeyId($fieldsOrID->getKeyId());
-		// 	$this->check();
-		//  // Or user can use:
-		// 	//$new_product = clone $product;
-		//  // or
-		//  //$new_product = $product;
 		} else if ($fieldsOrID != '') {
 			$this->setKeyId($fieldsOrID);
 			$this->check();
@@ -245,9 +234,6 @@ abstract class CoughObject {
 
 	protected function finishConstruction() {
 		// override for special construction behaviour that is dependent on the object's state
-		// $this->checkAllObjects();
-		// $this->initCollections();
-		//echo ("CoughObject::finishConstruction() for " . get_class($this) . "<br />\n");
 	}
 
 	/**
@@ -577,39 +563,11 @@ abstract class CoughObject {
 	protected function isNullAllowed($fieldName) {
 		if (isset($this->fieldDefinitions[$fieldName])) {
 			// Temporary: the is_array check is there for backwards compatibility with old generated code.
-			if (is_array($this->fieldDefinitions[$fieldName]) && array_key_exists('default_value', $this->fieldDefinitions[$fieldName])) {
+			if (array_key_exists('default_value', $this->fieldDefinitions[$fieldName])) {
 				return $this->fieldDefinitions[$fieldName]['is_null_allowed'];
 			}
 		}
 		return true; // backwards compatible default value
-	}
-	
-	/**
-	 * Sets the specified field name to it's default value.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 * @todo deprecate this in favor of $fields being initialized to default values?
-	 **/
-	public function setFieldToDefaultValue($fieldName) {
-		$this->setField($fieldName, $this->getFieldDefaultValue($fieldName));
-	}
-	
-	/**
-	 * Gets the default value for the specified field name.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 * @todo deprecate this in favor of $fields being initialized to default values?
-	 **/
-	public function getFieldDefaultValue($fieldName) {
-		if (isset($this->fieldDefinitions[$fieldName])) {
-			// Temporary: the is_array check is there for backwards compatibility with old generated code.
-			if (is_array($this->fieldDefinitions[$fieldName]) && array_key_exists('default_value', $this->fieldDefinitions[$fieldName])) {
-				return $this->fieldDefinitions[$fieldName]['default_value'];
-			}
-		}
-		return null; // backwards compatible default value
 	}
 	
 	/**
@@ -621,10 +579,9 @@ abstract class CoughObject {
 	 * @todo deprecate this in favor of $fields being initialized to default values?
 	 **/
 	protected function initFieldsToDefaultValues() {
-		foreach ($this->fieldDefinitions as $fieldName => $fieldAttr) {
-			// Temporary: the is_array check is there for backwards compatibility with old generated code.
-			if (is_array($fieldAttr) && array_key_exists('default_value', $fieldAttr)) {
-				$this->fields[$fieldName] = $fieldAttr['default_value'];
+		foreach ($this->fieldDefinitions as $fieldName => $fieldDef) {
+			if (array_key_exists('default_value', $fieldDef)) {
+				$this->fields[$fieldName] = $fieldDef['default_value'];
 			}
 		}
 	}
@@ -763,30 +720,6 @@ abstract class CoughObject {
 		}
 	}
 
-	/**
-	 * Undocumented function
-	 *
-	 * AWB:
-	 *     - When is this actually used?
-	 *     - protected / public?
-	 *
-	 * @param CoughCollection $c
-	 * @return void
-	 **/
-	protected function setFieldsFromCollection($c) {
-		if (is_subclass_of($c,'CoughCollection')) {
-			$i = $c->getIterator();
-			while ($i->valid()) {
-				$fieldName = $i->key();
-				$fieldValue = $i->current();
-				if (isset($this->fieldDefinitions[$fieldName])) {
-					$this->setField($fieldName, $fieldValue);
-				}
-				$i->next();
-			}
-		}
-	}
-
 	// ----------------------------------------------------------------------------------------------
 	// GETTORS AND SETTORS block ENDS
 	// ----------------------------------------------------------------------------------------------
@@ -808,8 +741,6 @@ abstract class CoughObject {
 	*/
 	public function check() {
 		if ($this->shouldCheckUsingCheckStatement()) {
-			// 2007-03-23/AWB: This has previously been un-used, and now that it will be, it needs to work by allowing FULL SQL customization.
-			// $sql = 'SELECT * FROM ' . $this->getCheckStatement() . ' WHERE ' . $this->getKeyName() . ' = "' . $this->getKeyId() . '"';
 			$sql = $this->getCheckStatement();
 		} else if ($this->shouldCheckUsingTableName()) {
 			$sql = 'SELECT * FROM ' . $this->dbName . '.' . $this->tableName . ' ' . $this->db->generateWhere($this->getPk());
@@ -1030,22 +961,11 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	public function saveCheckedCollections() {
-		foreach (array_keys($this->checkedCollections) as $collectionName) {
+		foreach ($this->collections as $collectionName => $collection) {
 			$this->saveCollection($collectionName);
 		}
 	}
-
-	/**
-	 * Saves everything. Probably shouldn't use. Just run save().
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function saveAll() {
-		$this->save();
-		$this->saveCheckedObjects();
-	}
-
+	
 	/*
 	 // ----------------------------------------------------------------------------------------------
 	 * create()
@@ -1085,12 +1005,11 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Updates the database with modified values
+	 * Updates the database with modified values, if any.
 	 *
-	 * @return boolean
+	 * @return boolean - true
 	 **/
 	public function update() {
-		// Update only the fields that were changed, if any.
 		$fields = $this->getModifiedFields();
 		if (!empty($fields)) {
 			$this->db->selectDb($this->dbName);
@@ -1098,31 +1017,7 @@ abstract class CoughObject {
 		}
 		return true;
 	}
-	/*
-	// ----------------------------------------------------------------------------------------------
-	 * populateCollection()
-	 * -------------------------
-	 * required args:		name of collection class
-	 * 						name of element class
-	 * 						sql statement that gets rows to populate collection with
-	 * optional args:		n/a
-	 * desc:
-	 * 						populateCollection() gets a set of rows from the database, constructs each row as an object, and pushes
-	 * 						that row onto the defined array name. This allows for easy population of object collections.
-	 * note:
-	 * 						populateCollection uses the primary key of each returned row as the array key for the collection
-	*/
-	public function populateCollection($collectionName, $elementName='', $sql='', $orderBySQL='') {
-		if (is_null($this->$collectionName)) {
-			$this->initCollection($collectionName);
-		}
-		if (is_object($this->$collectionName) && is_subclass_of($this->$collectionName,'CoughCollection')) {
-			$this->$collectionName->populateCollection($elementName, $sql, $orderBySQL);
-			$this->checkedCollections[$collectionName] = true;
-		} else {
-			throw new Exception("CoughObject::populateCollection did not have a collection object ($collectionName) to populate with $elementName elements.");
-		}
-	}
+	
 	// ----------------------------------------------------------------------------------------------
 	// object database methods / collection handling methods block ENDS
 	// ----------------------------------------------------------------------------------------------
@@ -1170,203 +1065,127 @@ abstract class CoughObject {
 	// permittors, testors, & validators block ENDS
 	// ----------------------------------------------------------------------------------------------
 
-
 	/**
-	 * Instantiates all objects and collections AND checks the database for
-	 * them.
+	 * Checks the object using the configuration in `objectDefinitions`.
 	 *
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function superCheck() {
-		$this->checkAllObjects();
-		$this->checkAllCollections();
+	protected function _checkObject($objectName) {
+		$objectInfo = &$this->objectDefinitions[$objectName];
+		$this->objects[$objectName] = new $objectInfo['class_name']($this->$objectInfo['get_id_method']());
 	}
-
+	
 	/**
-	 * Checks all the objects associated with the object
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function checkAllObjects() {
-		//echo ("CoughObject::checkAllObjects() called for " . get_class($this) . "<br />\n");
-		foreach (array_keys($this->objectDefinitions) as $objectName) {
-			$this->checkObject($objectName);
-		}
-		//echo ("CoughObject::checkAllObjects() finished<br />\n");
-	}
-
-	/**
-	 * Instantiates the given object name, using the information
-	 * specified in the `objectDefinitions` array.
+	 * Calls the check method for the given object name.
 	 *
 	 * @return void
 	 * @author Anthony Bush
 	 **/
 	protected function checkObject($objectName) {
-		$objectInfo = &$this->objectDefinitions[$objectName];
-		$this->objects[$objectName] = new $objectInfo['class_name']($this->$objectInfo['get_id_method']());
+		$checkMethod = 'check' . ucfirst($collectionName) . '_Object';
+		$this->$checkMethod();
 	}
-
+	
+	/**
+	 * Tells whether or not the given object name has been checked.
+	 *
+	 * @return boolean
+	 * @author Anthony Bush
+	 **/
+	protected function isObjectChecked($objectName) {
+		return isset($this->objects[$objectName]);
+	}
+	
 	/**
 	 * Returns the specified object for use.
 	 *
-	 * If the object has not been checked/instantiated, then it gets checked.
-	 *
-	 * @param string $objectName - the name of the object to check and get
+	 * @param $objectName - the name of the object to get
 	 * @return CoughObject - the requested object
 	 * @author Anthony Bush
 	 **/
-	protected function checkOnceAndGetObject($objectName) {
-		$this->readyObject($objectName);
-		return $this->objects[$objectName];
-	}
-
-	protected function readyObject($objectName) {
+	protected function getObject($objectName) {
 		if ( ! $this->isObjectChecked($objectName)) {
 			$this->checkObject($objectName);
 		}
+		return $this->objects[$objectName];
 	}
-
+	
 	/**
-	 * Instantiates each collection that is part of this object, according to
-	 * what defineCollections() set the `collections` array to.
-	 *
+	 * Checks the collection using the configuration in `collectionDefinitions`.
+	 * 
+	 * You can override the SQL, element name, and orderBySQL options.
+	 * 
+	 * @todo Document parameters
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function initAllCollections() {
-		foreach (array_keys($this->collectionDefinitions) as $collectionName) {
-			$this->initCollection($collectionName);
-		}
-	}
-
-	/**
-	 * Instantiates the given collection name.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function initCollection($collectionName) {
-		$collection =& $this->collectionDefinitions[$collectionName];
-		$this->$collectionName = new $collection['collection_class']();
+	protected function _checkCollection($collectionName, $elementName = '', $sql = '', $orderBySQL = '') {
+		$def =& $this->collectionDefinitions[$collectionName];
 		
-		if (isset($collection['join_table'])) {
-			$this->$collectionName->setCollector($this, CoughCollection::MANY_TO_MANY, $collection['join_table']);
+		$collection = new $def['collection_class']();
+		
+		if (isset($def['join_table'])) {
+			$collection->setCollector($this, CoughCollection::MANY_TO_MANY, $def['join_table']);
+			
+			if (empty($sql) && $this->hasKeyId()) {
+				$sql = '
+					SELECT ' . $def['collection_table'] . '.*' . $this->getJoinSelectSql($collectionName) . '
+					FROM ' .$def['join_table'] . '
+					INNER JOIN ' . $def['collection_table'] . ' ON ' . $def['join_table'] . '.' . $def['collection_key']
+						. ' = ' . $def['collection_table'] . '.' . $def['collection_key'] . '
+					WHERE ' . $def['join_table'] . '.' . $def['relation_key'] . ' = ' . $this->db->quote($this->getKeyId());
+
+				if (isset($def['retired_column']) && ! empty($def['retired_column'])) {
+					$sql .= '
+						AND ' . $def['collection_table'] . '.' . $def['retired_column'] . ' = ' . $this->db->quote($def['is_not_retired']);
+				}
+
+				if (isset($def['join_table_attr'])) {
+					$joinAttr =& $def['join_table_attr'];
+					if (isset($joinAttr['retired_column']) && ! empty($joinAttr['retired_column'])) {
+						$sql .= '
+							AND ' . $def['join_table'] . '.' . $joinAttr['retired_column'] . ' = ' . $this->db->quote($joinAttr['is_not_retired']);
+					}
+				}
+			}
+			
 		} else {
-			$this->$collectionName->setCollector($this, CoughCollection::ONE_TO_MANY);
+			$collection->setCollector($this, CoughCollection::ONE_TO_MANY);
+			
+			if (empty($sql) && $this->hasKeyId()) {
+				$sql = '
+					SELECT *
+					FROM ' . $def['collection_table'] . '
+					WHERE ' . $def['relation_key'] . ' = ' . $this->db->quote($this->getKeyId());
+
+				if (isset($def['retired_column']) && ! empty($def['retired_column'])) {
+					$sql .= '
+						AND ' . $def['retired_column'] . ' = ' . $this->db->quote($def['is_not_retired']);
+				}
+			}
+			
 		}
-	}
-
-	/**
-	 * Alias of `checkAllCollections`
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function populateAllCollections() {
-		$this->checkAllCollections();
-	}
-
-	/**
-	 * Checks all the collections associated with the object
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function checkAllCollections() {
-		foreach (array_keys($this->collectionDefinitions) as $collectionName) {
-			$this->checkCollection($collectionName);
+		
+		if (empty($elementName)) {
+			$elementName = $def['element_class'];
 		}
+		
+		$collection->populateCollection($elementName, $sql, $orderBySQL);
+		
+		$this->collections[$collectionName] = $collection;
 	}
-
+	
 	/**
-	 * Checks/populates the collection for the specified collection name.
+	 * Calls the check method for the given collection name.
 	 *
 	 * @param string $collectionName - the name of the collection to check
 	 * @return void
 	 * @author Anthony Bush
 	 **/
 	protected function checkCollection($collectionName) {
-		if (is_null($this->$collectionName)) {
-			$this->initCollection($collectionName);
-		}
-		// Only populate the collection (i.e. run a select on the database) if either a custom check function is set OR we have a KeyID.
-		if (isset($this->collectionDefinitions[$collectionName]['custom_check_function'])) {
-			$customCheckFunction = $this->collectionDefinitions[$collectionName]['custom_check_function'];
-			$this->$customCheckFunction();
-		} else if ($this->hasKeyId()) {
-			// 2007-04-16/AWB: We should be calling the generated check method so that anytime the collection is checked it goes through a single point. This change fixes that issue:
-			$checkMethod = 'check' . ucwords($collectionName);
-			$this->$checkMethod();
-			// if (isset($this->collectionDefinitions[$collectionName]['join_table'])) {
-			// 	$this->checkManyToManyCollection($collectionName);
-			// } else {
-			// 	$this->checkOneToManyCollection($collectionName);
-			// }
-		} else {
-			// 2007-06-25/AWB: Update checked collection status for collections with no parent yet. For example, you create an order and then "check" the order line collection (even though you have no order id yet); the collection should be empty, and it was, but it should also be marked checked, and now it is.
-			$this->checkedCollections[$collectionName] = true;
-		}
-	}
-
-	/**
-	 * Checks/populates the collection for the specified one-to-many collection
-	 * name.
-	 *
-	 * @param string $collectionName - the name of the collection to check
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function checkOneToManyCollection($collectionName) {
-		$collection =& $this->collectionDefinitions[$collectionName];
-
-		$sql = '
-			SELECT *
-			FROM ' . $collection['collection_table'] . '
-			WHERE ' . $collection['relation_key'] . ' = ' . $this->db->quote($this->getKeyId());
-
-		if (isset($collection['retired_column']) && ! empty($collection['retired_column'])) {
-			$sql .= '
-				AND ' . $collection['retired_column'] . ' = ' . $this->db->quote($collection['is_not_retired']);
-		}
-
-		$this->populateCollection($collectionName, $collection['element_class'], $sql);
-	}
-
-	/**
-	 * Checks/populates the collection for the specified many-to-many
-	 * collection name.
-	 *
-	 * @param string $collectionName - the name of the collection to check
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function checkManyToManyCollection($collectionName) {
-		$collection =& $this->collectionDefinitions[$collectionName];
-
-		$sql = '
-			SELECT ' . $collection['collection_table'] . '.*' . $this->getJoinSelectSql($collectionName) . '
-			FROM ' .$collection['join_table'] . '
-			INNER JOIN ' . $collection['collection_table'] . ' ON ' . $collection['join_table'] . '.' . $collection['collection_key']
-				. ' = ' . $collection['collection_table'] . '.' . $collection['collection_key'] . '
-			WHERE ' . $collection['join_table'] . '.' . $collection['relation_key'] . ' = ' . $this->db->quote($this->getKeyId());
-		
-		if (isset($collection['retired_column']) && ! empty($collection['retired_column'])) {
-			$sql .= '
-				AND ' . $collection['collection_table'] . '.' . $collection['retired_column'] . ' = ' . $this->db->quote($collection['is_not_retired']);
-		}
-		
-		if (isset($collection['join_table_attr'])) {
-			$joinAttr =& $collection['join_table_attr'];
-			if (isset($joinAttr['retired_column']) && ! empty($joinAttr['retired_column'])) {
-				$sql .= '
-					AND ' . $collection['join_table'] . '.' . $joinAttr['retired_column'] . ' = ' . $this->db->quote($joinAttr['is_not_retired']);
-			}
-		}
-
-		$this->populateCollection($collectionName, $collection['element_class'], $sql);
+		$checkMethod = 'check' . ucwords($collectionName);
+		$this->$checkMethod();
 	}
 	
 	/**
@@ -1386,15 +1205,15 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function getJoinSelectSql($collectionName) {
-		$collection =& $this->collectionDefinitions[$collectionName];
+		$def =& $this->collectionDefinitions[$collectionName];
 		
 		// Get extra join fields on-the-fly
 		$joinFields = array();
-		$sql = 'DESCRIBE '. $this->dbName . "." . $collection['join_table'];
+		$sql = 'DESCRIBE '. $this->dbName . "." . $def['join_table'];
 		$result = $this->db->query($sql);
 		while ($row = $result->getRow()) {
 			$joinFieldName = $row['Field'];
-			$joinFields[] = $collection['join_table'] . '.' . $joinFieldName . ' AS `' . $collection['join_table'] . '.' . $joinFieldName . '`';
+			$joinFields[] = $def['join_table'] . '.' . $joinFieldName . ' AS `' . $def['join_table'] . '.' . $joinFieldName . '`';
 		}
 		$result->freeResult();
 		if ( ! empty($joinFields)) {
@@ -1407,84 +1226,14 @@ abstract class CoughObject {
 
 	/**
 	 * Tells whether or not the given collection name has been checked.
-	 * This also means the collection has been populated.
 	 *
-	 * @return boolean - true if collection has been populated, false if not.
+	 * @return boolean
 	 * @author Anthony Bush
 	 **/
 	protected function isCollectionChecked($collectionName) {
-		// We could ask the collection itself if it has been populated:
-		//     $this->$collectionName->isPopulated();
-		// BUT, we would need to make sure the object is even instantiated first...
-		//     if (is_null($this->$collectionName)) {
-		//         return false;
-		//     } else {
-		//         return $this->$collectionName->isPopulated();
-		//     }
-		// HOWEVER, we still want to keep a list of populated collections ourselves...
-		// It makes the saving more efficient because then we don't have to ask
-		// every single collection if they are populated, we simply iterate through
-		// our "is populated" array.
-
-		return isset($this->checkedCollections[$collectionName]);
-	}
-
-	/**
-	 * Tells whether or not the given object name has been checked.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function isObjectChecked($objectName) {
-		return isset($this->objects[$objectName]);
+		return isset($this->collections[$collectionName]);
 	}
 	
-	/**
-	 * Gets the checked collections
-	 *
-	 * @return array - the checked collections; each element is a string containing the collection name.
-	 * @author Anthony Bush
-	 **/
-	public function getCheckedCollections() {
-		$checkedCollections = array();
-		foreach (array_keys($this->collectionDefinitions) as $collectionName) {
-			if ($this->isCollectionChecked($collectionName)) {
-				$checkedCollections[] = $collectionName;
-			}
-		}
-		return $checkedCollections;
-	}
-
-	/**
-	 * Gets the non-checked collections
-	 *
-	 * @return array - the non-checked collections; each element is a string containing the collection name.
-	 * @author Anthony Bush
-	 **/
-	public function getNonCheckedCollections() {
-		$nonCheckedCollections = array();
-		foreach (array_keys($this->collectionDefinitions) as $collectionName) {
-			if ( ! $this->isCollectionChecked($collectionName)) {
-				$nonCheckedCollections[] = $collectionName;
-			}
-		}
-		return $nonCheckedCollections;
-	}
-
-	/**
-	 * Returns the specified collection for use.
-	 *
-	 * If the collection has not been checked/populated, then it gets checked.
-	 *
-	 * @param string $collectionName - the name of the collection to check and get
-	 * @return CoughCollection - the requested collection object
-	 * @author Anthony Bush
-	 **/
-	protected function checkOnceAndGetCollection($collectionName) {
-		$this->readyCollection($collectionName);
-		return $this->getCollection($collectionName);
-	}
-
 	/**
 	 * Returns the specified collection for use.
 	 *
@@ -1493,7 +1242,10 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function getCollection($collectionName) {
-		return $this->$collectionName;
+		if ( ! $this->isCollectionChecked($collectionName)) {
+			$this->checkCollection($collectionName);
+		}
+		return $this->collections[$collectionName];
 	}
 
 	/**
@@ -1511,8 +1263,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function setCollection($collectionName, $objectsOrIDs) {
-		$this->readyCollection($collectionName);
-		$this->$collectionName->set($objectsOrIDs);
+		$this->getCollection($collectionName)->set($objectsOrIDs);
 	}
 
 	/**
@@ -1530,8 +1281,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function addToCollection($collectionName, $objectsOrIDs, $joinFields = null) {
-		$this->readyCollection($collectionName);
-		$this->$collectionName->add($objectsOrIDs, $joinFields);
+		$this->getCollection($collectionName)->add($objectsOrIDs, $joinFields);
 	}
 
 	/**
@@ -1549,16 +1299,9 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function removeFromCollection($collectionName, $objectsOrIDs) {
-		$this->readyCollection($collectionName);
-		$this->$collectionName->remove($objectsOrIDs);
+		$this->getCollection($collectionName)->remove($objectsOrIDs);
 	}
-
-	protected function readyCollection($collectionName) {
-		if ( ! $this->isCollectionChecked($collectionName)) {
-			$this->checkCollection($collectionName);
-		}
-	}
-
+	
 	/**
 	 * Saves the specified collection, checking the type of collection first.
 	 * (i.e. one-to-many or many-to-many).
@@ -1583,24 +1326,21 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function saveOneToManyCollection($collectionName) {
-		// TODO: Cough: Make sure that once we update the collection to handle
-		// it's collected object's attributes, that we make sure the logic here
-		// still works. PROBABLY, the case will be that the following logic
-		// will simply be moved into the collections save method.
-
+		$collection = $this->getCollection($collectionName);
+		
 		// Call save on all collected items that still exist.
-		$this->$collectionName->save();
+		$collection->save();
 
 		// Update all removed items too by setting their foreign key id to NULL.
-		foreach ($this->$collectionName->getRemovedElements() as $elementID) {
+		foreach ($collection->getRemovedElements() as $elementID) {
 			// Build a custom update query based on the colleciton attributes
-			$collectionAttr =& $this->collectionDefinitions[$collectionName];
-			$collectionTable = $collectionAttr['collection_table'];
-			$relationKeyName = $collectionAttr['relation_key'];
-			$collectionKeyName = $collectionAttr['collection_key'];
+			$def =& $this->collectionDefinitions[$collectionName];
+			$collectionTable = $def['collection_table'];
+			$relationKeyName = $def['relation_key'];
+			$collectionKeyName = $def['collection_key'];
 			$sql = 'UPDATE ' . $collectionTable . ' SET ' . $relationKeyName . ' = NULL WHERE ' . $collectionKeyName . ' = "' . $elementID . '"';
-			if ( ! is_null($collectionAttr['retired_column'])) {
-				$sql .= ' AND ' . $collectionAttr['retired_column'] . ' = "' . $collectionAttr['is_not_retired'] . '"';
+			if ( ! is_null($def['retired_column'])) {
+				$sql .= ' AND ' . $def['retired_column'] . ' = "' . $def['is_not_retired'] . '"';
 			}
 
 			// Execute the query
@@ -1608,7 +1348,7 @@ abstract class CoughObject {
 		}
 
 		// Update status in memory as saved.
-		$this->$collectionName->resetCollectionChanges();
+		$collection->resetCollectionChanges();
 	}
 
 	/**
@@ -1619,32 +1359,24 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function saveManyToManyCollection($collectionName) {
+		$collection = $this->getCollection($collectionName);
+		
 		// Save each collected object
-		// NOTE:
-		//    This could be considered inefficient, but it's impossible to
-		//    know if any of the collected elements where changed. The user
-		//    could have done it without us knowing via something like:
-		//       $product->getOs_Collection()[2]->setName('FreeBSD');
-		//    Or in a more practical way:
-		//       $oses = $product->getOs_Collection();
-		//       foreach ($oses as $osID => $os) {
-		//           $os->setLastModifiedDatetime('0000-00-00 00:00:00');
-		//       }
-		$this->$collectionName->save();
+		$collection->save();
 
 		// Get easy access to the current collection attributes
-		$collection =& $this->collectionDefinitions[$collectionName];
-
+		$def =& $this->collectionDefinitions[$collectionName];
+		
 		/////////////////////////////////////////////////////////
 		// Save all the removed elements (update the join table)
 		/////////////////////////////////////////////////////////
 
-		$removedElementIDs = $this->$collectionName->getRemovedElements();
+		$removedElementIDs = $collection->getRemovedElements();
 		if ( ! empty($removedElementIDs)) {
 
-			if (isset($collection['join_table_attr']) && isset($collection['join_table_attr']['retired_column']))
+			if (isset($def['join_table_attr']) && isset($def['join_table_attr']['retired_column']))
 			{
-				$joinAttr =& $collection['join_table_attr'];
+				$joinAttr =& $def['join_table_attr'];
 				foreach ($removedElementIDs as $elementID) {
 
 					$setFields = array(
@@ -1653,28 +1385,28 @@ abstract class CoughObject {
 
 					$whereFields = array(
 						  // 2007-04-16/AWB: We should probably stop the remove functionality, or have it work on primary keys... or have the collection perform the remove. For example, allow end-users to override some remove-like function that specifies how a remove should occur, e.g. maybe a remove is $collectedElement->setJoinField('is_retired', 1); or maybe a remove is $collectedElement->setIsRetired(1); or $collectedElement->markForDelete();
-						  // $collection['join_primary_key'] => $elementID
-						  $collection['relation_key']   => $this->getKeyId()
-						, $collection['collection_key'] => $elementID
+						  // $def['join_primary_key'] => $elementID
+						  $def['relation_key']   => $this->getKeyId()
+						, $def['collection_key'] => $elementID
 						, $joinAttr['retired_column']   => $joinAttr['is_not_retired']
 					);
 
-					$this->db->doUpdate($collection['join_table'], $setFields, null, $whereFields);
+					$this->db->doUpdate($def['join_table'], $setFields, null, $whereFields);
 				}
 			}
 			// If there is no retired column specified, then we can't remove..
 			else
 			{
 				// TODO: Add documentation for this... Also, add an option to the generator that allows this attribute to be added automatically for tables with no retired column.
-				if (isset($collection['allow_deletes']) && $collection['allow_deletes']) {
+				if (isset($def['allow_deletes']) && $def['allow_deletes']) {
 					$whereFields = array(
-						  $collection['relation_key']   => $this->getKeyId()
-						, $collection['collection_key'] => $elementID
+						  $def['relation_key']   => $this->getKeyId()
+						, $def['collection_key'] => $elementID
 					);
-					$this->db->doDelete($collection['join_table'], $whereFields);
+					$this->db->doDelete($def['join_table'], $whereFields);
 				} else {
 					// No retired column and deletes are not allowed, i.e. we have no way to "save" the current state.
-					throw new Exception('No retired column set for collection "' . $collectionName . '" (join table "' . $collection['join_table'] . '"). The `allow_deletes` attributes is also not set. Either add a retired column to ' . $collection['join_table'] . ' or enable deletes for this join table in the Cough model.');
+					throw new Exception('No retired column set for collection "' . $collectionName . '" (join table "' . $def['join_table'] . '"). The `allow_deletes` attributes is also not set. Either add a retired column to ' . $def['join_table'] . ' or enable deletes for this join table in the Cough model.');
 				}
 			}
 		}
@@ -1686,7 +1418,7 @@ abstract class CoughObject {
 		/* 2007-02-19/AWB: This is now handled by the element itself.
 		// First, build an array of value arrays to insert
 		$values = array();
-		foreach ($this->$collectionName->getAddedElements() as $elementID) {
+		foreach ($collection->getAddedElements() as $elementID) {
 			$values[] = array($elementID, $this->getKeyId());
 		}
 
@@ -1694,14 +1426,14 @@ abstract class CoughObject {
 		if ( ! empty($values)) {
 
 			// What fields are we inserting?
-			$fields = array($collection['collection_key'], $collection['relation_key']);
+			$fields = array($def['collection_key'], $def['relation_key']);
 
 			// Do the insert
-			$this->db->insertMultiple($collection['join_table'], $fields, $values);
+			$this->db->insertMultiple($def['join_table'], $fields, $values);
 		}
 		*/
 		
-		$this->$collectionName->resetCollectionChanges();
+		$collection->resetCollectionChanges();
 	}
 	
 	protected function saveJoinFields() {
