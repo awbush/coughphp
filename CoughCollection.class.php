@@ -33,11 +33,6 @@ abstract class CoughCollection extends ArrayObject {
 	protected $elementClassName;
 	protected $orderBySQL;
 	
-	protected $init_dbName = '';
-	protected $init_collectionSQL = '';
-	protected $init_elementClassName = '';
-	protected $init_orderBySQL = '';
-	
 	/**
 	 * Reference to database object.
 	 *

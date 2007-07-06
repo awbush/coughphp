@@ -119,17 +119,6 @@ abstract class CoughObject {
 	 **/
 	protected $tablesColumns = array();
 
-	// TODO: Remove these as we don't need them, and make sure all the define functions
-	// stop using them as well. (Fix the generator, too.)
-	protected $init_dbName;
-	protected $init_tableName;
-	protected $init_primaryKey;
-	protected $init_nameColumn;
-	protected $init_columns = array();
-	protected $init_statement;
-	protected $init_tablesColumns;
-
-
 	/**
 	 * An array of all the collections and their attributes.
 	 *
