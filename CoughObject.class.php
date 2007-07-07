@@ -956,45 +956,23 @@ abstract class CoughObject {
 		}
 	}
 	
-	/*
-	 // ----------------------------------------------------------------------------------------------
-	 * create()
-	 * -------------------------
-	 * required args:		n/a
-	 * optional args:		n/a
-	 * desc:
-	 * 						create() writes a new row to the database and sets the object's key id with the returned database insert id
-	 * note:
-	 * 						this writes to the database any values that are currently set for the object's fields
-	 */
 	/**
 	 * Inserts a new row to the database and sets the object's key id with the
 	 * returned database insert id.
 	 * 
 	 * If the object has a multi-key PK, then the key is not set after insert.
 	 * 
-	 * Only values that have been modified are used in the INSERT statement,
-	 * leaving it up to the database to set default values for the other fields.
+	 * By default, only values that have been modified are used in the INSERT
+	 * statement, leaving it up to the database to set default values for the
+	 * other fields. To change this, override the {@link getInsertFields()}
+	 * method.
 	 * 
-	 * Any modified field that is set to NULL where NULL is not allowed is
-	 * skipped.
-	 * @todo Remove the NULL skip behavior... that belongs in the AppCoughObject
-	 * layer for Academic Superstore.
-	 *
 	 * @return boolean
 	 * @author Anthony Bush
 	 **/
 	public function insert() {
 		
-		// Loop through fields and build one without null values that aren't allowed
-		$fields = array();
-		// foreach ($this->fields as $fieldName => $fieldValue) {
-		foreach ($this->getModifiedFields() as $fieldName => $fieldValue) {
-			if (is_null($fieldValue) && !$this->isNullAllowed($fieldName)) {
-				continue;
-			}
-			$fields[$fieldName] = $fieldValue;
-		}
+		$fields = $this->getInsertFields();
 		
 		$this->db->selectDb($this->dbName);
 		if (!$this->hasKeyId()) {
@@ -1012,17 +990,41 @@ abstract class CoughObject {
 	}
 	
 	/**
+	 * Returns the fields that should be used for inserting. This logic is
+	 * separate from the insert method to make it easy to override the
+	 * behavior.
+	 *
+	 * @return associative array [field_name] => [field_value]
+	 * @author Anthony Bush
+	 **/
+	protected function getInsertFields() {
+		return $this->getModifiedFields();
+	}
+	
+	/**
 	 * Updates the database with modified values, if any.
 	 *
 	 * @return boolean - true
 	 **/
 	public function update() {
-		$fields = $this->getModifiedFields();
+		$fields = $this->getUpdateFields();
 		if (!empty($fields)) {
 			$this->db->selectDb($this->dbName);
 			$this->db->doUpdate($this->tableName, $fields, null, $this->getPk());
 		}
 		return true;
+	}
+	
+	/**
+	 * Returns the fields that should be used for updating. This logic is
+	 * separate from the update method to make it easy to override the
+	 * behavior.
+	 *
+	 * @return associative array [field_name] => [field_value]
+	 * @author Anthony Bush
+	 **/
+	protected function getUpdateFields() {
+		return $this->getModifiedFields();
 	}
 	
 	// ----------------------------------------------------------------------------------------------
@@ -1031,7 +1033,10 @@ abstract class CoughObject {
 
 	/**
 	 * Checks the object using the configuration in `objectDefinitions`.
-	 *
+	 * 
+	 * Generic (aka generated) check methods, e.g. `checkProduct_Object`,
+	 * should call this method, e.g. `$this->_checkObject('product');`
+	 * 
 	 * @return void
 	 * @author Anthony Bush
 	 **/
