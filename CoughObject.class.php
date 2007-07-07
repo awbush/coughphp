@@ -1435,11 +1435,10 @@ abstract class CoughObject {
 	/**
 	 * Returns the function name of the getter for the given field name.
 	 *
-	 * TODO: Instead of calling getTitleCase, have the generator set the titlecase in the columns array.
-	 * Also, it doesn't work for the primary key getter.
-	 *
 	 * @return void
 	 * @author Anthony Bush
+	 * @todo Instead of calling getTitleCase, have the generator set the titlecase in the columns array.
+	 * @todo Can we deprecate this method?
 	 **/
 	public function getGetter($fieldName) {
 		$potentialGetter = 'get' . String::getTitleCase($fieldName);
@@ -1453,11 +1452,10 @@ abstract class CoughObject {
 	/**
 	 * Returns the function name of the setter for the given field name.
 	 *
-	 * TODO: Instead of calling getTitleCase, have the generator set the titlecase in the columns array.
-	 * Also, it doesn't work for the primary key setter.
-	 *
 	 * @return void
 	 * @author Anthony Bush
+	 * @todo Instead of calling getTitleCase, have the generator set the titlecase in the columns array.
+	 * @todo Can we deprecate this method?
 	 **/
 	public function getSetter($fieldName) {
 		$potentialGetter = 'set' . String::getTitleCase($fieldName);
