@@ -35,6 +35,7 @@ abstract class CoughObject {
 	 * Stores wether or not a check returned a row from the database.
 	 *
 	 * @var boolean
+	 * @see didCheckReturnResult()
 	 **/
 	protected $checkReturnedResult = null;
 
@@ -54,6 +55,7 @@ abstract class CoughObject {
 	 * Format of "db_column_name" => value
 	 *
 	 * @var array
+	 * @see getField(), getFields(), getFieldsWithoutPk(), setField(), setFields()
 	 **/
 	protected $fields = array();
 
@@ -61,6 +63,7 @@ abstract class CoughObject {
 	 * An array of fields that have been modified.
 	 *
 	 * @var array
+	 * @see getModifiedFields(), setModifiedField(), resetModified()
 	 **/
 	protected $modifiedFields = array();
 	
@@ -71,6 +74,7 @@ abstract class CoughObject {
 	 * Format of "derived_field_name" => value
 	 *
 	 * @var array
+	 * @see getDerivedField(), setDerivedField()
 	 **/
 	protected $derivedFields = array();
 
@@ -80,6 +84,7 @@ abstract class CoughObject {
 	 * Override in sub class.
 	 * 
 	 * @var array
+	 * @see getPkFieldNames(), getPk()
 	 **/
 	protected $pkFieldNames = array();
 
@@ -119,7 +124,7 @@ abstract class CoughObject {
 	 *
 	 * Format of "collection_name" => array of attributes
 	 *
-	 * TODO: Document that array of attributes. For now just look at the
+	 * @todo Document that array of attributes. For now just look at the
 	 * woc_Product_Generated class (at the defineCollections() function).
 	 *
 	 * @var array
@@ -130,6 +135,7 @@ abstract class CoughObject {
 	 * An array of all the checked collections in form [collectionName] => [CoughCollection]
 	 * 
 	 * @var array
+	 * @see getCollection(), setCollection(), checkCollection(), saveCheckedCollections()
 	 **/
 	protected $collections = array();
 	
@@ -141,6 +147,7 @@ abstract class CoughObject {
 	 * Format of "collection_name" => true
 	 *
 	 * @var string
+	 * @see isCollectionChecked()
 	 **/
 	protected $checkedCollections = array();
 
@@ -163,6 +170,7 @@ abstract class CoughObject {
 	 * An array of all the checked objects in form [objectName] => [CoughObject]
 	 * 
 	 * @var array
+	 * @see getObject(), checkObject(), saveCheckedObjects(), isObjectChecked()
 	 **/
 	protected $objects = array();
 
@@ -179,6 +187,7 @@ abstract class CoughObject {
 	 * an insert should take place when saving.
 	 *
 	 * @var boolean
+	 * @see setPreknownKeyId()
 	 **/
 	protected $isPreknownKeyIdSet = false;
 
@@ -226,35 +235,35 @@ abstract class CoughObject {
 		} else if ($fieldsOrID != '') {
 			$this->setKeyId($fieldsOrID);
 			$this->check();
-		} else {
-			// do nothing
 		}
+		
 		$this->finishConstruction();
 	}
-
-	protected function finishConstruction() {
-		// override for special construction behaviour that is dependent on the object's state
-	}
-
+	
 	/**
+	 * Called at the end of __construct(). Override for special construction
+	 * behavior that is dependent on the object's state.
+	 * 
+	 * @return void
+	 **/
+	protected function finishConstruction() {
+	}
+	
+	/**
+	 * Sets the cough object's basic identity:
+	 * 
+	 *    - {@link $fieldDefinitions}
+	 *    - {@link $objectDefinitions}
+	 *    - {@link $collectionDefinitions}
+	 *    - default values
 	 *
-	 * protected _initializeDefinitions()
-	 *	-------------------------
-	 *		required args:		n/a
-	 *		optional args:		n/a
-	 *		desc:
-	 *								_initializeDefinitions() sets the cough object's basic identity.
-	 */
+	 * @return void
+	 **/
 	protected function initializeDefinitions() {
-		$this->initFieldsToDefaultValues();
 
 		// the below method is used only if your class has a special check query other than a select by PK
 		// $this->defineCheckStatement();
-
-		// TODO: multi-table support has not been completed. -Tom
-		// $this->defineTablesColumns(); // only needed for multi-table situations
-
-
+		
 		// defineObjects() and defineCollections() are run last to allow them
 		// to make decisions based on the above definitions
 		$this->defineObjects();
@@ -297,12 +306,11 @@ abstract class CoughObject {
 		}
 		
 		// Mark all fields as having been modified (except key ID) so that a call to save() will complete the clone.
-		$fields = $this->fields;
-		foreach ($this->pkFieldNames as $fieldName) {
-			unset($fields[$fieldName]);
-			$this->fields[$fieldName] = null;
+		$this->setKeyId(null);
+		$this->resetModified();
+		foreach (array_keys($this->getFieldsWithoutPk()) as $fieldName) {
+			$this->setModifiedField($fieldName);
 		}
-		$this->modifiedFields = array_keys($fields);
 	}
 	
 	/**
@@ -453,13 +461,22 @@ abstract class CoughObject {
 	 *
 	 * @return boolean
 	 * @author Anthony Bush
+	 * @todo If NULL is a valid value for a PK, this function needs an update.
 	 **/
 	public function hasKeyId() {
+		// Must have at least one field marked as PK.
+		if (empty($this->pkFieldNames)) {
+			return false;
+		}
+		
+		// All PK fields must be initialized
+		// (TODO: what about NULL as a valid value? If it is, consider the slower array_key_exists method)
 		foreach ($this->pkFieldNames as $fieldName) {
 			if (!isset($this->fields[$fieldName])) {
 				return false;
 			}
 		}
+		
 		// Search for non-set key exhausted.
 		return true;
 	}
@@ -521,23 +538,6 @@ abstract class CoughObject {
 		return $this->pkFieldNames;
 	}
 	
-	
-	/*
-	 * getCheckStatement()
-	 * -------------------------
-	 * required args:
-	 * 						n/a
-	 * optional args:
-	 * 						n/a
-	 * desc:
-	 * 						getCheckStatement() returns the current statement that the "check()" method should run
-	 * note:
-	 * 						this statement is only used if the class has no primary key defined
-	*/
-	protected function getCheckStatement() {
-		return ($this->checkStatement);
-	}
-	
 	/**
 	 * Returns the current value of the requested field name.
 	 *
@@ -563,27 +563,11 @@ abstract class CoughObject {
 	protected function isNullAllowed($fieldName) {
 		if (isset($this->fieldDefinitions[$fieldName])) {
 			// Temporary: the is_array check is there for backwards compatibility with old generated code.
-			if (array_key_exists('default_value', $this->fieldDefinitions[$fieldName])) {
+			if (array_key_exists('is_null_allowed', $this->fieldDefinitions[$fieldName])) {
 				return $this->fieldDefinitions[$fieldName]['is_null_allowed'];
 			}
 		}
 		return true; // backwards compatible default value
-	}
-	
-	/**
-	 * Initializes all fields to their default values (without marking them
-	 * modified).
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 * @todo deprecate this in favor of $fields being initialized to default values?
-	 **/
-	protected function initFieldsToDefaultValues() {
-		foreach ($this->fieldDefinitions as $fieldName => $fieldDef) {
-			if (array_key_exists('default_value', $fieldDef)) {
-				$this->fields[$fieldName] = $fieldDef['default_value'];
-			}
-		}
 	}
 	
 	/**
@@ -595,7 +579,7 @@ abstract class CoughObject {
 	 **/
 	protected function setField($fieldName, $value) {
 		$this->fields[$fieldName] = $value;
-		$this->setModified($fieldName);
+		$this->setModifiedField($fieldName);
 	}
 	
 	/**
@@ -728,27 +712,33 @@ abstract class CoughObject {
 	// ----------------------------------------------------------------------------------------------
 	// object database methods / collection handling methods block BEGINS
 	// ----------------------------------------------------------------------------------------------
-	/*
-	// ----------------------------------------------------------------------------------------------
-	 * check()
-	 * -------------------------
-	 * required args:		n/a
-	 * optional args:		n/a
-	 * desc:
-	 * 						check() gets an row from the class's corresponding table as an associative array uses it as an argument to invoke setFields()
-	 * note:
-	 * 						this will set the object's primary key and "row name"
-	*/
+	
+	/**
+	 * Retrieves the object's data from the database, loading it into memory.
+	 * 
+	 * @return boolean - whether or not check was able to find a record in the database.
+	 * @author Anthony Bush
+	 **/
 	public function check() {
-		if ($this->shouldCheckUsingCheckStatement()) {
-			$sql = $this->getCheckStatement();
-		} else if ($this->shouldCheckUsingTableName()) {
+		return $this->checkBySql($this->getCheckSql());
+	}
+	
+	/**
+	 * Returns the current SQL statement that the {@link check()} method should
+	 * run.
+	 * 
+	 * Override this in sub classes for custom SQL.
+	 *
+	 * @return mixed - string of SQL or empty string if no SQL to run.
+	 * @author Anthony Bush
+	 **/
+	protected function getCheckSql() {
+		if ($this->hasKeyId()) {
 			$sql = 'SELECT * FROM ' . $this->dbName . '.' . $this->tableName . ' ' . $this->db->generateWhere($this->getPk());
 		} else {
-			// can't check.
-			return false;
+			$sql = '';
 		}
-		return $this->checkBySql($sql);
+		return $sql;
 	}
 	
 	/**
@@ -818,11 +808,9 @@ abstract class CoughObject {
 	}
 
 	/**
-	 * Clear the list of modified fields
+	 * Clear the list of modified fields and other modified flags.
 	 *
 	 * @return void
-	 * @author Wayne Wight
-	 * @author Anthony Bush
 	 **/
 	protected function resetModified() {
 		$this->modifiedFields = array();
@@ -835,25 +823,24 @@ abstract class CoughObject {
 	/**
 	 * Add a field to the list of modified fields
 	 *
+	 * @param string $fieldName
 	 * @return void
-	 * @param string $fieldName - the name of the field (db_column_name) to mark modified
-	 * @author Wayne Wight
 	 **/
-	protected function setModified($fieldName) {
-		$this->modifiedFields[] = $fieldName;
+	protected function setModifiedField($fieldName) {
+		$this->modifiedFields[$fieldName] = true;
 	}
 
 	/**
-	 * Get a list of all of this object's modified values, indexed by their
-	 * database field names/columns
+	 * Get a list of all of this object's modified values.
 	 *
-	 * @return hash - a hash of all modified values in (dbColumn => currentValue) form
-	 * @author Wayne Wight
+	 * @return associative array - all modified values in [field_name] => [field_value] form
 	 **/
 	protected function getModifiedFields() {
 		$fields = array();
-		foreach ($this->modifiedFields as $fieldName) {
-			$fields[$fieldName] = $this->getField($fieldName);
+		foreach ($this->modifiedFields as $fieldName => $isModified) {
+			if ($isModified) {
+				$fields[$fieldName] = $this->getField($fieldName);
+			}
 		}
 		return $fields;
 	}
@@ -861,6 +848,8 @@ abstract class CoughObject {
 	/**
 	 * If the object has a parent, then this method will update its foreign
 	 * key with the value from the parent's primary key.
+	 * 
+	 * It's called automatically by {@link save()}.
 	 *
 	 * @return void
 	 * @author Anthony Bush
@@ -883,7 +872,9 @@ abstract class CoughObject {
 	/**
 	 * Creates a new entry if needed, otherwise it updates an existing one.
 	 * During an update, it only updates the modified fields.
-	 *
+	 * During an insert, it only inserts modified fields (leaving defaults up to
+	 * the database server).
+	 * 
 	 * @return boolean - the result of the create/update.
 	 * @author Anthony Bush
 	 **/
@@ -898,9 +889,9 @@ abstract class CoughObject {
 			return false;
 		}
 		
-		// Save self first, in case the KeyID of a creation is needed by the saving of collections.
-		if ($this->shouldCreate()) {
-			$result = $this->create();
+		// Save self first, in case the PK is needed for remaining saves.
+		if ($this->shouldInsert()) {
+			$result = $this->insert();
 		} else {
 			$result = $this->update();
 		}
@@ -909,7 +900,6 @@ abstract class CoughObject {
 		// save the objects automatically. It's worth noting that we never had
 		// the ability to see which ones were checked (and thus potentially
 		// modified) either, but we do now.
-
 		//$this->saveCheckedObjects();
 
 		// Save collections next, but only ones that have been checked.
@@ -926,13 +916,13 @@ abstract class CoughObject {
 	}
 
 	/**
-	 * Indicates whether or not a save should create a new record or update an
+	 * Indicates whether or not a save should insert a new record or update an
 	 * existing one.
 	 *
-	 * @return boolean - true = create new, false = update existing one
+	 * @return boolean - true = insert new, false = update existing one
 	 * @author Anthony Bush
 	 **/
-	protected function shouldCreate() {
+	protected function shouldInsert() {
 		if (!$this->hasKeyId() || $this->isPreknownKeyIdSet === true) {
 			return true;
 		} else {
@@ -977,7 +967,24 @@ abstract class CoughObject {
 	 * note:
 	 * 						this writes to the database any values that are currently set for the object's fields
 	 */
-	public function create() {
+	/**
+	 * Inserts a new row to the database and sets the object's key id with the
+	 * returned database insert id.
+	 * 
+	 * If the object has a multi-key PK, then the key is not set after insert.
+	 * 
+	 * Only values that have been modified are used in the INSERT statement,
+	 * leaving it up to the database to set default values for the other fields.
+	 * 
+	 * Any modified field that is set to NULL where NULL is not allowed is
+	 * skipped.
+	 * @todo Remove the NULL skip behavior... that belongs in the AppCoughObject
+	 * layer for Academic Superstore.
+	 *
+	 * @return boolean
+	 * @author Anthony Bush
+	 **/
+	public function insert() {
 		
 		// Loop through fields and build one without null values that aren't allowed
 		$fields = array();
@@ -1020,49 +1027,6 @@ abstract class CoughObject {
 	
 	// ----------------------------------------------------------------------------------------------
 	// object database methods / collection handling methods block ENDS
-	// ----------------------------------------------------------------------------------------------
-
-
-	// ----------------------------------------------------------------------------------------------
-	// permittors, testors, & validators block BEGINS
-	// ----------------------------------------------------------------------------------------------
-
-	/**
-	 * Returns true if the class is set to run check() based on its key id and
-	 * not some special SQL statement
-	 *
-	 * @return boolean
-	 **/
-	protected function shouldCheckUsingTableName() {
-		if ($this->tableName != '') {
-			if (!empty($this->pkFieldNames)) {
-				if ($this->hasKeyId()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns true if the class is set to run check() based on some special pre-set SQL statement
-	 *
-	 * @return boolean
-	 **/
-	protected function shouldCheckUsingCheckStatement() {
-		if ($this->checkStatement != '') {
-			if (!empty($this->pkFieldNames)) {
-				if ($this->hasKeyId()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	
-	// ----------------------------------------------------------------------------------------------
-	// permittors, testors, & validators block ENDS
 	// ----------------------------------------------------------------------------------------------
 
 	/**
@@ -1209,7 +1173,7 @@ abstract class CoughObject {
 		
 		// Get extra join fields on-the-fly
 		$joinFields = array();
-		$sql = 'DESCRIBE '. $this->dbName . "." . $def['join_table'];
+		$sql = 'DESCRIBE '. $this->dbName . '.' . $def['join_table'];
 		$result = $this->db->query($sql);
 		while ($row = $result->getRow()) {
 			$joinFieldName = $row['Field'];
