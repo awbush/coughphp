@@ -16,7 +16,7 @@ abstract class CoughObject {
 	/**
 	 * Stores validation errors set by `validateData` function.
 	 * 
-	 * Format of "db_column_name" => "Error Text"
+	 * Format of "field_name" => "Error Text"
 	 *
 	 * @var array
 	 * @see clearValidationErrors()
@@ -43,7 +43,7 @@ abstract class CoughObject {
 	 * An array of all the columns in the database, including the primary key
 	 * column and name columns.
 	 *
-	 * Format of "db_column_name" => "Display Name"
+	 * Format of "field_name" => attributes
 	 *
 	 * @var array
 	 **/
@@ -52,7 +52,7 @@ abstract class CoughObject {
 	/**
 	 * An array of all the currently initialized or set fields.
 	 *
-	 * Format of "db_column_name" => value
+	 * Format of "field_name" => value
 	 *
 	 * @var array
 	 * @see getField(), getFields(), getFieldsWithoutPk(), setField(), setFields()
