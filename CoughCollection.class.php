@@ -6,17 +6,6 @@
  * @package CoughPHP
  **/
 abstract class CoughCollection extends ArrayObject {
-	// Values for the collectionType;
-	const KEYLESS = 0;
-	const KEYED   = 1;
-	protected $collectionType;
-	
-	// Changed status of each collected object
-	const REMOVED = 0;
-	const ADDED = 1;
-	const NOCHANGE = 2;
-	protected $collectionChanges = array();
-	protected $trackingEnabled = true;
 	
 	// Relationship managment
 	const NONE = 0;
@@ -47,6 +36,13 @@ abstract class CoughCollection extends ArrayObject {
 	 **/
 	protected $db;
 	
+	/**
+	 * Holds all the removed elements (unsaved)
+	 *
+	 * @var array of CoughObjects
+	 **/
+	protected $removedElements = array();
+	
 	public function getIterator() {
 		return new CoughIterator( $this );
 	}
@@ -56,9 +52,9 @@ abstract class CoughCollection extends ArrayObject {
 		$this->initializeDefinitions($specialArgs);
 		$this->db = DatabaseFactory::getDatabase($this->dbName);
 	}
+	
 	protected function initializeDefinitions($specialArgs=array()) {
 		$this->defineCollectionSQL();
-		$this->defineCollectionType();
 		$this->defineDefaultOrderClause();
 		$this->defineElementClassName();
 		$this->defineSpecialCriteria($specialArgs);
@@ -83,19 +79,6 @@ abstract class CoughCollection extends ArrayObject {
 	 **/
 	protected function defineDefaultOrderClause() {
 		$this->orderBySQL = '';
-	}
-	
-	/**
-	 * Set the collection type of the collection, KEYED, or KEYLESS.
-	 * Override this in sub class.
-	 * 
-	 * TODO: Cough: Remove KEYED support and move to KEYLESS mode full time?
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function defineCollectionType() {
-		$this->collectionType = self::KEYED;
 	}
 	
 	/**
@@ -138,16 +121,6 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Alias of populateCollection with no parameters.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function check() {
-		$this->populateCollection();
-	}
-	
-	/**
 	 * Populates the collection with optional overrides for both the element
 	 * class name and the SQL (you can override either one, or both, or neither)
 	 *
@@ -184,14 +157,11 @@ abstract class CoughCollection extends ArrayObject {
 		// Populate the collection
 		
 		$this->db->selectDb($this->dbName);
-		$result = $this->db->doQuery($collectionSQL);
+		$result = $this->db->query($collectionSQL);
 		if ($result->numRows() > 0) {
-			// Disable tracking for these elements that are fresh from the database
-			$this->trackingEnabled = false;
 			while ($row = $result->getRow()) {
-				$this->addElement(new $elementClassName($row));
+				$this->add(new $elementClassName($row));
 			}
-			$this->trackingEnabled = true;
 		}
 		
 		$result->freeResult();
@@ -245,65 +215,21 @@ abstract class CoughCollection extends ArrayObject {
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function save($fieldsToUpdate = null) {
-		$it = $this->getIterator();
-		while ($it->valid()) {
-			$element = $it->current();
-			if ($element instanceof CoughObject) {
-				$element->save($fieldsToUpdate);
+	public function save() {
+		foreach ($this as $key => $element) {
+			// Save the element, updating the collection's key if there wasn't one.
+			if (!$element->hasKeyId()) {
+				$element->save();
+				$this->offsetUnset($key);
+				$this->offsetSet($key, $element);
+			} else {
+				$element->save();
 			}
-			$it->next();
 		}
-	}
-	
-	/**
-	 * Returns the first element in the collection, or null if nothing in collection.
-	 *
-	 * @return mixed - first element in the collection, or null if nothing in collection.
-	 * @author Anthony Bush
-	 **/
-	public function getFirst() {
-		$it = $this->getIterator();
-		$it->rewind();
-		if ($it->valid()) {
-			return $it->current();
-		} else {
-			return null;
+		foreach ($this->removedElements as $element) {
+			$element->save();
 		}
-	}
-	
-	/**
-	 * Returns the last element in the collection, or null if nothing in collection.
-	 *
-	 * @return mixed - last element in the collection, or null if nothing in collection.
-	 * @author Anthony Bush
-	 **/
-	public function getLast() {
-		$it = $this->getIterator();
-		$count = $this->count();
-		if ($count > 0) {
-			$it->seek($count - 1);
-			return $it->current();
-		} else {
-			return null;
-		}
-	}
-	
-	/**
-	 * Returns a random element from the collection.
-	 *
-	 * @return mixed - a random element from the collection, or null if nothing in collection.
-	 * @author Anthony Bush
-	 **/
-	public function getRandom() {
-		$it = $this->getIterator();
-		$count = $this->count();
-		if ($count > 0) {
-			$it->seek(rand(0, $count - 1));
-			return $it->current();
-		} else {
-			return null;
-		}
+		$this->removedElements = array();
 	}
 	
 	/**
@@ -341,164 +267,34 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Set the collection to either:
-	 *  - another collection
-	 *  - or an array of elements
-	 *  - or a single element
-	 * 
-	 * where each element is either an ID of the current collection object type
-	 * to be added or the object itself.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function set($objectsOrIDs) {
-		$this->removeAll();
-		$this->add($objectsOrIDs);
-	}
-	
-	/**
-	 * Calls the appropriate addCollection() or addElements() function based
-	 * on the the type of object passed in.
-	 * 
-	 * If you know ahead of time what type you are adding, call the appropriate
-	 * function yourself rather than calling this.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function add($objectsOrIDs, $joinFields = null) {
-		if (get_class($objectsOrIDs) && is_subclass_of($objectsOrIDs,'CoughCollection')) {
-			$this->addCollection($objectsOrIDs);
-		} else {
-			$this->addElements($objectsOrIDs, $joinFields);
-		}
-	}
-	
-	/**
-	 * Adds all the elements of the collection object to the existing
-	 * collection.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function addCollection($collectionObj) {
-		foreach ($collectionObj as $elementObj) {
-			$this->addElement($elementObj);
-		}
-	}
-	
-	/**
-	 * Adds a single element or an array of elements, where each element is
-	 * either an ID of the current collection object type to be added or the
-	 * object itself.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function addElements($objectsOrIDs, $joinFields = null) {
-		if (is_array($objectsOrIDs)) {
-			// An array of objects or IDs
-			foreach ($objectsOrIDs as $objectOrID) {
-				$this->addElement($objectOrID, $joinFields);
-			}
-		} else if ( ! empty($objectsOrIDs)) {
-			// One object or ID
-			$this->addElement($objectsOrIDs, $joinFields);
-		}
-	}
-	
-	/**
 	 * Adds a single element given either an ID of the current collection
 	 * object type to be added or the object itself.
 	 *
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function addElement($objectOrID, $joinFields = null) {
+	public function add($objectOrID, $joinFields = null) {
 		if ( ! ($objectOrID instanceof CoughObject)) {
 			// It's an id, not an object.
 			$elementClassName = $this->elementClassName;
-			$objectOrID = new $elementClassName($objectOrID);
+			$object = new $elementClassName($objectOrID);
+		} else {
+			$object = $objectOrID;
 		}
 		
 		// We have the object...
-		$objectOrID->setCollector($this->getCollector());
+		$object->setCollector($this->getCollector());
 		if ($this->isManyToManyCollection()) {
-			$objectOrID->setJoinTableName($this->getJoinTableName());
-			$objectOrID->setJoinFields($joinFields);
-			$objectOrID->setIsJoinTableNew(true);
+			$object->setJoinTableName($this->getJoinTableName());
+			$object->setJoinFields($joinFields);
+			$object->setIsJoinTableNew(true);
 		}
 		
 		// Add the object to the collection
-		$object = $objectOrID;
-		$key = $objectOrID->getKeyID();
-		if ($this->collectionType == self::KEYLESS || $key === null) {
+		if ($object->hasKeyId()) {
 			$this->append($object);
-			
-			// TODO: How do we keep track of the above change? Can we get the
-			// offset of where the value was appended? It's possible that we
-			// don't care. If you use the object's adding functions, then it
-			// can keep track of whether or not it is changed so it will know
-			// to call save() based on that. And, since save() saves all
-			// indiscriminently of whether or not internal modifications have
-			// been made, there is not much use in keeping track of changes here.
 		} else {
-			if ( ! $this->offsetExists($key)) {
-				$this->offsetSet($key, $object);
-				$this->trackAdd($key);
-			}
-		}
-	}
-	
-	/**
-	 * Calls the appropriate removeCollection() or removeElements() function
-	 * based on the the type of object passed in.
-	 * 
-	 * If you know ahead of time what type you are removing, call the
-	 * appropriate function yourself rather than calling this.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function remove($objectsOrIDs) {
-		if (get_class($objectsOrIDs) && is_subclass_of($objectsOrIDs,'CoughCollection')) {
-			$this->removeCollection($objectsOrIDs);
-		} else {
-			$this->removeElements($objectsOrIDs);
-		}
-	}
-	
-	/**
-	 * Removes all the elements of the given collecton object from the existing
-	 * collection.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function removeCollection($collectionObj) {
-		foreach ($collectionObj as $elementObj) {
-			$this->removeElement($elementObj);
-		}
-	}
-	
-	/**
-	 * Removes a single element or an array of elements, where each element is
-	 * either an ID of the current collection object type to be removed or the
-	 * object itself.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function removeElements($objectsOrIDs) {
-		if (is_array($objectsOrIDs)) {
-			// An array of objects or IDs
-			foreach ($objectsOrIDs as $objectOrID) {
-				$this->removeElement($objectOrID);
-			}
-		} else if ( ! empty($objectsOrIDs)) {
-			// One object or ID
-			$this->removeElement($objectsOrIDs);
+			$this->offsetSet($object->getKeyId(), $object);
 		}
 	}
 	
@@ -506,44 +302,42 @@ abstract class CoughCollection extends ArrayObject {
 	 * Removes a single element given either an ID of the current collection
 	 * object type to be removed or the object itself.
 	 *
-	 * @return boolean - true if the element was removed, false if not
+	 * @return CoughObject - the element that was removed
 	 * @author Anthony Bush
 	 **/
-	public function removeElement($objectOrID) {
-		if (get_class($objectOrID) && is_subclass_of($objectOrID, 'CoughObject')) {
-			// It's an object
-			$key = $objectOrID->getKeyID();
+	public function remove($objectOrId) {
+		if (is_object($objectOrId)) {
+			if ($objectOrId->hasKeyId()) {
+				return $this->removeByKey($objectOrId->getKeyId());
+			} else {
+				return $this->removeByReference($objectOrId);
+			}
 		} else {
-			// It's an id
-			$key = $objectOrID;
-		}
-		if ($this->collectionType == self::KEYED && $this->offsetExists($key)) {
-			$this->offsetUnset($key);
-			$this->trackRemove($key);
-			return true;
-		} else {
-			return false;
+			return $this->removeByKey($objectOrId);
 		}
 	}
 	
-	/**
-	 * Removes all elements from the Collection.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function removeAll() {
-		// Keep track of the items we are about to remove
-		if ($this->collectionType == self::KEYED) {
-			$it = $this->getIterator();
-			while ($it->valid()) {
-				$this->trackRemove($it->key());
-				$it->next();
+	protected function removeByKey($key) {
+		if ($this->offsetExists($key)) {
+			$objectToRemove = $this->offsetGet($key);
+			$this->offsetUnset($key);
+			$this->removedElements[] = $objectToRemove;
+			$objectToRemove->setCollector(null);
+			return $objectToRemove;
+		}
+		return false;
+	}
+	
+	protected function removeByReference($objectToRemove) {
+		foreach ($this as $key => $element) {
+			if ($element == $objectToRemove) {
+				$this->offsetUnset($key);
+				$this->removedElements[] = $objectToRemove;
+				$objectToRemove->setCollector(null);
+				return $objectToRemove;
 			}
 		}
-		
-		// Remove them all
-		$this->exchangeArray(array());
+		return false;
 	}
 	
 	/**
@@ -598,109 +392,6 @@ abstract class CoughCollection extends ArrayObject {
 		// Step 4: Setup the collection with the new sorted array
 		$this->exchangeArray($sorted);
 		
-	}
-	
-	
-	#######################
-	# Collection Statuses #
-	#######################
-
-	
-	/**
-	 * Tells whether or not an item in the collection has been added or
-	 * removed. It does not check to see if the individual items have
-	 * been modified.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function isModified() {
-		foreach ($this->collectionChanges as $changedID => $changedStatus) {
-			if ($changedStatus != self::NOCHANGE) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Resets the status of what has been changed. Meant to be called after
-	 * a sync to the database.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function resetCollectionChanges() {
-		$this->collectionChanges = array();
-	}
-	
-	/**
-	 * Returns an array of KeyIDs that have been removed in comparison to what
-	 * was populated.
-	 *
-	 * @return array - element IDs for elements that have been removed.
-	 * @author Anthony Bush
-	 **/
-	public function getRemovedElements() {
-		$removedElements = array();
-		foreach ($this->collectionChanges as $changedID => $changedStatus) {
-			if ($changedStatus == self::REMOVED) {
-				$removedElements[] = $changedID;
-			}
-		}
-		return $removedElements;
-	}
-	
-	/**
-	 * Returns an array of KeyIDs that have been added in comparison to what
-	 * was populated.
-	 *
-	 * @return array - element IDs for elements that have been added.
-	 * @author Anthony Bush
-	 **/
-	public function getAddedElements() {
-		$addedElements = array();
-		foreach ($this->collectionChanges as $changedID => $changedStatus) {
-			if ($changedStatus == self::ADDED) {
-				$addedElements[] = $changedID;
-			}
-		}
-		return $addedElements;
-	}
-	
-	/**
-	 * Tracks the remove of an item from the collection.
-	 *
-	 * @return string $key - the element ID or key that has been removed.
-	 * @author Anthony Bush
-	 **/
-	protected function trackRemove($key) {
-		if (!$this->trackingEnabled) {
-			return;
-		}
-		if (isset($this->collectionChanges[$key]) && $this->collectionChanges[$key] == self::ADDED) {
-			$this->collectionChanges[$key] = self::NOCHANGE;
-		} else {
-			$this->collectionChanges[$key] = self::REMOVED;
-		}
-	}
-
-	/**
-	 * Tracks the addition of an item to the collection.
-	 *
-	 * @return string $key - the element ID or key that has been added.
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function trackAdd($key) {
-		if (!$this->trackingEnabled) {
-			return;
-		}
-		if (isset($this->collectionChanges[$key]) && $this->collectionChanges[$key] == self::REMOVED) {
-			$this->collectionChanges[$key] = self::NOCHANGE;
-		} else {
-			$this->collectionChanges[$key] = self::ADDED;
-		}
 	}
 	
 }

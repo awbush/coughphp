@@ -105,17 +105,7 @@ abstract class CoughObject {
 	 * @var string
 	 **/
 	protected $tableName;
-
-	/**
-	 * The SQL statement that the object maps to.
-	 *
-	 * If applicable, add collections in the form of:
-	 * $collectionObjectNamePlural = array();
-	 *
-	 * @var string
-	 **/
-	protected $checkStatement = null;
-
+	
 	/**
 	 * An array of all the collections and their attributes.
 	 *
@@ -135,7 +125,7 @@ abstract class CoughObject {
 	 * An array of all the checked collections in form [collectionName] => [CoughCollection]
 	 * 
 	 * @var array
-	 * @see getCollection(), setCollection(), checkCollection(), saveCheckedCollections()
+	 * @see getCollection(), checkCollection(), saveCheckedCollections()
 	 **/
 	protected $collections = array();
 	
@@ -207,20 +197,12 @@ abstract class CoughObject {
 	// CONSTRUCTORS and INITIALIZATION METHODS block BEGINS
 	// ----------------------------------------------------------------------------------------------
 
- 	/**
-	 *
-	 * CoughObject / __construct
-	 * -------------------------
-	 * required args:		n/a
-	 * optional args:
-	 * 						none	(constructs empty CoughObject)
-	 * 						id		(constructs & checks CoughObject using passed value as key ID)
-	 * 						assoc array / CoughCollection (constructs CoughObject, calls setFields() using the passed array)
-	 * note:
-	 * 						if the assoc array / collection includes the defined key for the object, the key will be set by setFields()
-	 * desc:
-	 * 						CoughObject() / __construct() is the class constructor
-	 */
+	/**
+	 * Construct an empty CoughObject or an object with pre-initialized data.
+	 * 
+	 * @param $fieldsOrID - initializes the object with the fields or id (does not query the database)
+	 * @return void
+	 **/
 	public function __construct($fieldsOrID = array()) {
 		// before chaining to construct, make sure you override initializeDefinitions() within the subclass
 		//	and then invoke initializeDefinitions() in the constructor method.
@@ -231,10 +213,22 @@ abstract class CoughObject {
 		$this->db->selectDb($this->dbName);
 
 		if (is_array($fieldsOrID)) {
-			$this->initFields($fieldsOrID);
+			foreach ( $fieldsOrID as $fieldName => $fieldValue ) {
+				if (isset($this->fieldDefinitions[$fieldName])) {
+					$this->fields[$fieldName] = $fieldValue;
+				} else if (($pos = strpos($fieldName, '.')) !== false) {
+					// custom field
+					// $joinTableName = substr($fieldName, 0, $pos);
+					$joinFieldName = substr($fieldName, $pos + 1);
+					$this->joinFields[$joinFieldName] = $fieldValue;
+				} else {
+					$this->setDerivedField($fieldName, $fieldValue);
+				}
+			}
 		} else if ($fieldsOrID != '') {
-			$this->setKeyId($fieldsOrID);
-			$this->check();
+			foreach ($this->getPkFieldNames() as $fieldName) {
+				$this->fields[$fieldName] = $fieldsOrID;
+			}
 		}
 		
 		$this->finishConstruction();
@@ -260,27 +254,14 @@ abstract class CoughObject {
 	 * @return void
 	 **/
 	protected function initializeDefinitions() {
-
-		// the below method is used only if your class has a special check query other than a select by PK
-		// $this->defineCheckStatement();
-		
-		// defineObjects() and defineCollections() are run last to allow them
-		// to make decisions based on the above definitions
 		$this->defineObjects();
 		$this->defineCollections();
 	}
 	
-	public function setDb($db) {
-		$this->db = $db;
-	}
-
- 	// definition methods for object initilization called by initializeDefinitions()
-	protected function defineCheckStatement() {
-		$this->checkStatement = ''; // override this line in subclass IF you need a special check query other than a select by PK
-	}
 	protected function defineObjects() {
 		// override this in subclass if the subclass possesses objects
 	}
+	
 	protected function defineCollections() {
 		// override this in subclass if the subclass possesses collections
 	}
@@ -428,16 +409,22 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	public function getKeyId() {
-		if (count($this->pkFieldNames) == 1) {
-			$fieldName = $this->pkFieldNames[0];
-			if (isset($this->fields[$fieldName])) {
-				return $this->fields[$fieldName];
-			} else {
-				return null;
-			}
+		if ($this->hasKeyId()) {
+			// Implode to support multi-key PK in the KEYED collection (can't hash an array)
+			return implode(',', $this->getKeyId());
 		} else {
-			return $this->getPk();
+			return null;
 		}
+		// if (count($this->pkFieldNames) == 1) {
+		// 	$fieldName = $this->pkFieldNames[0];
+		// 	if (isset($this->fields[$fieldName])) {
+		// 		return $this->fields[$fieldName];
+		// 	} else {
+		// 		return null;
+		// 	}
+		// } else {
+		// 	return $this->getPk();
+		// }
 	}
 	
 	/**
@@ -470,7 +457,6 @@ abstract class CoughObject {
 		}
 		
 		// All PK fields must be initialized
-		// (TODO: what about NULL as a valid value? If it is, consider the slower array_key_exists method)
 		foreach ($this->pkFieldNames as $fieldName) {
 			if (!isset($this->fields[$fieldName])) {
 				return false;
@@ -543,31 +529,12 @@ abstract class CoughObject {
 	 *
 	 * @return mixed
 	 **/
-	protected function getField($fieldName) {
+	public function getField($fieldName) {
 		if (isset($this->fields[$fieldName])) {
 			return ($this->fields[$fieldName]);
 		} else {
 			return null;
 		}
-	}
-	
-	/**
-	 * Check if the given field name can be set to NULL.
-	 * 
-	 * If no information about the null status is available, then
-	 * it always return true (to maintain backwards compatibility)
-	 *
-	 * @return boolean - true if null is allowed, false if not
-	 * @author Anthony Bush
-	 **/
-	protected function isNullAllowed($fieldName) {
-		if (isset($this->fieldDefinitions[$fieldName])) {
-			// Temporary: the is_array check is there for backwards compatibility with old generated code.
-			if (array_key_exists('is_null_allowed', $this->fieldDefinitions[$fieldName])) {
-				return $this->fieldDefinitions[$fieldName]['is_null_allowed'];
-			}
-		}
-		return true; // backwards compatible default value
 	}
 	
 	/**
@@ -577,7 +544,7 @@ abstract class CoughObject {
 	 * @param mixed $value
 	 * @return void
 	 **/
-	protected function setField($fieldName, $value) {
+	public function setField($fieldName, $value) {
 		$this->fields[$fieldName] = $value;
 		$this->setModifiedField($fieldName);
 	}
@@ -599,8 +566,6 @@ abstract class CoughObject {
 				// $joinTableName = substr($fieldName, 0, $pos);
 				$joinFieldName = substr($fieldName, $pos + 1);
 				$this->setJoinField($joinFieldName, $fieldValue);
-			} else if (isset($this->$fieldName)) {
-				$this->setCollection($fieldName, $fieldValue);
 			} else {
 				$this->setDerivedField($fieldName, $fieldValue);
 			}
@@ -609,12 +574,12 @@ abstract class CoughObject {
 	
 	/**
 	 * Sets a read-only field; It's usually a derived field from a complex
-	 * SQL query such as when using the defineCheckStatement() functionality.
+	 * SQL query such as when overriding the getCheckSql() function.
 	 *
 	 * @param string $fieldName - the derived field name to set
 	 * @param mixed $fieldValue - the value to store
 	 * @return void
-	 * @see defineCheckStatement()
+	 * @see getCheckSql()
 	 * @author Anthony Bush
 	 **/
 	protected function setDerivedField($fieldName, $fieldValue) {
@@ -626,7 +591,7 @@ abstract class CoughObject {
 	 * 
 	 * @param string $fieldName - the derived field name to retrieve
 	 * @return mixed - the value of the specified field
-	 * @see setDerivedField(), defineCheckStatement()
+	 * @see setDerivedField(), getCheckSql()
 	 * @author Anthony Bush
 	 **/
 	public function getDerivedField($fieldName) {
@@ -680,30 +645,7 @@ abstract class CoughObject {
 			$this->joinFields[$fieldName] = $fieldValue;
 		}
 	}
-
-	/**
-	 * Initializes the specified fields with given values without setting the
-	 * fields as being modified.
-	 *
-	 * Meant to be called with values from the database, e.g. by the `check()`
-	 * function. This way, a call to save() will not cause the values to be
-	 * saved back to the database, a wasteful operation. All sets that should
-	 * cause data to be actually saved should use setFields() and not this
-	 * function.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function initFields($fields = array()) {
-		$this->setFields($fields);
-
-		// If the setting of the fields also set the primary key, then assume
-		// we pulled from the database and clear the modified fields
-		if ($this->hasKeyId()) {
-			$this->resetModified();
-		}
-	}
-
+	
 	// ----------------------------------------------------------------------------------------------
 	// GETTORS AND SETTORS block ENDS
 	// ----------------------------------------------------------------------------------------------
@@ -769,7 +711,7 @@ abstract class CoughObject {
 	public function checkBySql($sql) {
 		if ( ! empty($sql)) {
 			$this->db->selectDb($this->dbName);
-			$result = $this->db->doQuery($sql);
+			$result = $this->db->query($sql);
 			if ($result->numRows() == 1) {
 				$this->initFields($result->getRow());
 				$this->setCheckReturnedResult(true);
@@ -896,22 +838,12 @@ abstract class CoughObject {
 			$result = $this->update();
 		}
 
-		// We have never said that this was okay, but this is how you would
-		// save the objects automatically. It's worth noting that we never had
-		// the ability to see which ones were checked (and thus potentially
-		// modified) either, but we do now.
-		//$this->saveCheckedObjects();
-
-		// Save collections next, but only ones that have been checked.
-		// (Alternately, we could do an additional conditional test to only
-		// save ones that have also been gotten, but it is probably safe and more
-		// effiecent to assume that if you are checking the collection you are
-		// getting the collection.)
 		$this->saveCheckedCollections();
 		
 		$this->saveJoinFields();
 		
 		$this->resetModified();
+		
 		return $result;
 	}
 
@@ -929,7 +861,7 @@ abstract class CoughObject {
 			return false;
 		}
 	}
-
+	
 	/**
 	 * Saves all the checked objects (if it wasn't checked there would be
 	 * nothing to save)
@@ -942,7 +874,7 @@ abstract class CoughObject {
 			$object->save();
 		}
 	}
-
+	
 	/**
 	 * Saves all the checked collections (if it wasn't checked there would be
 	 * nothing to save)
@@ -951,8 +883,8 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	public function saveCheckedCollections() {
-		foreach ($this->collections as $collectionName => $collection) {
-			$this->saveCollection($collectionName);
+		foreach ($this->collections as $collection) {
+			$collection->save();
 		}
 	}
 	
@@ -976,9 +908,9 @@ abstract class CoughObject {
 		
 		$this->db->selectDb($this->dbName);
 		if (!$this->hasKeyId()) {
-			$id = $this->db->doInsert($this->tableName, $fields);
+			$id = $this->db->insert($this->tableName, $fields);
 		} else {
-			$this->db->doInsertOrUpdate($this->tableName, $fields, null, $this->getPk());
+			$this->db->insertOrUpdate($this->tableName, $fields, null, $this->getPk());
 			$id = null;
 		}
 		if ($id != '') {
@@ -1010,7 +942,7 @@ abstract class CoughObject {
 		$fields = $this->getUpdateFields();
 		if (!empty($fields)) {
 			$this->db->selectDb($this->dbName);
-			$this->db->doUpdate($this->tableName, $fields, null, $this->getPk());
+			$this->db->update($this->tableName, $fields, null, $this->getPk());
 		}
 		return true;
 	}
@@ -1025,6 +957,21 @@ abstract class CoughObject {
 	 **/
 	protected function getUpdateFields() {
 		return $this->getModifiedFields();
+	}
+	
+	/**
+	 * Deletes the record from the database, if hasKeyId returns true.
+	 *
+	 * @return boolean - whether or not the delete was executed.
+	 * @author Anthony Bush
+	 **/
+	public function delete() {
+		if ($this->hasKeyId()) {
+			$this->db->delete($this->tableName, $this->getPk());
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	// ----------------------------------------------------------------------------------------------
@@ -1042,7 +989,9 @@ abstract class CoughObject {
 	 **/
 	protected function _checkObject($objectName) {
 		$objectInfo = &$this->objectDefinitions[$objectName];
-		$this->objects[$objectName] = new $objectInfo['class_name']($this->$objectInfo['get_id_method']());
+		$object = new $objectInfo['class_name']($this->$objectInfo['get_id_method']());
+		$object->check();
+		$this->objects[$objectName] = $object;
 	}
 	
 	/**
@@ -1078,6 +1027,26 @@ abstract class CoughObject {
 			$this->checkObject($objectName);
 		}
 		return $this->objects[$objectName];
+	}
+	
+	/**
+	 * Sets the object reference in memory.
+	 * 
+	 * This has no effect on the database. For example:
+	 * 
+	 *     $order->setCustomer($customer);
+	 * 
+	 * will not change the customer_id on the order. It is simply a way to pass
+	 * in pre-instantiated objects so that they do not have to be looked up in
+	 * the database.
+	 *
+	 * @return void
+	 * @author Anthony Bush
+	 **/
+	protected function setObject($objectName, $object) {
+		if (isset($this->objectDefinitions[$objectName])) {
+			$this->objects[$objectName] = $object;
+		}
 	}
 	
 	/**
@@ -1153,7 +1122,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function checkCollection($collectionName) {
-		$checkMethod = 'check' . ucwords($collectionName);
+		$checkMethod = 'check' . ucfirst($collectionName);
 		$this->$checkMethod();
 	}
 	
@@ -1216,194 +1185,6 @@ abstract class CoughObject {
 		}
 		return $this->collections[$collectionName];
 	}
-
-	/**
-	 * Set the specified collection to either:
-	 *  - another collection
-	 *  - or an array of elements
-	 *  - or a single element
-	 *
-	 * where each element is either an ID of the current collection object type
-	 * to be added or the object itself.
-	 *
-	 * @param string $collectionName - the name of the collection to set
-	 * @param mixed $objectsOrIDs - the objects or IDs to set the collection to.
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function setCollection($collectionName, $objectsOrIDs) {
-		$this->getCollection($collectionName)->set($objectsOrIDs);
-	}
-
-	/**
-	 * Add to the specified collection to either:
-	 *  - another collection
-	 *  - or an array of elements
-	 *  - or a single element
-	 *
-	 * where each element is either an ID of the current collection object type
-	 * to be added or the object itself.
-	 *
-	 * @param string $collectionName - the name of the collection to add to.
-	 * @param mixed $objectsOrIDs - the objects or IDs to add.
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function addToCollection($collectionName, $objectsOrIDs, $joinFields = null) {
-		$this->getCollection($collectionName)->add($objectsOrIDs, $joinFields);
-	}
-
-	/**
-	 * Remove from the specified collection either:
-	 *  - another collection
-	 *  - or an array of elements
-	 *  - or a single element
-	 *
-	 * where each element is either an ID of the current collection object type
-	 * to be added or the object itself.
-	 *
-	 * @param string $collectionName - the name of the collection to remove.
-	 * @param mixed $objectsOrIDs - the objects or IDs to remove.
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function removeFromCollection($collectionName, $objectsOrIDs) {
-		$this->getCollection($collectionName)->remove($objectsOrIDs);
-	}
-	
-	/**
-	 * Saves the specified collection, checking the type of collection first.
-	 * (i.e. one-to-many or many-to-many).
-	 *
-	 * @param string $collectionName - the name of the collection to save.
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function saveCollection($collectionName) {
-		if (isset($this->collectionDefinitions[$collectionName]['join_table'])) {
-			$this->saveManyToManyCollection($collectionName);
-		} else {
-			$this->saveOneToManyCollection($collectionName);
-		}
-	}
-
-	/**
-	 * Saves the specified one-to-many collection.
-	 *
-	 * @param string $collectionName - the name of the collection to save.
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function saveOneToManyCollection($collectionName) {
-		$collection = $this->getCollection($collectionName);
-		
-		// Call save on all collected items that still exist.
-		$collection->save();
-
-		// Update all removed items too by setting their foreign key id to NULL.
-		foreach ($collection->getRemovedElements() as $elementID) {
-			// Build a custom update query based on the colleciton attributes
-			$def =& $this->collectionDefinitions[$collectionName];
-			$collectionTable = $def['collection_table'];
-			$relationKeyName = $def['relation_key'];
-			$collectionKeyName = $def['collection_key'];
-			$sql = 'UPDATE ' . $collectionTable . ' SET ' . $relationKeyName . ' = NULL WHERE ' . $collectionKeyName . ' = "' . $elementID . '"';
-			if ( ! is_null($def['retired_column'])) {
-				$sql .= ' AND ' . $def['retired_column'] . ' = "' . $def['is_not_retired'] . '"';
-			}
-
-			// Execute the query
-			$this->db->query($sql);
-		}
-
-		// Update status in memory as saved.
-		$collection->resetCollectionChanges();
-	}
-
-	/**
-	 * Saves the specified many-to-many collection.
-	 *
-	 * @param string $collectionName - the name of the collection to save.
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function saveManyToManyCollection($collectionName) {
-		$collection = $this->getCollection($collectionName);
-		
-		// Save each collected object
-		$collection->save();
-
-		// Get easy access to the current collection attributes
-		$def =& $this->collectionDefinitions[$collectionName];
-		
-		/////////////////////////////////////////////////////////
-		// Save all the removed elements (update the join table)
-		/////////////////////////////////////////////////////////
-
-		$removedElementIDs = $collection->getRemovedElements();
-		if ( ! empty($removedElementIDs)) {
-
-			if (isset($def['join_table_attr']) && isset($def['join_table_attr']['retired_column']))
-			{
-				$joinAttr =& $def['join_table_attr'];
-				foreach ($removedElementIDs as $elementID) {
-
-					$setFields = array(
-						$joinAttr['retired_column'] => $joinAttr['is_retired']
-					);
-
-					$whereFields = array(
-						  // 2007-04-16/AWB: We should probably stop the remove functionality, or have it work on primary keys... or have the collection perform the remove. For example, allow end-users to override some remove-like function that specifies how a remove should occur, e.g. maybe a remove is $collectedElement->setJoinField('is_retired', 1); or maybe a remove is $collectedElement->setIsRetired(1); or $collectedElement->markForDelete();
-						  // $def['join_primary_key'] => $elementID
-						  $def['relation_key']   => $this->getKeyId()
-						, $def['collection_key'] => $elementID
-						, $joinAttr['retired_column']   => $joinAttr['is_not_retired']
-					);
-
-					$this->db->doUpdate($def['join_table'], $setFields, null, $whereFields);
-				}
-			}
-			// If there is no retired column specified, then we can't remove..
-			else
-			{
-				// TODO: Add documentation for this... Also, add an option to the generator that allows this attribute to be added automatically for tables with no retired column.
-				if (isset($def['allow_deletes']) && $def['allow_deletes']) {
-					$whereFields = array(
-						  $def['relation_key']   => $this->getKeyId()
-						, $def['collection_key'] => $elementID
-					);
-					$this->db->doDelete($def['join_table'], $whereFields);
-				} else {
-					// No retired column and deletes are not allowed, i.e. we have no way to "save" the current state.
-					throw new Exception('No retired column set for collection "' . $collectionName . '" (join table "' . $def['join_table'] . '"). The `allow_deletes` attributes is also not set. Either add a retired column to ' . $def['join_table'] . ' or enable deletes for this join table in the Cough model.');
-				}
-			}
-		}
-
-		/////////////////////////////////////////////////////////
-		// Save all the added elements (update the join table)
-		/////////////////////////////////////////////////////////
-
-		/* 2007-02-19/AWB: This is now handled by the element itself.
-		// First, build an array of value arrays to insert
-		$values = array();
-		foreach ($collection->getAddedElements() as $elementID) {
-			$values[] = array($elementID, $this->getKeyId());
-		}
-
-		// If we have some values to insert, insert them
-		if ( ! empty($values)) {
-
-			// What fields are we inserting?
-			$fields = array($def['collection_key'], $def['relation_key']);
-
-			// Do the insert
-			$this->db->insertMultiple($def['join_table'], $fields, $values);
-		}
-		*/
-		
-		$collection->resetCollectionChanges();
-	}
 	
 	protected function saveJoinFields() {
 		
@@ -1411,7 +1192,7 @@ abstract class CoughObject {
 
 			$this->setJoinFields($this->getPk());
 			$this->setJoinFields($this->getCollector()->getPk());
-			$this->db->doInsertOnDupUpdate($this->getJoinTableName(),$this->getJoinFields());
+			$this->db->insertOnDupUpdate($this->getJoinTableName(),$this->getJoinFields());
 			
 		} else if ($this->isJoinTableModified) {
 
@@ -1428,41 +1209,7 @@ abstract class CoughObject {
 					$whereFields[$fieldName] = $fieldValue;
 				}
 			}
-			$this->db->doInsertOrUpdate($this->getJoinTableName(),$fieldsToSave,null,$whereFields);
-		}
-	}
-
-	/**
-	 * Returns the function name of the getter for the given field name.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 * @todo Instead of calling getTitleCase, have the generator set the titlecase in the columns array.
-	 * @todo Can we deprecate this method?
-	 **/
-	public function getGetter($fieldName) {
-		$potentialGetter = 'get' . String::getTitleCase($fieldName);
-		if (method_exists($this, $potentialGetter)) {
-			return $potentialGetter;
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Returns the function name of the setter for the given field name.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 * @todo Instead of calling getTitleCase, have the generator set the titlecase in the columns array.
-	 * @todo Can we deprecate this method?
-	 **/
-	public function getSetter($fieldName) {
-		$potentialGetter = 'set' . String::getTitleCase($fieldName);
-		if (method_exists($this, $potentialGetter)) {
-			return $potentialGetter;
-		} else {
-			return null;
+			$this->db->insertOrUpdate($this->getJoinTableName(),$fieldsToSave,null,$whereFields);
 		}
 	}
 	
@@ -1569,29 +1316,123 @@ abstract class CoughObject {
 	 * @see http://us.php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.methods
 	 **/
 	public function __call($method, $args) {
-		// Allow: getJoin_Customer_RelationshipStartDate calls, which will invoke getJoinField('relationship_start_date') for now.
-		if (strpos($method, 'getJoin_') === 0)
-		{
-			$methodPieces = explode('_', $method);
-			if (count($methodPieces) == 3) {
-				$field = String::convertCamelCaseToUnderscore($methodPieces[2]);
-				return $this->getJoinField($field);
+		$underscorePos = strrpos($method, '_');
+		
+		if ($underscorePos === false) {
+			// Not a getJoin_, get*_Collection, or get*_Object call, so must be a field call.
+			
+			// Allow: getFieldName, which will invoke getField('field_name').
+			if (strpos($method, 'get') === 0) {
+				return $this->getField($this->_underscore(substr($method, 3)));
 			}
-		}
-		// Allow: setJoin_Customer_RelationshipStartDate calls, which will invoke setJoinField('relationship_start_date', $value) for now.
-		else if (strpos($method, 'setJoin_') === 0)
-		{
-			$methodPieces = explode('_', $method);
-			if (count($methodPieces) == 3) {
-				$field = String::convertCamelCaseToUnderscore($methodPieces[2]);
+			// Allow: setFieldName, which will invoke setField('field_name').
+			else if (strpos($method, 'set') === 0) {
+				$field = $this->_underscore(substr($method, 3));
 				if (isset($args[0])) {
 					$value = $args[0];
 				} else {
 					$value = null;
 				}
-				return $this->setJoinField($field, $value);
+				return $this->setField($field, $value);
+			}
+			// Allow: addObjectName($object, $joinFields = null),
+			// which will invoke getCollection('object_name')->add($object, $joinFields);
+			else if (strpos($method, 'add') === 0) {
+				$objectName = $this->_underscore(substr($method, 3));
+				if (isset($this->collectionDefinitions[$objectName])) {
+					if (isset($args[0])) {
+						$objectOrId = $args[0];
+						if (isset($args[1])) {
+							$joinFields = $args[1];
+						} else {
+							$joinFields = null;
+						}
+						return $this->getCollection($objectName)->add($objectOrId, $joinFields);
+					}
+					return false;
+				}
+			}
+			// Allow: removeObjectName($object),
+			// which will invoke getCollection('object_name')->remove($object);
+			else if (strpos($method, 'remove') === 0) {
+				$objectName = $this->_underscore(substr($method, 6));
+				if (isset($this->collectionDefinitions[$objectName])) {
+					if (isset($args[0])) {
+						$objectOrId = $args[0];
+						$removedObject = $this->getCollection($objectName)->remove($objectOrId);
+						$def =& $this->collectionDefinitions[$objectName];
+						if (isset($def['join_table_attr'])) {
+							// Retire the join
+							$removedObject->setJoinField($def['join_table_attr']['retired_column'], $def['join_table_attr']['is_retired']);
+						} else {
+							// Null out the foreign key
+							$removedObject->setField($def['relation_key'], null);
+						}
+						return true;
+					}
+					return false;
+				}
+			}
+			
+		} else {
+			if ((substr($method, $underscorePos + 1) === 'Object')) {
+				if (strpos($method, 'get') === 0) {
+					$objectName = substr($method, 3, $underscorePos - 3);
+					return $this->getObject($objectName);
+				} else if (strpos($method, 'set') === 0) {
+					$objectName = substr($method, 3, $underscorePos - 3);
+					if (isset($args[0])) {
+						$value = $args[0];
+					} else {
+						$value = null;
+					}
+					return $this->setObject($objectName, $value);
+				} else if (strpos($method, 'check') === 0) {
+					$objectName = substr($method, 5, $underscorePos - 5);
+					return $this->_checkObject($objectName);
+				}
+
+			}
+			else if ((substr($method, $underscorePos + 1) === 'Collection')) {
+				if (strpos($method, 'get') === 0) {
+					$tables = explode('_', substr($method, 3, $underscorePos - 3));
+					if (count($tables) == 1) {
+						return $this->getCollection($tables[0]);
+					} else {
+
+					}
+				} else if (strpos($method, 'check') === 0) {
+					$collectionName = substr($method, 5, $underscorePos - 5);
+					return $this->_checkCollection($collectionName);
+				}
+			}
+			
+			// CONSIDER: getJoinName_Join() because (1) makes naming consistent for users AND less work for this magic method to do.
+			// Allow: getJoin_Customer_RelationshipStartDate calls, which will invoke getJoinField('relationship_start_date') for now.
+			else if (strpos($method, 'getJoin_') === 0)
+			{
+				$methodPieces = explode('_', $method);
+				if (count($methodPieces) == 3) {
+					$field = $this->_underscore($methodPieces[2]);
+					return $this->getJoinField($field);
+				}
+			}
+			// Allow: setJoin_Customer_RelationshipStartDate calls, which will invoke setJoinField('relationship_start_date', $value) for now.
+			else if (strpos($method, 'setJoin_') === 0)
+			{
+				$methodPieces = explode('_', $method);
+				if (count($methodPieces) == 3) {
+					$field = $this->_underscore($methodPieces[2]);
+					if (isset($args[0])) {
+						$value = $args[0];
+					} else {
+						$value = null;
+					}
+					return $this->setJoinField($field, $value);
+				}
 			}
 		}
+		
 		
 		// Don't break useful errors
 		$errorMsg = 'Call to undefined method ' . __CLASS__ . '::' . $method . '()';
@@ -1602,6 +1443,15 @@ abstract class CoughObject {
 		$errorMsg .= '. CoughObject\'s magic method was invoked';
 		trigger_error($errorMsg, E_USER_ERROR);
 	}
+	
+	protected function _titleCase($underscoredString) {
+		return str_replace(' ', '', str_replace('_', ' ', ucwords($underscoredString)));
+	}
+	
+	protected function _underscore($camelCasedString) {
+		return preg_replace('/_i_d$/', '_id', strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedString)));
+	}
+	
 }
 
 
