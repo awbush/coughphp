@@ -46,8 +46,9 @@ abstract class CoughObject {
 	 * Format of "field_name" => attributes
 	 *
 	 * @var array
+	 * @deprecated in core cough, use the $fields array to specified which fields are allowed (in addition to their default values)
 	 **/
-	protected $fieldDefinitions = array();
+	// protected $fieldDefinitions = array();
 
 	/**
 	 * An array of all the currently initialized or set fields.
@@ -214,7 +215,7 @@ abstract class CoughObject {
 
 		if (is_array($fieldsOrID)) {
 			foreach ( $fieldsOrID as $fieldName => $fieldValue ) {
-				if (isset($this->fieldDefinitions[$fieldName])) {
+				if (isset($this->fields[$fieldName])) {
 					$this->fields[$fieldName] = $fieldValue;
 				} else if (($pos = strpos($fieldName, '.')) !== false) {
 					// custom field
@@ -246,7 +247,6 @@ abstract class CoughObject {
 	/**
 	 * Sets the cough object's basic identity:
 	 * 
-	 *    - {@link $fieldDefinitions}
 	 *    - {@link $objectDefinitions}
 	 *    - {@link $collectionDefinitions}
 	 *    - default values
@@ -559,7 +559,7 @@ abstract class CoughObject {
 	 **/
 	public function setFields($fields) {
 		foreach ( $fields as $fieldName => $fieldValue ) {
-			if (isset($this->fieldDefinitions[$fieldName])) {
+			if (isset($this->fields[$fieldName])) {
 				$this->setField($fieldName, $fieldValue);
 			} else if (($pos = strpos($fieldName, '.')) !== false) {
 				// custom field
