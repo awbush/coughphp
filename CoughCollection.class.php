@@ -15,6 +15,11 @@ abstract class CoughCollection extends ArrayObject {
 	protected $collector = null; // a reference to the collector of the collection, if any. Used in conjuction with relationshipType.
 	protected $joinTableName = null;
 	
+	/**
+	 * Whether or not {@link populateCollection} was run
+	 *
+	 * @var string
+	 **/
 	protected $populated = false;
 	
 	/**
@@ -25,8 +30,34 @@ abstract class CoughCollection extends ArrayObject {
 	 * @var string
 	 **/
 	protected $dbName = null;
-	protected $collectionSQL;
+	
+	/**
+	 * The collection SQL to use by default.
+	 * 
+	 * Override in sub class using defineCollectionSql
+	 *
+	 * @var string
+	 **/
+	protected $collectionSQL = '';
+	
+	/**
+	 * The name of the element class that will be used when adding new
+	 * elements to the collection (can be overridden when calling
+	 * `populateCollection`).
+	 * 
+	 * Override this in sub class.
+	 * 
+	 * @var string
+	 **/
 	protected $elementClassName;
+	
+	/**
+	 * The default ORDER BY clause to be used when populating the collection.
+	 * 
+	 * Override this in sub class using defineDefaultOrderClause()
+	 * 
+	 * @var string
+	 **/
 	protected $orderBySQL;
 	
 	/**
@@ -54,9 +85,8 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	protected function initializeDefinitions($specialArgs=array()) {
-		$this->defineCollectionSQL();
+		$this->defineCollectionSql();
 		$this->defineDefaultOrderClause();
-		$this->defineElementClassName();
 		$this->defineSpecialCriteria($specialArgs);
 	}
 	
@@ -66,7 +96,7 @@ abstract class CoughCollection extends ArrayObject {
 	 *
 	 * @return void
 	 **/
-	protected function defineCollectionSQL() {
+	protected function defineCollectionSql() {
 		$this->collectionSQL = '';
 	}
 	
@@ -79,18 +109,6 @@ abstract class CoughCollection extends ArrayObject {
 	 **/
 	protected function defineDefaultOrderClause() {
 		$this->orderBySQL = '';
-	}
-	
-	/**
-	 * Set the name of the element class that will be used when adding new
-	 * elements to the collection (can be overridden when calling
-	 * `populateCollection`).
-	 * Override this in sub class.
-	 *
-	 * @return void
-	 **/
-	protected function defineElementClassName() {
-		$this->elementClassName = '';
 	}
 	
 	/**
