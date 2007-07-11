@@ -413,7 +413,7 @@ abstract class CoughObject {
 	public function getKeyId() {
 		if ($this->hasKeyId()) {
 			// Implode to support multi-key PK in the KEYED collection (can't hash an array)
-			return implode(',', $this->getKeyId());
+			return implode(',', $this->getPk());
 		} else {
 			return null;
 		}
@@ -1124,7 +1124,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function checkCollection($collectionName) {
-		$checkMethod = 'check' . ucfirst($collectionName);
+		$checkMethod = 'check' . ucfirst($collectionName) . '_Collection';
 		$this->$checkMethod();
 	}
 	
