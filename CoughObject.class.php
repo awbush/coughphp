@@ -212,10 +212,12 @@ abstract class CoughObject {
 		// Get our reference to the database object
 		$this->db = DatabaseFactory::getDatabase($this->dbName);
 		$this->db->selectDb($this->dbName);
-
+		
 		if (is_array($fieldsOrID)) {
-			foreach ( $fieldsOrID as $fieldName => $fieldValue ) {
-				if (isset($this->fields[$fieldName])) {
+			foreach ($fieldsOrID as $fieldName => $fieldValue) {
+				// This next check has to either be array_key_exists($fieldName, $this->fields)
+				// or isset($this->fieldDefinitions[$fieldName])...
+				if (array_key_exists($fieldName, $this->fields)) {
 					$this->fields[$fieldName] = $fieldValue;
 				} else if (($pos = strpos($fieldName, '.')) !== false) {
 					// custom field
