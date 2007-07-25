@@ -1,0 +1,410 @@
+// Generator TODO, gen getters for the primary key fields, e.g. getProductId(). getKeyId() should just be an alias OR better, build from the self::$primaryKeyDefinition = array('product_id');
+
+
+setKeyId UPDATED -- now handles multi-key while allowing old usage.
+getKeyId UPDATED -- now handles multi-key while allowing old usage (return just value for single-key).
+hasKeyId UPDATED -- now handles multi-key PKs.
+getKeyName --- Removing usage of this function internally to Cough. Should remove it completely though, because all other code that might want to use it will have to check if it is an array or not, so they may as well just getPkFieldNames() and iterate through.
+
+isKey REMOVED
+
+
+
+SUMMARY
+-------
+
+The primary key values will be stored in the $fields array.
+
+The primary key field info will exist in the $fieldDefintions array, just like other fields.
+
+Which fields comprise the primary key will be stored in $pkFieldNames
+
+To get the primary key "id", getKeyId will still work and will return an array of [field_name] => [field_value] pairs when the PK is multi-key.
+
+You can still call setKeyId, but it will act on all primary key fields, e.g. setting them all to null if you call setKeyId(null).
+
+New getters:
+
+	getPkFieldNames();
+	getPk();
+
+Still working
+
+	setKeyId()
+	getKeyId()
+	hasKeyId()
+
+Removed
+
+	getKeyName()
+	isKey()
+	checkBy($key, $value)
+
+Renamed
+	checkByArray -> checkByCriteria and changed second parameter to additionSql
+
+
+
+
+
+NEXT TIME:
+
+
+* Fix CoughCollection save method so that CoughObject can just call save() on the collection object.
+
+* Start making CoughCollection keyless...
+
+	* There are some issues with this.
+	* First, note that one of the reasons it needed to be keyless was because of complex joins (involving date ranges) -- there might be another way to solve that problem.
+	* Another reason was for new objects that have no PK yet. There has to be a system in place for removing those and for retrieving those.
+	* If we make it keyless, how will one remove items via a key? We have to search the list manually.
+
+Regarding the above features, we may not be able to do them. At least, not without caveats.
+
+First, there is an efficiency issue with going to KEYLESS. A remove based on an ID would have to iterate through all of them and compare the key ID. The benefit is that multi-key PK would be supported via that method. We might be able to solve that by having getKeyId flatting a multi-key PK either by imploding, building a hash, or serializing.
+
+Second, not all entities have appropriate PKs. Consider the Wayne date range example. THIS IS NOW INVALID -- The wrong collection type was generated, and should either be fixed via smarter generator, generator configuration options (e.g. XML schema), OR simply overriding the defineCollections method to unset the incorrect type and add it back as the correct type, a one-to-many. Cough Generator WILL need to know to generate the join table CoughObject classes in that case, if it isn't modified to generate them all the time.
+
+Third, can we accept that when you add a relationship where there is no PK on the collected element, we can't remove it? We could overcome this by allowing you to remove it via reference:
+
+	$order->addOrderLine($orderLineWithNoPkYet);
+	$order->removeOrderLine($orderLineWithNoPkYet); // will iterate through collection and remove it if found
+
+### One to Many
+
+Add:
+
+	if (!is_object($elementToAdd)) { // Array of fields or ID => construct object with that data.
+		$elementToAdd = new $this->elementClass($elementToAdd);
+	}
+	//$this->append($elementToAdd); // WRONG needs to go into a special array... but then foreach ($collection as $element) won't work :()
+	
+	if ($elementToAdd->hasKeyId()) {
+		// add via key method
+	} else {
+		// append it :(
+	}
+
+Remove($idOrObject):
+
+	protected function remove($idOrObject) {
+		if (is_object($idOrObject)) {
+			if ($idOrObject->hasKeyId()) {
+				return $this->removeByKey($idOrObject->getKeyId());
+			} else {
+				return $this->removeByReference($idOrObject);
+			}
+		} else {
+			return $this->removeByKey($idOrObject);
+		}
+	}
+	
+	protected function removeByKey($id) {
+		if (isset($this[$idOrObject])) {
+			$object = $this[$idOrObject];
+			unset($this[$idOrObject]);
+		} else {
+			$object = new $this->elementClass($idOrObject);
+		}
+	}
+
+Ideas for removing: Don't have the Collection do anything except remove it from the "array", placing it into a removedElements array (which will be saved and keeps it out of the foreach loop in the mean time), and return a reference to the item removed. Then, the object can setup how removal should take place, e.g.
+
+	public function removeOrderLine($orderLine) {
+		$orderLine = $this->getCollection('orderLine')->remove($orderLine);
+		$orderLine->setOrderId(null);
+		return $orderLine;
+	}
+
+This makes changing that logic a breeze (override the above), and decouples that logic from the collection, which really is a generic collection of order lines and not a Order_OrderLine_Collection.
+
+Before we continue with that, demonstrate that many-to-many will work in the above way:
+
+	public function removeOs($os) {
+		$os = $this->getCollection('os')->remove($os);
+		$os->setJoinField('is_retired', 0); // old way, maybe still supported. If it is, it's simply going to do this:
+		// $os->getProduct2Os_Object()->setIsRetired(0);
+		return $os;
+	}
+
+Now, a complex many-to-many example:
+
+	person table.
+	role table.
+	school table.
+	
+	enrollment table:
+	person_id  role_id   school_id  start_date  end_date  is_retired
+	Anthony    student   TTU        2005        2006      0
+	Anthony    professor TTU        2006        2007      0
+
+PK either has to be a separate column or a combination of everything. Let's assume it is a column on it's own.
+
+AHA! The above should not be treated as a many-to-many but a one-to-many, e.g. $person->getEnrollment_Collection(). The generator currently treats this as a many to many, BUT the generator could be made to detect that we were going to generate TWO many-to-many using the same join table and thus prevent those from being generated and instead generate a one-to-many for the join table. Additionally, it could override the check function to join into the other tables, e.g.:
+
+	public function checkEnrollment_Collection() {
+		if ($this->hasKeyId()) {
+			$sql = '
+				SELECT
+					enrollment.*
+					, role.role_id                    AS `role.role_id`
+					, role.role_type                  AS `role.role_type`
+					, role.creation_datetime          AS `role.creation_datetime`
+					, role.last_modified_datetime     AS `role.last_modified_datetime`
+					, role.is_retired                 AS `role.is_retired`
+					, school.school_id                AS `school.school_id`
+					, school.school_name              AS `school.school_name`
+					, school.creation_datetime        AS `school.creation_datetime`
+					, school.last_modified_datetime   AS `school.last_modified_datetime`
+					, school.is_retired               AS `school.is_retired`
+				FROM
+					enrollment
+					INNER JOIN role USING (role_id)
+					INNER JOIN school USING (school_id)
+				WHERE
+					' . $this->db->generateWhere($this->getPk(), null, '') . '
+					AND enrollment.is_retired = 0
+			';
+		} else {
+			$sql = '';
+		}
+		$this->_checkCollection('enrollment', '', $sql);
+	}
+
+2007-07-09 01:21:05: Looks good.
+
+We may need to keep the tracking abilities of the collection in order for `removeAll()` to work (we were talking about having the removed elements returned back to parent and having items set, but when removeAll is called that doesn't happen...) There is a similar problem when adding. If we don't have all the keys yet, then we will have to make the sets later during the save process. This is sort of done now via the setForeignKeyFromParentPk() method, but does it handle things the way we want? Should all adds and removes be processed during the save process (the sets, that is)?
+
+	$this->setJoinField('is_retired', 0);
+	$this->save(); // go and save joinObject.
+
+	$this->setOrderId(null);
+	$this->save();
+
+Just keep that in mind before moving the save logic to the collection.
+	
+	
+
+
+
+* Can we deprecate getGetter and getSetter?
+
+* Can we deprecate addToCollection, removeFromCollection, etc.? All that is require is to have generated calls to those function instead generate as either:
+
+	$this->getCollection($collectionName)->add($objectsOrIDs, $joinFields);
+or
+	$this->getCollectionName_Collection()->add($objectsOrIDs, $joinFields);
+
+* Remove: CoughCollection::getRandom()
+
+* Address naming conflicts (getters are generated based on schema, but we also have getters in the class, e.g. getField, getInsertFields, getModifiedFields...)
+
+* Consider putting things like '_Object' and '_Collection' as constants to a Cough class.
+	class Cough {
+		const OBJECT_SUFFIX = '_Object'; // empty string is more convenient, but only if your schema won't have naming collisions
+		const COLLECTION_SUFFIX = '_Collection'; // 's' is more convenient, but ditto.
+	}
+
+* Update generator to generate getters for primary key fields and to comply with above changes.
+
+* Solve issue with objects, i.e.
+	1. Is there a way to set an object? For example, we have a product object with null os_id and an os object pre-loaded in memory. How can we give that to the product object? Currently have to $product->setOsId($os->getOsId()); and then it will be re-pulled from the database when something tries to $product->getOs().
+
+	2. If we solve the above, go one step further and allow a single query to do this also, e.g.:
+
+		SELECT
+			product.*
+			, os.*
+		FROM
+			product
+			INNER JOIN os USING (os_id)
+		WHERE
+			product.product_id = <product_id>
+	
+	The initFields / setFields should pass on the os data... We may want to solve this by having some functions do the select conversions (os.* to `os.field1`, `os.field2`, etc.) and parse them out on DB retrieval into an associative array:
+
+		array(
+			'product' => array(
+				'field1' => 'value1',
+				'field2' => 'value2',
+			),
+			'os' => array(
+				'field1' => 'value1',
+				'field2' => 'value2',
+			),
+		)
+
+	3. If (2) is solved, make sure it works for collections because that is probably where it would be used, i.e. pulling a bunch of orders and their accounts, contacts, shipping, and billing info with one query, and instantiating all the objects in memory with that data.
+
+	4. If (3) is solved, show an example of how to create a separate collection class that extends the default and adds the extra joins. Show how you can make other objects use that collection instead of the default, in case sometimes you just want to pull some data and sometimes you want all (if you always want all you can just override the default to always pull the data). Make sure that the _checkCollection call either works with the overridden collection definitions OR that you show how to override the checkBlah_Collection method.
+
+	5. This may already be done in order to solve the above, but take a look at the join field implementation as it could be solved automatically by this (pass the join_table.field1, etc.) to the join field OBJECT. The thing that may be left to do is (1) generator should gen the object and (2) specify how many-to-many collections work. Propel uses some getRef-ish syntax.
+	
+		We might have solved this backwards?
+		
+			$product->checkOs_Collection(); // same example, but now pretend it is many-to-many.
+		
+			SELECT
+				product2os.*
+				os.*
+			...
+
+			$product->addOs(new Os($rowDataWithBoth));
+
+		If 1-3 above are solved, then it will not set join fields, but instead construct a join field object and initialize it with the values. This is good, EXCEPT: it's a little confusing... It means we could leave everything alone, actually... BUT the product object should also have a reference to the product2os object, thus the confusion. SO, the way propel solves this is just by having the product and os objects be slave to the product2os object. I'm not sure I like this as code gets a little more confusing, e.g.:
+
+
+			I'm a product. I want my Oses.
+
+			The current Cough way:
+
+				$product->getOs_Collection(); // current way = not confusing, except MAYBE how to set join fields. ($os->setJoinField could still work, but we'd probably want to DEPRECATE that and require $os->getProduct2Os_Object()->setSomeField($someValue); Keep in mind though, if you are just trying to change join field stuff you could save some queries and just change it for crying out loud:
+
+				$join = new Product2Os();
+				$join->checkByCriteria(array('product_id' => 1, 'os_id' => 2));
+				if ($join->didCheckReturnResult()) {
+					$join->setIsRetired(true);
+					$join->save();
+				}
+
+				We want to get rid of the above though...
+				
+				$join = Produt2Os::retrieveByPk(array('product_id' => 1, 'os_id' => 2));
+				if ($join) {
+					$join->setIsRetired(true);
+					$join->save();
+					// $join->delete(); // we should support this. A.S. can override the method to do nothing at AppCoughObject layer.
+				}
+			
+			The Propel way:
+
+				$osRefs = $product->getProduct2OsJoinOs();
+				$oses = array();
+				foreach ($osRefs as $osRef) {
+					$oses[] = $osRef->getOs();
+				}
+				
+
+
+$product = new Product(1); // this used to check. That functionality is now deprecated.
+
+Instead, construction does only one thing: initializes fields. There are two choices:
+
+instantiate the object with an associative array of [field_name] => [field_value] pairs OR
+
+instantiate the object with a single value as in the above example. The single value will be treated as the primary key id. For objects with a multi-field primary key, you should pass in an array.
+
+This allows you to update an items values without running two queries (SELECT & UPDATE). It's not necessarily good practice, but is a side effect of making Cough's interface more consistent.
+
+	$product = new Product(1);
+	$product->setProductName('New Name');
+	$product->save();
+
+
+
+
+
+DONE
+====
+
+* Move collections and objects into an array instead of attibutes so we have:
+	$collectionDefinitions
+	$collections
+	$objectDefinitions
+	$objects
+
+Revision 13 Commit message
+--------------------------
+
+Renamed create() to insert() (so we now have matching insert/update functions).
+Cleaned up how modifiedFields work (used to set duplicate entries in the modifiedFields array).
+Added some "@see" documentation (phpDoc).
+Cleaned up checking functions for the object. Less code, more clear, and more functionality as a side-effect.
+
+(can easily override getCheckSql to get custom SQL whereas before it required overriding defineCheckStatement AND overriding setKeyId to recall that method anytime the key was changed, etc...)
+
+Revision 14
+-----------
+
+* Split out logic for which fields get written to the database on insert and update.
+	* This solves the A.S. issue without requiring them to override the entire insert function.
+
+Revision ?
+-----------
+
+Cleaned up CoughObject::__construct() function.
+
+Removed KEYLESS collection type -- KEYED full time.
+
+Collection now does saving of objects instead of the logic living in CoughObject::save*ToManyCollection()
+
+Simplified add/remove functions.
+
+Removed getFirst, getLast, getRandom from CoughCollection (just use getPosition(); even that function is not that useful 80% of the time)
+
+Removed CoughCollection::set() (and removeAll()) functions b/c the code that will handing the removing of collection elements will exist in the parent's remove function. It's also not that useful to begin with.
+ - WRONG, it is useful. Consider this example:
+
+	You have a form field with multiple check boxes, perhaps like this:
+
+		Select Platforms: [ ] Mac [ ] Win [ ] Linux
+
+	The markup for which might look like:
+	
+		<input type="checkbox" name="platform[]" value="1" /> Mac
+		<input type="checkbox" name="platform[]" value="2" /> Win
+		<input type="checkbox" name="platform[]" value="3" /> Linux
+	
+	Next, you want to easily save the state of checked items to the related entity (a Product). The setter can be used for this:
+		
+		if (isset($_POST['platform'])) {
+			$platforms = $_POST['platform'];
+		} else {
+			$platforms = array(); // handles case when none where checked.
+		}
+		
+		$product = new Product(1);
+		$product->setOs_Collection($_POST['platform']);
+	
+	That's it!
+	
+	Now that we have proved the usefulness of the setCollection method, allow me to propose a solution. Continue to leave removeAll deprecated. Instead of having the set call removeAll and then add all the passed entities, instead have it run too loops:
+
+		// First re
+
+Added some magic method handling to CoughObject for objects, collections, and fields so that without generated functions (as long as the definitions are present) you can do:
+
+	getFieldName();
+	setFieldName($value);
+	getObjectName_Object();
+	checkObjectName_Object();
+	getCollectionName_Collection();
+	checkCollectionName_Collection();
+	addObjectName($objectOrId, $joinFields); -- adds to the 'object_name' collection
+	removeObjectName($objectOrId); -- removes from the 'object_name' collection
+
+
+WHATS LEFT should be:
+
+* Enhance "collector" behavior:
+	CoughCollection::setCollectingObjectName('order');
+	CoughCollection::setCollector($this);
+	CoughObject::setCollectingObjectName($this->getCollectingObjectName());
+	CoughObject::setCollector($this);
+		$this->objects[$this->getCollectingObjectName()] = $collector;
+	
+	* Notice no calls to setOrder. If we just didn't want to go through work of finding the method name, neverfear, for setObject('order', $collector) is here.
+
+* Enhance join fields handling via generated objects.
+
+* Clean up definitions arrays (how does Propel do it?) Or just update the generator and forget about it.
+
+
+
+
+
+
+
+
+GenieCough - Great Power, little bitty living space.
+GenieCough - Great Power, Small Footprint.
