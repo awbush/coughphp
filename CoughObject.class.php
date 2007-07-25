@@ -561,7 +561,7 @@ abstract class CoughObject {
 	 **/
 	public function setFields($fields) {
 		foreach ( $fields as $fieldName => $fieldValue ) {
-			if (isset($this->fields[$fieldName])) {
+			if (array_key_exists($fieldName, $this->fields)) {
 				$this->setField($fieldName, $fieldValue);
 			} else if (($pos = strpos($fieldName, '.')) !== false) {
 				// custom field
@@ -1012,6 +1012,7 @@ abstract class CoughObject {
 	 *
 	 * @return boolean
 	 * @author Anthony Bush
+	 * @todo Determine whether we need to switch to array_key_exists here. Depends on whether we set the value to null (in which case yes) or an empty object (in which case no) when the object is checked, but not found in the database.
 	 **/
 	protected function isObjectChecked($objectName) {
 		return isset($this->objects[$objectName]);
