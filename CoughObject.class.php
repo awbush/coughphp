@@ -706,7 +706,6 @@ abstract class CoughObject {
 	 * Provides a way to `check` by custom SQL.
 	 *
 	 * @param string $sql - custom SQL to use during the check
-	 * @param boolean $allowManyRows - set to true if you want to initialize from a record even if there was more than one record returned.
 	 * @return boolean - true if initialized object with data, false otherwise.
 	 * @author Anthony Bush
 	 **/
