@@ -78,5 +78,60 @@ constructByFields
 			break;
 		}
 	}
+
+
+More talk (2007-07-25)
+----------------------
+
+What if we say as a rule the only "check"/"load" methods that exist ARE static methods? This means __construct should only initialize any values passed in and should not run any checks, even if the value is a single id. We can then remove all the check/load methods, basically changing each of them to be a static method. Then we only need the dbName/tableName/pkFieldNames to be static? Actually, those values could be hard-coded in the generated static methods, e.g.:
+
+	public static function constructByKey($idOrHash) {
+		if (is_array($idOrHash)) {
+			return self::constructByCriteria($idOrHash);
+		} else {
+			$hash = array();
+			foreach (self::$pkFieldNames as $pkFieldName) {
+				$hash[$pkFieldName] = $idOrHash;
+			}
+			return self::constructByCriteria($hash);
+		}
+	}
+
+	/**
+	 * Provides a way to `check` by an array of "key" => "value" pairs.
+	 *
+	 * @param array $where - an array of "key" => "value" pairs to search for
+	 * @param boolean $additionalSql - add ORDER BYs and LIMITs here.
+	 * @return mixed - the initialized object if found, null otherwise.
+	 * @author Anthony Bush
+	 **/
+	public static function constructByCriteria($where = array(), $additionalSql = '') {
+		$db = DatabaseFactory::getDatabase(self::$dbName);
+		if ( ! empty($where)) {
+			$sql = 'SELECT * FROM ' . self::$dbName . '.' . self::$tableName
+			     . ' ' . $db->generateWhere($where) . ' ' . $additionalSql;
+			return self::constructBySql($sql);
+		}
+		return null;
+	}
 	
+	/**
+	 * Provides a way to `check` by custom SQL.
+	 *
+	 * @param string $sql - custom SQL to use during the check
+	 * @return mixed - the initialized object if found, null otherwise.
+	 * @author Anthony Bush
+	 **/
+	public static function constructBySql($sql) {
+		$db = DatabaseFactory::getDatabase(self::$dbName);
+		$result = $db->query($sql);
+		if ($row = $result->getRow()) {
+			return self::constructByFields($row);
+		} else {
+			return null;
+		}
+	}
 	
+	public static function constructByFields($fields) {
+		return new ConcreteClassName($fields);
+	}
