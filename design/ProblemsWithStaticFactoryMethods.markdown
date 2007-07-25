@@ -26,3 +26,57 @@ These problems can be fixed if we want to make the generation a required part of
 
 The idea is that in the above example  we can remove the protected static $dbName = null; from CoughObject and it will work. Extending TestObject and trying to change the dbName will be considered invalid, and bad practice. To have to simpilar objects on different databases the desired thing would be to make TestObject abstract, remove the protected static $dbName = 'test_db_name'; and write two new classes, TestObjectA and TestObjectB that each set the dbName to what they each need.
 
+
+
+
+
+Another Solution (2007-07-25)
+-----------------------------
+
+We can leave the existing check/load methods in place and have the static methods call them... Note that this is somewhat inefficient because in the default case of constructByKey we construct two objects in memory, discarding one. Collections will not be effected by this, but simple stuff will:
+
+	$ticket = Ticket::construct($id);
+
+construct
+constructByKey
+constructByFields
+
+	public static function construct($idOrFields) {
+		if (is_array($idOrFields)) {
+			return self::constructByFields($idOrFields);
+		} else {
+			return self::constructByKey($idOrFields);
+		}
+	}
+	
+	public static function constructByKey($idOrHash) {
+		// We need to run SQL to get it... Only other way is to do this:
+		$obj = new ConcreteClassName($idOrHash);
+		if (is_array($idOrHash)) {
+			$obj->load();
+		} else {
+			// don't need to load if we keep the object autoloading when a non-array value is passed.
+		}
+		// now discard the object we just created and pass controll to constructByFields:
+		return self::constructByFields($obj->getFields());
+	}
+	
+	public static function constructByFields($hash) {
+		// DEFAULT:
+		return new ConcreteClassName($hash); // note that we are saying the generator must provide this method because it won't work otherwise, i.e. class name is not available from within a static method call.
+		
+		// POSSIBLE OVERRIDEN BEHAVIOR.
+		switch ($hash['type']) {
+			case 'type_one':
+				return new TypeOne($hash);
+			break;
+			case 'type_two':
+				return new TypeTwo($hash);
+			break;
+			default:
+				return new ConcreteClassName($hash);
+			break;
+		}
+	}
+	
+	
