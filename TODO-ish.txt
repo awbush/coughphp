@@ -370,7 +370,32 @@ Removed CoughCollection::set() (and removeAll()) functions b/c the code that wil
 	
 	Now that we have proved the usefulness of the setCollection method, allow me to propose a solution. Continue to leave removeAll deprecated. Instead of having the set call removeAll and then add all the passed entities, instead have it run too loops:
 
-		// First re
+		// (I've written this somewhere else, BTW):
+		
+		public function set($idsOrObjects) {
+			// First remove 
+			foreach ($this as $elementId => $element) {
+				if (isset($idsOrObjects[$elementId] || in_array($elementId, $idsOrObjects)) {
+					// keep it
+				} else {
+					$this->remove($elementId);
+				}
+			}
+
+			// Next Add
+			foreach ($idsOrObjects as $key => $value) {
+				if ($value instanceof CoughObject) {
+					if (!$this->offsetExists($value->getKeyId())) {
+						$this->add($value);
+					}
+				} else {
+					if (!$this->offsetExists($value)) {
+						$this->add($value);
+					}
+				}
+			}
+		}
+		
 
 Added some magic method handling to CoughObject for objects, collections, and fields so that without generated functions (as long as the definitions are present) you can do:
 
