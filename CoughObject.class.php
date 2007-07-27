@@ -46,9 +46,9 @@ abstract class CoughObject {
 	 * Format of "field_name" => attributes
 	 *
 	 * @var array
-	 * @deprecated in core cough, use the $fields array to specified which fields are allowed (in addition to their default values)
+	 * @todo Tom: Why?
 	 **/
-	// protected $fieldDefinitions = array();
+	protected $fieldDefinitions = array();
 
 	/**
 	 * An array of all the currently initialized or set fields.
@@ -57,6 +57,7 @@ abstract class CoughObject {
 	 *
 	 * @var array
 	 * @see getField(), getFields(), getFieldsWithoutPk(), setField(), setFields()
+	 * @todo Tom: Why?
 	 **/
 	protected $fields = array();
 
@@ -224,7 +225,7 @@ abstract class CoughObject {
 					// $joinTableName = substr($fieldName, 0, $pos);
 					$joinFieldName = substr($fieldName, $pos + 1);
 					$this->joinFields[$joinFieldName] = $fieldValue;
-				} else {
+				} else if (array_key_exists($fieldName, $this->derivedFields)) {
 					$this->setDerivedField($fieldName, $fieldValue);
 				}
 			}
@@ -281,8 +282,8 @@ abstract class CoughObject {
 	public function __clone() {
 		// Reset all attributes of the cloned object, except any non-primary key field.
 		$className = get_class($this);
-		$clone = new $className();
-		foreach ($clone as $key => $value) {
+		$freshObject = new $className();
+		foreach ($freshObject as $key => $value) {
 			if ($key != 'fields') {
 				$this->$key = $value;
 			}
@@ -1454,6 +1455,18 @@ abstract class CoughObject {
 		return preg_replace('/_i_d$/', '_id', strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedString)));
 	}
 	
+	// returns object to it's own state, except what you want to keep.
+	// why: by default empties everything, overriden version only empties yours
+	// enervate() // deflate ? -- clone will probably call this
+	public function deflate() {
+		// Reset all attributes.
+		$className = get_class($this);
+		$freshObject = new $className();
+		foreach ($freshObject as $key => $value) {
+			$this->$key = $value;
+		}
+	}
+	// invigorate() // inflate ? initFields on steriods -- full constructor code here... constructor will call this.
 }
 
 

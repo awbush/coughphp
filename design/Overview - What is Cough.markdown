@@ -28,6 +28,41 @@ ORM / Model: Cough
 }
 
 
+
+
+
+
+
+
+
+
+Make this clear
+---------------
+
+Basically, some marketing things for the web site.
+
+* Rules of OO programming
+
+* High performance
+	* Will not do needless checks
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### 1. Getting/Setting Fields ###
 get<field>() // gets the field. easy to override.
 set<field>($value) // sets the field and toggles a modified flag so that save works. easy to override
