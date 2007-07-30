@@ -12,32 +12,6 @@
  * @package CoughPHP
  **/
 abstract class CoughObject {
-	
-	/**
-	 * Stores validation errors set by `validateData` function.
-	 * 
-	 * Format of "field_name" => "Error Text"
-	 *
-	 * @var array
-	 * @see clearValidationErrors()
-	 **/
-	protected $validationErrors = array();
-	
-	/**
-	 * Keep track of whether or not data has been validated.
-	 *
-	 * @var boolean
-	 * @see clearValidationErrors()
-	 **/
-	protected $validatedData = false;
-
-	/**
-	 * Stores wether or not a check returned a row from the database.
-	 *
-	 * @var boolean
-	 * @see didCheckReturnResult()
-	 **/
-	protected $checkReturnedResult = null;
 
 	/**
 	 * An array of all the columns in the database, including the primary key
@@ -46,9 +20,78 @@ abstract class CoughObject {
 	 * Format of "field_name" => attributes
 	 *
 	 * @var array
+	 * @see defineFields()
 	 * @todo Tom: Why?
 	 **/
 	protected $fieldDefinitions = array();
+	
+	/**
+	 * The primary key field names
+	 *
+	 * Override in sub class.
+	 * 
+	 * @var array
+	 * @see getPkFieldNames(), getPk(), defineFields()
+	 **/
+	protected $pkFieldNames = array();
+	
+	/**
+	 * An array of derived field definitions
+	 * 
+	 * Format of "derived_field_name" => attributes
+	 *
+	 * @var array
+	 * @see defineDerivedFields()
+	 **/
+	protected $derivedFieldDefinitions = array();
+	
+	/**
+	 * An array of all the collections and their attributes.
+	 *
+	 * The information is used by CoughObject to write SQL queries,
+	 * among other things.
+	 *
+	 * Format of "collection_name" => array of attributes
+	 *
+	 * @todo Document that array of attributes. For now just look at the
+	 * woc_Product_Generated class (at the defineCollections() function).
+	 *
+	 * @var array
+	 **/
+	protected $collectionDefinitions = array();
+	
+	/**
+	 * An array of all the objects and their attributes.
+	 *
+	 * The information is used by CoughObject to instantiate and check the
+	 * objects.
+	 *
+	 * Format of [objectName] => [array of attributes]
+	 *
+	 * TODO: Document that array of attributes. For now just look at the
+	 * woc_Product_Generated class (at the defineObjects() function).
+	 *
+	 * @var array
+	 **/
+	protected $objectDefinitions = array();
+	
+	/**
+	 * The name of the database the table is in.
+	 * 
+	 * Override in sub class.
+	 * 
+	 * @var string
+	 **/
+	protected $dbName = null;
+	
+	/**
+	 * The name of table the object maps to.
+	 *
+	 * Override in sub class.
+	 * 
+	 * @var string
+	 **/
+	protected $tableName;
 
 	/**
 	 * An array of all the currently initialized or set fields.
@@ -76,87 +119,17 @@ abstract class CoughObject {
 	 * Format of "derived_field_name" => value
 	 *
 	 * @var array
-	 * @see getDerivedField(), setDerivedField()
+	 * @see getDerivedField(), setDerivedField(), defineDerivedFields()
 	 **/
 	protected $derivedFields = array();
-
-	/**
-	 * The primary key field names
-	 *
-	 * Override in sub class.
-	 * 
-	 * @var array
-	 * @see getPkFieldNames(), getPk()
-	 **/
-	protected $pkFieldNames = array();
-
-	/**
-	 * The name of the database the table is in.
-	 * 
-	 * Override in sub class.
-	 * 
-	 * @var string
-	 **/
-	protected $dbName = null;
-
-	/**
-	 * The name of table the object maps to.
-	 *
-	 * Override in sub class.
-	 * 
-	 * @var string
-	 **/
-	protected $tableName;
-	
-	/**
-	 * An array of all the collections and their attributes.
-	 *
-	 * The information is used by CoughObject to write SQL queries,
-	 * among other things.
-	 *
-	 * Format of "collection_name" => array of attributes
-	 *
-	 * @todo Document that array of attributes. For now just look at the
-	 * woc_Product_Generated class (at the defineCollections() function).
-	 *
-	 * @var array
-	 **/
-	protected $collectionDefinitions = array();
 	
 	/**
 	 * An array of all the checked collections in form [collectionName] => [CoughCollection]
 	 * 
 	 * @var array
-	 * @see getCollection(), checkCollection(), saveCheckedCollections()
+	 * @see getCollection(), checkCollection(), saveCheckedCollections(), isCollectionChecked()
 	 **/
 	protected $collections = array();
-	
-	/**
-	 * An array of all the currently checked/populated collections.
-	 *
-	 * A collection that has not populated will not be be in the array at all.
-	 *
-	 * Format of "collection_name" => true
-	 *
-	 * @var string
-	 * @see isCollectionChecked()
-	 **/
-	protected $checkedCollections = array();
-
-	/**
-	 * An array of all the objects and their attributes.
-	 *
-	 * The information is used by CoughObject to instantiate and check the
-	 * objects.
-	 *
-	 * Format of [objectName] => [array of attributes]
-	 *
-	 * TODO: Document that array of attributes. For now just look at the
-	 * woc_Product_Generated class (at the defineObjects() function).
-	 *
-	 * @var array
-	 **/
-	protected $objectDefinitions = array();
 	
 	/**
 	 * An array of all the checked objects in form [objectName] => [CoughObject]
@@ -184,6 +157,32 @@ abstract class CoughObject {
 	protected $isPreknownKeyIdSet = false;
 
 	/**
+	 * Stores wether or not a check returned a row from the database.
+	 *
+	 * @var boolean
+	 * @see didCheckReturnResult()
+	 **/
+	protected $checkReturnedResult = null;
+	
+	/**
+	 * Stores validation errors set by `validateData` function.
+	 * 
+	 * Format of "field_name" => "Error Text"
+	 *
+	 * @var array
+	 * @see clearValidationErrors()
+	 **/
+	protected $validationErrors = array();
+	
+	/**
+	 * Keep track of whether or not data has been validated.
+	 *
+	 * @var boolean
+	 * @see clearValidationErrors()
+	 **/
+	protected $validatedData = false;
+
+	/**
 	 * Stores any custom join fields if passed into the constructor.
 	 *
 	 * @var string
@@ -205,7 +204,7 @@ abstract class CoughObject {
 	 * @param $fieldsOrID - initializes the object with the fields or id (does not query the database)
 	 * @return void
 	 **/
-	public function __construct($fieldsOrID = array()) {
+	public function __construct($fieldsOrID = array(), $relatedEntities = array()) {
 		// before chaining to construct, make sure you override initializeDefinitions() within the subclass
 		//	and then invoke initializeDefinitions() in the constructor method.
 		$this->initializeDefinitions();
@@ -214,37 +213,11 @@ abstract class CoughObject {
 		$this->db = DatabaseFactory::getDatabase($this->dbName);
 		$this->db->selectDb($this->dbName);
 		
-		if (is_array($fieldsOrID)) {
-			foreach ($fieldsOrID as $fieldName => $fieldValue) {
-				// This next check has to either be array_key_exists($fieldName, $this->fields)
-				// or isset($this->fieldDefinitions[$fieldName])...
-				if (array_key_exists($fieldName, $this->fields)) {
-					$this->fields[$fieldName] = $fieldValue;
-				} else if (($pos = strpos($fieldName, '.')) !== false) {
-					// custom field
-					// $joinTableName = substr($fieldName, 0, $pos);
-					$joinFieldName = substr($fieldName, $pos + 1);
-					$this->joinFields[$joinFieldName] = $fieldValue;
-				} else if (array_key_exists($fieldName, $this->derivedFields)) {
-					$this->setDerivedField($fieldName, $fieldValue);
-				}
-			}
-		} else if ($fieldsOrID != '') {
-			foreach ($this->getPkFieldNames() as $fieldName) {
-				$this->fields[$fieldName] = $fieldsOrID;
-			}
-		}
+		// Initialize fields and related entities
+		$this->inflate($fieldsOrID, $relatedEntities);
 		
+		// Allow post construction specific code
 		$this->finishConstruction();
-	}
-	
-	/**
-	 * Called at the end of __construct(). Override for special construction
-	 * behavior that is dependent on the object's state.
-	 * 
-	 * @return void
-	 **/
-	protected function finishConstruction() {
 	}
 	
 	/**
@@ -257,18 +230,57 @@ abstract class CoughObject {
 	 * @return void
 	 **/
 	protected function initializeDefinitions() {
+		$this->defineDbConfig();
+		$this->defineFields();
+		$this->defineDerivedFields();
 		$this->defineObjects();
 		$this->defineCollections();
 	}
 	
-	protected function defineObjects() {
-		// override this in subclass if the subclass possesses objects
-	}
-	
-	protected function defineCollections() {
-		// override this in subclass if the subclass possesses collections
-	}
+	/**
+	 * Override in sub-class to set $dbName and $tableName via code.
+	 *
+	 * @return void
+	 **/
+	protected function defineDbConfig() {}
 
+	/**
+	 * Override in sub-class to define fields the object possesses, including
+	 * $pkFieldNames.
+	 * 
+	 * @return void
+	 **/
+	protected function defineFields() {}
+	
+	/**
+	 * Override in sub-class to define derived fields the object may possess.
+	 * 
+	 * @return void
+	 **/
+	protected function defineDerivedFields() {}
+
+	/**
+	 * Override in sub-class to define objects the object possesses.
+	 *
+	 * @return void
+	 **/
+	protected function defineObjects() {}
+	
+	/**
+	 * Override in sub-class to define collections the object possesses.
+	 *
+	 * @return void
+	 **/
+	protected function defineCollections() {}
+	
+	/**
+	 * Called at the end of __construct(). Override for special construction
+	 * behavior that is dependent on the object's state.
+	 * 
+	 * @return void
+	 **/
+	protected function finishConstruction() {}
+	
 	/**
 	 * Clone only the non-primary key fields.
 	 * 
@@ -302,9 +314,6 @@ abstract class CoughObject {
 	 * same type and have the same field values (excluding the primary key).
 	 * 
 	 * Feel free to override this in sub classes for customized comparison.
-	 * 
-	 * TODO: If PHP ever provides a `operator==` overload function, have it
-	 * call this as well so we can do $object1 == $object2 and have it work.
 	 * 
 	 * @return boolean
 	 * @author Anthony Bush
@@ -548,8 +557,8 @@ abstract class CoughObject {
 	 * @return void
 	 **/
 	public function setField($fieldName, $value) {
-		$this->fields[$fieldName] = $value;
 		$this->setModifiedField($fieldName);
+		$this->fields[$fieldName] = $value;
 	}
 	
 	/**
@@ -559,10 +568,11 @@ abstract class CoughObject {
 	 * 
 	 * @param array $fields - format of [field_name] => [new_value]
 	 * @return void
+	 * @todo Anthony: Make this like inflate? -- make it recursive, e.g. if 'account' => array('name' => 'Bob') is passed in, then do getObject('account')->setFields(array('name' => 'Bob')); OR maybe we need setFieldsIfDifferent(array('name' => array('new' => 'Bob', 'old' => 'Fred')))
 	 **/
 	public function setFields($fields) {
 		foreach ( $fields as $fieldName => $fieldValue ) {
-			if (array_key_exists($fieldName, $this->fields)) {
+			if (isset($this->fieldDefinitions[$fieldName])) {
 				$this->setField($fieldName, $fieldValue);
 			} else if (($pos = strpos($fieldName, '.')) !== false) {
 				// custom field
@@ -771,22 +781,30 @@ abstract class CoughObject {
 	 * @return void
 	 **/
 	protected function setModifiedField($fieldName) {
-		$this->modifiedFields[$fieldName] = true;
+		$this->modifiedFields[$fieldName] = $this->getField($fieldName);
 	}
 
 	/**
 	 * Get a list of all of this object's modified values.
 	 *
-	 * @return associative array - all modified values in [field_name] => [field_value] form
+	 * @return associative array - all modified values in [field_name] => [old_value] form
 	 **/
 	protected function getModifiedFields() {
-		$fields = array();
-		foreach ($this->modifiedFields as $fieldName => $isModified) {
-			if ($isModified) {
-				$fields[$fieldName] = $this->getField($fieldName);
-			}
+		return $this->modifiedFields;
+	}
+	
+	/**
+	 * Returns whether or not there are modified fields.
+	 *
+	 * @return void
+	 * @author Anthony Bush
+	 **/
+	public function hasModifiedFields() {
+		if (!empty($this->modifiedFields)) {
+			return true;
+		} else {
+			return false;
 		}
-		return $fields;
 	}
 	
 	/**
@@ -932,7 +950,11 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function getInsertFields() {
-		return $this->getModifiedFields();
+		$fields = array();
+		foreach ($this->getModifiedFields() as $fieldName => $oldValue) {
+			$fields[$fieldName] = $this->getField($fieldName);
+		}
+		return $fields;
 	}
 	
 	/**
@@ -958,11 +980,30 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function getUpdateFields() {
-		return $this->getModifiedFields();
+		$fields = array();
+		foreach ($this->getModifiedFields() as $fieldName => $oldValue) {
+			$fields[$fieldName] = $this->getField($fieldName);
+		}
+		return $fields;
 	}
 	
 	/**
 	 * Deletes the record from the database, if hasKeyId returns true.
+	 * 
+	 * Override this for special delete functionality. For example, if an object
+	 * should never be deleted, but instead just retired, then override this
+	 * to look like:
+	 * 
+	 *     $this->setIsRetired(true);
+	 *     $this->save();
+	 * 
+	 * Then just make sure the load queries include is_retired = 0 in the WHERE
+	 * clause so that the item is not pulled from the database (i.e. it appears
+	 * deleted, but the data is still there for historical reference/backup.)
+	 * 
+	 * Usually, the coder will be the only one to call delete, but Cough will
+	 * call it on join objects when removing objects in a many-to-many
+	 * collection.
 	 *
 	 * @return boolean - whether or not the delete was executed.
 	 * @author Anthony Bush
@@ -1216,6 +1257,22 @@ abstract class CoughObject {
 		}
 	}
 	
+	// TODO: Keep this and delete the above?
+	protected function saveJoinData() {
+		$joinObj = $this->getJoinObject();
+		if (!$joinObj->hasKeyId()) {
+			// "new"
+			$joinObj->setJoinFields($this->getPk());
+			$joinObj->setJoinFields($this->getCollector()->getPk());
+			$joinObj->save(); // NOTE: previous join field saving did "insertOnDupUpdate" in case of join collisions when there are is no PK on a join table (we don't have to worry about it if we are just going to require that tables have a PK, otherwise the save method should take an option to allow ON DUPLICATE KEY UPDATE functionality)
+		} else if ($joinObj->hasModifiedFields()) {
+			// not "new"
+			$joinObj->setJoinFields($this->getPk());
+			$joinObj->setJoinFields($this->getCollector()->getPk());
+			$joinObj->save(); // NOTE: previous join field saving constructed a special WHERE clause (again to ensure join data is saved when there is no PK on the join table)...
+		}
+	}
+	
 	/**
 	 * Validates data stored in the model. It is called automatically by `save`,
 	 * which will return false if this function sets any errors.
@@ -1455,9 +1512,13 @@ abstract class CoughObject {
 		return preg_replace('/_i_d$/', '_id', strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedString)));
 	}
 	
-	// returns object to it's own state, except what you want to keep.
-	// why: by default empties everything, overriden version only empties yours
-	// enervate() // deflate ? -- clone will probably call this
+	/**
+	 * Returns object to it's own state, except what you want to keep. By
+	 * default it empties everything; overridden version only empties yours.
+	 *
+	 * @return void
+	 * @todo Tom: Why this function? (provide good example)
+	 **/
 	public function deflate() {
 		// Reset all attributes.
 		$className = get_class($this);
@@ -1466,7 +1527,71 @@ abstract class CoughObject {
 			$this->$key = $value;
 		}
 	}
-	// invigorate() // inflate ? initFields on steriods -- full constructor code here... constructor will call this.
+	
+	/**
+	 * Inflate/Invigorate
+	 *
+	 * @return void
+	 **/
+	public function inflate($fieldsOrId = array(), $relatedEntities = array()) {
+		if (is_array($fieldsOrID)) {
+			$joins = array();
+			foreach ($fieldsOrID as $fieldName => $fieldValue) {
+				if (is_array($fieldValue)) {
+					// field is data for a related object
+					$this->inflateOject($fieldName, $fieldValue, $fieldsOrID);
+				} else if (isset($this->fieldDefinitions[$fieldName])) {
+					// field is part of this object's fields
+					$this->fields[$fieldName] = $fieldValue;
+				} else if (isset($this->derivedFieldDefinitions[$fieldName])) {
+					// field is a derived field for this object
+					$this->setDerivedField($fieldName, $fieldValue);
+				} else if (($pos = strpos($fieldName, '.')) !== false) {
+					// join data
+					$joinTableName = substr($fieldName, 0, $pos);
+					$joinFieldName = substr($fieldName, $pos + 1);
+					$joins[$joinTableName][$joinFieldName] = $fieldValue;
+					// $this->joinFields[$joinFieldName] = $fieldValue;
+				}
+			}
+			// Construct objects using any join data passed in...
+			foreach ($joins as $joinTableName => $joinFields) {
+				$this->inflateOject($joinTableName, $joinFields, $joins);
+			}
+
+		} else if ($fieldsOrID != '') {
+			// an id was given
+			foreach ($this->getPkFieldNames() as $fieldName) {
+				$this->fields[$fieldName] = $fieldsOrID;
+			}
+			// TODO: Tom: To load or not to load automatically?
+			$this->check();
+		}
+		
+		// Set related entities that were passed in
+		foreach ($relatedEntities as $name => $value) {
+			if (isset($this->objectDefinitions[$name])) {
+				$this->setObject($name, $value);
+			} else if (isset($this->collectionDefinitions[$name])) {
+				$this->setCollection($name, $value); // TODO: Anthony: Make sure this doesn't conflict with other set for collections...
+			}
+		}
+		
+	}
+	
+	protected function inflateObject($objectName, $objectData, &$additionalData = array()) {
+		if (isset($this->objectDefinitions[$objectName])) {
+			// append to the object data any additional object data that isn't part of this object.
+			foreach ($additionalData as $objectName2 => $objectData2) {
+				if (is_array($objectData2) && !isset($this->objectDefinitions[$objectName2])) {
+					$objectData[$objectName2] = $objectData2;
+				}
+			}
+			// set the related object
+			$this->setObject($objectName, new $this->objectDefinitions[$objectName]['class_name']($objectData));
+		}
+		
+	}
 }
 
 
