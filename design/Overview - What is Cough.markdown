@@ -133,10 +133,22 @@ Okay, so what about adding?
 	$person = Person(1);
 	$person->addSchoolRating($schoolRatingId); // makes no sense, we have no PK yet.
 	$person->addSchoolRating($schoolId, $rating); // ?
-	$person->addSchoolRating(array('school_id' => $schoolId, 'rating' => 0)); // ?
 	$person->addSchoolRating($schoolId, $joinFields = array('rating' => 0)); // ?
 	?>
+
+The above is confusing... The correct way to do it is the same as with one-to-many collections (basically everything is a "one-to-many" unless it is the direct access "many-to-many")
+
+	<?php
+	$person = Person(1);
+	// Prototype: addSchoolRating($schoolRatingFields_or_schoolRatingObject);
+	$person->addSchoolRating(array('school_id' => $schoolId, 'rating' => 0)); // ?
 	
+	$schoolRating = new SchoolRating();
+	$schoolRating->setSchoolId($schoolId);
+	$schoolRating->setRating(0);
+	$person->addSchoolRating($schoolRating);
+	?>
+
 
 Okay, so how is adding join name confusing (i.e. why did we go the route that causes naming conflicts)? Well, consider the data model:
 
