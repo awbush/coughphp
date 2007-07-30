@@ -142,3 +142,8 @@ The hash data might look like:
 
 		$ticket = Ticket::construct($hash); // will switch through the hash to figure out with type of object to return, an Order or a Quote.
 
+
+Accessing Join attributes (this is collection-related topic)
+-------------------------
+
+Need to standardize the way of accessing join fields.
