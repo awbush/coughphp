@@ -571,15 +571,10 @@ abstract class CoughObject {
 	 * @todo Anthony: Make this like inflate? -- make it recursive, e.g. if 'account' => array('name' => 'Bob') is passed in, then do getObject('account')->setFields(array('name' => 'Bob')); OR maybe we need setFieldsIfDifferent(array('name' => array('new' => 'Bob', 'old' => 'Fred')))
 	 **/
 	public function setFields($fields) {
-		foreach ( $fields as $fieldName => $fieldValue ) {
+		foreach ($fields as $fieldName => $fieldValue) {
 			if (isset($this->fieldDefinitions[$fieldName])) {
 				$this->setField($fieldName, $fieldValue);
-			} else if (($pos = strpos($fieldName, '.')) !== false) {
-				// custom field
-				// $joinTableName = substr($fieldName, 0, $pos);
-				$joinFieldName = substr($fieldName, $pos + 1);
-				$this->setJoinField($joinFieldName, $fieldValue);
-			} else {
+			} else if (isset($this->derivedFieldDefinitions[$fieldName])) {
 				$this->setDerivedField($fieldName, $fieldValue);
 			}
 		}
