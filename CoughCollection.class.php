@@ -310,9 +310,9 @@ abstract class CoughCollection extends ArrayObject {
 		
 		// Add the object to the collection
 		if ($object->hasKeyId()) {
-			$this->append($object);
-		} else {
 			$this->offsetSet($object->getKeyId(), $object);
+		} else {
+			$this->append($object);
 		}
 	}
 	
