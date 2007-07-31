@@ -239,7 +239,7 @@ abstract class CoughCollection extends ArrayObject {
 			if (!$element->hasKeyId()) {
 				$element->save();
 				$this->offsetUnset($key);
-				$this->offsetSet($key, $element);
+				$this->offsetSet($element->getKeyId(), $element);
 			} else {
 				$element->save();
 			}
