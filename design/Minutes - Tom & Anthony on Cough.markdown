@@ -74,13 +74,15 @@ NEW COUGH FUNCTIONALITY
 Action Items For Anthony
 ------------------------
 
-* Write deflate and inflate
+* DONE: Write deflate and inflate
 	* nothing in Cough calls deflate, not even clone. It's there for user... TODO: Tom: Write usage examples
 	* inflate called by constructor (2 params).
-* Write fieldDefinitions usage (and define function)
-* Write derivedFieldDefintions usage (ditto)
-* Put back defineDbConfig() // dbName and tableName + the @todo why
-* Change constructor to include an optional second parameter $relatedEntities (just pass it on to infalte)
+* DONE: Write fieldDefinitions usage (and define function)
+	* TODO: What is format? (needed for generator)
+* DONE: Write derivedFieldDefintions usage (ditto)
+	* TODO: What is format?
+* DONE: Put back defineDbConfig() // dbName and tableName + the @todo why
+* DONE: Change constructor to include an optional second parameter $relatedEntities (just pass it on to infalte)
 * Put `@todo Tom: Why this design decision?` sections where we made decisions that others might not understand
 * We should be able to get rid of all the *join* functions in CoughObject since we will be generating a CoughObject and CoughCollection class for all those... Problem is with direct collection access, e.g.
 
