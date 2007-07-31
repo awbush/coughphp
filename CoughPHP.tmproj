@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>design/Overview - What is Cough.markdown</string>
+	<string>CoughObject.class.php</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -26,28 +26,60 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>65</integer>
+				<integer>35</integer>
 				<key>line</key>
-				<integer>86</integer>
+				<integer>304</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>69</integer>
+			<integer>177</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>13</integer>
+				<key>line</key>
+				<integer>304</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>35</integer>
+				<key>line</key>
+				<integer>304</integer>
+			</dict>
 		</dict>
 		<key>CoughObject.class.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>21</integer>
+				<integer>28</integer>
 				<key>line</key>
-				<integer>93</integer>
+				<integer>1105</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>557</integer>
+			<integer>1091</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>16</integer>
+				<key>line</key>
+				<integer>1105</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>28</integer>
+				<key>line</key>
+				<integer>1105</integer>
+			</dict>
 		</dict>
 		<key>design/Cough API.markdown</key>
 		<dict>
@@ -89,7 +121,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>109</integer>
+			<integer>116</integer>
 		</dict>
 		<key>sample-app/index.php</key>
 		<dict>
