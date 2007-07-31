@@ -1,7 +1,7 @@
 <?php
 // include_once('load.inc.php');
 // 
-// $server = new MysqlServer('127.0.0.1', 'root', '4Ri&uqE6');
+// $server = new MysqlServer('127.0.0.1', 'nobody', '');
 // $server->loadDatabase('mediapc');
 // 
 // $schemaGenerator = new CoughSchemaGenerator();
