@@ -27,6 +27,10 @@ class AbstractColumn {
 	public function isPrimaryKey() {
 		return $this->isPrimaryKey;
 	}
+	public function getTable() {
+		return $this->table;
+	}
+	
 }
 
 ?>

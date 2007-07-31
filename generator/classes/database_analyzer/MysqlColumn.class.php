@@ -2,17 +2,13 @@
 
 class MysqlColumn extends AbstractColumn {
 	protected $columnDef = null;
-	protected $table = null;
 	
 	public function __construct($columnDef, $table = null) {
+		$this->table = $table;
 		$this->columnDef = $columnDef;
 		if (is_array($columnDef) && isset($columnDef['Field'])) {
 			$this->parseShowColumnDef();
 		}
-	}
-	
-	public function getTable() {
-		return $this->table;
 	}
 	
 	/**
