@@ -55,8 +55,8 @@ $config = array(
 	// All databases will be scanned unless specified in the 'databases' parameter.
 	'dsn' => array(
 		'host' => 'localhost',
-		'user' => 'root',
-		'pass' => '4Ri&uqE6',
+		'user' => 'nobody',
+		'pass' => '',
 		'port' => 3306,
 		
 		// Now, we can override the global config on a per database level.
