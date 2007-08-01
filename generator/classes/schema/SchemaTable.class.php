@@ -14,6 +14,18 @@ class SchemaTable {
 	protected $tableName = null;
 	protected $columns = array();
 	
+	/**
+	 * Format of
+	 * array(
+	 *     'local_key' => array('col_name1'[, 'col_name2']*),
+	 *     'ref_table' => 'ref_table_name',
+	 *     'ref_key' => array('ref_col_name1'[, 'ref_col_name2']*)
+	 * )
+	 *
+	 * @var array
+	 **/
+	protected $foreignKeys = array();
+	
 	// Getters
 	
 	public function getDatabase() {
@@ -46,6 +58,10 @@ class SchemaTable {
 		return $primaryKey;
 	}
 	
+	public function getForeignKeys() {
+		return $this->foreignKeys;
+	}
+	
 	// Setters
 	
 	public function setDatabase($database) {
@@ -58,6 +74,21 @@ class SchemaTable {
 	
 	public function addColumn($column) {
 		$this->columns[$column->getColumnName()] = $column;
+	}
+	
+	/**
+	 * Add a foreign key hash to the table.
+	 * 
+	 * @return void
+	 * @throws Exception
+	 * @see $foreignKeys
+	 **/
+	public function addForeignKey($foreignKey) {
+		if (isset($foreignKey['local_key']) && isset($foreignKey['ref_table']) && isset($foreignKey['ref_key'])) {
+			$this->foreignKeys[] = $foreignKey;
+		} else {
+			throw new Exception('First argument must be a foreign key (hash) containing local_key, ref_table, and ref_key. See documentation for SchemaTable::$foreignKeys.');
+		}
 	}
 	
 }

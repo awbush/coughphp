@@ -19,9 +19,8 @@ class MysqlTable extends SchemaTable implements DriverTable {
 	}
 	
 	public function loadColumns() {
-		$sql = 'SHOW COLUMNS FROM `' . $this->tableName . '`';
+		$sql = 'SHOW COLUMNS FROM `' . $this->getTableName() . '`';
 		$result = $this->query($sql);
-		$this->columns = array();
 		while ($row = mysql_fetch_assoc($result)) {
 			$column = new SchemaColumn();
 			$column->setTable($this);
@@ -37,8 +36,61 @@ class MysqlTable extends SchemaTable implements DriverTable {
 				$column->setSize($typePieces[1]);
 			}
 			
-			$this->columns[$column->getColumnName()] = $column;
+			$this->addColumn($column);
 		}
+		
+		$sql = 'SHOW CREATE TABLE `' . $this->getTableName() . '`';
+		$result = $this->query($sql);
+		while ($row = mysql_fetch_assoc($result)) {
+			$this->parseCreateStatement($row['Create Table']);
+		}
+		
+	}
+	
+	protected function parseCreateStatement($createSql) {
+		$this->parseForeignKeyReferences($createSql);
+	}
+	
+	public function parseForeignKeyReferences($createSql) {
+		// This regex has the following restrictions: A column name can not contain a ")" or a " ".
+		$pattern = '|FOREIGN KEY[^(]*\(([^)]+)\)[ ]*REFERENCES[ ]*([^ ]+)[ ]+\(([^)]+)\)|';
+
+		$matches = array();
+		$count = preg_match_all($pattern, $createSql, $matches, PREG_SET_ORDER);
+
+		foreach ($matches as $match) {
+			$fKeyString   = $match[1];
+			$refTable     = $this->trimBackticks($match[2]);
+			$refKeyString = $match[3];
+
+			$fKey = array();
+			foreach (explode(',', $fKeyString) as $quotedKey) {
+				$fKey[] = $this->trimBackticks($quotedKey); 
+			}
+
+			$refKey = array();
+			foreach (explode(',', $refKeyString) as $quotedKey) {
+				$refKey[] = $this->trimBackticks($quotedKey);
+			}
+			
+			$this->addForeignKey(array(
+				'local_key' => $fKeys,
+				'ref_table' => $refTable,
+				'ref_key' => $refKey
+			));
+
+			// echo 'Table ' . $this->getTableName() . ' has FK ' . implode(',', $fKey) . ' which points to table ' . $refTable . ' (' . implode(',', $refKey) . ')' . "\n";
+		}
+		
+	}
+	
+	/**
+	 * Trim whitespace, and THEN backticks (leaving any whitespice within the backticks)
+	 *
+	 * @return string
+	 **/
+	protected function trimBacktick($str) {
+		return trim(trim($str), '`');
 	}
 	
 	protected function query($sql) {

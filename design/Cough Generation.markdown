@@ -130,5 +130,35 @@ Columns in general need relationship or FK checking if that is not going to be d
 * MysqlDatabase
 * ServerDatabase
 
+Next Up:
+
+* What is interface for retrieving relationships between objects? 
+
+Just thinking, but maybe:
+
+	<?php
+	foreach ($schema->getDatabases() as $database) {
+		foreach ($database->getTables() as $table) {
+			// This tables data
+			$columns = $table->getColumns();
+			$pk = $table->getPrimaryKey();
+			
+			// Other tables that have this one's key 
+			foreach ($table->getHasOneRelationships() as $relationship) {
+				
+				$relationship = array(
+					array($table->getColumn($col1), $relatedTable->getColumn($col2)),
+					// Most will only have one id -> one id, but we can allow more than one via:
+					// array($table->getColumn($col3), $relatedTable->getColumn($col4)),
+				);
+				// Um, how do we know which keys relate?
+				// We just want what columns on $table link to what columns on $relatedTable.
+				// ticket_line_id -> order_line_item_id, e.g. So we just need references...
+			}
+			
+		}
+	}
+	?>
+
 
 
