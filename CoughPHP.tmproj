@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>generator/generate.php</string>
+	<string>design/Cough Generation.markdown</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -100,12 +100,12 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>137</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>51</integer>
+			<integer>100</integer>
 		</dict>
 		<key>design/Minutes - Tom &amp; Anthony on Cough.markdown</key>
 		<dict>
@@ -140,9 +140,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>2</integer>
 				<key>line</key>
-				<integer>19</integer>
+				<integer>30</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -168,14 +168,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>40</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>14</integer>
+				<integer>100</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>51</integer>
 		</dict>
 		<key>generator/classes/CoughGeneratorConfig.class.php</key>
 		<dict>
@@ -219,6 +219,34 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>generator/classes/schema/Schema.class.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>60</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>40</integer>
+		</dict>
+		<key>generator/classes/schema/SchemaColumn.class.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>1</integer>
+				<key>line</key>
+				<integer>33</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>generator/classes/schema/SchemaDatabase.class.php</key>
 		<dict>
 			<key>caret</key>
@@ -249,33 +277,63 @@
 				<integer>5</integer>
 			</dict>
 		</dict>
+		<key>generator/classes/schema/SchemaTable.class.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>21</integer>
+				<key>line</key>
+				<integer>82</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>41</integer>
+		</dict>
+		<key>generator/classes/schema_generators/SchemaGenerator.class.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>generator/classes/schema_generators/database/DatabaseSchemaGenerator.class.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>33</integer>
+				<integer>21</integer>
 				<key>line</key>
-				<integer>89</integer>
+				<integer>16</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>62</integer>
-		</dict>
-		<key>generator/classes/schema_generators/database/drivers/base/DriverColumn.class.php</key>
-		<dict>
-			<key>caret</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>11</integer>
 			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>17</integer>
+			</dict>
 		</dict>
 		<key>generator/classes/schema_generators/database/drivers/base/DriverDatabase.class.php</key>
 		<dict>
@@ -298,7 +356,7 @@
 				<key>column</key>
 				<integer>1</integer>
 				<key>line</key>
-				<integer>31</integer>
+				<integer>9</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -347,6 +405,20 @@
 			<key>firstVisibleLine</key>
 			<integer>27</integer>
 		</dict>
+		<key>generator/classes/schema_generators/database/drivers/mysql/MysqlTable.class.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>80</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>39</integer>
+		</dict>
 		<key>generator/config/application.inc.php</key>
 		<dict>
 			<key>caret</key>
@@ -380,9 +452,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>17</integer>
 				<key>line</key>
-				<integer>41</integer>
+				<integer>20</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -422,23 +494,23 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>14</integer>
+				<integer>2</integer>
 				<key>line</key>
-				<integer>1485</integer>
+				<integer>411</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1447</integer>
+			<integer>382</integer>
 		</dict>
 		<key>generator/generate.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>35</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>21</integer>
+				<integer>36</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -490,15 +562,19 @@
 		<string>generator/classes/CoughConfig.class.php</string>
 		<string>design/ActionItems.markdown</string>
 		<string>design/Cough Generation.markdown</string>
+		<string>generator/classes/schema_generators/database/drivers/mysql/MysqlTable.class.php</string>
+		<string>generator/classes/schema/SchemaTable.class.php</string>
+		<string>generator/classes/schema/SchemaColumn.class.php</string>
 		<string>generator/generate.php</string>
+		<string>generator/classes/schema_generators/SchemaGenerator.class.php</string>
 		<string>generator/config/cough_test/cough_generator.inc.php</string>
 		<string>generator/classes/schema_generators/database/DatabaseSchemaGenerator.class.php</string>
+		<string>generator/classes/schema/Schema.class.php</string>
 		<string>load.inc.php</string>
 		<string>generator/classes/schema_generators/database/drivers/mysql/MysqlServer.class.php</string>
 		<string>generator/classes/schema_generators/database/drivers/base/DriverDatabase.class.php</string>
 		<string>generator/classes/schema_generators/database/drivers/mysql/MysqlDatabase.class.php</string>
 		<string>generator/classes/schema/SchemaDatabase.class.php</string>
-		<string>generator/classes/schema_generators/database/drivers/base/DriverColumn.class.php</string>
 		<string>generator/classes/schema_generators/database/drivers/base/DriverServer.class.php</string>
 		<string>generator/classes/schema_generators/database/drivers/base/DriverTable.class.php</string>
 		<string>generator/config/application.inc.php</string>
