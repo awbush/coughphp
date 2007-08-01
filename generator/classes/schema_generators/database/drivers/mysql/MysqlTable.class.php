@@ -20,6 +20,28 @@ class MysqlTable extends SchemaTable implements DriverTable {
 	
 	public function loadColumns() {
 		$sql = 'SHOW COLUMNS FROM `' . $this->tableName . '`';
+		$result = $this->query($sql);
+		$this->columns = array();
+		while ($row = mysql_fetch_assoc($result)) {
+			$column = new SchemaColumn();
+			$column->setTable($this);
+			$column->setColumnName($row['Field']);
+			$column->setIsNullAllowed((strtolower($row['Null']) == 'yes'));
+			$column->setDefaultValue($row['Default']); // value from MySQL will be PHP null, false, true, or a string
+			$column->setIsPrimaryKey(($row['Key'] == 'PRI'));
+			
+			// Set type and size of column
+			$typePieces = preg_split('/[\(\)]/',$row['Type']);
+			$column->setType($typePieces[0]);
+			if (count($typePieces) > 1) {
+				$column->setSize($typePieces[1]);
+			}
+			
+			$this->columns[$column->getColumnName()] = $column;
+		}
+	}
+	
+	protected function query($sql) {
 		if (is_null($this->dbLink)) {
 			$result = mysql_query($sql);
 		} else {
@@ -27,10 +49,8 @@ class MysqlTable extends SchemaTable implements DriverTable {
 		}
 		if ( ! $result) {
 			$this->generateError('Invalid query');
-		}
-		$this->columns = array();
-		while ($record = mysql_fetch_assoc($result)) {
-			$this->columns[$record['Field']] = new MysqlColumn($record, $this);
+		} else {
+			return $result;
 		}
 	}
 	
