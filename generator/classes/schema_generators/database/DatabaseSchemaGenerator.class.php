@@ -129,7 +129,6 @@ class DatabaseSchemaGenerator extends SchemaGenerator {
 			$this->loadDrivers(dirname(__FILE__) . '/drivers/base/', 'Driver');
 		}
 		$prefix = $path . $classPrefix;
-		include_once($prefix . 'Column.class.php');
 		include_once($prefix . 'Database.class.php');
 		include_once($prefix . 'Server.class.php');
 		include_once($prefix . 'Table.class.php');
