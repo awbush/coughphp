@@ -103,3 +103,32 @@ There will of course be assistants that already know how all the parts interact 
 	* Will assist in the modification of config files.
 
 
+
+
+
+
+Checklist for implementation
+----------------------------
+
+Besides any missing documentation, the Schema needs:
+
+* DriverColumn
+* MysqlColumn
+* ServerColumn
+
+Columns in general need relationship or FK checking if that is not going to be done on the table level...
+
+* DriverServer
+* MysqlServer
+* ServerServer
+
+* DriverTable
+* MysqlTable
+* ServerTable
+
+* DriverDatabase
+* MysqlDatabase
+* ServerDatabase
+
+
+
