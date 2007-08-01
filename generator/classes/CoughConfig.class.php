@@ -1,6 +1,6 @@
 <?php
 
-class CoughConfig {
+abstract class CoughConfig {
 	protected $config = array();
 	
 	public function __construct($config) {
@@ -15,49 +15,7 @@ class CoughConfig {
 	 * @author Anthony Bush
 	 * @since 2007-06-15
 	 **/
-	protected function initConfig() {
-		$this->config = array(
-			'phpDoc' => array(
-				'author' => 'CoughGenerator',
-				'package' => 'default',
-				'copyright' => '',
-			),
-			'paths' => array(
-				'generated_classes' => 'generated/',
-				'starter_classes' => 'generated/',
-				'file_suffix' => '.class.php',
-			),
-			'class_names' => array(
-				'prefix' => '',
-				'base_object_suffix' => '_Generated',
-				'base_collection_suffix' => '_Collection_Generated',
-				'starter_object_suffix' => '',
-				'starter_collection_suffix' => '_Collection',
-			),
-			'table_settings' => array(
-				// This match setting is so the database scanner can resolve relationships better, e.g. know that when it sees "ticket_id" that a "wfl_ticket" table is an acceptable match.
-				'match_table_name_prefixes' => array(), // e.g. array('cust_', 'wfl_', 'baof_'),
-				// Additionally, you can strip table prefixes from the generated class names (note that you might run into naming conflicts though.)
-				'strip_table_name_prefixes' => array(), // e.g. array('cust_', 'wfl_', 'baof_'),
-				// You can ignore tables all together, too:
-				'ignore_tables_matching_regex' => '/(_bak$)|(^bak_)|(^temp_)/',
-			),
-			'field_settings' => array(
-				'id_suffix' => '_id',
-				'retired_column' => 'is_retired',
-				'is_retired_value' => '1',
-				'is_not_retired_value' => '0', // TODO: deprecate this. Have the code use != is_retired_value
-			),
-
-			// All databases will be scanned unless specified in the 'databases' parameter.
-			'dsn' => array(
-				'host' => 'localhost',
-				'user' => 'nobody',
-				'pass' => '',
-				'port' => 3306,
-			),
-		);
-	}
+	abstract protected function initConfig();
 	
 	/**
 	 * Merges the given config into the current config, overriding any of the
@@ -97,20 +55,20 @@ class CoughConfig {
 		if (!is_null($dbName)) {
 			if (!is_null($tableName)) {
 				// Look for table config first
-				$finalKey = array_merge(array('dsn', 'databases', $dbName, 'tables', $tableName), $configKey);
-				$value = $this->array_value_from_multi_key($this->config, $finalKey);
+				$finalKey = array_merge(array('databases', $dbName, 'tables', $tableName), $configKey);
+				$value = $this->getArrayValueFromMultiKey($this->config, $finalKey);
 			}
 			
 			// Look for databaes config next
 			if (is_null($value)) {
-				$finalKey = array_merge(array('dsn', 'databases', $dbName), $configKey);
-				$value = $this->array_value_from_multi_key($this->config, $finalKey);
+				$finalKey = array_merge(array('databases', $dbName), $configKey);
+				$value = $this->getArrayValueFromMultiKey($this->config, $finalKey);
 			}
 		}
 		
 		// Look at global config
 		if (is_null($value)) {
-			$value = $this->array_value_from_multi_key($this->config, $configKey);
+			$value = $this->getArrayValueFromMultiKey($this->config, $configKey);
 		}
 		
 		// No config found, return null
@@ -126,14 +84,14 @@ class CoughConfig {
 	 * 
 	 *     $source = array('one' => array('two' => 'three'));
 	 *     $keys = array('one', 'two');
-	 *     echo array_value_from_multi_key($source, $keys);
+	 *     echo getArrayValueFromMultiKey($source, $keys);
 	 * 
 	 * outputs "three"
 	 * 
 	 * @return mixed - null if any of the keys are found, otherwise the value deep in the source array.
 	 * @author Anthony Bush
 	 **/
-	protected function array_value_from_multi_key(&$value, $keys) {
+	protected function getArrayValueFromMultiKey(&$value, $keys) {
 		foreach ($keys as $key) {
 			if (is_array($value) && isset($value[$key])) {
 				// So far so good
@@ -147,33 +105,47 @@ class CoughConfig {
 		return $value;
 	}
 	
-	public function shouldGenerateForDatabase($db) {
+	/**
+	 * Returns whether not the given database is meant to be processed.
+	 * 
+	 * @param AbstractDatabase $db
+	 * @return boolean
+	 * @author Anthony Bush
+	 * @todo Should we move this into one of the concrete config classes or rename the function?
+	 **/
+	public function shouldProcessDatabase($db) {
 		// If custom database config is specified, then only return true if the given database object is in there.
-		if (isset($this->config['dsn']['databases'])) {
-			if (!isset($this->config['dsn']['databases'][$db->getDatabaseName()])) {
+		if (isset($this->config['databases'])) {
+			if (!isset($this->config['databases'][$db->getDatabaseName()])) {
 				return false;
 			}
 		}
 		return true;
 	}
 	
-	public function shouldGenerateForTable($table) {
+	/**
+	 * Returns whether not the given table is meant to be processed.
+	 * 
+	 * @param AbstractTable $table
+	 * @return boolean
+	 * @author Anthony Bush
+	 * @todo Should we move this into one of the concrete config classes or rename the function?
+	 **/
+	public function shouldProcessTable($table) {
 		// If custom database config is specified AND custom table config is specified, then only return true if the given database object is in there.
-		if (isset($this->config['dsn']['databases'])) {
+		if (isset($this->config['databases'])) {
 			$dbName = $table->getDatabase()->getDatabaseName();
-			if (isset($this->config['dsn']['databases'][$dbName])) {
-				if (isset($this->config['dsn']['databases'][$dbName]['tables'])) {
-					if (!isset($this->config['dsn']['databases'][$dbName]['tables'][$table->getTableName()])) {
+			if (isset($this->config['databases'][$dbName])) {
+				if (isset($this->config['databases'][$dbName]['tables'])) {
+					if (!isset($this->config['databases'][$dbName]['tables'][$table->getTableName()])) {
 						return false;
 					}
 				}
+			} else {
+				return false; // databases array specified, but the database for this table is not in it.
 			}
 		}
 		return true;
-	}
-	
-	public function getDsn() {
-		return $this->config['dsn'];
 	}
 	
 }

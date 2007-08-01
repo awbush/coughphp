@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>config/academic_superstore.php</string>
+	<string>cough_web_panel.php</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,6 +21,36 @@
 	<integer>328</integer>
 	<key>metaData</key>
 	<dict>
+		<key>classes/CoughGenerator.class.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>36</integer>
+				<key>line</key>
+				<integer>4</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>1</integer>
+				<key>line</key>
+				<integer>4</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>40</integer>
+				<key>line</key>
+				<integer>4</integer>
+			</dict>
+		</dict>
 		<key>config/academic_superstore.php</key>
 		<dict>
 			<key>caret</key>
@@ -33,30 +63,16 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>33</integer>
-		</dict>
-		<key>cough_generator_classes.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>30</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
 			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>85</integer>
 		</dict>
 		<key>cough_web_panel.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>9</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>33</integer>
+				<integer>21</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -68,7 +84,7 @@
 	<array>
 		<string>cough_web_panel.php</string>
 		<string>config/academic_superstore.php</string>
-		<string>cough_generator_classes.php</string>
+		<string>classes/CoughGenerator.class.php</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>

@@ -93,14 +93,14 @@ else {
 		// Regenerate NOW (TODO: show preview info and require a click to regen / commit)
 		include_once('/Users/awbush/Projects/Shared/modules/database_analyzer/load.inc.php');
 		include_once(CLASS_PATH . 'CoughConfig.class.php');
-		include_once(CLASS_PATH . 'CoughSchemaGenerator.class.php');
+		include_once(CLASS_PATH . 'SchemaGenerator.class.php');
 		
 		$configObj = new CoughConfig($config);
 		
 		$server = new MysqlServer($configObj->getDsn());
 		$server->loadDatabase('mediapc');
 		
-		$schemaGenerator = new CoughSchemaGenerator($configObj);
+		$schemaGenerator = new SchemaGenerator($configObj);
 		$schemaGenerator->loadDatabase($server->getDatabase('mediapc'));
 		$schemas  = $schemaGenerator->generateSchemas();
 		

@@ -1,15 +1,13 @@
 <?php
-// include_once('load.inc.php');
-// 
-// $server = new MysqlServer('127.0.0.1', 'nobody', '');
-// $server->loadDatabase('mediapc');
-// 
-// $schemaGenerator = new CoughSchemaGenerator();
-// $schemaGenerator->loadDatabase($server->getDatabase('mediapc'));
-// $schemas  = $schemaGenerator->generateSchemas();
 
-
-class CoughSchemaGenerator {
+class DatabaseSchemaGenerator extends SchemaGenerator {
+	
+	/**
+	 * Configuration object for this class
+	 *
+	 * @var DatabaseSchemaGeneratorConfig
+	 **/
+	protected $config = null;
 	
 	protected $databases = array();
 	protected $schemas = array();
@@ -17,24 +15,44 @@ class CoughSchemaGenerator {
 	// TODO: Split out into configuration options
 	protected $idSuffix = '_id';
 	
-	/**
-	 * Construct a CoughSchemaGenerator with a CoughConfig object.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function __construct($config) {
-		$this->config = $config;
+	
+	public function __construct($config = array()) {
+		$this->initConfig($config);
 	}
 	
-	/**
-	 * Load a database object to include in the schema.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function loadDatabase($db) {
-		$this->databases[$db->getDatabaseName()] = $db;
+	public function initConfig($config) {
+		if ($config instanceof DatabaseSchemaGeneratorConfig) {
+			$this->config = $config;
+		} else if (is_array($config)) {
+			$this->config = new DatabaseSchemaGeneratorConfig($config);
+		} else {
+			throw new Exception('First parameter must be an array or DatabaseSchemaGeneratorConfig object.');
+		}
+	}
+	
+	// /**
+	//  * Load a database object to include in the schema.
+	//  *
+	//  * @return void
+	//  * @author Anthony Bush
+	//  **/
+	// public function loadDatabase($db) {
+	// 	$this->databases[$db->getDatabaseName()] = $db;
+	// }
+	
+	public function loadServer() {
+		$dsn = $this->config->getDsn();
+		$serverClass = ucfirst(strtolower($dsn['driver'])) . 'Server';
+		$server = new $serverClass($dsn);
+		
+		$dbNames = $server->getDatabaseNames();
+		
+		$this->databases = array();
+		foreach ($dbNames as $dbName) {
+			$this->loadDatabase($dbName);
+		}
+		
+		$server->loadDatabases();
 	}
 	
 	/**
@@ -45,7 +63,9 @@ class CoughSchemaGenerator {
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function generateSchemas() {
+	public function generateSchema() {
+		$this->loadServer();
+		
 		// Loop through the databases, using the cough naming conventions (or configuration?) to link relationships.
 		
 		$this->schemas = array();
@@ -97,6 +117,7 @@ class CoughSchemaGenerator {
 		return (substr($dbColumnName, -strlen($this->idSuffix)) == $this->idSuffix
 			&& (strpos($dbColumnName, '2') === false));
 	}
+	
 	
 }
 

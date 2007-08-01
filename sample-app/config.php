@@ -3,7 +3,8 @@
 
 // Config...
 define('SHARED_PATH',    '/Users/awbush/Projects/Shared/');
-define('AS_SHARED_PATH', '/Users/awbush/Projects/Academic Superstore/html/shared/');
+// define('AS_SHARED_PATH', '/Users/awbush/Projects/Academic Superstore/html/shared/');
+define('AS_SHARED_PATH', dirname(dirname(dirname(dirname(__FILE__)))) . '/');
 
 
 // Database configuration for all databases we'll use; currently only one.

@@ -1,5 +1,9 @@
 <?php
 
+include('SchemaGenerator.class.php');
+include('DatabaseSchemaGenerator.class.php');
+include('DatabaseSchemaGeneratorConfig.class.php');
+
 include('AbstractDatabase.class.php');
 include('AbstractTable.class.php');
 include('AbstractColumn.class.php');
