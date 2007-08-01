@@ -108,7 +108,7 @@ abstract class CoughConfig {
 	/**
 	 * Returns whether not the given database is meant to be processed.
 	 * 
-	 * @param AbstractDatabase $db
+	 * @param SchemaDatabase $db
 	 * @return boolean
 	 * @author Anthony Bush
 	 * @todo Should we move this into one of the concrete config classes or rename the function?
@@ -126,7 +126,7 @@ abstract class CoughConfig {
 	/**
 	 * Returns whether not the given table is meant to be processed.
 	 * 
-	 * @param AbstractTable $table
+	 * @param SchemaTable $table
 	 * @return boolean
 	 * @author Anthony Bush
 	 * @todo Should we move this into one of the concrete config classes or rename the function?
