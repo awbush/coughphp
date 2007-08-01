@@ -11,7 +11,6 @@ class MysqlDatabase extends SchemaDatabase implements DriverDatabase {
 	}
 	
 	public function loadTables() {
-		$this->selectDb($this->dbName);
 		$tableNames = $this->getAvailableTableNames();
 		
 		$this->tables = array();
@@ -28,12 +27,14 @@ class MysqlDatabase extends SchemaDatabase implements DriverDatabase {
 	 * @author Anthony Bush
 	 **/
 	public function loadTable($tableName) {
-		$this->tables[$tableName] = new MysqlTable($tableName, $this->dbLink, $this);
-		$this->tables[$tableName]->loadColumns();
+		$table = new MysqlTable($tableName, $this->dbLink, $this);
+		$table->loadColumns();
+		$this->tables[$tableName] = $table;
 		return $table;
 	}
 	
 	public function getAvailableTableNames() {
+		$this->selectDb($this->databaseName);
 		$sql = 'SHOW TABLES';
 		if (is_null($this->dbLink)) {
 			$result = mysql_query($sql);

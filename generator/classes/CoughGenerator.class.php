@@ -12,7 +12,7 @@ class CoughGenerator {
 		$coughClass = new CoughClass($className, $contents);
 		
 		// Add the class
-		$this->addGeneratedClass($coughClass)
+		$this->addGeneratedClass($coughClass);
 		
 		// Return the generated classes.
 		return $this->generatedClasses;

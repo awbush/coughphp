@@ -1,29 +1,35 @@
 <?php
 
-// Include the Cough generation classes
-include_once(dirname(__FILE__) . '/load.inc.php');
+try {
+	// Include the Cough generation classes
+	include_once(dirname(__FILE__) . '/config/application.inc.php');
+	
+	// Which config to use?
+	$configName = 'cough_test';
 
-// Setup some paths
-define('APP_PATH', dirname(__FILE__) . '/');
-define('CONFIG_PATH', APP_PATH . 'config/');
-define('CLASS_PATH', APP_PATH . 'classes/');
+	// Database Schema Generator example
 
-// Which config to use?
-$configName = 'default';
+	// Get the database config
+	include(CONFIG_PATH . $configName . '/database_schema_generator.inc.php');
+	$schemaGeneratorConfig = new DatabaseSchemaGeneratorConfig($config);
 
-// Database Schema Generator example
+	// Get the cough generator config
+	include(CONFIG_PATH . $configName . '/cough_generator.inc.php');
+	$coughGeneratorConfig = new CoughGeneratorConfig($config);
 
-// Get the database config
-include(CONFIG_PATH . $configName . '/database_schema_generator_config.php');
-$schemaGeneratorConfig = new DatabaseSchemaGeneratorConfig($config);
-
-// Get the cough generator config
-include(CONFIG_PATH . $configName . '/cough_generator_config.php');
-$coughGeneratorConfig = new CoughGeneratorConfig($config);
-
-// Load the schema into memory
-$schemaGenerator = new DatabaseSchemaGenerator($schemaGeneratorConfig);
-$schema = $schemaGenerator->generateSchema();
+	// Load the schema into memory
+	$schemaGenerator = new DatabaseSchemaGenerator($schemaGeneratorConfig);
+	$schemaGenerator->enableVerbose();
+	$schema = $schemaGenerator->generateSchema();
+	
+} catch (Exception $e) {
+	echo $e->getMessage() . "\n";
+	
+	if (DEV) {
+		echo 'Trace:' . "\n";
+		print_r($e->getTrace());
+	}
+}
 
 
 

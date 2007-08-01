@@ -14,7 +14,7 @@ interface DriverServer {
 	 *
 	 * @return void
 	 **/
-	abstract public function loadDatabases();
+	public function loadDatabases();
 	
 	/**
 	 * Load a specific database schema into memory.
@@ -22,14 +22,14 @@ interface DriverServer {
 	 * @param $dbName - specific database name to load.
 	 * @return void
 	 **/
-	abstract public function loadDatabase($dbName);
+	public function loadDatabase($dbName);
 	
 	/**
 	 * Get a list of available database names.
 	 *
 	 * @return array of strings
 	 **/
-	abstract public function getAvailableDatabaseNames();
+	public function getAvailableDatabaseNames();
 	
 }
 

@@ -66,9 +66,9 @@ class MysqlServer extends Schema implements DriverServer {
 			$host .= ':' . $dsn['port'];
 		}
 		
-		$this->dbLink = mysql_connect($host, $user, $pass);
+		$this->dbLink = @mysql_connect($host, $user, $pass);
 		if ( ! $this->dbLink) {
-			throw new Exception('Could not connect to MySQL server: ' . mysql_error($this->dbLink));
+			throw new Exception('Could not connect to MySQL server: ' . mysql_error() . ' | Using ' . print_r($dsn, true));
 		} else {
 			$this->connected = true;
 		}

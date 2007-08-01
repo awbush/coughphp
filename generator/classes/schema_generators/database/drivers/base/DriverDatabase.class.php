@@ -2,11 +2,11 @@
 
 interface DriverDatabase {
 	
-	abstract public function loadTable($tableName);
+	public function loadTable($tableName);
 	
-	abstract public function getAvailableTableNames();
+	public function getAvailableTableNames();
 	
-	abstract public function selectDb($dbName);
+	public function selectDb($dbName);
 	
 }
 

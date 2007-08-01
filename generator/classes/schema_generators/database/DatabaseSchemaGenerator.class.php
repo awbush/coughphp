@@ -23,7 +23,20 @@ class DatabaseSchemaGenerator extends SchemaGenerator {
 	 **/
 	protected $schema = null;
 	
+	/**
+	 * Keep track of whether or not the base database drivers have been loaded.
+	 * (we'll load them on-the-fly only if needed)
+	 *
+	 * @var string
+	 **/
 	protected $hasLoadedBaseDrivers = false;
+	
+	/**
+	 * Whether or not to echo what's happening to the screen.
+	 *
+	 * @var boolean
+	 **/
+	protected $verbose = false;
 	
 	/**
 	 * Construct with optional configuration parameters.
@@ -75,23 +88,40 @@ class DatabaseSchemaGenerator extends SchemaGenerator {
 		
 		$dbNames = $server->getAvailableDatabaseNames();
 		foreach ($dbNames as $dbName) {
-			$database = $server->loadDatabase($dbName);
-			foreach ($database->getAvailableTableNames() as $tableName) {
-				$table = $database->loadTable($tableName);
+			if ($this->config->shouldProcessDatabase($dbName)) {
+				if ($this->verbose) {
+					echo 'Scanning database `' . $dbName . "`\n";
+				}
+				$database = $server->loadDatabase($dbName);
+				foreach ($database->getAvailableTableNames() as $tableName) {
+					if ($this->config->shouldProcessTable($dbName, $tableName)) {
+						if ($this->verbose) {
+							echo "\tScanning table `" . $tableName . "`\n";
+						}
+						$table = $database->loadTable($tableName);
+					} else {
+						if ($this->verbose) {
+							echo "\tSkipping table `" . $tableName . "`\n";
+						}
+					}
+				}
+			} else {
+				if ($this->verbose) {
+					echo 'Skipping database `' . $dbName . "`\n";
+				}
 			}
 		}
 		
 		$this->setSchema($server);
 	}
 	
-	public function getSchema() {
-		return $this->schema;
-	}
-	
-	public function setSchema($schema) {
-		$this->schema = $schema;
-	}
-	
+	/**
+	 * Load database schema drivers for the specified path and driver prefix.
+	 * 
+	 * @param string $path - full path with trailing slash
+	 * @param string $classPrefix
+	 * @return void
+	 **/
 	public function loadDrivers($path, $classPrefix) {
 		if (!$this->hasLoadedBaseDrivers) {
 			// Load the base driver classes/interfaces
@@ -168,6 +198,43 @@ class DatabaseSchemaGenerator extends SchemaGenerator {
 	// 		&& (strpos($dbColumnName, '2') === false));
 	// }
 	
+	/**
+	 * Enable verbose mode
+	 *
+	 * @return void
+	 * @see {@link $verbose}
+	 **/
+	public function enableVerbose() {
+		$this->verbose = true;
+	}
+	
+	/**
+	 * Disable verbose mode
+	 *
+	 * @return void
+	 * @see {@link $verbose}
+	 **/
+	public function disableVerbose() {
+		$this->verbose = false;
+	}
+
+	/**
+	 * Get the Schema / DriverServer object.
+	 *
+	 * @return Schema
+	 **/
+	public function getSchema() {
+		return $this->schema;
+	}
+	
+	/**
+	 * Set the Schema / DriverServer object.
+	 *
+	 * @return void
+	 **/
+	public function setSchema(Schema $schema) {
+		$this->schema = $schema;
+	}
 	
 }
 

@@ -10,7 +10,7 @@
  **/
 interface DriverTable {
 	
-	abstract public function loadColumns();
+	public function loadColumns();
 	
 }
 
