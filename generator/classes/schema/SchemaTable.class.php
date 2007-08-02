@@ -26,6 +26,27 @@ class SchemaTable {
 	 **/
 	protected $foreignKeys = array();
 	
+	/**
+	 * one-to-one relationships
+	 *
+	 * @var array
+	 **/
+	protected $hasOneRelationships = array();
+	
+	/**
+	 * one-to-many relationships
+	 *
+	 * @var array
+	 **/
+	protected $hasManyRelationships = array();
+	
+	/**
+	 * many-to-many relationships (habtm = has and belongs to many)
+	 *
+	 * @var array
+	 **/
+	protected $habtmRelationships = array();
+	
 	// Getters
 	
 	public function getDatabase() {
@@ -62,6 +83,18 @@ class SchemaTable {
 		return $this->foreignKeys;
 	}
 	
+	public function getHasOneRelationships() {
+		return $this->hasOneRelationships;
+	}
+	
+	public function getHasManyRelationships() {
+		return $this->hasManyRelationships;
+	}
+	
+	public function getHabtmRelationships() {
+		return $this->habtmRelationships;
+	}
+
 	// Setters
 	
 	public function setDatabase($database) {
@@ -90,6 +123,18 @@ class SchemaTable {
 			throw new Exception('First argument must be a foreign key (hash) containing local_key, ref_table, and ref_key. See documentation for SchemaTable::$foreignKeys.');
 		}
 	}
+
+	public function addHasOneRelationship($hasOneRelationship) {
+		$this->hasOneRelationships[] = $hasOneRelationship;
+	}
+	
+	public function addHasManyRelationship($hasManyRelationship) {
+		$this->hasManyRelationships[] = $hasManyRelationship;
+	}
+	
+	public function addHabtmRelationshis($habtmRelationship) {
+		$this->habtmRelationships[] = $habtmRelationship;
+	}	
 	
 }
 

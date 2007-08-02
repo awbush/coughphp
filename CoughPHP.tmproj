@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>design/Cough Generation.markdown</string>
+	<string>generator/cough_generator_classes.php</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -105,7 +105,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>100</integer>
+			<integer>109</integer>
 		</dict>
 		<key>design/Minutes - Tom &amp; Anthony on Cough.markdown</key>
 		<dict>
@@ -282,14 +282,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>21</integer>
+				<integer>3</integer>
 				<key>line</key>
-				<integer>82</integer>
+				<integer>136</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>41</integer>
+			<integer>0</integer>
 		</dict>
 		<key>generator/classes/schema_generators/SchemaGenerator.class.php</key>
 		<dict>
@@ -494,14 +494,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>2</integer>
+				<integer>4</integer>
 				<key>line</key>
-				<integer>411</integer>
+				<integer>1553</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>382</integer>
+			<integer>1501</integer>
+		</dict>
+		<key>generator/cough_web_panel.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>44</integer>
+				<key>line</key>
+				<integer>19</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>generator/generate.php</key>
 		<dict>
@@ -564,6 +578,7 @@
 		<string>design/Cough Generation.markdown</string>
 		<string>generator/classes/schema_generators/database/drivers/mysql/MysqlTable.class.php</string>
 		<string>generator/classes/schema/SchemaTable.class.php</string>
+		<string>generator/cough_web_panel.php</string>
 		<string>generator/classes/schema/SchemaColumn.class.php</string>
 		<string>generator/generate.php</string>
 		<string>generator/classes/schema_generators/SchemaGenerator.class.php</string>
