@@ -44,7 +44,7 @@ Basically, some marketing things for the web site.
 * Rules of OO programming
 
 * High performance
-	* Will not do needless checks
+	* Will not do needless loads
 
 
 

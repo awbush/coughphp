@@ -11,11 +11,13 @@ class CoughClass {
 	protected $className = null;
 	protected $contents = null;
 	protected $isStarterClass = false;
+	protected $isCollectionClass = false;
 	
-	public function __construct($className = null, $contents = null, $isStarterClass = null) {
+	public function __construct($className = null, $contents = null, $isStarterClass = false, $isCollectionClass = false) {
 		$this->setClassName($className);
 		$this->setContents($contents);
 		$this->setIsStarterClass($isStarterClass);
+		$this->setIsCollectionClass($isStarterClass);
 	}
 
 	public function setClassName($className) {
@@ -30,6 +32,10 @@ class CoughClass {
 		$this->isStarterClass = $isStarterClass;
 	}
 	
+	public function setIsCollectionClass($isCollectionClass) {
+		$this->isCollectionClass = $isCollectionClass;
+	}
+	
 	public function getClassName() {
 		return $this->className;
 	}
@@ -40,6 +46,10 @@ class CoughClass {
 	
 	public function isStarterClass() {
 		return $this->isStarterClass;
+	}
+	
+	public function isCollectionClass() {
+		return $this->isCollectionClass;
 	}
 	
 }

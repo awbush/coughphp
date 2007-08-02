@@ -261,8 +261,8 @@ or
 				$product->getOs_Collection(); // current way = not confusing, except MAYBE how to set join fields. ($os->setJoinField could still work, but we'd probably want to DEPRECATE that and require $os->getProduct2Os_Object()->setSomeField($someValue); Keep in mind though, if you are just trying to change join field stuff you could save some queries and just change it for crying out loud:
 
 				$join = new Product2Os();
-				$join->checkByCriteria(array('product_id' => 1, 'os_id' => 2));
-				if ($join->didCheckReturnResult()) {
+				$join->loadByCriteria(array('product_id' => 1, 'os_id' => 2));
+				if ($join->isLoaded()) {
 					$join->setIsRetired(true);
 					$join->save();
 				}
@@ -321,7 +321,7 @@ Cleaned up how modifiedFields work (used to set duplicate entries in the modifie
 Added some "@see" documentation (phpDoc).
 Cleaned up checking functions for the object. Less code, more clear, and more functionality as a side-effect.
 
-(can easily override getCheckSql to get custom SQL whereas before it required overriding defineCheckStatement AND overriding setKeyId to recall that method anytime the key was changed, etc...)
+(can easily override getLoadSql to get custom SQL whereas before it required overriding defineCheckStatement AND overriding setKeyId to recall that method anytime the key was changed, etc...)
 
 Revision 14
 -----------

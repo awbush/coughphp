@@ -161,4 +161,29 @@ Just thinking, but maybe:
 	?>
 
 
+TODO: Resolve potential method naming collisions:
+
+getCollection
+getObject
+getField
+getFields
+getFieldsWithoutPk
+getPk
+getKeyId
+getPkFieldNames
+getCollector
+getValidationErrors
+getUpdateFields
+getInsertFields
+getModifiedFields
+getDerivedFields
+getLoadSql
+getLoadSqlWithoutWhere
+
+These are also here, but we haven't discussed how we are going to do them for the 1.0 release:
+
+getJoinField
+getJoinFields
+getJoinSelectSql
+getJoinTableName
 

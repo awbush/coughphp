@@ -1,6 +1,10 @@
 <?php
 
 abstract class CoughConfig {
+	const SCOPE_GLOBAL = 1;
+	const SCOPE_DATABASE = 2;
+	const SCOPE_TABLE = 3;
+	
 	protected $config = array();
 	
 	public function __construct($config) {
@@ -48,26 +52,26 @@ abstract class CoughConfig {
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	protected function getConfigValue($configKey, $dbName = null, $tableName = null) {
+	protected function getConfigValue($configKey, $dbName = null, $tableName = null, $scope = self::SCOPE_GLOBAL) {
 		$keys = explode('/', $configKey);
 		$value = null;
 		
 		if (!is_null($dbName)) {
 			if (!is_null($tableName)) {
-				// Look for table config first
+				// Look for table config first (in GLOBAL, DATABASE, or TABLE scopes)
 				$finalKey = array_merge(array('databases', $dbName, 'tables', $tableName), $configKey);
 				$value = $this->getArrayValueFromMultiKey($this->config, $finalKey);
 			}
 			
-			// Look for databaes config next
-			if (is_null($value)) {
+			// Look for databaes config next (in GLOBAL and DATABASE scopes only)
+			if (is_null($value) && $scope != self::SCOPE_TABLE) {
 				$finalKey = array_merge(array('databases', $dbName), $configKey);
 				$value = $this->getArrayValueFromMultiKey($this->config, $finalKey);
 			}
 		}
 		
-		// Look at global config
-		if (is_null($value)) {
+		// Look at global config (in GLOBAL scope only)
+		if (is_null($value) && $scope == self::SCOPE_GLOBAL) {
 			$value = $this->getArrayValueFromMultiKey($this->config, $configKey);
 		}
 		

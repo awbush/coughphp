@@ -20,7 +20,7 @@ abstract class CoughCollection extends ArrayObject {
 	 *
 	 * @var string
 	 **/
-	protected $populated = false;
+	protected $isPopulated = false;
 	
 	/**
 	 * The database name to use to running queries.
@@ -35,10 +35,10 @@ abstract class CoughCollection extends ArrayObject {
 	 * The collection SQL to use by default.
 	 * 
 	 * Override in sub class using defineCollectionSql
-	 *
+	 * 
 	 * @var string
 	 **/
-	protected $collectionSQL = '';
+	protected $collectionSql = '';
 	
 	/**
 	 * The name of the element class that will be used when adding new
@@ -79,7 +79,7 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	public function __construct($specialArgs=array(), $array=array()) {
-		parent::__construct($array=array(), $flags=0, $iterator_class="CoughIterator");
+		parent::__construct($array=array(), $flags=0, $iterator_class='CoughIterator');
 		$this->initializeDefinitions($specialArgs);
 		$this->db = DatabaseFactory::getDatabase($this->dbName);
 	}
@@ -97,7 +97,9 @@ abstract class CoughCollection extends ArrayObject {
 	 * @return void
 	 **/
 	protected function defineCollectionSql() {
-		$this->collectionSQL = '';
+		$elementClassName = $this->elementClassName;
+		$element = new $elementClassName();
+		$this->collectionSql = $element->getLoadSqlWithoutWhere();
 	}
 	
 	/**
@@ -155,7 +157,7 @@ abstract class CoughCollection extends ArrayObject {
 		if ( ! empty($overrideSQL)) {
 			$collectionSQL = $overrideSQL;
 		} else {
-			$collectionSQL = $this->collectionSQL;
+			$collectionSQL = $this->collectionSql;
 		}
 		
 		// Append ORDER BY SQL
@@ -183,7 +185,7 @@ abstract class CoughCollection extends ArrayObject {
 		}
 		
 		$result->freeResult();
-		$this->populated = true;
+		$this->setIsPopulated(true);
 	}
 	
 	/**
@@ -191,9 +193,21 @@ abstract class CoughCollection extends ArrayObject {
 	 *
 	 * @return boolean - true if the collection has been populated, false if not.
 	 * @author Anthony Bush
+	 * @todo Why do we need the isPopulated() methods?
 	 **/
 	public function isPopulated() {
-		return $this->populated;
+		return $this->isPopulated;
+	}
+	
+	/**
+	 * Sets the collection as "populated"
+	 *
+	 * @return void
+	 * @author Anthony Bush
+	 * @todo Why do we need the isPopulated() methods?
+	 **/
+	public function setIsPopulated($isPopulated) {
+		$this->isPopulated = $isPopulated;
 	}
 	
 	public function hasCollector() {

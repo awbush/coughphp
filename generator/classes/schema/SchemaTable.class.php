@@ -79,6 +79,15 @@ class SchemaTable {
 		return $primaryKey;
 	}
 	
+	public function hasPrimaryKey() {
+		$primaryKey = $this->getPrimaryKey();
+		if (empty($primaryKey)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 	public function getForeignKeys() {
 		return $this->foreignKeys;
 	}

@@ -26,7 +26,7 @@ class CoughRelationships {
 								'column_name' => 'account_id'
 							)
 						),
-						// so FK => one-to-one object? YES for the table it is on. In this case a Ticket can check cust_account because account_id is available.
+						// so FK => one-to-one object? YES for the table it is on. In this case a Ticket can load cust_account because account_id is available.
 					)
 					'has_many' => array(
 						'collectionAliasName' => array(
@@ -63,7 +63,7 @@ class CoughRelationships {
 
 // Option 1: Generator everything here.
 
-// Option 2: Configure at runtime with only the info as it is needed, e.g. product wants to check os object then we have to first load the os class files (which will have code that addes to the relationships).
+// Option 2: Configure at runtime with only the info as it is needed, e.g. product wants to load os object then we have to first load the os class files (which will have code that addes to the relationships).
 
 
 

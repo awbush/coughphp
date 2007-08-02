@@ -8,8 +8,8 @@ class CoughGeneratorConfig extends CoughConfig {
 		$this->config = array(
 			'phpDoc' => array(
 				'author' => 'CoughGenerator',
-				'package' => 'shared',
-				'copyright' => 'Academic Superstore',
+				'package' => 'default',
+				'copyright' => '',
 			),
 			'paths' => array(
 				'generated_classes' => $generated . 'generated_classes/',
@@ -26,6 +26,9 @@ class CoughGeneratorConfig extends CoughConfig {
 				'base_collection_suffix' => '_Collection_Generated',
 				'starter_object_suffix' => '',
 				'starter_collection_suffix' => '_Collection',
+				// You can use your on "AppCoughObject" class here instead, if you want.
+				'object_extension_class_name' => 'CoughObject',
+				'collection_extension_class_name' => 'CoughCollection',
 			),
 			'field_settings' => array(
 				'retired_column' => 'is_retired',
@@ -56,6 +59,125 @@ class CoughGeneratorConfig extends CoughConfig {
 			// 	),
 			// ),
 		);
+	}
+	
+	// public function getTableConfigValue($configKey, SchemaTable $table) {
+	// 	return $this->getConfigValue($configKey, $table->getDatabase()->getDatabaseName(), $table->getTableName(), CoughConfig::SCOPE_TABLE);
+	// }
+	
+	public function getClassName(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		$className = $this->getConfigValue('class_name', $dbName, $tableName, CoughConfig::SCOPE_TABLE);
+		
+		if (is_null($className)) {
+			$prefixes = $this->getConfigValue('class_names/strip_table_name_prefixes', $dbName, $tableName);
+			
+			// If a prefix exists in the table name, remove it
+			$tableNameWithoutPrefix = $tableName;
+			foreach ($prefixes as $prefix) {
+				if (substr($tableName, 0, strlen($prefix)) == $prefix) {
+					$tableNameWithoutPrefix = substr($tableName, strlen($prefix) - 1);
+					break;
+				}
+			}
+			
+			$className = $this->getTitleCase($tableNameWithoutPrefix);
+		}
+		
+		return $className;
+	}
+	
+	public function getStarterObjectClassName(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->getClassName($table) . $this->getConfigValue('class_names/starter_object_suffix', $dbName, $tableName);
+	}
+	
+	public function getStarterCollectionClassName(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->getClassName($table) . $this->getConfigValue('class_names/starter_collection_suffix', $dbName, $tableName);
+	}
+	
+	public function getBaseObjectClassName(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->getClassName($table) . $this->getConfigValue('class_names/base_object_suffix', $dbName, $tableName);
+	}
+	
+	public function getBaseCollectionClassName(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->getClassName($table) . $this->getConfigValue('class_names/base_collection_suffix', $dbName, $tableName);
+	}
+	
+	public function getPhpdocAuthor(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->config->getConfigValue('phpdoc/author', $dbName, $tableName);
+	}
+	
+	public function getPhpdocPackage(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->config->getConfigValue('phpdoc/package', $dbName, $tableName);
+	}
+	
+	public function getPhpdocCopyright(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->config->getConfigValue('phpdoc/copyright', $dbName, $tableName);
+	}
+	
+	public function getObjectExtensionClassName(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->config->getConfigValue('class_names/object_extension_class_name', $dbName, $tableName);
+	}
+	
+	public function getCollectionExtensionClassName(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->config->getConfigValue('class_names/collection_extension_class_name', $dbName, $tableName);
+	}
+	
+	
+	/**
+	 * getTitleCase() takes the given string and returns it in TitleCase format
+	 * (sometimes called UpperCamelCase), with underscores removed.
+	 *
+	 * Example input: db_column_name
+	 * Example output: DbColumnName
+	 * 
+	 * @param string $value the string to convert to title case, usually containing underscores
+	 * @return string the TitleCased version of the given string
+	 * @author Anthony Bush
+	 **/
+	private function getTitleCase($value) {
+		$value = str_replace('_', ' ', $value);
+		$value = ucwords($value);
+		$value = str_replace(' ', '', $value);
+		return $value;
+	}
+	
+	/**
+	 * getCamelCase takes the given string and returns it in camelCase format,
+	 * with underscores removed.
+	 *
+	 * Example input: db_column_name
+	 * Example output: dbColumnName
+	 *
+	 * See: http://en.wikipedia.org/wiki/CamelCase
+	 * 
+	 * @param string $value the string to convert to camel case, usually containing underscores
+	 * @return string the camelCased version of the given string
+	 * @author Anthony Bush
+	 **/
+	private function getCamelCase($value) {
+		$value = $this->getTitleCase($value);
+		$value[0] = strtolower($value[0]);
+		return $value;
 	}
 	
 }

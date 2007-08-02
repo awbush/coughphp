@@ -63,7 +63,7 @@ abstract class CoughObject {
 	/**
 	 * An array of all the objects and their attributes.
 	 *
-	 * The information is used by CoughObject to instantiate and check the
+	 * The information is used by CoughObject to instantiate and load the
 	 * objects.
 	 *
 	 * Format of [objectName] => [array of attributes]
@@ -124,18 +124,18 @@ abstract class CoughObject {
 	protected $derivedFields = array();
 	
 	/**
-	 * An array of all the checked collections in form [collectionName] => [CoughCollection]
+	 * An array of all the loaded collections in form [collectionName] => [CoughCollection]
 	 * 
 	 * @var array
-	 * @see getCollection(), checkCollection(), saveCheckedCollections(), isCollectionChecked()
+	 * @see getCollection(), loadCollection(), saveLoadedCollections(), isCollectionLoaded()
 	 **/
 	protected $collections = array();
 	
 	/**
-	 * An array of all the checked objects in form [objectName] => [CoughObject]
+	 * An array of all the loaded objects in form [objectName] => [CoughObject]
 	 * 
 	 * @var array
-	 * @see getObject(), checkObject(), saveCheckedObjects(), isObjectChecked()
+	 * @see getObject(), loadObject(), saveLoadedObjects(), isObjectLoaded()
 	 **/
 	protected $objects = array();
 
@@ -157,10 +157,10 @@ abstract class CoughObject {
 	protected $isPreknownKeyIdSet = false;
 
 	/**
-	 * Stores wether or not a check returned a row from the database.
+	 * Stores wether or not a load returned a row from the database.
 	 *
 	 * @var boolean
-	 * @see didCheckReturnResult()
+	 * @see isLoaded()
 	 **/
 	protected $checkReturnedResult = null;
 	
@@ -581,13 +581,30 @@ abstract class CoughObject {
 	}
 	
 	/**
+	 * Sets fields in the given hash, but only if they new values are different
+	 * from the existing values
+	 * 
+	 * @param array $fields - format of [field_name] => [new_value]
+	 * @return void
+	 * @author Anthony Bush
+	 * @since 2007-08-02
+	 **/
+	public function setFieldsIfDifferent($fields) {
+		foreach ($fields as $fieldName => $fieldValue) {
+			if ($fieldValue != $this->getField($fieldName)) {
+				$this->setField($fieldName, $fieldValue);
+			}
+		}
+	}
+	
+	/**
 	 * Sets a read-only field; It's usually a derived field from a complex
-	 * SQL query such as when overriding the getCheckSql() function.
+	 * SQL query such as when overriding the getLoadSql() function.
 	 *
 	 * @param string $fieldName - the derived field name to set
 	 * @param mixed $fieldValue - the value to store
 	 * @return void
-	 * @see getCheckSql()
+	 * @see getLoadSql()
 	 * @author Anthony Bush
 	 **/
 	protected function setDerivedField($fieldName, $fieldValue) {
@@ -599,7 +616,7 @@ abstract class CoughObject {
 	 * 
 	 * @param string $fieldName - the derived field name to retrieve
 	 * @return mixed - the value of the specified field
-	 * @see setDerivedField(), getCheckSql()
+	 * @see setDerivedField(), getLoadSql()
 	 * @author Anthony Bush
 	 **/
 	public function getDerivedField($fieldName) {
@@ -666,15 +683,15 @@ abstract class CoughObject {
 	/**
 	 * Retrieves the object's data from the database, loading it into memory.
 	 * 
-	 * @return boolean - whether or not check was able to find a record in the database.
+	 * @return boolean - whether or not load was able to find a record in the database.
 	 * @author Anthony Bush
 	 **/
-	public function check() {
-		return $this->checkBySql($this->getCheckSql());
+	public function load() {
+		return $this->loadBySql($this->getLoadSql());
 	}
 	
 	/**
-	 * Returns the current SQL statement that the {@link check()} method should
+	 * Returns the current SQL statement that the {@link load()} method should
 	 * run.
 	 * 
 	 * Override this in sub classes for custom SQL.
@@ -682,9 +699,9 @@ abstract class CoughObject {
 	 * @return mixed - string of SQL or empty string if no SQL to run.
 	 * @author Anthony Bush
 	 **/
-	protected function getCheckSql() {
+	protected function getLoadSql() {
 		if ($this->hasKeyId()) {
-			$sql = 'SELECT * FROM ' . $this->dbName . '.' . $this->tableName . ' ' . $this->db->generateWhere($this->getPk());
+			$sql = $this->getLoadSqlWithoutWhere() . ' ' . $this->db->generateWhere($this->getPk());
 		} else {
 			$sql = '';
 		}
@@ -692,68 +709,82 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Provides a way to `check` by an array of "key" => "value" pairs.
+	 * Returns the core SQL statement that other load methods should build upon
+	 * (no WHERE clause is returned). This allows other functions (like
+	 * {@link loadByCriteria()} and even other collections) to share the same
+	 * SELECT and FROM portions of the SQL.
+	 * 
+	 * Override this in sub classes for custom SQL. Trailing white-space is not
+	 * required. The SQL should be runnable on it's own (i.e. no syntax errors)
+	 *
+	 * @return string
+	 * @author Anthony Bush
+	 * @todo Consider moving to something like prepared statements.
+	 **/
+	public function getLoadSqlWithoutWhere() {
+		return 'SELECT * FROM ' . $this->dbName . '.' . $this->tableName;
+	}
+	
+	/**
+	 * Provides a way to load by an array of "key" => "value" pairs.
 	 *
 	 * @param array $where - an array of "key" => "value" pairs to search for
 	 * @param boolean $additionalSql - add ORDER BYs and LIMITs here.
 	 * @return boolean - true if initialized object with data, false otherwise.
 	 * @author Anthony Bush
 	 **/
-	public function checkByCriteria($where = array(), $additionalSql = '') {
+	public function loadByCriteria($where = array(), $additionalSql = '') {
 		if ( ! empty($where)) {
-			$sql = 'SELECT * FROM ' . $this->dbName . '.' . $this->tableName
-			     . ' ' . $this->db->generateWhere($where) . ' ' . $additionalSql;
-			return $this->checkBySql($sql);
+			$sql = $this->getLoadSqlWithoutWhere() . ' ' . $this->db->generateWhere($where) . ' ' . $additionalSql;
+			return $this->loadBySql($sql);
 		}
 		return false;
 	}
 	
 	/**
-	 * Provides a way to `check` by custom SQL.
+	 * Provides a way to load by custom SQL.
 	 *
-	 * @param string $sql - custom SQL to use during the check
+	 * @param string $sql
 	 * @return boolean - true if initialized object with data, false otherwise.
 	 * @author Anthony Bush
 	 **/
-	public function checkBySql($sql) {
+	public function loadBySql($sql) {
 		if ( ! empty($sql)) {
 			$this->db->selectDb($this->dbName);
 			$result = $this->db->query($sql);
 			if ($result->numRows() == 1) {
 				$this->initFields($result->getRow());
-				$this->setCheckReturnedResult(true);
+				$this->setIsLoaded(true);
 			} else {
-				// check failed because the unique dataset couldn't be selected
-				$this->setCheckReturnedResult(false);
+				// load failed because the unique dataset couldn't be selected
+				$this->setIsLoaded(false);
 			}
 			$result->freeResult();
 		} else {
-			$this->setCheckReturnedResult(false);
+			$this->setIsLoaded(false);
 		}
-		return $this->didCheckReturnResult();
+		return $this->isLoaded();
 	}
 
 	/**
-	 * Set whether or not a check returned a result from the database.
+	 * Set whether or load returned a result from the database.
 	 *
-	 * @param boolean $value - true if check returned a result, false if not.
+	 * @param boolean $value
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	protected function setCheckReturnedResult($value) {
-		$this->checkReturnedResult = $value;
+	protected function setIsLoaded($value) {
+		$this->isLoaded = $value;
 	}
 
 	/**
-	 * Get whether or not a check returned a result from the database.
+	 * Get whether or not a load returned a result from the database.
 	 *
-	 * Note that there is no `getCheckReturnedResult` function, as this is it.
-	 *
-	 * @return boolean - true if check returned a result, false if not.
+	 * @return boolean
 	 * @author Anthony Bush
 	 **/
-	public function didCheckReturnResult() {
-		return $this->checkReturnedResult;
+	public function isLoaded() {
+		return $this->isLoaded;
 	}
 
 	/**
@@ -813,16 +844,18 @@ abstract class CoughObject {
 	 **/
 	protected function setFieldsFromParentPk() {
 		if ($this->hasCollector()) {
-			$collector = $this->getCollector();
-			foreach ($this->objectDefinitions as $objProperties) {
-				if ($collector instanceof $objProperties['class_name']) {
-					$getter = $objProperties['get_id_method']; // TODO: Make multi-key PK compliant
-					if ($this->$getter() === null) {
-						$this->setFields($collector->getPk());
-					}
-					break;
-				}
-			}
+			$this->setFieldsIfDifferent($this->getCollector()->getPk());
+			
+			// $collector = $this->getCollector();
+			// foreach ($this->objectDefinitions as $objProperties) {
+			// 	if ($collector instanceof $objProperties['class_name']) {
+			// 		$getter = $objProperties['get_id_method']; // TODO: Make multi-key PK compliant
+			// 		if ($this->$getter() === null) {
+			// 			$this->setFields($collector->getPk());
+			// 		}
+			// 		break;
+			// 	}
+			// }
 		}
 	}
 
@@ -853,7 +886,7 @@ abstract class CoughObject {
 			$result = $this->update();
 		}
 
-		$this->saveCheckedCollections();
+		$this->saveLoadedCollections();
 		
 		$this->saveJoinFields();
 		
@@ -878,26 +911,26 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Saves all the checked objects (if it wasn't checked there would be
+	 * Saves all the loaded objects (if it wasn't loaded there would be
 	 * nothing to save)
 	 *
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function saveCheckedObjects() {
+	public function saveLoadedObjects() {
 		foreach ($this->objects as $object) {
 			$object->save();
 		}
 	}
 	
 	/**
-	 * Saves all the checked collections (if it wasn't checked there would be
+	 * Saves all the loaded collections (if it wasn't loaded there would be
 	 * nothing to save)
 	 *
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function saveCheckedCollections() {
+	public function saveLoadedCollections() {
 		foreach ($this->collections as $collection) {
 			$collection->save();
 		}
@@ -1017,40 +1050,40 @@ abstract class CoughObject {
 	// ----------------------------------------------------------------------------------------------
 
 	/**
-	 * Checks the object using the configuration in `objectDefinitions`.
+	 * Loads the object using the configuration in `objectDefinitions`.
 	 * 
-	 * Generic (aka generated) check methods, e.g. `checkProduct_Object`,
-	 * should call this method, e.g. `$this->_checkObject('product');`
+	 * Generic (aka generated) load methods, e.g. `loadProduct_Object`,
+	 * should call this method, e.g. `$this->_loadObject('product');`
 	 * 
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	protected function _checkObject($objectName) {
+	protected function _loadObject($objectName) {
 		$objectInfo = &$this->objectDefinitions[$objectName];
 		$object = new $objectInfo['class_name']($this->$objectInfo['get_id_method']());
-		$object->check();
+		$object->load();
 		$this->objects[$objectName] = $object;
 	}
 	
 	/**
-	 * Calls the check method for the given object name.
+	 * Calls the load method for the given object name.
 	 *
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	protected function checkObject($objectName) {
-		$checkMethod = 'check' . ucfirst($collectionName) . '_Object';
-		$this->$checkMethod();
+	protected function loadObject($objectName) {
+		$loadMethod = 'load' . ucfirst($collectionName) . '_Object';
+		$this->$loadMethod();
 	}
 	
 	/**
-	 * Tells whether or not the given object name has been checked.
+	 * Tells whether or not the given object name has been loaded.
 	 *
 	 * @return boolean
 	 * @author Anthony Bush
-	 * @todo Determine whether we need to switch to array_key_exists here. Depends on whether we set the value to null (in which case yes) or an empty object (in which case no) when the object is checked, but not found in the database.
+	 * @todo Determine whether we need to switch to array_key_exists here. Depends on whether we set the value to null (in which case yes) or an empty object (in which case no) when the object is loaded, but not found in the database.
 	 **/
-	protected function isObjectChecked($objectName) {
+	protected function isObjectLoaded($objectName) {
 		return isset($this->objects[$objectName]);
 	}
 	
@@ -1062,8 +1095,8 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function getObject($objectName) {
-		if ( ! $this->isObjectChecked($objectName)) {
-			$this->checkObject($objectName);
+		if ( ! $this->isObjectLoaded($objectName)) {
+			$this->loadObject($objectName);
 		}
 		return $this->objects[$objectName];
 	}
@@ -1089,7 +1122,7 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Checks the collection using the configuration in `collectionDefinitions`.
+	 * Loads the collection using the configuration in `collectionDefinitions`.
 	 * 
 	 * You can override the SQL, element name, and orderBySQL options.
 	 * 
@@ -1097,7 +1130,7 @@ abstract class CoughObject {
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	protected function _checkCollection($collectionName, $elementName = '', $sql = '', $orderBySQL = '') {
+	protected function _loadCollection($collectionName, $elementName = '', $sql = '', $orderBySQL = '') {
 		$def =& $this->collectionDefinitions[$collectionName];
 		
 		$collection = new $def['collection_class']();
@@ -1154,15 +1187,15 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Calls the check method for the given collection name.
+	 * Calls the load method for the given collection name.
 	 *
-	 * @param string $collectionName - the name of the collection to check
+	 * @param string $collectionName - the name of the collection to load
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	protected function checkCollection($collectionName) {
-		$checkMethod = 'check' . ucfirst($collectionName) . '_Collection';
-		$this->$checkMethod();
+	protected function loadCollection($collectionName) {
+		$loadMethod = 'load' . ucfirst($collectionName) . '_Collection';
+		$this->$loadMethod();
 	}
 	
 	/**
@@ -1202,12 +1235,12 @@ abstract class CoughObject {
 	}
 
 	/**
-	 * Tells whether or not the given collection name has been checked.
+	 * Tells whether or not the given collection name has been loaded.
 	 *
 	 * @return boolean
 	 * @author Anthony Bush
 	 **/
-	protected function isCollectionChecked($collectionName) {
+	protected function isCollectionLoaded($collectionName) {
 		return isset($this->collections[$collectionName]);
 	}
 	
@@ -1219,8 +1252,8 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function getCollection($collectionName) {
-		if ( ! $this->isCollectionChecked($collectionName)) {
-			$this->checkCollection($collectionName);
+		if ( ! $this->isCollectionLoaded($collectionName)) {
+			$this->loadCollection($collectionName);
 		}
 		return $this->collections[$collectionName];
 	}
@@ -1309,7 +1342,7 @@ abstract class CoughObject {
 	 * Returns true if the field is valid (i.e. no validation errors set),
 	 * otherwise it returns false.
 	 *
-	 * @param string $fieldName - the field name to check.
+	 * @param string $fieldName - the field name to load.
 	 * @return boolean
 	 * @author Anthony Bush
 	 **/
@@ -1442,9 +1475,9 @@ abstract class CoughObject {
 						$value = null;
 					}
 					return $this->setObject($objectName, $value);
-				} else if (strpos($method, 'check') === 0) {
+				} else if (strpos($method, 'load') === 0) {
 					$objectName = substr($method, 5, $underscorePos - 5);
-					return $this->_checkObject($objectName);
+					return $this->_loadObject($objectName);
 				}
 
 			}
@@ -1456,9 +1489,9 @@ abstract class CoughObject {
 					} else {
 
 					}
-				} else if (strpos($method, 'check') === 0) {
+				} else if (strpos($method, 'load') === 0) {
 					$collectionName = substr($method, 5, $underscorePos - 5);
-					return $this->_checkCollection($collectionName);
+					return $this->_loadCollection($collectionName);
 				}
 			}
 			
@@ -1560,7 +1593,7 @@ abstract class CoughObject {
 				$this->fields[$fieldName] = $fieldsOrID;
 			}
 			// TODO: Tom: To load or not to load automatically?
-			$this->check();
+			$this->load();
 		}
 		
 		// Set related entities that were passed in
