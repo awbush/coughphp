@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>generator/generate.php</string>
+	<string>CoughObject.class.php</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -54,14 +54,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>49</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>1599</integer>
+				<integer>1066</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1570</integer>
+			<integer>1044</integer>
 		</dict>
 		<key>design/ActionItems.markdown</key>
 		<dict>
@@ -84,12 +84,12 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>201</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>47</integer>
+			<integer>191</integer>
 		</dict>
 		<key>design/Cough Generation.markdown</key>
 		<dict>
@@ -103,9 +103,9 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>132</integer>
+			<integer>134</integer>
 		</dict>
-		<key>design/Cough Object Model.graffle</key>
+		<key>design/CoughRelationships.markdown</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -131,7 +131,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>67</integer>
+			<integer>179</integer>
 		</dict>
 		<key>design/Overview - What is Cough.markdown</key>
 		<dict>
@@ -166,14 +166,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>19</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>92</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>56</integer>
 		</dict>
 		<key>generator/classes/CoughClass.class.php</key>
 		<dict>
@@ -194,14 +194,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>65</integer>
 				<key>line</key>
-				<integer>80</integer>
+				<integer>74</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>43</integer>
+			<integer>38</integer>
 		</dict>
 		<key>generator/classes/CoughGenerator.class.php</key>
 		<dict>
@@ -210,26 +210,26 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>330</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>406</integer>
+			<integer>302</integer>
 		</dict>
 		<key>generator/classes/CoughGeneratorConfig.class.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>30</integer>
+				<integer>7</integer>
 				<key>line</key>
-				<integer>138</integer>
+				<integer>176</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>89</integer>
+			<integer>128</integer>
 		</dict>
 		<key>generator/classes/CoughWriter.class.php</key>
 		<dict>
@@ -264,14 +264,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>4</integer>
 				<key>line</key>
-				<integer>60</integer>
+				<integer>62</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>40</integer>
+			<integer>51</integer>
 		</dict>
 		<key>generator/classes/schema/SchemaColumn.class.php</key>
 		<dict>
@@ -322,14 +322,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>38</integer>
+				<integer>45</integer>
 				<key>line</key>
-				<integer>65</integer>
+				<integer>127</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>55</integer>
+			<integer>90</integer>
 		</dict>
 		<key>generator/classes/schema_generators/SchemaGenerator.class.php</key>
 		<dict>
@@ -375,33 +375,35 @@
 				<integer>17</integer>
 			</dict>
 		</dict>
-		<key>generator/classes/schema_generators/database/drivers/base/DriverDatabase.class.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>11</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
 		<key>generator/classes/schema_generators/database/drivers/base/DriverServer.class.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>4</integer>
 				<key>line</key>
-				<integer>9</integer>
+				<integer>10</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>10</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>17</integer>
+			</dict>
 		</dict>
 		<key>generator/classes/schema_generators/database/drivers/base/DriverTable.class.php</key>
 		<dict>
@@ -431,33 +433,19 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>generator/classes/schema_generators/database/drivers/mysql/MysqlServer.class.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>24</integer>
-				<key>line</key>
-				<integer>59</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>27</integer>
-		</dict>
 		<key>generator/classes/schema_generators/database/drivers/mysql/MysqlTable.class.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>80</integer>
+				<integer>85</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>39</integer>
+			<integer>64</integer>
 		</dict>
 		<key>generator/config/application.inc.php</key>
 		<dict>
@@ -502,6 +490,20 @@
 				<key>line</key>
 				<integer>36</integer>
 			</dict>
+		</dict>
+		<key>generator/config/cough_test/database_schema_generator.inc.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>33</integer>
+				<key>line</key>
+				<integer>19</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>generator/config/default/cough_generator.inc.php</key>
 		<dict>
@@ -564,7 +566,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>31</integer>
+				<integer>0</integer>
 				<key>line</key>
 				<integer>15</integer>
 			</dict>
@@ -572,20 +574,6 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
-		</dict>
-		<key>load.inc.php</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>60</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>5</integer>
 		</dict>
 		<key>sample-app/index.php</key>
 		<dict>
@@ -611,6 +599,7 @@
 		<string>design/Cough API.markdown</string>
 		<string>design/Overview - What is Cough.markdown</string>
 		<string>design/Minutes - Tom &amp; Anthony on Cough.markdown</string>
+		<string>design/CoughRelationships.markdown</string>
 		<string>generator/config/default/cough_generator.inc.php</string>
 		<string>generator/config/default/database_schema_generator.inc.php</string>
 		<string>generator/classes/CoughGeneratorConfig.class.php</string>
@@ -627,11 +616,9 @@
 		<string>generator/generate.php</string>
 		<string>generator/classes/schema_generators/SchemaGenerator.class.php</string>
 		<string>generator/config/cough_test/cough_generator.inc.php</string>
+		<string>generator/config/cough_test/database_schema_generator.inc.php</string>
 		<string>generator/classes/schema_generators/database/DatabaseSchemaGenerator.class.php</string>
 		<string>generator/classes/schema/Schema.class.php</string>
-		<string>load.inc.php</string>
-		<string>generator/classes/schema_generators/database/drivers/mysql/MysqlServer.class.php</string>
-		<string>generator/classes/schema_generators/database/drivers/base/DriverDatabase.class.php</string>
 		<string>generator/classes/schema_generators/database/drivers/mysql/MysqlDatabase.class.php</string>
 		<string>generator/classes/schema/SchemaDatabase.class.php</string>
 		<string>generator/classes/schema_generators/database/drivers/base/DriverServer.class.php</string>
@@ -639,13 +626,12 @@
 		<string>generator/config/application.inc.php</string>
 		<string>generator/classes/load.inc.php</string>
 		<string>generator/classes/CoughGenerator.class.php</string>
-		<string>design/Cough Object Model.graffle</string>
 		<string>generator/classes/CoughClass.class.php</string>
 		<string>generator/classes/CoughWriter.class.php</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{0, 0}, {1298, 1028}}</string>
+	<string>{{0, 0}, {1299, 1028}}</string>
 </dict>
 </plist>
