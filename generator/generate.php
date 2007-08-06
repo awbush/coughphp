@@ -18,6 +18,12 @@ try {
 	$schemaGenerator->enableVerbose();
 	$schema = $schemaGenerator->generateSchema();
 	
+	foreach ($schema->getDatabases() as $database) {
+		foreach ($database->getTables() as $table) {
+			echo 'Table ' . sprintf('%20s', $table->getTableName()) . ' has ' . count($table->getHasOneRelationships()) . ' one-to-one relationships.' . "\n";
+		}
+	}
+	
 	// TODO: ? Allow external additions to the schema... e.g. loop through it with any custom naming standards and add any FK data based on those standards, e.g. using the cough naming conventions (or configuration?).
 	// $manipulator = new SchemaManipulator();
 	// $manipulator->addFksFromJointables($schema, '/.*2.*/');
@@ -28,12 +34,12 @@ try {
 
 	// Generate files into memory
 	$coughGenerator = new CoughGenerator($coughGeneratorConfig);
-	$classes = $coughGenerator->generateCoughClasses($schema);
+	// $classes = $coughGenerator->generateCoughClasses($schema);
 	
 	echo number_format(memory_get_usage()) . " used\n";
 	echo number_format(memory_get_usage(true)) . " allocated\n";
 	
-	print_r($classes);
+	// print_r($classes);
 	
 } catch (Exception $e) {
 	echo $e->getMessage() . "\n";

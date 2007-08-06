@@ -58,6 +58,13 @@ class Schema {
 	public function linkRelationships() {
 		// Loop through the databases' tables, and use any FK information to build all the relationships.
 		
+		foreach ($this->getDatabases() as $dbName => $database) {
+			foreach ($database->getTables() as $tableName => $table) {
+				
+				// one of this table to one of the related FK table.
+				// one of the related FK table to many of this table.
+			}
+		}
 		
 		// foreach ($this->databases as $dbName => $db) {
 		// 	$this->schemas[$dbName] = array();

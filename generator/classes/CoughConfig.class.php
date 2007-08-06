@@ -59,20 +59,20 @@ abstract class CoughConfig {
 		if (!is_null($dbName)) {
 			if (!is_null($tableName)) {
 				// Look for table config first (in GLOBAL, DATABASE, or TABLE scopes)
-				$finalKey = array_merge(array('databases', $dbName, 'tables', $tableName), $configKey);
+				$finalKey = array_merge(array('databases', $dbName, 'tables', $tableName), $keys);
 				$value = $this->getArrayValueFromMultiKey($this->config, $finalKey);
 			}
 			
 			// Look for databaes config next (in GLOBAL and DATABASE scopes only)
 			if (is_null($value) && $scope != self::SCOPE_TABLE) {
-				$finalKey = array_merge(array('databases', $dbName), $configKey);
+				$finalKey = array_merge(array('databases', $dbName), $keys);
 				$value = $this->getArrayValueFromMultiKey($this->config, $finalKey);
 			}
 		}
 		
 		// Look at global config (in GLOBAL scope only)
 		if (is_null($value) && $scope == self::SCOPE_GLOBAL) {
-			$value = $this->getArrayValueFromMultiKey($this->config, $configKey);
+			$value = $this->getArrayValueFromMultiKey($this->config, $keys);
 		}
 		
 		// No config found, return null

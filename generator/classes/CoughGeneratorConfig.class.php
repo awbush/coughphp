@@ -115,31 +115,31 @@ class CoughGeneratorConfig extends CoughConfig {
 	public function getPhpdocAuthor(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		return $this->config->getConfigValue('phpdoc/author', $dbName, $tableName);
+		return $this->getConfigValue('phpdoc/author', $dbName, $tableName);
 	}
 	
 	public function getPhpdocPackage(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		return $this->config->getConfigValue('phpdoc/package', $dbName, $tableName);
+		return $this->getConfigValue('phpdoc/package', $dbName, $tableName);
 	}
 	
 	public function getPhpdocCopyright(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		return $this->config->getConfigValue('phpdoc/copyright', $dbName, $tableName);
+		return $this->getConfigValue('phpdoc/copyright', $dbName, $tableName);
 	}
 	
 	public function getObjectExtensionClassName(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		return $this->config->getConfigValue('class_names/object_extension_class_name', $dbName, $tableName);
+		return $this->getConfigValue('class_names/object_extension_class_name', $dbName, $tableName);
 	}
 	
 	public function getCollectionExtensionClassName(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		return $this->config->getConfigValue('class_names/collection_extension_class_name', $dbName, $tableName);
+		return $this->getConfigValue('class_names/collection_extension_class_name', $dbName, $tableName);
 	}
 	
 	
@@ -154,7 +154,7 @@ class CoughGeneratorConfig extends CoughConfig {
 	 * @return string the TitleCased version of the given string
 	 * @author Anthony Bush
 	 **/
-	private function getTitleCase($value) {
+	public function getTitleCase($value) {
 		$value = str_replace('_', ' ', $value);
 		$value = ucwords($value);
 		$value = str_replace(' ', '', $value);
@@ -174,7 +174,7 @@ class CoughGeneratorConfig extends CoughConfig {
 	 * @return string the camelCased version of the given string
 	 * @author Anthony Bush
 	 **/
-	private function getCamelCase($value) {
+	public function getCamelCase($value) {
 		$value = $this->getTitleCase($value);
 		$value[0] = strtolower($value[0]);
 		return $value;

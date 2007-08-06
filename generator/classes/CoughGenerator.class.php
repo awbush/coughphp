@@ -481,10 +481,10 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
 		
-		$starterObjectClassName = $this->config->getStarterObjectClassName($table);
+		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
 		$starterCollectionClassName = $this->config->getStarterCollectionClassName($table);
-		$baseObjectClassName = $this->config->getBaseObjectClassName($table);
-		$baseCollectionClassName = $this->config->getBaseCollectionClassName($table);
+		$baseObjectClassName        = $this->config->getBaseObjectClassName($table);
+		$baseCollectionClassName    = $this->config->getBaseCollectionClassName($table);
 		
 		$phpdocTags = $this->generatePhpdocTags($table);
 		$phpdocTags[] = '@see ' . $baseObjectClassName . ', CoughObject';
@@ -500,27 +500,6 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
  * <?php echo implode("\n * ", $phpdocTags) . "\n"; ?>
  **/
 class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassName ?> {
-
-	// Static Construction Methods
-	
-	public static function constructByPk($idOrIdArray) {
-		if (is_array($idOrIdArray)) {
-			$object = new <?php echo $starterObjectClassName ?>($idOrIdArray);
-			$object->load();
-		} else {
-			$object = new <?php echo $starterObjectClassName ?>($idOrIdArray);
-		}
-		if ($object->isLoaded()) {
-			return $object;
-		} else {
-			return null;
-		}
-	}
-	
-	public static function constructByFields($hash) {
-		return new Order($hash);
-	}
-	
 }
 <?php
 		echo("\n?>\n");
@@ -541,19 +520,29 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 	 * @author Anthony Bush
 	 **/
 	protected function generateStarterCollection() {
+		
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		
+		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
+		$starterCollectionClassName = $this->config->getStarterCollectionClassName($table);
+		$baseObjectClassName        = $this->config->getBaseObjectClassName($table);
+		$baseCollectionClassName    = $this->config->getBaseCollectionClassName($table);
+		
+		$phpdocTags = $this->generatePhpdocTags($table);
+		$phpdocTags[] = '@see ' . $baseCollectionClassName . ', CoughCollection';
+		
+		$extensionClassName = $this->config->getCollectionExtensionClassName($table);
+		
 		ob_start();
 		echo("<?php\n\n");
 		?>
 /**
- * This is the starter class for <?php echo $this->table['class_name'] . $this->baseCollectionSuffix ?>.
+* This is the starter class for <?php echo $baseCollectionClassName ?>.
  *
- * @package <?php echo $this->package . "\n" ?>
- * @author <?php echo $this->author . "\n" ?>
- * @author CoughGenerator::generateStarterCollection() <?php echo $this->generatorVersion . "\n" ?>
- * @copyright <?php echo $this->copyright . "\n" ?>
- * @see <?php echo $this->table['class_name'] . $this->baseCollectionSuffix . ", CoughCollection" . "\n" ?>
+ * <?php echo implode("\n * ", $phpdocTags) . "\n"; ?>
  **/
-class <?php echo $this->table['class_name'] . $this->starterCollectionSuffix ?> extends <?php echo $this->table['class_name'] . $this->baseCollectionSuffix ?> {
+class <?php echo $starterCollectionClassName ?> extends <?php echo $baseCollectionClassName ?> {
 }
 <?php
 		echo("\n?>\n");

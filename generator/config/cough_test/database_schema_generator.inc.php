@@ -15,9 +15,9 @@ $config = array(
 	
 	// All databases will be scanned unless specified in the 'databases' parameter in the OPTIONAL CONFIG SECTION.
 	'dsn' => array(
-		'host' => 'gomer',
-		'user' => 'root',
-		'pass' => '3v3ry0n3l@rp5!',
+		'host' => 'localhost', // gomer
+		'user' => 'nobody', // root
+		'pass' => '', // 3v3ry0n3l@rp5!
 		'port' => 3306,
 		'driver' => 'mysql'
 	),

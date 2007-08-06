@@ -1617,6 +1617,8 @@ abstract class CoughObject {
 			}
 			// set the related object
 			$this->setObject($objectName, new $this->objectDefinitions[$objectName]['class_name']($objectData));
+			// if we had load methods that took data then we don't even need to know the class name:
+			// $this->loadObject($objectName, $objectData);
 		}
 		
 	}

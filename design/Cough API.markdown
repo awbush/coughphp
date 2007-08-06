@@ -147,3 +147,99 @@ Accessing Join attributes (this is collection-related topic)
 -------------------------
 
 Need to standardize the way of accessing join fields.
+
+
+Static Construction Implementation
+----------------------------------
+
+After given this some thought, why don't we try this:
+
+	protected static $dbName = 'asdlfjk';
+
+the problem is that the member definition can only appear once, otherwise functions in parent classes where it is defined will not see the change. We can not overcome this by adding a `public static defineDbCOnfig()` method because the same problem will occur: parent classes will call the wrong one.
+
+This might be why Propel uses a "Peer" class which contains static methods?
+
+But, maybe one appearance is enough? If we are using the generator,then it can generate all these static methods and attributes for us. The question is how valuable is being able to override dbName, tableName, and all definitions (for fields, objects, and collections)? One would think the information is not dynamic at run time so there is no value in being able to override it -- you'd just change the values that are there. But, maybe someone wants to reuse some logic and they do it by extending an existing class and customizing some logic?  Sounds like in that case you should be using a different design pattern, perhaps the Strategy Pattern.
+
+What if we generate, in the starter classes, the static methods and member variables that are needed?  This allows Cough to call the methods, allows the end user to customize them, and the only drawback I can think of is that hand-writing a Cough class might be harder (because of the static methods, the member variables are easy and required already).
+
+Perhaps we should take a look at how much work there is in the static methods, and see if we can't have some of the static methods in the core Cough class... (e.g. can you do self::$dbName in a parent class when there isn't one defined until a sub class?)
+
+Even if we don't want to require static methods, we could also provide an option for it. The problem is that we are trying to allow you to have a factory method that returns an object of the right type, but core Cough needs to know what that method is otherwise it will be stuck constructing only one type of object and not use your factory method (e.g. CoughCollection code that creates your elements... Now, we currently have an option to pass in the element name (if wanting to override it, but maybe we could set a variable for the factory method, if any, or even provide code that can be evaled))
+
+
+Loading / Setting objects.
+--------------------------
+
+Listen closely, because this might solve the confusion about what setCollectionName_Collection() does (set the reference to the collection or call set on the collection which will "set" the state of the collection to what you give it, i.e. perform any needed adds and removes).
+
+Here we go.
+
+What if the load methods for objets and collections support parameters? For example, if you have preloaded a related object you need a way to set it so that an extra lookup isn't done. We were considering:
+
+
+	<?php
+	$manuf = new Manufacturer(1);
+	$product = new Product(1);
+	$product->setManufacturer_Object($manuf);
+	
+	// And then if you call get it doesn't load because the object is already available.
+	$product->getManufacturer();
+	?>
+
+But what about:
+
+	<?php
+	$manuf = new Manufacturer(1);
+	$product = new Product(1);
+	$product->loadManufacturer_Object($manuf);
+	?>
+
+What we are saying here is that the load method will check arguments and only perform the load if nothing was passed in. If something was passed in, it will still be setting the object, it just won't do a database lookup.
+
+NOTE: object loading should setObject (i.e. we are abstracting away the object data structure this time around, so use setObject/getObject)
+
+Example object load method:
+
+	<?php
+	public function loadManufacturer_Object($hashOrObject = null) {
+		if (is_null($hashOrObject)) {
+			// Do db lookup to get hash.
+			$sql = Manufacturer::getLoadSqlWithoutWhere();
+			$sql . = ' WHERE ' . $this->getDb()->generateWhere($this->getPk())
+		}
+		else if (is_array($hashOrObject)) {
+			// We got the data
+		}
+		else if (is_object($hashOrObject)) {
+			// We got the object, just set it:
+			$this->setObject('manufacturer', $hashOrObject);
+		}
+	}
+	?>
+
+Static methods will need a static db object too... we should provide a getter for non static methods and static methods alike:
+
+	self::getDb()->generateWhere($this->getPk())
+
+The method might look like:
+
+	public static function getDb() {
+		if (is_null(self::$db)) {
+			self::$db = DatabaseFactory::getDatabase(self::$dbName);
+		}
+		return self::$db;
+	}
+
+If we go that route we might need to require that all generated classes implement a CoughStaticInterface or something that says the following methods must be defined:
+
+	public static function getDb();
+	public static function constructByPk($pk);
+	public static function constructByFields($hash);
+	public static function construct(); // ?
+	// and more...
+
+
+
+

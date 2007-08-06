@@ -36,6 +36,87 @@ class ConcreteClass implements CoughFactoryInterface {
 ?>
 
 
+Sample Generator Code
+---------------------
+
+Some of the static methods might be generated like the following...
+
+	// Static Construction Methods
+	
+	/**
+	 * Constructs a new <?php echo $starterObjectClassName ?> object from
+	 * a single id (for single key PKs) or a hash of [field_name] => [field_value].
+	 * 
+	 * The key is used to pull data from the database, and, if no data is found,
+	 * null is returned. You can use this function with any unique keys or the
+	 * primary key as long as a hash is used.
+	 * 
+	 * @return <?php echo $starterObjectClassName ?>
+	 **/
+	public static function constructByKey($idOrIdArray) {
+		if (is_array($idOrIdArray)) {
+			$fields = $idOrIdArray;
+		} else {
+			$fields = array();
+			foreach (self::getPkFieldNames() as $fieldName) {
+				$fields[$fieldName] = $idOrIdArray;
+			}
+		}
+		$db = <?php echo $starterObjectClassName ?>::getDb();
+		$sql = <?php echo $starterObjectClassName ?>::getLoadSqlWithoutWhere() . ' ' . $db->generateWhere($fields);
+		return self::constructBySql($sql);
+		$result = $db->query($sql);
+		if ($row = $result->getRow()) {
+			return self::constructByFields($row);
+		} else {
+			return null;
+		}
+	}
+	
+	public static function constructBySql($sql) {
+		if ( ! empty($sql)) {
+			$db = <?php echo $starterObjectClassName ?>::getDb();
+			$db->selectDb(self::$dbName);
+			$result = $db->query($sql);
+			if ($result->numRows() == 1) {
+				return self::constructByFields($result->getRow());
+			}
+			$result->freeResult();
+		}
+		return null;
+	}
+	
+	// potential temporary implementation before we have all the DB methods static...
+	public static function constructByKey($idOrIdArray) {
+		if (is_array($idOrIdArray)) {
+			$object = new <?php echo $starterObjectClassName ?>($idOrIdArray);
+			$object->load();
+		} else {
+			$object = new <?php echo $starterObjectClassName ?>($idOrIdArray);
+		}
+		if ($object->isLoaded()) {
+			return $object;
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Constructs a new <?php echo $starterObjectClassName ?> object after
+	 * checking the fields array to make sure the appropriate subclass is
+	 * used.
+	 * 
+	 * No queries are run against the database.
+	 * 
+	 * @return <?php echo $starterObjectClassName ?>
+	 **/
+	public static function constructByFields($hash) {
+		return new <?php echo $starterObjectClassName ?>($hash);
+		// Would we need isLoaded status when using static methods? $object->setIsLoaded(true);
+	}
+	
+
+
 Single-Query Initialization
 ---------------------------
 
