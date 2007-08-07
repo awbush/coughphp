@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>generator/classes/CoughGenerator.class.php</string>
+	<string>CoughObject.class.php</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -54,14 +54,44 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>2</integer>
+				<integer>84</integer>
 				<key>line</key>
-				<integer>1065</integer>
+				<integer>1691</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>1645</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>33</integer>
+				<key>line</key>
+				<integer>1691</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>84</integer>
+				<key>line</key>
+				<integer>1691</integer>
+			</dict>
+		</dict>
+		<key>design/API Inconsistency.markdown</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>23</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1047</integer>
+			<integer>0</integer>
 		</dict>
 		<key>design/ActionItems.markdown</key>
 		<dict>
@@ -82,9 +112,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>174</integer>
+				<integer>3</integer>
 				<key>line</key>
-				<integer>13</integer>
+				<integer>44</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -175,6 +205,20 @@
 			<key>firstVisibleLine</key>
 			<integer>116</integer>
 		</dict>
+		<key>design/RAW Getters &amp; Setters.markdown</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>1</integer>
+				<key>line</key>
+				<integer>108</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>36</integer>
+		</dict>
 		<key>design/Schema Manipulation.php</key>
 		<dict>
 			<key>caret</key>
@@ -236,29 +280,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>12</integer>
+				<integer>50</integer>
 				<key>line</key>
-				<integer>313</integer>
+				<integer>391</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>287</integer>
+			<integer>349</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>42</integer>
 				<key>line</key>
-				<integer>313</integer>
+				<integer>391</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>59</integer>
 				<key>line</key>
-				<integer>314</integer>
+				<integer>391</integer>
 			</dict>
 		</dict>
 		<key>generator/classes/CoughGeneratorConfig.class.php</key>
@@ -366,9 +410,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>88</integer>
+				<integer>33</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -387,7 +431,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>95</integer>
+			<integer>0</integer>
 		</dict>
 		<key>generator/classes/schema_generators/SchemaGenerator.class.php</key>
 		<dict>
@@ -651,6 +695,7 @@
 	<key>openDocuments</key>
 	<array>
 		<string>CoughObject.class.php</string>
+		<string>design/RAW Getters &amp; Setters.markdown</string>
 		<string>As_CoughObject.class.php</string>
 		<string>sample-app/index.php</string>
 		<string>CoughCollection.class.php</string>
