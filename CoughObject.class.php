@@ -541,7 +541,7 @@ abstract class CoughObject {
 	 *
 	 * @return mixed
 	 **/
-	public function getField($fieldName) {
+	protected function getField($fieldName) {
 		if (isset($this->fields[$fieldName])) {
 			return ($this->fields[$fieldName]);
 		} else {
@@ -556,7 +556,7 @@ abstract class CoughObject {
 	 * @param mixed $value
 	 * @return void
 	 **/
-	public function setField($fieldName, $value) {
+	protected function setField($fieldName, $value) {
 		$this->setModifiedField($fieldName);
 		$this->fields[$fieldName] = $value;
 	}
@@ -1057,13 +1057,13 @@ abstract class CoughObject {
 	 * 
 	 * @return void
 	 * @author Anthony Bush
+	 * @deprecated loads will be generated, override them for custom loads (i.e. lift requirements on how much definitions are required)
 	 **/
-	protected function _loadObject($objectName) {
-		$objectInfo = &$this->objectDefinitions[$objectName];
-		$object = new $objectInfo['class_name']($this->$objectInfo['get_id_method']());
-		$object->load();
-		$this->objects[$objectName] = $object;
-	}
+	// protected function _loadObject($objectName) {
+	// 	$objectInfo = &$this->objectDefinitions[$objectName];
+	// 	$object = $objectInfo['class_name']::constructByKey($this->getRefFields($objectName));
+	// 	$this->setObject($objectName, $object);
+	// }
 	
 	/**
 	 * Calls the load method for the given object name.
@@ -1071,8 +1071,8 @@ abstract class CoughObject {
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	protected function loadObject($objectName) {
-		$loadMethod = 'load' . ucfirst($collectionName) . '_Object';
+	public function loadObject($objectName) {
+		$loadMethod = 'load' . self::titleCase($objectName) . '_Object';
 		$this->$loadMethod();
 	}
 	
@@ -1088,7 +1088,7 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Returns the specified object for use.
+	 * Returns the specified object for use (raw get).
 	 *
 	 * @param $objectName - the name of the object to get
 	 * @return CoughObject - the requested object
@@ -1102,7 +1102,7 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Sets the object reference in memory.
+	 * Sets the object reference in memory (raw set).
 	 * 
 	 * This has no effect on the database. For example:
 	 * 
@@ -1258,6 +1258,19 @@ abstract class CoughObject {
 		return $this->collections[$collectionName];
 	}
 	
+	/**
+	 * Sets the object reference in memory (raw set).
+	 *
+	 * @param $collectionName - the name of the collection to get
+	 * @return CoughCollection - the requested collection object
+	 * @author Anthony Bush
+	 **/
+	protected function setCollection($collectionName, $collection) {
+		if (isset($this->collectionDefinitions[$collectionName])) {
+			$this->collections[$collectionName] = $collection;
+		}
+	}
+	
 	protected function saveJoinFields() {
 		
 		if ($this->isJoinTableNew) {
@@ -1406,33 +1419,47 @@ abstract class CoughObject {
 	public function __call($method, $args) {
 		$underscorePos = strrpos($method, '_');
 		
-		if ($underscorePos === false) {
+		if ($underscorePos === false)
+		{
 			// Not a getJoin_, get*_Collection, or get*_Object call, so must be a field call.
 			
-			// Allow: getFieldName, which will invoke getField('field_name').
-			if (strpos($method, 'get') === 0) {
-				return $this->getField($this->_underscore(substr($method, 3)));
+			// Allow: getFieldName(), which will invoke getField('field_name').
+			if (strpos($method, 'get') === 0)
+			{
+				return $this->getField(self::underscore(substr($method, 3)));
 			}
-			// Allow: setFieldName, which will invoke setField('field_name').
-			else if (strpos($method, 'set') === 0) {
-				$field = $this->_underscore(substr($method, 3));
-				if (isset($args[0])) {
+			
+			// Allow: setFieldName(), which will invoke setField('field_name').
+			else if (strpos($method, 'set') === 0)
+			{
+				$field = self::underscore(substr($method, 3));
+				if (isset($args[0]))
+				{
 					$value = $args[0];
-				} else {
+				}
+				else
+				{
 					$value = null;
 				}
 				return $this->setField($field, $value);
 			}
+			
 			// Allow: addObjectName($object, $joinFields = null),
 			// which will invoke getCollection('object_name')->add($object, $joinFields);
-			else if (strpos($method, 'add') === 0) {
-				$objectName = $this->_underscore(substr($method, 3));
-				if (isset($this->collectionDefinitions[$objectName])) {
-					if (isset($args[0])) {
+			else if (strpos($method, 'add') === 0)
+			{
+				$objectName = self::underscore(substr($method, 3));
+				if (isset($this->collectionDefinitions[$objectName]))
+				{
+					if (isset($args[0]))
+					{
 						$objectOrId = $args[0];
-						if (isset($args[1])) {
+						if (isset($args[1]))
+						{
 							$joinFields = $args[1];
-						} else {
+						}
+						else
+						{
 							$joinFields = null;
 						}
 						return $this->getCollection($objectName)->add($objectOrId, $joinFields);
@@ -1440,19 +1467,26 @@ abstract class CoughObject {
 					return false;
 				}
 			}
+			
 			// Allow: removeObjectName($object),
 			// which will invoke getCollection('object_name')->remove($object);
-			else if (strpos($method, 'remove') === 0) {
-				$objectName = $this->_underscore(substr($method, 6));
-				if (isset($this->collectionDefinitions[$objectName])) {
-					if (isset($args[0])) {
+			else if (strpos($method, 'remove') === 0)
+			{
+				$objectName = self::underscore(substr($method, 6));
+				if (isset($this->collectionDefinitions[$objectName]))
+				{
+					if (isset($args[0]))
+					{
 						$objectOrId = $args[0];
 						$removedObject = $this->getCollection($objectName)->remove($objectOrId);
 						$def =& $this->collectionDefinitions[$objectName];
-						if (isset($def['join_table_attr'])) {
+						if (isset($def['join_table_attr']))
+						{
 							// Retire the join
 							$removedObject->setJoinField($def['join_table_attr']['retired_column'], $def['join_table_attr']['is_retired']);
-						} else {
+						}
+						else
+						{
 							// Null out the foreign key
 							$removedObject->setField($def['relation_key'], null);
 						}
@@ -1462,36 +1496,68 @@ abstract class CoughObject {
 				}
 			}
 			
-		} else {
-			if ((substr($method, $underscorePos + 1) === 'Object')) {
-				if (strpos($method, 'get') === 0) {
+		}
+		else
+		{
+			
+			// Allow: *_Object()
+			if ((substr($method, $underscorePos + 1) === 'Object'))
+			{
+				// Allow: get*_Object()
+				if (strpos($method, 'get') === 0)
+				{
 					$objectName = substr($method, 3, $underscorePos - 3);
 					return $this->getObject($objectName);
-				} else if (strpos($method, 'set') === 0) {
+				}
+				
+				// Allow: set*_Object($value)
+				else if (strpos($method, 'set') === 0)
+				{
 					$objectName = substr($method, 3, $underscorePos - 3);
-					if (isset($args[0])) {
+					if (isset($args[0]))
+					{
 						$value = $args[0];
-					} else {
+					}
+					else
+					{
 						$value = null;
 					}
 					return $this->setObject($objectName, $value);
-				} else if (strpos($method, 'load') === 0) {
-					$objectName = substr($method, 5, $underscorePos - 5);
-					return $this->_loadObject($objectName);
+				}
+				
+				// Allow: load*_Object()
+				else if (strpos($method, 'load') === 0)
+				{
+					// deprecated, must provide a loadObjectName_Object() method.
+					// $objectName = substr($method, 5, $underscorePos - 5);
+					// return $this->_loadObject($objectName);
 				}
 
 			}
-			else if ((substr($method, $underscorePos + 1) === 'Collection')) {
-				if (strpos($method, 'get') === 0) {
+			
+			// Allow: *_Collection()
+			else if ((substr($method, $underscorePos + 1) === 'Collection'))
+			{
+				// Allow: get*_Collection()
+				if (strpos($method, 'get') === 0)
+				{
 					$tables = explode('_', substr($method, 3, $underscorePos - 3));
-					if (count($tables) == 1) {
+					if (count($tables) == 1)
+					{
 						return $this->getCollection($tables[0]);
-					} else {
+					}
+					else
+					{
 
 					}
-				} else if (strpos($method, 'load') === 0) {
-					$collectionName = substr($method, 5, $underscorePos - 5);
-					return $this->_loadCollection($collectionName);
+				}
+				
+				// Allow: load*_Collection()
+				else if (strpos($method, 'load') === 0)
+				{
+					// deprecated, must provide a loadCollectionName_Collection() method.
+					// $collectionName = substr($method, 5, $underscorePos - 5);
+					// return $this->_loadCollection($collectionName);
 				}
 			}
 			
@@ -1500,20 +1566,26 @@ abstract class CoughObject {
 			else if (strpos($method, 'getJoin_') === 0)
 			{
 				$methodPieces = explode('_', $method);
-				if (count($methodPieces) == 3) {
-					$field = $this->_underscore($methodPieces[2]);
+				if (count($methodPieces) == 3)
+				{
+					$field = self::underscore($methodPieces[2]);
 					return $this->getJoinField($field);
 				}
 			}
+			
 			// Allow: setJoin_Customer_RelationshipStartDate calls, which will invoke setJoinField('relationship_start_date', $value) for now.
 			else if (strpos($method, 'setJoin_') === 0)
 			{
 				$methodPieces = explode('_', $method);
-				if (count($methodPieces) == 3) {
-					$field = $this->_underscore($methodPieces[2]);
-					if (isset($args[0])) {
+				if (count($methodPieces) == 3)
+				{
+					$field = self::underscore($methodPieces[2]);
+					if (isset($args[0]))
+					{
 						$value = $args[0];
-					} else {
+					}
+					else
+					{
 						$value = null;
 					}
 					return $this->setJoinField($field, $value);
@@ -1525,18 +1597,19 @@ abstract class CoughObject {
 		// Don't break useful errors
 		$errorMsg = 'Call to undefined method ' . __CLASS__ . '::' . $method . '()';
 		$bt = debug_backtrace();
-		if (count($bt) > 1) {
+		if (count($bt) > 1)
+		{
 			$errorMsg .= ' in <b>' . @$bt[1]['file'] . '</b> on line <b>' . @$bt[1]['line'] . '</b>';
 		}
 		$errorMsg .= '. CoughObject\'s magic method was invoked';
 		trigger_error($errorMsg, E_USER_ERROR);
 	}
 	
-	protected function _titleCase($underscoredString) {
+	public static function titleCase($underscoredString) {
 		return str_replace(' ', '', str_replace('_', ' ', ucwords($underscoredString)));
 	}
 	
-	protected function _underscore($camelCasedString) {
+	public static function underscore($camelCasedString) {
 		return preg_replace('/_i_d$/', '_id', strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedString)));
 	}
 	
@@ -1609,14 +1682,14 @@ abstract class CoughObject {
 	
 	protected function inflateObject($objectName, $objectData, &$additionalData = array()) {
 		if (isset($this->objectDefinitions[$objectName])) {
-			// append to the object data any additional object data that isn't part of this object.
+			// append to the object data any additional object data that isn't part of this object (read: chain inflation).
 			foreach ($additionalData as $objectName2 => $objectData2) {
 				if (is_array($objectData2) && !isset($this->objectDefinitions[$objectName2])) {
 					$objectData[$objectName2] = $objectData2;
 				}
 			}
 			// set the related object
-			$this->setObject($objectName, new $this->objectDefinitions[$objectName]['class_name']($objectData));
+			$this->setObject($objectName, $this->objectDefinitions[$objectName]['class_name']::constructByFields($objectData));
 			// if we had load methods that took data then we don't even need to know the class name:
 			// $this->loadObject($objectName, $objectData);
 		}

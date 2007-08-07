@@ -153,10 +153,10 @@ class CoughGenerator {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
 		
-		$starterObjectClassName = $this->config->getStarterObjectClassName($table);
+		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
 		$starterCollectionClassName = $this->config->getStarterCollectionClassName($table);
-		$baseObjectClassName = $this->config->getBaseObjectClassName($table);
-		$baseCollectionClassName = $this->config->getBaseCollectionClassName($table);
+		$baseObjectClassName        = $this->config->getBaseObjectClassName($table);
+		$baseCollectionClassName    = $this->config->getBaseCollectionClassName($table);
 		
 		$phpdocTags = $this->generatePhpdocTags($table);
 		$phpdocTags[] = '@see ' . $starterObjectClassName . ', CoughObject';
@@ -205,7 +205,7 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 
 	protected $objectDefinitions = array(
 <?php foreach ($table->getHasOneRelationships() as $hasOne): ?>
-		'<?php echo $hasOne->getRefTableName() ?>' => array(
+		'<?php echo $hasOne->getRefObjectname() ?>' => array(
 			'class_name' => '<?php echo $this->config->getStarterObjectClassName($hasOne->getRefTable()) ?>'
 		),
 <?php endforeach; ?>
@@ -302,29 +302,72 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 		$titleCase = $this->config->getTitleCase($columnName);
 ?>
 	public function get<?php echo $titleCase ?>() {
-		return $this->getField('<?php echo $columnName ?>');
+		return $this->rawGetField('<?php echo $columnName ?>');
 	}
 	
 	public function set<?php echo $titleCase ?>($value) {
-		$this->setField('<?php echo $columnName ?>', $value);
+		$this->rawSetField('<?php echo $columnName ?>', $value);
 	}
 
 <?php endforeach; ?>
 
 	// Generated one-to-one accessors
 
-<?php foreach ($table->getHasOneRelationships() as $hasOne): ?>
-	public function load<?php echo $this->getTitleCase($hasOne->getRefObjectName()) ?>_Object() {
-		$this->_loadObject('<?php echo $hasOne->getRefObjectName() ?>');
+<?php
+	foreach ($table->getHasOneRelationships() as $hasOne):
+		$objectTitleCase = $this->getTitleCase($hasOne->getRefObjectName());
+		$objectClassName = $this->config->getStarterObjectClassName($hasOne->getRefTable());
+		$localVarName = $this->getCamelCase($hasOne->getRefTableName()); //'object';
+?>
+	public function load<?php echo $objectTitleCase ?>_Object() {
+		$<?php echo $localVarName ?> = <?php echo $objectClassName ?>::constructByKey(array(
+<?php foreach ($hasOne->getRefKey() as $key => $columnName): ?>
+			'<?php echo $columnName ?>' => $this->get<?php echo $this->config->getTitleCase($hasOne->getLocalKey()[$key]) ?>(),
+<? endforeach; ?>
+		));
+		$this->set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>);
 	}
 	
-	public function get<?php echo $this->getTitleCase($hasOne->getRefObjectName()) ?>_Object() {
-		return $this->getObject('<?php echo $hasOne->getRefObjectName() ?>');
+	public function get<?php echo $objectTitleCase ?>_Object() {
+		return $this->rawGetObject('<?php echo $hasOne->getRefObjectName() ?>');
+	}
+	
+	public function set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>) {
+		$this->rawSetObject('<?php echo $hasOne->getRefObjectName() ?>', $<?php echo $localVarName ?>);
 	}
 
 <?php endforeach; ?>
 
 	// Generated one-to-many collection loaders, getters, setters, adders, and removers
+
+<?php
+	foreach ($table->getHasManyRelationships() as $hasMany):
+		$objectTitleCase = $this->getTitleCase($hasMany->getRefObjectName());
+		$objectClassName = $this->config->getStarterObjectClassName($hasMany->getRefTable());
+		$localVarName = $this->getCamelCase($hasMany->getRefTableName()); //'object';
+?>
+	public function load<?php echo $objectTitleCase ?>_Collection() {
+		$<?php echo $localVarName ?> = <?php echo $objectClassName ?>::constructByKey(array(
+<?php foreach ($hasMany->getRefKey() as $key => $columnName): ?>
+			'<?php echo $columnName ?>' => $this->get<?php echo $this->config->getTitleCase($hasMany->getLocalKey()[$key]) ?>(),
+<? endforeach; ?>
+		));
+		$this->set<?php echo $objectTitleCase ?>_Collection($<?php echo $localVarName ?>);
+	}
+
+	public function get<?php echo $objectTitleCase ?>_Collection() {
+		return $this->rawGetObject('<?php echo $hasMany->getRefObjectName() ?>');
+	}
+
+	public function set<?php echo $objectTitleCase ?>_Collection($<?php echo $localVarName ?>) {
+		$this->rawSetObject('<?php echo $hasMany->getRefObjectName() ?>', $<?php echo $localVarName ?>);
+	}
+
+<?php endforeach; ?>
+
+
+
+
 
 <?php
 	foreach ($oneToManyLinks as $linkTableName => $link):
@@ -411,10 +454,10 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
 		
-		$starterObjectClassName = $this->config->getStarterObjectClassName($table);
+		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
 		$starterCollectionClassName = $this->config->getStarterCollectionClassName($table);
-		$baseObjectClassName = $this->config->getBaseObjectClassName($table);
-		$baseCollectionClassName = $this->config->getBaseCollectionClassName($table);
+		$baseObjectClassName        = $this->config->getBaseObjectClassName($table);
+		$baseCollectionClassName    = $this->config->getBaseCollectionClassName($table);
 		
 		$phpdocTags = $this->generatePhpdocTags($table);
 		$phpdocTags[] = '@see ' . $starterCollectionClassName . ', CoughCollection';
