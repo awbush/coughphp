@@ -74,7 +74,7 @@ class MysqlTable extends SchemaTable implements DriverTable {
 			}
 			
 			$this->addForeignKey(array(
-				'local_key' => $fKeys,
+				'local_key' => $fKey,
 				'ref_table' => $refTable,
 				'ref_key' => $refKey
 			));
@@ -89,7 +89,7 @@ class MysqlTable extends SchemaTable implements DriverTable {
 	 *
 	 * @return string
 	 **/
-	protected function trimBacktick($str) {
+	protected function trimBackticks($str) {
 		return trim(trim($str), '`');
 	}
 	

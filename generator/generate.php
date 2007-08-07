@@ -20,7 +20,11 @@ try {
 	
 	foreach ($schema->getDatabases() as $database) {
 		foreach ($database->getTables() as $table) {
-			echo 'Table ' . sprintf('%20s', $table->getTableName()) . ' has ' . count($table->getHasOneRelationships()) . ' one-to-one relationships.' . "\n";
+			// echo 'Table ' . sprintf('%20s', $table->getTableName()) . ' has ' . count($table->getHasOneRelationships()) . ' one-to-one relationships.' . "\n";
+			echo 'Table ' . $table->getTableName() . ' has ' . "\n";
+			echo "\t" . count($table->getHasOneRelationships()) . ' one-to-one relationships.' . "\n";
+			echo "\t" . count($table->getHasManyRelationships()) . ' one-to-many relationships.' . "\n";
+			echo "\t" . count($table->getHabtmRelationships()) . ' many-to-many relationships.' . "\n";
 		}
 	}
 	
@@ -49,9 +53,5 @@ try {
 		print_r($e->getTrace());
 	}
 }
-
-
-
-
 
 ?>

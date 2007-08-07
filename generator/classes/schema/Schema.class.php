@@ -58,11 +58,40 @@ class Schema {
 	public function linkRelationships() {
 		// Loop through the databases' tables, and use any FK information to build all the relationships.
 		
+		// Build one-to-one and one-to-many relationships
 		foreach ($this->getDatabases() as $dbName => $database) {
 			foreach ($database->getTables() as $tableName => $table) {
+				foreach ($table->getForeignKeys() as $fk) {
+					// If a table has an FK, two things happen:
+					
+					// 1. The local table can pull a "has one" relationship to the reference table
+					$hasOne = $fk;
+					$table->addHasOneRelationship($hasOne);
+
+					// 2. The reference table can pull a "has many" relationship to the local table
+					$hasMany = array(
+						'local_key' => $fk['ref_key'],
+						'ref_table' => $table->getTableName(),
+						'ref_key' => $fk['local_key']
+					);
+					$table->getDatabase()->getTable($fk['ref_table'])->addHasManyRelationship($hasMany);
+				}
+			}
+		}
+		
+		// Convert some one-to-many relationships into many-to-many relationships
+		foreach ($this->getDatabases() as $dbName => $database) {
+			foreach ($database->getTables() as $tableName => $table) {
+				// 3. A potential many-to-many can be found....
+				foreach ($table->getHasManyRelationships() as $hasMany) {
+					foreach ($table->getDatabase()->getTable($hasMany['ref_table'])->getHasOneRelationships() as $hasOne) {
+						if ($hasOne['ref_table'] != $table->getTableName()) {
+							$table->addHabtmRelationships($habtm);
+							// $table->removeHasManyRelationship($hasMany);
+						}
+					}
+				}
 				
-				// one of this table to one of the related FK table.
-				// one of the related FK table to many of this table.
 			}
 		}
 		

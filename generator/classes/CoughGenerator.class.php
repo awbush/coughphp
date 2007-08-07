@@ -205,9 +205,8 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 
 	protected $objectDefinitions = array(
 <?php foreach ($table->getHasOneRelationships() as $hasOne): ?>
-		'<?php echo 'object_camel_name' ?>' => array(
-			'class_name' => '<?php echo 'element_class_name' ?>',
-			'get_id_method' => 'get<?php echo 'foreign_key_title_name' ?>'
+		'<?php echo $hasOne->getRefTableName() ?>' => array(
+			'class_name' => '<?php echo $this->config->getStarterObjectClassName($hasOne->getRefTable()) ?>'
 		),
 <?php endforeach; ?>
 	);
@@ -315,12 +314,12 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 	// Generated one-to-one accessors
 
 <?php foreach ($table->getHasOneRelationships() as $hasOne): ?>
-	public function load<?php echo $link['object_title_name'] ?>_Object() {
-		$this->loadObject('<?php echo $link['object_camel_name'] ?>');
+	public function load<?php echo $this->getTitleCase($hasOne->getRefObjectName()) ?>_Object() {
+		$this->_loadObject('<?php echo $hasOne->getRefObjectName() ?>');
 	}
 	
-	public function get<?php echo $hasOne->getRefClassName() ?>_Object() {
-		return $this-><?php echo $link['object_camel_name'] ?>;
+	public function get<?php echo $this->getTitleCase($hasOne->getRefObjectName()) ?>_Object() {
+		return $this->getObject('<?php echo $hasOne->getRefObjectName() ?>');
 	}
 
 <?php endforeach; ?>

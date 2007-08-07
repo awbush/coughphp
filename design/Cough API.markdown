@@ -241,5 +241,3 @@ If we go that route we might need to require that all generated classes implemen
 	// and more...
 
 
-
-
