@@ -175,7 +175,7 @@ class CoughGenerator {
 		echo("<?php\n\n");
 		?>
 /**
- * This is the base class for <?= $starterObjectClassName ?>.
+ * This is the base class for <?php echo $starterObjectClassName ?>.
  * 
  * <?php echo implode("\n * ", $phpdocTags) . "\n"; ?>
  **/
@@ -195,10 +195,10 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 	
 	protected $fieldDefinitions = array(
 <?php foreach ($table->getColumns() as $columnName => $column): ?>
-		'<?= $columnName ?>' => array(
-			'db_column_name' => '<?= $columnName ?>',
-			'is_null_allowed' => <?= $this->getStringFromPhpValue($column->isNullAllowed()) ?>,
-			'default_value' => <?= $this->getStringFromPhpValue($column->getDefaultValue()) . "\n" ?>
+		'<?php echo $columnName ?>' => array(
+			'db_column_name' => '<?php echo $columnName ?>',
+			'is_null_allowed' => <?php echo $this->getStringFromPhpValue($column->isNullAllowed()) ?>,
+			'default_value' => <?php echo $this->getStringFromPhpValue($column->getDefaultValue()) . "\n" ?>
 		),
 <?php endforeach; ?>
 	);
@@ -302,38 +302,46 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 		$titleCase = $this->config->getTitleCase($columnName);
 ?>
 	public function get<?php echo $titleCase ?>() {
-		return $this->rawGetField('<?php echo $columnName ?>');
+		return $this->getField('<?php echo $columnName ?>');
 	}
 	
 	public function set<?php echo $titleCase ?>($value) {
-		$this->rawSetField('<?php echo $columnName ?>', $value);
+		$this->setField('<?php echo $columnName ?>', $value);
 	}
 
 <?php endforeach; ?>
 
-	// Generated one-to-one accessors
+	// Generated one-to-one accessors (loaders, getters, and setters)
 
 <?php
 	foreach ($table->getHasOneRelationships() as $hasOne):
 		$objectTitleCase = $this->getTitleCase($hasOne->getRefObjectName());
 		$objectClassName = $this->config->getStarterObjectClassName($hasOne->getRefTable());
 		$localVarName = $this->getCamelCase($hasOne->getRefTableName()); //'object';
+		if ($localVarName == 'this') {
+			// avoid naming conflict
+			$localVarName = 'object';
+		}
+		$localKey = $hasOne->getLocalKey();
 ?>
 	public function load<?php echo $objectTitleCase ?>_Object() {
-		$<?php echo $localVarName ?> = <?php echo $objectClassName ?>::constructByKey(array(
+		$<?php echo $localVarName ?> = new <?php echo $objectClassName ?>(array(
 <?php foreach ($hasOne->getRefKey() as $key => $columnName): ?>
-			'<?php echo $columnName ?>' => $this->get<?php echo $this->config->getTitleCase($hasOne->getLocalKey()[$key]) ?>(),
-<? endforeach; ?>
+			'<?php echo $columnName ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]) ?>(),
+<?php endforeach; ?>
 		));
+		if (!$<?php echo $localVarName ?>->isLoaded()) {
+			$<?php echo $localVarName ?> = null;
+		}
 		$this->set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>);
 	}
 	
 	public function get<?php echo $objectTitleCase ?>_Object() {
-		return $this->rawGetObject('<?php echo $hasOne->getRefObjectName() ?>');
+		return $this->getObject('<?php echo $hasOne->getRefObjectName() ?>');
 	}
 	
 	public function set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>) {
-		$this->rawSetObject('<?php echo $hasOne->getRefObjectName() ?>', $<?php echo $localVarName ?>);
+		$this->setObject('<?php echo $hasOne->getRefObjectName() ?>', $<?php echo $localVarName ?>);
 	}
 
 <?php endforeach; ?>
@@ -344,89 +352,106 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 	foreach ($table->getHasManyRelationships() as $hasMany):
 		$objectTitleCase = $this->getTitleCase($hasMany->getRefObjectName());
 		$objectClassName = $this->config->getStarterObjectClassName($hasMany->getRefTable());
-		$localVarName = $this->getCamelCase($hasMany->getRefTableName()); //'object';
+		$collectionClassName = $this->config->getStarterCollectionClassName($hasMany->getRefTable());
+		$localKey = $hasMany->getLocalKey();
 ?>
 	public function load<?php echo $objectTitleCase ?>_Collection() {
-		$<?php echo $localVarName ?> = <?php echo $objectClassName ?>::constructByKey(array(
+		
+		// What are we collecting?
+		$elementClassName = '<?php echo $objectClassName ?>';
+		
+		// Get the base SQL (so we can use the same SELECT and JOINs as the element class)
+		$element = new $elementClassName();
+		$sql = $element->getLoadSqlWithoutWhere();
+		
+		// What criteria are we using?
+		$criteria = array(
 <?php foreach ($hasMany->getRefKey() as $key => $columnName): ?>
-			'<?php echo $columnName ?>' => $this->get<?php echo $this->config->getTitleCase($hasMany->getLocalKey()[$key]) ?>(),
-<? endforeach; ?>
-		));
-		$this->set<?php echo $objectTitleCase ?>_Collection($<?php echo $localVarName ?>);
+			'<?php echo $columnName ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]) ?>(),
+<?php endforeach; ?>
+		);
+		$sql .= ' ' . $this->db->generateWhere($criteria);
+		
+		// Construct and populate the collection
+		$collection = new <?php echo $collectionClassName ?>();
+		$collection->setCollector($this, CoughCollection::ONE_TO_MANY); // TODO: Anthony: Remove type? The collection object should not need this info anymore... (and, FYI, all collections are one-to-many -- it only differs when we provide "direct access" to table2 without having to go through a join table.)
+		$collection->populateCollection($elementClassName, $sql);
+		$this->set<?php echo $objectTitleCase ?>_Collection($collection);
 	}
 
 	public function get<?php echo $objectTitleCase ?>_Collection() {
-		return $this->rawGetObject('<?php echo $hasMany->getRefObjectName() ?>');
+		return $this->getCollection('<?php echo $hasMany->getRefObjectName() ?>');
 	}
 
 	public function set<?php echo $objectTitleCase ?>_Collection($<?php echo $localVarName ?>) {
-		$this->rawSetObject('<?php echo $hasMany->getRefObjectName() ?>', $<?php echo $localVarName ?>);
+		$this->setCollection('<?php echo $hasMany->getRefObjectName() ?>', $<?php echo $localVarName ?>);
+	}
+	
+	public function add<?php echo $objectTitleCase ?>($objectOrId) {
+		return $this->get<?php echo $objectTitleCase ?>_Collection()->add($objectOrId);
+	}
+	
+	public function remove<?php echo $objectTitleCase ?>($objectOrId) {
+		$removedObject = $this->get<?php echo $objectTitleCase ?>_Collection()->remove($objectOrId);
+<?php foreach ($hasMany->getRefKey() as $key => $columnName): ?>
+		$removedObject->set<?php echo $this->config->getTitleCase($columnName) ?>(null);		
+<?php endforeach; ?>
+		return $removedObject;
 	}
 
 <?php endforeach; ?>
 
-
-
-
+	// Generated many-to-many collection loaders, getters, setters, adders, and removers
 
 <?php
-	foreach ($oneToManyLinks as $linkTableName => $link):
-		// many-to-many collection takes precedence.
-		if (isset($manyToManyLinks[$linkTableName])) {
-			continue;
-		}
+	foreach ($table->getHabtmRelationships() as $habtm):
+		$objectTitleCase = $this->getTitleCase($habtm->getRefObjectName());
+		$objectClassName = $this->config->getStarterObjectClassName($habtm->getRefTable());
+		$collectionClassName = $this->config->getStarterCollectionClassName($habtm->getRefTable());
+		$localKey = $habtm->getLocalKey();
 ?>
-	public function load<?php echo $link['object_title_name'] ?>() {
-		return $this->loadOneToManyCollection('<?php echo $link['object_camel_name'] ?>');
-	}
-
-	public function get<?php echo $link['object_title_name'] ?>() {
-		return $this->getCollection('<?php echo $link['object_camel_name'] ?>');
-	}
-
-	public function coag<?php echo $link['object_title_name'] ?>() {
-		return $this->loadOnceAndGetCollection('<?php echo $link['object_camel_name'] ?>');
-	}
-
-	public function set<?php echo $link['object_title_name'] ?>($objectsOrIDs = array()) {
-		$this->setCollection('<?php echo $link['object_camel_name'] ?>', $objectsOrIDs);
-	}
-
-	public function add<?php echo $link['table_title_name'] ?>($objectOrID) {
-		$this->addToCollection('<?php echo $link['object_camel_name'] ?>', $objectOrID);
-	}
-
-	public function remove<?php echo $link['table_title_name'] ?>($objectOrID) {
-		$this->removeFromCollection('<?php echo $link['object_camel_name'] ?>', $objectOrID);
-	}
-
+	public function load<?php echo $objectTitleCase ?>_Collection() {
+		
+		// What are we collecting?
+		$elementClassName = '<?php echo $objectClassName ?>';
+		
+		// Get the base SQL (so we can use the same SELECT and JOINs as the element class)
+		$element = new $elementClassName();
+		$sql = $element->getLoadSqlWithoutWhere();
+		
+		// What criteria are we using?
+		$criteria = array(
+<?php foreach ($habtm->getRefKey() as $key => $columnName): ?>
+			'<?php echo $columnName ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]) ?>(),
 <?php endforeach; ?>
-
-	// Generated many-to-many collection attributes
-
-<?php foreach ($manyToManyLinks as $link): ?>
-	public function load<?php echo $link['object_title_name'] ?>() {
-		return $this->loadManyToManyCollection('<?php echo $link['object_camel_name'] ?>');
+		);
+		$sql .= ' ' . $this->db->generateWhere($criteria);
+		
+		// Construct and populate the collection
+		$collection = new <?php echo $collectionClassName ?>();
+		$collection->setCollector($this, CoughCollection::MANY_TO_MANY); // TODO: Anthony: Remove type? The collection object should not need this info anymore... (and, FYI, all collections are one-to-many -- it only differs when we provide "direct access" to table2 without having to go through a join table.)
+		$collection->populateCollection($elementClassName, $sql);
+		$this->set<?php echo $objectTitleCase ?>_Collection($collection);
 	}
 
-	public function get<?php echo $link['object_title_name'] ?>() {
-		return $this->getCollection('<?php echo $link['object_camel_name'] ?>');
+	public function get<?php echo $objectTitleCase ?>_Collection() {
+		return $this->getCollection('<?php echo $habtm->getRefObjectName() ?>');
 	}
 
-	public function coag<?php echo $link['object_title_name'] ?>() {
-		return $this->loadOnceAndGetCollection('<?php echo $link['object_camel_name'] ?>');
+	public function set<?php echo $objectTitleCase ?>_Collection($<?php echo $localVarName ?>) {
+		$this->setCollection('<?php echo $habtm->getRefObjectName() ?>', $<?php echo $localVarName ?>);
 	}
 
-	public function set<?php echo $link['object_title_name'] ?>($objectsOrIDs = array()) {
-		$this->setCollection('<?php echo $link['object_camel_name'] ?>', $objectsOrIDs);
+	public function add<?php echo $objectTitleCase ?>($objectOrId) {
+		return $this->get<?php echo $objectTitleCase ?>_Collection()->add($objectOrId);
 	}
 
-	public function add<?php echo $link['table_title_name'] ?>($objectOrID, $joinFields = null) {
-		$this->addToCollection('<?php echo $link['object_camel_name'] ?>', $objectOrID, $joinFields);
-	}
-
-	public function remove<?php echo $link['table_title_name'] ?>($objectOrID) {
-		$this->removeFromCollection('<?php echo $link['object_camel_name'] ?>', $objectOrID);
+	public function remove<?php echo $objectTitleCase ?>($objectOrId) {
+		$removedObject = $this->get<?php echo $objectTitleCase ?>_Collection()->remove($objectOrId);
+<?php foreach ($habtm->getRefKey() as $key => $columnName): ?>
+		$removedObject->set<?php echo $this->config->getTitleCase($columnName) ?>(null);		
+<?php endforeach; ?>
+		return $removedObject;
 	}
 
 <?php endforeach; ?>
@@ -464,15 +489,6 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 		
 		$extensionClassName = $this->config->getCollectionExtensionClassName($table);
 		
-		
-		// $table =& $this->tables[$this->tableName];
-		// 
-		// if ( ! empty($this->retiredColumn) && isset($table['variables'][$this->retiredColumn])) {
-		// 	$whereClause = ' WHERE ' . $this->retiredColumn . ' = ' . $this->isNotRetiredValue;
-		// } else {
-		// 	$whereClause = '';
-		// }
-
 		ob_start();
 		echo("<?php\n\n");
 		?>
@@ -488,15 +504,11 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 	protected function defineCollectionSQL() {
 		$elementClassName = $this->elementClassName;
 		$element = new $elementClassName();
-		$this->collectionSql = $element->getLoadSqlWithoutWhere() . '<?php echo $whereClause ?>';
+		$this->collectionSql = $element->getLoadSqlWithoutWhere();
 	}
 	
 	protected function defineElementClassName() {
 		$this->elementClassName = '<?php echo $table->getTableName() ?>';
-	}
-	
-	protected function defineSpecialCriteria($specialArgs=array()) {
-		// this modifies the collectionSQL based on special parameters
 	}
 	
 }
@@ -542,6 +554,53 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
  * <?php echo implode("\n * ", $phpdocTags) . "\n"; ?>
  **/
 class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassName ?> {
+	
+	// Static Construction (factory) Methods
+	
+	/**
+	 * Constructs a new <?php echo $starterObjectClassName ?> object from
+	 * a single id (for single key PKs) or a hash of [field_name] => [field_value].
+	 * 
+	 * The key is used to pull data from the database, and, if no data is found,
+	 * null is returned. You can use this function with any unique keys or the
+	 * primary key as long as a hash is used. If the primary key is a single
+	 * field, you may pass its value in directly without using a hash.
+	 * 
+	 * @param mixed $idOrHash - id or hash of [field_name] => [field_value]
+	 * @return mixed - <?php echo $starterObjectClassName ?> or null if no record found.
+	 **/
+	public static function constructByKey($idOrHash) {
+		$object = new <?php echo $starterObjectClassName ?>();
+		if (is_array($idOrHash)) {
+			$fields = $idOrHash;
+		} else {
+			$fields = array();
+			foreach ($object->getPkFieldNames() as $fieldName) {
+				$fields[$fieldName] = $idOrHash;
+			}
+		}
+		$object->loadByCriteria($fields);
+		if ($object->isLoaded()) {
+			return $object;
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Constructs a new <?php echo $starterObjectClassName ?> object after
+	 * checking the fields array to make sure the appropriate subclass is
+	 * used.
+	 * 
+	 * No queries are run against the database.
+	 * 
+	 * @param array $hash - hash of [field_name] => [field_value] pairs
+	 * @return <?php echo $starterObjectClassName ?>
+	 **/
+	public static function constructByFields($hash) {
+		return new <?php echo $starterObjectClassName ?>($hash);
+	}
+	
 }
 <?php
 		echo("\n?>\n");

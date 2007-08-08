@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>CoughObject.class.php</string>
+	<string>design/Minutes - Tom &amp; Anthony on Cough.markdown</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -40,44 +40,42 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>24</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>186</integer>
+				<integer>79</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>163</integer>
+			<integer>65</integer>
+		</dict>
+		<key>CoughIterator.class.php</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>CoughObject.class.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>84</integer>
+				<integer>2</integer>
 				<key>line</key>
-				<integer>1691</integer>
+				<integer>938</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1645</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>33</integer>
-				<key>line</key>
-				<integer>1691</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>84</integer>
-				<key>line</key>
-				<integer>1691</integer>
-			</dict>
+			<integer>898</integer>
 		</dict>
 		<key>design/API Inconsistency.markdown</key>
 		<dict>
@@ -112,9 +110,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>3</integer>
+				<integer>94</integer>
 				<key>line</key>
-				<integer>44</integer>
+				<integer>11</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -140,9 +138,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>38</integer>
 				<key>line</key>
-				<integer>242</integer>
+				<integer>237</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -163,7 +161,35 @@
 			<key>firstVisibleLine</key>
 			<integer>134</integer>
 		</dict>
-		<key>design/CoughRelationships.markdown</key>
+		<key>design/Documentation Examples.markdown</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>2</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>design/Generated Method Names.markdown</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>17</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>design/HandlingMixedCasedFieldnames.markdown</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -182,14 +208,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>27</integer>
+				<integer>51</integer>
 				<key>line</key>
-				<integer>94</integer>
+				<integer>167</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>179</integer>
+			<integer>159</integer>
 		</dict>
 		<key>design/Overview - What is Cough.markdown</key>
 		<dict>
@@ -238,14 +264,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>19</integer>
+				<integer>70</integer>
 				<key>line</key>
-				<integer>92</integer>
+				<integer>46</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>56</integer>
+			<integer>25</integer>
+		</dict>
+		<key>docs/Customizing Collection Removing Logic.markdown</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>241</integer>
+				<key>line</key>
+				<integer>5</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>generator/classes/CoughClass.class.php</key>
 		<dict>
@@ -280,29 +320,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>50</integer>
+				<integer>59</integer>
 				<key>line</key>
-				<integer>391</integer>
+				<integer>431</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>349</integer>
+			<integer>403</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>42</integer>
+				<integer>52</integer>
 				<key>line</key>
-				<integer>391</integer>
+				<integer>431</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>59</integer>
+				<integer>64</integer>
 				<key>line</key>
-				<integer>391</integer>
+				<integer>431</integer>
 			</dict>
 		</dict>
 		<key>generator/classes/CoughGeneratorConfig.class.php</key>
@@ -352,14 +392,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>54</integer>
+				<integer>2</integer>
 				<key>line</key>
-				<integer>89</integer>
+				<integer>34</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>57</integer>
+			<integer>37</integer>
 		</dict>
 		<key>generator/classes/schema/SchemaColumn.class.php</key>
 		<dict>
@@ -695,6 +735,8 @@
 	<key>openDocuments</key>
 	<array>
 		<string>CoughObject.class.php</string>
+		<string>design/Documentation Examples.markdown</string>
+		<string>CoughIterator.class.php</string>
 		<string>design/RAW Getters &amp; Setters.markdown</string>
 		<string>As_CoughObject.class.php</string>
 		<string>sample-app/index.php</string>
@@ -704,7 +746,6 @@
 		<string>design/Cough API - Release 2.markdown</string>
 		<string>design/Overview - What is Cough.markdown</string>
 		<string>design/Minutes - Tom &amp; Anthony on Cough.markdown</string>
-		<string>design/CoughRelationships.markdown</string>
 		<string>generator/config/default/cough_generator.inc.php</string>
 		<string>generator/config/default/database_schema_generator.inc.php</string>
 		<string>generator/classes/CoughGeneratorConfig.class.php</string>
@@ -732,6 +773,9 @@
 		<string>generator/config/application.inc.php</string>
 		<string>generator/classes/load.inc.php</string>
 		<string>generator/classes/CoughGenerator.class.php</string>
+		<string>docs/Customizing Collection Removing Logic.markdown</string>
+		<string>design/Generated Method Names.markdown</string>
+		<string>design/HandlingMixedCasedFieldnames.markdown</string>
 		<string>generator/classes/CoughClass.class.php</string>
 		<string>generator/classes/CoughWriter.class.php</string>
 	</array>

@@ -165,6 +165,16 @@ abstract class CoughObject {
 	protected $checkReturnedResult = null;
 	
 	/**
+	 * Stores whether or not the object has been deleted from the database.
+	 * 
+	 * Save will do nothing if an object has been deleted...
+	 *
+	 * @var boolean
+	 * @see delete(), save()
+	 **/
+	protected $isDeleted = false;
+	
+	/**
 	 * Stores validation errors set by `validateData` function.
 	 * 
 	 * Format of "field_name" => "Error Text"
@@ -870,6 +880,11 @@ abstract class CoughObject {
 	 **/
 	public function save() {
 		
+		// Don't save if deleted.
+		if ($this->isDeleted()) {
+			return false;
+		}
+		
 		// Update the child with it's parent id
 		$this->setFieldsFromParentPk();
 		
@@ -950,7 +965,7 @@ abstract class CoughObject {
 	 * @return boolean
 	 * @author Anthony Bush
 	 **/
-	public function insert() {
+	protected function insert() {
 		
 		$fields = $this->getInsertFields();
 		
@@ -990,7 +1005,7 @@ abstract class CoughObject {
 	 *
 	 * @return boolean - true
 	 **/
-	public function update() {
+	protected function update() {
 		$fields = $this->getUpdateFields();
 		if (!empty($fields)) {
 			$this->db->selectDb($this->dbName);
@@ -1039,10 +1054,21 @@ abstract class CoughObject {
 	public function delete() {
 		if ($this->hasKeyId()) {
 			$this->db->delete($this->tableName, $this->getPk());
+			$this->isDeleted = true;
 			return true;
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Specifies whether or not the object has been deleted from the database.
+	 *
+	 * @return boolean
+	 * @author Anthony Bush
+	 **/
+	public function isDeleted() {
+		return $this->isDeleted;
 	}
 	
 	// ----------------------------------------------------------------------------------------------
@@ -1618,7 +1644,7 @@ abstract class CoughObject {
 	 * default it empties everything; overridden version only empties yours.
 	 *
 	 * @return void
-	 * @todo Tom: Why this function? (provide good example)
+	 * @todo Tom: Why this function? (provide good example so it can be added to documentation)
 	 **/
 	public function deflate() {
 		// Reset all attributes.
@@ -1665,8 +1691,8 @@ abstract class CoughObject {
 			foreach ($this->getPkFieldNames() as $fieldName) {
 				$this->fields[$fieldName] = $fieldsOrID;
 			}
-			// TODO: Tom: To load or not to load automatically?
-			$this->load();
+			// TODO: Tom: To load or not to load automatically? I can give use cases on why someone wouldn't want it to autoload; plus the user should be using Object::constructByKey($key) anyway when they want it to pull from storage.
+			// $this->load();
 		}
 		
 		// Set related entities that were passed in
@@ -1689,7 +1715,9 @@ abstract class CoughObject {
 				}
 			}
 			// set the related object
-			$this->setObject($objectName, $this->objectDefinitions[$objectName]['class_name']::constructByFields($objectData));
+			// $this->setObject($objectName, new $this->objectDefinitions[$objectName]['class_name']($objectData));
+			// if we are going to use factory methods
+			$this->setObject($objectName, call_user_func(array($this->objectDefinitions[$objectName]['class_name'], 'constructByFields'), $objectData);
 			// if we had load methods that took data then we don't even need to know the class name:
 			// $this->loadObject($objectName, $objectData);
 		}

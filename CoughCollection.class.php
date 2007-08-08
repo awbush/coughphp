@@ -78,7 +78,7 @@ abstract class CoughCollection extends ArrayObject {
 		return new CoughIterator( $this );
 	}
 	
-	public function __construct($specialArgs=array(), $array=array()) {
+	public function __construct($specialArgs=array()) {
 		parent::__construct($array=array(), $flags=0, $iterator_class='CoughIterator');
 		$this->initializeDefinitions($specialArgs);
 		$this->db = DatabaseFactory::getDatabase($this->dbName);
@@ -95,6 +95,7 @@ abstract class CoughCollection extends ArrayObject {
 	 * Override this in sub class.
 	 *
 	 * @return void
+	 * @todo Tom: What if we changed this to a getter and only called it when needed (e.g. no SQL passed in to populateCollection)?
 	 **/
 	protected function defineCollectionSql() {
 		$elementClassName = $this->elementClassName;
@@ -118,6 +119,7 @@ abstract class CoughCollection extends ArrayObject {
 	 * Override this in sub class.
 	 *
 	 * @return void
+	 * @todo Tom: Why? (provide good examples)
 	 **/
 	protected function defineSpecialCriteria($specialArgs=array()) {
 		// this modifies the collectionSQL based on special parameters
@@ -305,13 +307,13 @@ abstract class CoughCollection extends ArrayObject {
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function add($objectOrID, $joinFields = null) {
-		if ( ! ($objectOrID instanceof CoughObject)) {
+	public function add($objectOrId, $joinFields = null) {
+		if ( ! ($objectOrId instanceof CoughObject)) {
 			// It's an id, not an object.
 			$elementClassName = $this->elementClassName;
-			$object = new $elementClassName($objectOrID);
+			$object = new $elementClassName($objectOrId);
 		} else {
-			$object = $objectOrID;
+			$object = $objectOrId;
 		}
 		
 		// We have the object...

@@ -235,7 +235,7 @@ The method might look like:
 If we go that route we might need to require that all generated classes implement a CoughStaticInterface or something that says the following methods must be defined:
 
 	public static function getDb();
-	public static function constructByPk($pk);
+	public static function constructByKey($pk);
 	public static function constructByFields($hash);
 	public static function construct(); // ?
 	// and more...

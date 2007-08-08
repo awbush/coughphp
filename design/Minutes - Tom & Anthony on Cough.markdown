@@ -150,7 +150,7 @@ Adding should do:
 	* Same as one-to-many, and also:
 	* Construct a join object (if one wasn't passed in) and call setFields on it (if an array was passed in).
 
-I think we got the idea here... no how to manage existing fields in a non-add/removal operation:
+I think we got the idea here... now how to manage existing fields in a non-add/removal operation:
 
 Old way (with direct access; the only way to access in the old system):
 
