@@ -1,3 +1,21 @@
+Stop flattening many-to-many collection accessors.
+-------------------------------------------------
+
+Use case:
+
+	$product = new Product(1);
+	$newProduct = clone $product;
+	foreach ($product->getOs_Collection() as $os) {
+		$newProduct->addOs($os);
+	}
+	$newProduct->save();
+
+The above code updates the join fields for the product2os table, removing the oses from the other product.
+
+
+
+
+
 // Generator TODO, gen getters for the primary key fields, e.g. getProductId(). getKeyId() should just be an alias OR better, build from the self::$primaryKeyDefinition = array('product_id');
 
 

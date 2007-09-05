@@ -62,19 +62,68 @@ class Schema {
 		foreach ($this->getDatabases() as $dbName => $database) {
 			foreach ($database->getTables() as $tableName => $table) {
 				foreach ($table->getForeignKeys() as $fk) {
+					
+					// Get reference database
+					if (isset($fk['ref_database'])) {
+						$refDatabase = $table->getSchema()->getDatabase($fk['ref_database']);
+					} else {
+						$refDatabase = $table->getDatabase();
+					}
+					
+					// Get reference table
+					$refTable = $refDatabase->getTable($fk['ref_table']);
+					
+					// Get reference columns
+					$refKey = array();
+					foreach ($fk['ref_key'] as $columnName) {
+						$refKey[] = $refTable->getColumn($columnName);
+					}
+					
+					// Get reference "object name"
+					if (isset($fk['ref_object_name'])) {
+						$refObjectName = $fk['ref_object_name'];
+					} else {
+						$refObjectName = $refTable->getTableName();
+					}
+					
+					// Get local columns
+					$localKey = array();
+					foreach ($fk['local_key'] as $columnName) {
+						$localKey[] = $table->getColumn($columnName);
+					}
+					
+					// Get local "object name"
+					if (isset($fk['local_object_name'])) {
+						$localObjectName = $fk['local_object_name'];
+					} else {
+						$localObjectName = $table->getTableName();
+					}
+					
 					// If a table has an FK, two things happen:
 					
 					// 1. The local table can pull a "has one" relationship to the reference table
-					$hasOne = $fk;
+					
+					$hasOne = new SchemaRelationship();
+					$hasOne->setRefTable($refTable);
+					$hasOne->setRefObjectName($refObjectName);
+					$hasOne->setRefKey($refKey);
+					$hasOne->setLocalTable($table);
+					$hasOne->setLocalObjectName($localObjectName);
+					$hasOne->setLocalKey($localKey);
+					
 					$table->addHasOneRelationship($hasOne);
-
+					
 					// 2. The reference table can pull a "has many" relationship to the local table
-					$hasMany = array(
-						'local_key' => $fk['ref_key'],
-						'ref_table' => $table->getTableName(),
-						'ref_key' => $fk['local_key']
-					);
-					$table->getDatabase()->getTable($fk['ref_table'])->addHasManyRelationship($hasMany);
+					
+					$hasMany = new SchemaRelationship();
+					$hasMany->setRefTable($table);
+					$hasMany->setRefObjectName($localObjectName);
+					$hasMany->setRefKey($localKey);
+					$hasMany->setLocalTable($refTable);
+					$hasMany->setLocalObjectName($refObjectName);
+					$hasMany->setLocalKey($refKey);
+					
+					$refTable->addHasManyRelationship($hasMany);
 				}
 			}
 		}
@@ -83,11 +132,15 @@ class Schema {
 		foreach ($this->getDatabases() as $dbName => $database) {
 			foreach ($database->getTables() as $tableName => $table) {
 				// 3. A potential many-to-many can be found....
-				foreach ($table->getHasManyRelationships() as $hasMany) {
-					foreach ($table->getDatabase()->getTable($hasMany['ref_table'])->getHasOneRelationships() as $hasOne) {
-						if ($hasOne['ref_table'] != $table->getTableName()) {
-							$table->addHabtmRelationships($habtm);
-							// $table->removeHasManyRelationship($hasMany);
+				foreach ($table->getHasManyRelationships() as $hasManyKey => $hasMany) {
+					foreach ($hasMany->getRefTable()->getHasOneRelationships() as $hasOne) {
+						if ($hasOne->getRefTable() != $table) {
+							// TODO: Anthony: washere
+							echo 'Found Many-to-Many relationship' . "\n";
+							// $habtm = new SchemaRelationship();
+							// $habtm->setJoinTable($hasMany->getRefTable());
+							// $table->addHabtmRelationship($habtm);
+							// $table->removeHasManyRelationship($hasManyKey);
 						}
 					}
 				}

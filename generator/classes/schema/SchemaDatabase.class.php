@@ -8,6 +8,10 @@ class SchemaDatabase {
 	
 	// Getters
 	
+	public function getSchema() {
+		return $this->server;
+	}
+	
 	public function getServer() {
 		return $this->server;
 	}

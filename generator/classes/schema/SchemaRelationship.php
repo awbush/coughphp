@@ -32,8 +32,12 @@ class SchemaRelationship {
 		return $this->localTable;
 	}
 	
-	public function getLocalRefObjectName() {
-		return $this->localRefObjectName;
+	public function getLocalTableName() {
+		return $this->getLocalTable()->getTableName();
+	}
+	
+	public function getLocalObjectName() {
+		return $this->localObjectName;
 	}
 	
 	public function getLocalKey() {
@@ -58,14 +62,29 @@ class SchemaRelationship {
 		$this->localTable = $localTable;
 	}
 	
-	public function setLocalRefObjectName($localRefObjectName) {
-		$this->localRefObjectName = $localRefObjectName;
+	public function setLocalObjectName($localObjectName) {
+		$this->localObjectName = $localObjectName;
 	}
 	
 	public function setLocalKey($localKey) {
 		$this->localKey = $localKey;
 	}	
 	
+	/**
+	 * Returns false if all keys are NOT NULL, true otherwise.
+	 * 
+	 * @return boolean
+	 **/
+	public function isKeyNullable($keySet) {
+		foreach ($keySet as $key) {
+			if ($key->isNullAllowed()) {
+				// A single key allows NULL => the entire key is not guaranteed to be NOT NULL.
+				return true;
+			}
+		}
+		// All keys are NOT NULL
+		return false;
+	}
 }
 
 
@@ -83,6 +102,9 @@ class SchemaRelationshipHabtm extends SchemaRelationship {
 	protected $joinTable = null;
 	protected $joinKey = null;
 	
+	public function setJoinTable($table) {
+		$this->joinTable = $table;
+	}
 	
 	
 }

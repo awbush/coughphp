@@ -295,6 +295,48 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 	);
 */ ?>
 
+<?php
+$selectSql = array();
+$innerJoins = array();
+foreach ($table->getHasOneRelationships() as $hasOne) {
+	if (!$hasOne->isKeyNullable($hasOne->getLocalKey())) {
+		$refDbName = $hasOne->getRefTable()->getDatabase()->getDatabaseName();
+		$refTableName = $hasOne->getRefTable()->getTableName();
+		$localKey = $hasOne->getLocalKey();
+		
+		$joinOnSql = array();
+		foreach ($hasOne->getRefKey() as $index => $refColumn) {
+			$joinOnSql[] = '`' . $tableName . '`.`' . $localKey[$index]->getColumnName() . '` = `' . $refTableName . '`.`' . $refColumn->getColumnName() . '`';
+		}
+		// Append to INNER JOIN SQL.
+		$innerJoins['`' . $refDbName . '`.`' . $refTableName . '`'] = $joinOnSql;
+		
+		// Append to SELECT SQL.
+		foreach ($hasOne->getRefTable->getColumns() as $columnName => $refColumn) {
+			$selectSql[] = '`' . $refTableName . '`.`' . $columnName . '` AS `' . $refTableName . '.' . $columnName . '`';
+		}
+	}
+}
+if (count($joins) > 0) {
+?>
+	public function getLoadSqlWithoutWhere() {
+		return '
+			SELECT
+				`<?php echo $tableName ?>`.*
+				, <?php echo implode("\n\t\t\t\t, ", $selectSql) . "\n" ?>
+			FROM
+				`<?php echo $dbName ?>`.`<?php echo $tableName ?>`
+<?php foreach ($innerJoins as $joinTable => $joinCriteria) { ?>
+				INNER JOIN <?php echo $joinTable . "\n" ?>
+					ON <?php echo implode("\n\t\t\t\t\tAND ", $joinCriteria) . "\n" ?>
+<? } ?>
+		';
+	}
+<?php
+}
+?>
+
+
 	// Generated attribute accessors (getters and setters)
 
 <?php
@@ -326,8 +368,8 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 ?>
 	public function load<?php echo $objectTitleCase ?>_Object() {
 		$<?php echo $localVarName ?> = new <?php echo $objectClassName ?>(array(
-<?php foreach ($hasOne->getRefKey() as $key => $columnName): ?>
-			'<?php echo $columnName ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]) ?>(),
+<?php foreach ($hasOne->getRefKey() as $key => $column): ?>
+			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumName()) ?>(),
 <?php endforeach; ?>
 		));
 		if (!$<?php echo $localVarName ?>->isLoaded()) {
@@ -366,8 +408,8 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 		
 		// What criteria are we using?
 		$criteria = array(
-<?php foreach ($hasMany->getRefKey() as $key => $columnName): ?>
-			'<?php echo $columnName ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]) ?>(),
+<?php foreach ($hasMany->getRefKey() as $key => $column): ?>
+			'<?php echo $column->getColumName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumName()) ?>(),
 <?php endforeach; ?>
 		);
 		$sql .= ' ' . $this->db->generateWhere($criteria);
@@ -393,8 +435,8 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 	
 	public function remove<?php echo $objectTitleCase ?>($objectOrId) {
 		$removedObject = $this->get<?php echo $objectTitleCase ?>_Collection()->remove($objectOrId);
-<?php foreach ($hasMany->getRefKey() as $key => $columnName): ?>
-		$removedObject->set<?php echo $this->config->getTitleCase($columnName) ?>(null);		
+<?php foreach ($hasMany->getRefKey() as $key => $column): ?>
+		$removedObject->set<?php echo $this->config->getTitleCase($column->getColumnName()) ?>(null);		
 <?php endforeach; ?>
 		return $removedObject;
 	}
@@ -421,8 +463,8 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 		
 		// What criteria are we using?
 		$criteria = array(
-<?php foreach ($habtm->getRefKey() as $key => $columnName): ?>
-			'<?php echo $columnName ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]) ?>(),
+<?php foreach ($habtm->getRefKey() as $key => $column): ?>
+			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
 <?php endforeach; ?>
 		);
 		$sql .= ' ' . $this->db->generateWhere($criteria);

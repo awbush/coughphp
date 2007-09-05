@@ -19,6 +19,7 @@ class SchemaTable {
 	 * array(
 	 *     'local_key' => array('col_name1'[, 'col_name2']*),
 	 *     'ref_table' => 'ref_table_name',
+	 *     'ref_database' => 'ref_database_name', // optional, only required if the database that the ref_table is on a different database than the local table
 	 *     'ref_key' => array('ref_col_name1'[, 'ref_col_name2']*)
 	 * )
 	 *
@@ -48,6 +49,10 @@ class SchemaTable {
 	protected $habtmRelationships = array();
 	
 	// Getters
+	
+	public function getSchema() {
+		return $this->getDatabase()->getSchema();
+	}
 	
 	public function getDatabase() {
 		return $this->database;

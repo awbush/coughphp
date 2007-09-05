@@ -12,6 +12,14 @@ class SchemaColumn {
 	
 	// Getters
 	
+	public function getSchema() {
+		return $this->getDatabase()->getSchema();
+	}
+	
+	public function getDatabase() {
+		return $this->getTable()->getDatabase();
+	}
+	
 	public function getTable() {
 		return $this->table;
 	}

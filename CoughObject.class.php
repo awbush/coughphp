@@ -889,8 +889,7 @@ abstract class CoughObject {
 		$this->setFieldsFromParentPk();
 		
 		// Check for valid data.
-		$this->validateData($this->fields);
-		if ( ! $this->isDataValid()) {
+		if ( ! $this->validateData()) {
 			return false;
 		}
 		
@@ -1344,16 +1343,24 @@ abstract class CoughObject {
 	 * Validates data stored in the model. It is called automatically by `save`,
 	 * which will return false if this function sets any errors.
 	 * 
+	 * If you pass it nothing, it will validate with the current data stored in
+	 * the object.
+	 * 
 	 * @param array $data - the data  to validate in [field_name] => [value] form.
-	 * @return void
+	 * @return boolean - result of {@link isDataValid()}
 	 * @see isDataValid(), getValidationErrors()
 	 * @author Anthony Bush
 	 **/
-	public function validateData(&$data) {
+	public function validateData(&$data = null) {
 		if (!$this->validatedData) {
-			$this->doValidateData($data);
+			if (is_null($data)) {
+				$this->doValidateData($this->fields);
+			} else {
+				$this->doValidateData($data);
+			}
 		}
 		$this->validatedData = true;
+		return $this->isDataValid();
 	}
 	
 	/**

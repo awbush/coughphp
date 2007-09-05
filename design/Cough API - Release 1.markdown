@@ -2,7 +2,7 @@
 Confirmed
 ---------
 
-* No factory methods
+* No factory methods. Well, there will be factory methods, but we aren't going to provide a full suite like we do with the check/load methods, and their usage won't be required, although core Cough code will use them whenever instantiating objects.
 * Replace all `check` methods with `load` methods.
 * Centralize an object's generic SQL without a WHERE clause so it can be reused by itself, related object that have a one-to-one relationship, and collections.
 * Simplify the definitions for objects and collections so that the work is done by load methods which can easily be overridden.
