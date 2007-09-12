@@ -189,7 +189,7 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 	
 	protected $fields = array(
 <?php foreach ($table->getColumns() as $columnName => $column): ?>
-		'<?php echo $columnName ?>' => <?php $this->getStringFromPhpValue($column->getDefaultValue()) ?>,
+		'<?php echo $columnName ?>' => <?php echo $this->getStringFromPhpValue($column->getDefaultValue()) ?>,
 <?php endforeach; ?>
 	);
 	
@@ -551,10 +551,6 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 		$elementClassName = $this->elementClassName;
 		$element = new $elementClassName();
 		$this->collectionSql = $element->getLoadSqlWithoutWhere();
-	}
-	
-	protected function defineElementClassName() {
-		$this->elementClassName = '<?php echo $table->getTableName() ?>';
 	}
 	
 }
