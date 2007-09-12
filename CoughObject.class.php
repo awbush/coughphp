@@ -1724,7 +1724,7 @@ abstract class CoughObject {
 			// set the related object
 			// $this->setObject($objectName, new $this->objectDefinitions[$objectName]['class_name']($objectData));
 			// if we are going to use factory methods
-			$this->setObject($objectName, call_user_func(array($this->objectDefinitions[$objectName]['class_name'], 'constructByFields'), $objectData);
+			$this->setObject($objectName, call_user_func(array($this->objectDefinitions[$objectName]['class_name'], 'constructByFields'), $objectData));
 			// if we had load methods that took data then we don't even need to know the class name:
 			// $this->loadObject($objectName, $objectData);
 		}
