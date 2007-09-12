@@ -25,7 +25,7 @@ $config = array(
 	
 	'class_names' => array(
 		// You can add prefixes to class names that are generated
-		'prefix' => 'usr_',
+		'prefix' => '',
 		// Additionally, you can strip table prefixes from the generated class names (note that you might run into naming conflicts though.)
 		'strip_table_name_prefixes' => array('cust_', 'wfl_', 'baof_'),
 		// Suffixes...
