@@ -7,7 +7,7 @@
  **/
 
 
-$generated = dirname(__FILE__) . '/generated/';
+$generated = dirname(dirname(dirname(__FILE__))) . '/generated/';
 
 $config = array(
 	
@@ -18,8 +18,8 @@ $config = array(
 	),
 	
 	'paths' => array(
-		'generated_classes' => $generated . 'generated_classes/',
-		'starter_classes' => $generated . 'starter_classes/',
+		'generated_classes' => $generated,
+		'starter_classes' => $generated,
 		'file_suffix' => '.class.php',
 	),
 	
