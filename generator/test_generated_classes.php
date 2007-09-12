@@ -38,6 +38,8 @@ DatabaseFactory::setDatabaseConfigs($dbConfigs);
 $person = Person::constructByKey(1);
 if ($person) {
 	echo 'Successfully pulled person id ' . $person->getPersonId() . ' (' . $person->getKeyId() . ') with name "' . $person->getName() . '"' . "\n";
+	$person->setName('Anthony TEST');
+	$person->save();
 }
 print_r($person);
 
@@ -45,6 +47,8 @@ print_r($person);
 $person = new Person(1);
 if ($person->isLoaded()) {
 	echo 'Successfully pulled person id ' . $person->getPersonId() . ' (' . $person->getKeyId() . ') with name "' . $person->getName() . '"' . "\n";
+	$person->setName('Anthony');
+	$person->save();
 }
 print_r($person);
 
