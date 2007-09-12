@@ -763,7 +763,7 @@ abstract class CoughObject {
 			$this->db->selectDb($this->dbName);
 			$result = $this->db->query($sql);
 			if ($result->numRows() == 1) {
-				$this->initFields($result->getRow());
+				$this->inflate($result->getRow());
 				$this->setIsLoaded(true);
 			} else {
 				// load failed because the unique dataset couldn't be selected
@@ -1668,12 +1668,12 @@ abstract class CoughObject {
 	 * @return void
 	 **/
 	public function inflate($fieldsOrId = array(), $relatedEntities = array()) {
-		if (is_array($fieldsOrID)) {
+		if (is_array($fieldsOrId)) {
 			$joins = array();
-			foreach ($fieldsOrID as $fieldName => $fieldValue) {
+			foreach ($fieldsOrId as $fieldName => $fieldValue) {
 				if (is_array($fieldValue)) {
 					// field is data for a related object
-					$this->inflateOject($fieldName, $fieldValue, $fieldsOrID);
+					$this->inflateOject($fieldName, $fieldValue, $fieldsOrId);
 				} else if (isset($this->fieldDefinitions[$fieldName])) {
 					// field is part of this object's fields
 					$this->fields[$fieldName] = $fieldValue;
@@ -1693,13 +1693,13 @@ abstract class CoughObject {
 				$this->inflateOject($joinTableName, $joinFields, $joins);
 			}
 
-		} else if ($fieldsOrID != '') {
+		} else if ($fieldsOrId != '') {
 			// an id was given
 			foreach ($this->getPkFieldNames() as $fieldName) {
-				$this->fields[$fieldName] = $fieldsOrID;
+				$this->fields[$fieldName] = $fieldsOrId;
 			}
 			// TODO: Tom: To load or not to load automatically? I can give use cases on why someone wouldn't want it to autoload; plus the user should be using Object::constructByKey($key) anyway when they want it to pull from storage.
-			// $this->load();
+			$this->load();
 		}
 		
 		// Set related entities that were passed in
