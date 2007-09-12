@@ -6,7 +6,7 @@
  * @package default
  * @author Anthony Bush
  **/
-class As_CoughObject {
+class As_CoughObject extends CoughObject {
 	
 	/**
 	 * Retrieves the object's data from the database, loading it into memory.
@@ -41,6 +41,30 @@ class As_CoughObject {
 	 **/
 	public function checkByCriteria($where = array(), $additionalSql = '') {
 		return $this->loadByCriteria($where, $additionalSql);
+	}
+	
+	/**
+	 * Provides a way to `check` by an array of "key" => "value" pairs.
+	 *
+	 * @param array $where - an array of "key" => "value" pairs to search for
+	 * @param boolean $allowManyRows - set to true if you want to initialize from a record even if there was more than one record returned.
+	 * @return boolean - true if initialized object with data, false otherwise.
+	 * @author Anthony Bush
+	 **/
+	public function checkByArray($where = array(), $allowManyRows = false) {
+		return $this->loadByCriteria($where);
+	}
+	
+	/**
+	 * Provides a way to `check` by a unique key other than the primary key.
+	 *
+	 * @param string $uniqueKey - the db_column_name to compare with
+	 * @param string $uniqueValue - the value to look for
+	 * @return boolean - true if one row returned, false otherwise.
+	 * @author Anthony Bush
+	 **/
+	public function checkBy($uniqueKey, $uniqueValue) {
+		return $this->loadByCriteria(array($uniqueKey => $uniqueValue));
 	}
 	
 	/**
