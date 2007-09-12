@@ -317,7 +317,7 @@ foreach ($table->getHasOneRelationships() as $hasOne) {
 		}
 	}
 }
-if (count($joins) > 0) {
+if (count($innerJoins) > 0) {
 ?>
 	public function getLoadSqlWithoutWhere() {
 		return '
@@ -506,7 +506,7 @@ if (count($joins) > 0) {
 		$class->setContents(ob_get_clean());
 		$class->setIsStarterClass(false);
 		$class->setIsCollectionClass(false);
-		$class->setClassName($className);
+		$class->setClassName($baseObjectClassName);
 		$this->addGeneratedClass($class);
 	}
 
@@ -516,7 +516,7 @@ if (count($joins) > 0) {
 	 * @return string the generated PHP code
 	 * @author Anthony Bush
 	 **/
-	protected function generateBaseCollection() {
+	protected function generateBaseCollection($table) {
 		
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
@@ -562,7 +562,7 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 		$class->setContents(ob_get_clean());
 		$class->setIsStarterClass(false);
 		$class->setIsCollectionClass(true);
-		$class->setClassName($className);
+		$class->setClassName($baseCollectionClassName);
 		$this->addGeneratedClass($class);
 	}
 
@@ -572,7 +572,7 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 	 * @return string the generated PHP code
 	 * @author Anthony Bush
 	 **/
-	protected function generateStarterObject() {
+	protected function generateStarterObject($table) {
 		
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
@@ -652,7 +652,7 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 		$class->setContents(ob_get_clean());
 		$class->setIsStarterClass(true);
 		$class->setIsCollectionClass(false);
-		$class->setClassName($className);
+		$class->setClassName($starterObjectClassName);
 		$this->addGeneratedClass($class);
 	}
 
@@ -662,7 +662,7 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 	 * @return string the generated PHP code
 	 * @author Anthony Bush
 	 **/
-	protected function generateStarterCollection() {
+	protected function generateStarterCollection($table) {
 		
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
@@ -695,7 +695,7 @@ class <?php echo $starterCollectionClassName ?> extends <?php echo $baseCollecti
 		$class->setContents(ob_get_clean());
 		$class->setIsStarterClass(true);
 		$class->setIsCollectionClass(true);
-		$class->setClassName($className);
+		$class->setClassName($starterCollectionClassName);
 		$this->addGeneratedClass($class);
 	}
 

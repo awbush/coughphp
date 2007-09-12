@@ -38,7 +38,7 @@ try {
 
 	// Generate files into memory
 	$coughGenerator = new CoughGenerator($coughGeneratorConfig);
-	// $classes = $coughGenerator->generateCoughClasses($schema);
+	$classes = $coughGenerator->generateCoughClasses($schema);
 	
 	echo number_format(memory_get_usage()) . " used\n";
 	echo number_format(memory_get_usage(true)) . " allocated\n";
