@@ -40,6 +40,19 @@ try {
 	$coughGenerator = new CoughGenerator($coughGeneratorConfig);
 	$classes = $coughGenerator->generateCoughClasses($schema);
 	
+	// Write files to disk
+	$coughWriter = new CoughWriter($coughGeneratorConfig);
+	if (!$coughWriter->writeClasses($classes)) {
+		echo 'Trouble writing classes:' . "\n";
+		echo '------------------------' . "\n";
+		foreach ($coughWriter->getErrorMessages() as $message) {
+			echo $message . "\n";
+		}
+		echo "\n";
+	} else {
+		echo 'Success writing classes!' . "\n";
+	}
+	
 	echo number_format(memory_get_usage()) . " used\n";
 	echo number_format(memory_get_usage(true)) . " allocated\n";
 	

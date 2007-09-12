@@ -88,28 +88,54 @@ class CoughGeneratorConfig extends CoughConfig {
 		return $className;
 	}
 	
+	public function getClassFileName(CoughClass $class) {
+		$dbName = $class->getDatabaseName();
+		$tableName = $class->getTableName();
+		
+		// Get file path
+		if ($class->isStarterClass()) {
+			$filePath = $this->getConfigValue('paths/starter_classes', $dbName, $tableName);
+		} else {
+			$filePath = $this->getConfigValue('paths/generated_classes', $dbName, $tableName);
+		}
+		
+		// Get file suffix
+		$fileSuffix = $this->getConfigValue('paths/file_suffix', $dbName, $tableName);
+		
+		// Put it all together
+		return $filePath . $class->getClassName() . $fileSuffix;
+	}
+	
 	public function getStarterObjectClassName(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		return $this->getClassName($table) . $this->getConfigValue('class_names/starter_object_suffix', $dbName, $tableName);
+		return $this->getConfigValue('class_names/prefix', $dbName, $tableName)
+		     . $this->getClassName($table)
+		     . $this->getConfigValue('class_names/starter_object_suffix', $dbName, $tableName);
 	}
 	
 	public function getStarterCollectionClassName(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		return $this->getClassName($table) . $this->getConfigValue('class_names/starter_collection_suffix', $dbName, $tableName);
+		return $this->getConfigValue('class_names/prefix', $dbName, $tableName)
+		     . $this->getClassName($table)
+		     . $this->getConfigValue('class_names/starter_collection_suffix', $dbName, $tableName);
 	}
 	
 	public function getBaseObjectClassName(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		return $this->getClassName($table) . $this->getConfigValue('class_names/base_object_suffix', $dbName, $tableName);
+		return $this->getConfigValue('class_names/prefix', $dbName, $tableName)
+		     . $this->getClassName($table)
+		     . $this->getConfigValue('class_names/base_object_suffix', $dbName, $tableName);
 	}
 	
 	public function getBaseCollectionClassName(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		return $this->getClassName($table) . $this->getConfigValue('class_names/base_collection_suffix', $dbName, $tableName);
+		return $this->getConfigValue('class_names/prefix', $dbName, $tableName)
+		     . $this->getClassName($table)
+		     . $this->getConfigValue('class_names/base_collection_suffix', $dbName, $tableName);
 	}
 	
 	public function getPhpdocAuthor(SchemaTable $table) {

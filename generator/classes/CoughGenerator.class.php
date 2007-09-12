@@ -507,6 +507,10 @@ if (count($innerJoins) > 0) {
 		$class->setIsStarterClass(false);
 		$class->setIsCollectionClass(false);
 		$class->setClassName($baseObjectClassName);
+		$class->setDatabaseName($dbName);
+		$class->setTableName($tableName);
+		$tableName = $table->getTableName();
+		
 		$this->addGeneratedClass($class);
 	}
 
@@ -563,6 +567,8 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 		$class->setIsStarterClass(false);
 		$class->setIsCollectionClass(true);
 		$class->setClassName($baseCollectionClassName);
+		$class->setDatabaseName($dbName);
+		$class->setTableName($tableName);
 		$this->addGeneratedClass($class);
 	}
 
@@ -653,6 +659,8 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 		$class->setIsStarterClass(true);
 		$class->setIsCollectionClass(false);
 		$class->setClassName($starterObjectClassName);
+		$class->setDatabaseName($dbName);
+		$class->setTableName($tableName);
 		$this->addGeneratedClass($class);
 	}
 
@@ -696,6 +704,8 @@ class <?php echo $starterCollectionClassName ?> extends <?php echo $baseCollecti
 		$class->setIsStarterClass(true);
 		$class->setIsCollectionClass(true);
 		$class->setClassName($starterCollectionClassName);
+		$class->setDatabaseName($dbName);
+		$class->setTableName($tableName);
 		$this->addGeneratedClass($class);
 	}
 
