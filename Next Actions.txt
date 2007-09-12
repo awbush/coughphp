@@ -1,0 +1,9 @@
+Next Actions
+============
+
+* Check on the FK schema creation code.  Make sure FK in the database map correctly to schema entities.  (I think the code to look for is around the linkRelationships() method)
+
+* Create the AS_SchemaManipulator extends SchemaManipulator (which has at least one method, manipulateSchema($schema))
+	* Port over the naming conventions from the old generator (e.g. "2" in the name => join table, etc.)
+
+* Finish the generator, the object and collection definitions need to be checked, and our API probably needs some work before the generator can wrap that stuff up.
