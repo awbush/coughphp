@@ -7,6 +7,7 @@ include($baseClasses . 'schema/SchemaColumn.class.php');
 include($baseClasses . 'schema/SchemaDatabase.class.php');
 include($baseClasses . 'schema/Schema.class.php');
 include($baseClasses . 'schema/SchemaTable.class.php');
+include($baseClasses . 'schema/SchemaRelationship.class.php');
 
 // Load the core cough generation classes
 include($baseClasses . 'CoughClass.class.php');

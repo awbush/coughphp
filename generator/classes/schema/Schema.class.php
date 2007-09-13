@@ -128,25 +128,26 @@ class Schema {
 			}
 		}
 		
-		// Convert some one-to-many relationships into many-to-many relationships
-		foreach ($this->getDatabases() as $dbName => $database) {
-			foreach ($database->getTables() as $tableName => $table) {
-				// 3. A potential many-to-many can be found....
-				foreach ($table->getHasManyRelationships() as $hasManyKey => $hasMany) {
-					foreach ($hasMany->getRefTable()->getHasOneRelationships() as $hasOne) {
-						if ($hasOne->getRefTable() != $table) {
-							// TODO: Anthony: washere
-							echo 'Found Many-to-Many relationship' . "\n";
-							// $habtm = new SchemaRelationship();
-							// $habtm->setJoinTable($hasMany->getRefTable());
-							// $table->addHabtmRelationship($habtm);
-							// $table->removeHasManyRelationship($hasManyKey);
-						}
-					}
-				}
-				
-			}
-		}
+		// 2007-09-12/AWB: Hmm... this part doesn't appear to be done...
+		// // Convert some one-to-many relationships into many-to-many relationships
+		// foreach ($this->getDatabases() as $dbName => $database) {
+		// 	foreach ($database->getTables() as $tableName => $table) {
+		// 		// 3. A potential many-to-many can be found....
+		// 		foreach ($table->getHasManyRelationships() as $hasManyKey => $hasMany) {
+		// 			foreach ($hasMany->getRefTable()->getHasOneRelationships() as $hasOne) {
+		// 				if ($hasOne->getRefTable() != $table) {
+		// 					// TODO: Anthony: washere
+		// 					echo 'Found Many-to-Many relationship (TODO Finish this code in Schema class on line ' . __LINE__ . ')' . "\n";
+		// 					// $habtm = new SchemaRelationship();
+		// 					// $habtm->setJoinTable($hasMany->getRefTable());
+		// 					// $table->addHabtmRelationship($habtm);
+		// 					// $table->removeHasManyRelationship($hasManyKey);
+		// 				}
+		// 			}
+		// 		}
+		// 		
+		// 	}
+		// }
 		
 		// foreach ($this->databases as $dbName => $db) {
 		// 	$this->schemas[$dbName] = array();

@@ -312,7 +312,7 @@ foreach ($table->getHasOneRelationships() as $hasOne) {
 		$innerJoins['`' . $refDbName . '`.`' . $refTableName . '`'] = $joinOnSql;
 		
 		// Append to SELECT SQL.
-		foreach ($hasOne->getRefTable->getColumns() as $columnName => $refColumn) {
+		foreach ($hasOne->getRefTable()->getColumns() as $columnName => $refColumn) {
 			$selectSql[] = '`' . $refTableName . '`.`' . $columnName . '` AS `' . $refTableName . '.' . $columnName . '`';
 		}
 	}
@@ -357,9 +357,9 @@ if (count($innerJoins) > 0) {
 
 <?php
 	foreach ($table->getHasOneRelationships() as $hasOne):
-		$objectTitleCase = $this->getTitleCase($hasOne->getRefObjectName());
+		$objectTitleCase = $this->config->getTitleCase($hasOne->getRefObjectName());
 		$objectClassName = $this->config->getStarterObjectClassName($hasOne->getRefTable());
-		$localVarName = $this->getCamelCase($hasOne->getRefTableName()); //'object';
+		$localVarName = $this->config->getCamelCase($hasOne->getRefTableName()); //'object';
 		if ($localVarName == 'this') {
 			// avoid naming conflict
 			$localVarName = 'object';
@@ -369,7 +369,7 @@ if (count($innerJoins) > 0) {
 	public function load<?php echo $objectTitleCase ?>_Object() {
 		$<?php echo $localVarName ?> = new <?php echo $objectClassName ?>(array(
 <?php foreach ($hasOne->getRefKey() as $key => $column): ?>
-			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumName()) ?>(),
+			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
 <?php endforeach; ?>
 		));
 		if (!$<?php echo $localVarName ?>->isLoaded()) {
@@ -392,10 +392,11 @@ if (count($innerJoins) > 0) {
 
 <?php
 	foreach ($table->getHasManyRelationships() as $hasMany):
-		$objectTitleCase = $this->getTitleCase($hasMany->getRefObjectName());
+		$objectTitleCase = $this->config->getTitleCase($hasMany->getRefObjectName());
 		$objectClassName = $this->config->getStarterObjectClassName($hasMany->getRefTable());
 		$collectionClassName = $this->config->getStarterCollectionClassName($hasMany->getRefTable());
 		$localKey = $hasMany->getLocalKey();
+		$localVarName = $this->config->getCamelCase($hasMany->getRefTableName());
 ?>
 	public function load<?php echo $objectTitleCase ?>_Collection() {
 		
@@ -409,7 +410,7 @@ if (count($innerJoins) > 0) {
 		// What criteria are we using?
 		$criteria = array(
 <?php foreach ($hasMany->getRefKey() as $key => $column): ?>
-			'<?php echo $column->getColumName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumName()) ?>(),
+			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
 <?php endforeach; ?>
 		);
 		$sql .= ' ' . $this->db->generateWhere($criteria);
@@ -447,7 +448,7 @@ if (count($innerJoins) > 0) {
 
 <?php
 	foreach ($table->getHabtmRelationships() as $habtm):
-		$objectTitleCase = $this->getTitleCase($habtm->getRefObjectName());
+		$objectTitleCase = $this->config->getTitleCase($habtm->getRefObjectName());
 		$objectClassName = $this->config->getStarterObjectClassName($habtm->getRefTable());
 		$collectionClassName = $this->config->getStarterCollectionClassName($habtm->getRefTable());
 		$localKey = $habtm->getLocalKey();

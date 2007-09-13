@@ -38,7 +38,7 @@ $config = array(
 	),
 	
 	'databases' => array(
-		'cough_test' => array(
+		'cough_test_fk' => array(
 		),
 	),
 	

@@ -33,24 +33,48 @@ DatabaseFactory::setDatabaseConfigs($dbConfigs);
 
 
 
+// Testing cough_test database tables
+// // Start using the classes
+// $person = Person::constructByKey(1);
+// if ($person) {
+// 	echo 'Successfully pulled person id ' . $person->getPersonId() . ' (' . $person->getKeyId() . ') with name "' . $person->getName() . '"' . "\n";
+// 	$person->setName('Anthony TEST');
+// 	$person->save();
+// }
+// print_r($person);
+// 
+// // We could support the old way, if we wanted... (check the inflate method in new cough, there is a line with `$this->load()` comment it out to disable this feature and enable easy one-query updates...)
+// $person = new Person(1);
+// if ($person->isLoaded()) {
+// 	echo 'Successfully pulled person id ' . $person->getPersonId() . ' (' . $person->getKeyId() . ') with name "' . $person->getName() . '"' . "\n";
+// 	$person->setName('Anthony');
+// 	$person->save();
+// }
+// print_r($person);
 
-// Start using the classes
-$person = Person::constructByKey(1);
-if ($person) {
-	echo 'Successfully pulled person id ' . $person->getPersonId() . ' (' . $person->getKeyId() . ') with name "' . $person->getName() . '"' . "\n";
-	$person->setName('Anthony TEST');
-	$person->save();
-}
-print_r($person);
 
-// We could support the old way, if we wanted... (check the inflate method in new cough, there is a line with `$this->load()` comment it out to disable this feature and enable easy one-query updates...)
-$person = new Person(1);
-if ($person->isLoaded()) {
-	echo 'Successfully pulled person id ' . $person->getPersonId() . ' (' . $person->getKeyId() . ') with name "' . $person->getName() . '"' . "\n";
-	$person->setName('Anthony');
-	$person->save();
-}
-print_r($person);
+
+
+
+$product = new Product();
+// $product->setCategory('Computers');
+// $product->setId(1);
+$product->setPreknownKeyId(array(
+	'category' => 'Computers',
+	'id' => 1
+));
+$product->setPrice(50.01);
+
+
+$db = DatabaseFactory::getDatabase('cough_test_fk');
+$db->startLoggingQueries();
+$product->save();
+print_r($db->getQueryLog());
+
+
+
+die();
+
 
 
 ?>

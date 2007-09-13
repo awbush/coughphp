@@ -99,9 +99,6 @@ class SchemaRelationshipHabtm extends SchemaRelationship {
 	protected $joinObjectName = null;
 	protected $joinKey = null;
 	
-	protected $joinTable = null;
-	protected $joinKey = null;
-	
 	public function setJoinTable($table) {
 		$this->joinTable = $table;
 	}
