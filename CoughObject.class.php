@@ -1219,7 +1219,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function loadCollection($collectionName) {
-		$loadMethod = 'load' . ucfirst($collectionName) . '_Collection';
+		$loadMethod = 'load' . self::titleCase($collectionName) . '_Collection';
 		$this->$loadMethod();
 	}
 	
@@ -1291,9 +1291,9 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function setCollection($collectionName, $collection) {
-		if (isset($this->collectionDefinitions[$collectionName])) {
+		// if (isset($this->collectionDefinitions[$collectionName])) {
 			$this->collections[$collectionName] = $collection;
-		}
+		// }
 	}
 	
 	protected function saveJoinFields() {
@@ -1690,7 +1690,7 @@ abstract class CoughObject {
 			}
 			// Construct objects using any join data passed in...
 			foreach ($joins as $joinTableName => $joinFields) {
-				$this->inflateOject($joinTableName, $joinFields, $joins);
+				$this->inflateObject($joinTableName, $joinFields, $joins);
 			}
 
 		} else if ($fieldsOrId != '') {
