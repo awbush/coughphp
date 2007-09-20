@@ -56,25 +56,62 @@ DatabaseFactory::setDatabaseConfigs($dbConfigs);
 
 
 
-$product = new Product();
-// $product->setCategory('Computers');
-// $product->setId(1);
-$product->setPreknownKeyId(array(
-	'category' => 'Computers',
-	'id' => 1
-));
-$product->setPrice(50.01);
-
+/////////////////////////////
+// Test cough_test_fk tables
+/////////////////////////////
 
 $db = DatabaseFactory::getDatabase('cough_test_fk');
 $db->startLoggingQueries();
-$product->save();
+
+$db->query('DELETE FROM product_order');
+$db->query('DELETE FROM product');
+$db->query('DELETE FROM customer');
+
+$product1 = new Product();
+// $product->setCategory('Computers');
+// $product->setId(1);
+$product1->setPreknownKeyId(array(
+	'category' => 1,
+	'id' => 1
+));
+$product1->setPrice(50.01);
+$product1->save();
+
+$product2 = new Product();
+$product2->setPreknownKeyId(array(
+	'category' => 1,
+	'id' => 2
+));
+$product2->setPrice(50.12);
+$product2->save();
+
+$customer = new Customer();
+$customer->setPreknownKeyId(array('id' => 1));
+$customer->setName('Anthony');
+$customer->save();
+
+$order = new ProductOrder();
+$order->setProductCategory($product1->getCategory());
+$order->setProductId($product1->getId());
+$order->setCustomerId($customer->getId());
+$order->save();
+
+$order = new ProductOrder();
+$order->setProductCategory($product2->getCategory());
+$order->setProductId($product2->getId());
+$order->setCustomerId($customer->getId());
+$order->save();
+
+
+$orders = $customer->getProductOrder_Collection();
+foreach ($orders as $order) {
+	echo 'Customer ' . $order->getCustomerId() . ' ordered category ' . $order->getProductCategory() . ', product ' . $order->getProductId() . "\n";
+}
+
+
+
+
 print_r($db->getQueryLog());
-
-
-
 die();
-
-
 
 ?>
