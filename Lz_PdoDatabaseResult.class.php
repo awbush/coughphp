@@ -33,6 +33,12 @@ class Lz_PdoDatabaseResult extends Lz_DatabaseResult
 	{
 		return $this->result->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_ABS, $rowNum);
 	}
-} // END class Lz_DatabaseResult
+	
+	public function freeResult()
+	{
+		// hmm I need to set $this to null somehow
+	}
+	
+} // END class Lz_PdoDatabaseResult
 
 ?>

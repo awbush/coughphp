@@ -18,11 +18,11 @@ class Lz_PdoDatabase extends Lz_Database
 	{
 		$driver = $dsn['driver'];
 		$host = $dsn['host'];
-		$user = $dsn['username'];
+		$username = $dsn['username'];
 		$password = $dsn['password'];
 		$database = $dsn['database'];
 		
-		return new Lz_PdoDatabase(new PDO("$driver:host=$host;dbname=$database", $user, $password));
+		return new Lz_PdoDatabase(new PDO("$driver:host=$host;dbname=$database", $username, $password));
 	}
 	
 	public function query($sql)
