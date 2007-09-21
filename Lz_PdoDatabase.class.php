@@ -25,11 +25,6 @@ class Lz_PdoDatabase extends Lz_Database
 		return new Lz_PdoDatabase(new PDO("$driver:host=$host;dbname=$database", $user, $password));
 	}
 	
-	public function getErrors()
-	{
-		return $this->db->errorInfo();
-	}
-	
 	public function query($sql)
 	{
 		$result = $this->db->query($sql);
@@ -37,13 +32,23 @@ class Lz_PdoDatabase extends Lz_Database
 			return Lz_PdoDatabaseResult::retrieveByResult($result);
 		}
 		else {
-			$this->showErrors();
+			return false;
 		}
 	}
 	
 	public function execute($sql)
 	{
-		
+		return $this->db->exec($sql);
+	}
+	
+	public function getLastInsertId()
+	{
+		return $this->db->lastInsertId();
+	}
+	
+	public function dbQuote($string)
+	{
+		return $this->db->quote($string);
 	}
 }
 
