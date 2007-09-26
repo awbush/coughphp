@@ -22,7 +22,7 @@ coughphp.tar.gz
 			SchemaDatabase.class.php
 			SchemaRelationship.class.php
 			SchemaTable.class.php
-		schema_generators/
+		schema_generator/
 			SchemaGenerator.class.php
 			database/
 				DatabaseSchemaGenerator.class.php
@@ -39,7 +39,9 @@ coughphp.tar.gz
 			xml/
 				XmlSchemaGenerator.class.php
 				XmlSchemaGeneratorConfig.class.php
-		database/
+		dal/ -- TODO rename this? it's "database abstraction layers"
+			matt_database/ -- TODO: Rename and possibly move this
+		dalal/ -- TODO: rename this, it's the "database abstraction layer abstraction layer"
 			Lz_DatabaseFactory
 			drivers/
 				base/
