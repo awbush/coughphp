@@ -49,13 +49,10 @@
  * @package CoughPHP
  **/
 
-// Dependencies
-// ModuleFactory::loadModule('matt_database');
-
 // Load the Cough framework
-include_once('CoughIterator.class.php');
-include_once('CoughCollection.class.php');
-include_once('CoughObject.class.php');
-include_once('CoughLoader.class.php');
+include_once('cough/CoughIterator.class.php');
+include_once('cough/CoughCollection.class.php');
+include_once('cough/CoughObject.class.php');
+include_once('cough/CoughLoader.class.php');
 
 ?>
