@@ -42,17 +42,17 @@ coughphp.tar.gz
 		dal/ -- TODO rename this? it's "database abstraction layers"
 			matt_database/ -- TODO: Rename and possibly move this
 		dalal/ -- TODO: rename this, it's the "database abstraction layer abstraction layer"
-			Lz_DatabaseFactory
+			CoughDatabaseFactory
 			drivers/
 				base/
-					Lz_Database
-					Lz_DatabaseResult
+					CoughAbstractDatabaseAdapter
+					CoughAbstractDatabaseResultAdapter
 				matt_database/
-					Lz_MattDatabase
-					Lz_MattDatabaseResult
+					CoughAsDatabaseAdapter
+					CoughAsDatabaseResultAdapter
 				pdo/
-					Lz_PdoDatabase
-					Lz_PdoDatabaseResult
+					CoughPdoDatabaseAdapter
+					CoughPdoDatabaseResultAdapter
 		generate.php
 			[command line tool for generating code]
 		web_panel.php

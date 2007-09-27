@@ -6,11 +6,11 @@
  * @package default
  * @author Lewis Zhang
  **/
-class Lz_MattDatabase extends Lz_Database
+class CoughAsDatabaseAdapter extends CoughAbstractDatabaseAdapter
 {	
 	/**
 	 * creates a new MattDatabase connection from a DSN
-	 * NOTE: this may or may not apply after the DatabaseFactory changes to include Lz_Database
+	 * NOTE: this may or may not apply after the DatabaseFactory changes to include CoughAbstractDatabaseAdapter
 	 *
 	 * @return void
 	 * @author Lewis Zhang
@@ -25,13 +25,13 @@ class Lz_MattDatabase extends Lz_Database
 		$password = $dsn['password'];
 		$database = $dsn['database'];
 		
-		return new Lz_MattDatabase(new Database($database, $host, $username, $password));
+		return new CoughAsDatabaseAdapter(new Database($database, $host, $username, $password));
 	}
 	
 	public function query($sql)
 	{
 		$result = $this->db->query($sql);
-		return Lz_MattDatabaseResult::retrieveByResult($result);
+		return CoughAsDatabaseResultAdapter::retrieveByResult($result);
 		// TODO: MattDatabase always returns an object, so we need to find out how to return false when the query failed
 	}
 	

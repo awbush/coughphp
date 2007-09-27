@@ -6,12 +6,12 @@
  * @package default
  * @author Lewis Zhang
  **/
-abstract class Lz_DatabaseResult
+abstract class CoughAbstractDatabaseResultAdapter
 {
 	protected $result = null;
 	
 	/**
-	 * creates a new Lz_DatabaseResult (variant) object from a db abstraction layer specific result object
+	 * creates a new CoughAbstractDatabaseResultAdapter (variant) object from a db abstraction layer specific result object
 	 *
 	 * @return void
 	 * @author Lewis Zhang
@@ -33,6 +33,6 @@ abstract class Lz_DatabaseResult
 	
 	abstract public function freeResult();
 	
-} // END abstract class Lz_DatabaseResult
+} // END abstract class CoughAbstractDatabaseResultAdapter
 
 ?>

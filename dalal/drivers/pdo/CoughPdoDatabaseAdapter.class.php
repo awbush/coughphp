@@ -6,7 +6,7 @@
  * @package default
  * @author Lewis Zhang
  **/
-class Lz_PdoDatabase extends Lz_Database
+class CoughPdoDatabaseAdapter extends CoughAbstractDatabaseAdapter
 {	
 	/**
 	 * creates a new PDO connection
@@ -22,14 +22,14 @@ class Lz_PdoDatabase extends Lz_Database
 		$password = $dsn['password'];
 		$database = $dsn['database'];
 		
-		return new Lz_PdoDatabase(new PDO("$driver:host=$host;dbname=$database", $username, $password));
+		return new CoughPdoDatabaseAdapter(new PDO("$driver:host=$host;dbname=$database", $username, $password));
 	}
 	
 	public function query($sql)
 	{
 		$result = $this->db->query($sql);
 		if (is_object($result)) {
-			return Lz_PdoDatabaseResult::retrieveByResult($result);
+			return CoughPdoDatabaseResultAdapter::retrieveByResult($result);
 		}
 		else {
 			return false;

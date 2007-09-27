@@ -6,7 +6,7 @@
  * @package default
  * @author Lewis Zhang
  **/
-abstract class Lz_Database
+abstract class CoughAbstractDatabaseAdapter
 {
 	/**
 	 * database abstraction layer object
@@ -44,10 +44,10 @@ abstract class Lz_Database
 	{
 		switch ($dsn['dbLayer']) {
 			case 'pdo':
-				return Lz_PdoDatabase::retrieveByDsn($dsn);
+				return CoughPdoDatabaseAdapter::retrieveByDsn($dsn);
 				break;
 			case 'matt_database':
-				return Lz_MattDatabase::retrieveByDsn($dsn);
+				return CoughAsDatabaseAdapter::retrieveByDsn($dsn);
 				break;
 		}
 	}
@@ -56,7 +56,7 @@ abstract class Lz_Database
 	 * selects the specified database for this connection
 	 * TODO: is this the right thing to do? I'm assuming this is MySQL specific as well
 	 *
-	 * @return Lz_DatabaseResult
+	 * @return CoughAbstractDatabaseResultAdapter
 	 * @author Lewis Zhang
 	 **/
 	public function selectDb($databaseName)
@@ -129,7 +129,7 @@ abstract class Lz_Database
 	/**
 	 * returns the result of a SELECT query from the supplied arguments
 	 *
-	 * @return Lz_DatabaseResult
+	 * @return CoughAbstractDatabaseResultAdapter
 	 * @author Lewis Zhang
 	 **/
 	public function select($tableName, $fieldNames, $where)
@@ -387,6 +387,6 @@ abstract class Lz_Database
 		}
 	}
 	
-} // END class Lz_Database
+} // END class CoughAbstractDatabaseAdapter
 
 ?>

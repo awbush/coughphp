@@ -6,11 +6,11 @@
  * @package default
  * @author Lewis Zhang
  **/
-class Lz_PdoDatabaseResult extends Lz_DatabaseResult
+class CoughPdoDatabaseResultAdapter extends CoughAbstractDatabaseResultAdapter
 {	
 	public static function retrieveByResult($result)
 	{
-		return new Lz_PdoDatabaseResult($result);
+		return new CoughPdoDatabaseResultAdapter($result);
 	}
 	
 	public function getRow()
@@ -39,6 +39,6 @@ class Lz_PdoDatabaseResult extends Lz_DatabaseResult
 		// hmm I need to set $this to null somehow
 	}
 	
-} // END class Lz_PdoDatabaseResult
+} // END class CoughPdoDatabaseResultAdapter
 
 ?>

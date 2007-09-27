@@ -7,11 +7,11 @@
  * @package default
  * @author Lewis Zhang
  **/
-class Lz_MattDatabaseResult extends Lz_DatabaseResult
+class CoughAsDatabaseResultAdapter extends CoughAbstractDatabaseResultAdapter
 {	
 	public static function retrieveByResult($result)
 	{
-		return new Lz_MattDatabaseResult($result);
+		return new CoughAsDatabaseResultAdapter($result);
 	}
 
 	public function getRow()
@@ -43,6 +43,6 @@ class Lz_MattDatabaseResult extends Lz_DatabaseResult
 		return mysql_free_result($this->result);
 	}
 	
-} // END class Lz_MattDatabaseResult
+} // END class CoughAsDatabaseResultAdapter
 
 ?>
