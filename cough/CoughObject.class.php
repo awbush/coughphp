@@ -431,27 +431,16 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	public function getKeyId() {
-		if ($this->hasKeyId()) {
-			if (count($this->pkFieldNames) == 1) {
-				foreach ($this->pkFieldNames as $fieldName) {
-					return $this->fields[$fieldName];
-				}
+		if (count($this->pkFieldNames) == 1) {
+			$fieldName = $this->pkFieldNames[0];
+			if (isset($this->fields[$fieldName])) {
+				return $this->fields[$fieldName];
 			} else {
-				return $this->getPk();
+				return null;
 			}
 		} else {
-			return null;
+			return $this->getPk();
 		}
-		// if (count($this->pkFieldNames) == 1) {
-		// 	$fieldName = $this->pkFieldNames[0];
-		// 	if (isset($this->fields[$fieldName])) {
-		// 		return $this->fields[$fieldName];
-		// 	} else {
-		// 		return null;
-		// 	}
-		// } else {
-		// 	return $this->getPk();
-		// }
 	}
 	
 	/**
