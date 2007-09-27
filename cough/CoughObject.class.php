@@ -432,8 +432,13 @@ abstract class CoughObject {
 	 **/
 	public function getKeyId() {
 		if ($this->hasKeyId()) {
-			// Implode to support multi-key PK in the KEYED collection (can't hash an array)
-			return implode(',', $this->getPk());
+			if (count($this->pkFieldNames) == 1) {
+				foreach ($this->pkFieldNames as $fieldName) {
+					return $this->fields[$fieldName];
+				}
+			} else {
+				return $this->getPk();
+			}
 		} else {
 			return null;
 		}
