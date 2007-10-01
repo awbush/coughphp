@@ -220,7 +220,7 @@ abstract class CoughObject {
 		$this->initializeDefinitions();
 
 		// Get our reference to the database object
-		$this->db = DatabaseFactory::getDatabase($this->dbName);
+		$this->db = As_DatabaseFactory::getDatabase($this->dbName);
 		$this->db->selectDb($this->dbName);
 		
 		// Initialize fields and related entities

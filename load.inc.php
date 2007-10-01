@@ -55,4 +55,7 @@ include_once('cough/CoughCollection.class.php');
 include_once('cough/CoughObject.class.php');
 include_once('cough/CoughLoader.class.php');
 
+// Load the Database Abstraction Layer / Database Adapter classes (TODO: use the dalal stuff, for now I'm hard coding it to just keep using the As Database classes)
+include_once('dal/as_database/load.inc.php');
+
 ?>

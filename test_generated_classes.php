@@ -1,6 +1,5 @@
 <?php
 
-define('COUGH_MODULE_PATH', dirname(dirname(__FILE__)) . '/');
 define('GENERATOR_OUTPUT_PATH', dirname(__FILE__) . '/generated/');
 
 // Setup autoloader for the generated classes
@@ -11,10 +10,7 @@ function __autoload($className) {
 }
 
 // Load up the Cough module
-include_once(COUGH_MODULE_PATH . 'load.inc.php');
-
-// Load up the Database module (a Cough dependency)
-include_once(dirname(dirname(dirname(__FILE__))) . '/database/load.inc.php');
+include_once('load.inc.php');
 
 // Specify Database Configuration... (server, user, pass)
 $dbConfigs = array(
@@ -28,7 +24,7 @@ $dbConfigs = array(
 	)
 );
 
-DatabaseFactory::setDatabaseConfigs($dbConfigs);
+As_DatabaseFactory::setDatabaseConfigs($dbConfigs);
 
 
 
@@ -60,7 +56,7 @@ DatabaseFactory::setDatabaseConfigs($dbConfigs);
 // Test cough_test_fk tables
 /////////////////////////////
 
-$db = DatabaseFactory::getDatabase('cough_test_fk');
+$db = As_DatabaseFactory::getDatabase('cough_test_fk');
 $db->startLoggingQueries();
 
 $db->query('DELETE FROM product_order');

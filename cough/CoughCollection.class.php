@@ -81,7 +81,7 @@ abstract class CoughCollection extends ArrayObject {
 	public function __construct($specialArgs=array()) {
 		parent::__construct($array=array(), $flags=0, $iterator_class='CoughIterator');
 		$this->initializeDefinitions($specialArgs);
-		$this->db = DatabaseFactory::getDatabase($this->dbName);
+		$this->db = As_DatabaseFactory::getDatabase($this->dbName);
 	}
 	
 	protected function initializeDefinitions($specialArgs=array()) {
