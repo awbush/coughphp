@@ -146,23 +146,6 @@ abstract class CoughObject {
 	 * @var DatabaseConnector
 	 **/
 	protected $db;
-
-	/**
-	 * Flag indicating whether or not the key ID was set as a preknown key, i.e.
-	 * an insert should take place when saving.
-	 *
-	 * @var boolean
-	 * @see setPreknownKeyId()
-	 **/
-	protected $isPreknownKeyIdSet = false;
-
-	/**
-	 * Stores wether or not a load returned a row from the database.
-	 *
-	 * @var boolean
-	 * @see isLoaded()
-	 **/
-	protected $checkReturnedResult = null;
 	
 	/**
 	 * Stores whether or not the object has been deleted from the database.
@@ -173,6 +156,21 @@ abstract class CoughObject {
 	 * @see delete(), save()
 	 **/
 	protected $isDeleted = false;
+	
+	/**
+	 * Stores whether or not the object is new (i.e. not in database yet).
+	 * 
+	 * Save will perform an INSERT if $isNew is true, otherwise it will perform
+	 * an UPDATE as long as hasKeyId() also returns true.
+	 * 
+	 * Note that isNew() = !isInflated(). That is, any time an object is
+	 * inflated, it is considered to be synced with the database, and therefore
+	 * not new.
+	 *
+	 * @var boolean
+	 * @see save(), isNew(), isInflated()
+	 **/
+	protected $isNew = true;
 	
 	/**
 	 * Stores validation errors set by `validateData` function.
@@ -410,16 +408,32 @@ abstract class CoughObject {
 			}
 		}
 	}
-
+	
 	/**
-	 * Allows you to insert a record when you already know the primary key id.
+	 * Returns whether or not the object is new (i.e. not in persistent storage)
 	 *
+	 * This method returns the opposite of {@link isInflated()}
+	 * 
+	 * @return boolean
+	 * @author Anthony Bush
+	 * @see isInflated()
+	 **/
+	public function isNew() {
+		return $this->isNew;
+	}
+	
+	/**
+	 * Returns whether or not the object is inflated (i.e. pulled from
+	 * persistent storage)
+	 * 
+	 * This method returns the opposite of {@link isNew()}
+	 * 
 	 * @return void
 	 * @author Anthony Bush
+	 * @see isNew()
 	 **/
-	public function setPreknownKeyId($id) {
-		$this->setKeyId($id);
-		$this->isPreknownKeyIdSet = true;
+	public function isInflated() {
+		return !$this->isNew;
 	}
 	
 	/**
@@ -753,42 +767,21 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	public function loadBySql($sql) {
+		$inflated = false;
 		if ( ! empty($sql)) {
 			$this->db->selectDb($this->dbName);
 			$result = $this->db->query($sql);
 			if ($result->numRows() == 1) {
 				$this->inflate($result->getRow());
-				$this->setIsLoaded(true);
+				$inflated = true;
 			} else {
 				// load failed because the unique dataset couldn't be selected
-				$this->setIsLoaded(false);
 			}
 			$result->freeResult();
 		} else {
-			$this->setIsLoaded(false);
+			// load failed because no SQL was given
 		}
-		return $this->isLoaded();
-	}
-
-	/**
-	 * Set whether or load returned a result from the database.
-	 *
-	 * @param boolean $value
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function setIsLoaded($value) {
-		$this->isLoaded = $value;
-	}
-
-	/**
-	 * Get whether or not a load returned a result from the database.
-	 *
-	 * @return boolean
-	 * @author Anthony Bush
-	 **/
-	public function isLoaded() {
-		return $this->isLoaded;
+		return $inflated;
 	}
 
 	/**
@@ -798,7 +791,6 @@ abstract class CoughObject {
 	 **/
 	protected function resetModified() {
 		$this->modifiedFields = array();
-		$this->isPreknownKeyIdSet = false;
 		$this->modifiedJoinFields = array();
 		$this->isJoinTableModified = false;
 		$this->isJoinTableNew = false;
@@ -893,6 +885,7 @@ abstract class CoughObject {
 		} else {
 			$result = $this->update();
 		}
+		$this->isNew = false;
 
 		$this->saveLoadedCollections();
 		
@@ -911,7 +904,7 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	protected function shouldInsert() {
-		if (!$this->hasKeyId() || $this->isPreknownKeyIdSet === true) {
+		if (!$this->hasKeyId() || $this->isNew()) {
 			return true;
 		} else {
 			return false;
@@ -1663,30 +1656,35 @@ abstract class CoughObject {
 	 **/
 	public function inflate($fieldsOrId = array(), $relatedEntities = array()) {
 		if (is_array($fieldsOrId)) {
-			$joins = array();
-			foreach ($fieldsOrId as $fieldName => $fieldValue) {
-				if (is_array($fieldValue)) {
-					// field is data for a related object
-					$this->inflateOject($fieldName, $fieldValue, $fieldsOrId);
-				} else if (isset($this->fieldDefinitions[$fieldName])) {
-					// field is part of this object's fields
-					$this->fields[$fieldName] = $fieldValue;
-				} else if (isset($this->derivedFieldDefinitions[$fieldName])) {
-					// field is a derived field for this object
-					$this->setDerivedField($fieldName, $fieldValue);
-				} else if (($pos = strpos($fieldName, '.')) !== false) {
-					// join data
-					$joinTableName = substr($fieldName, 0, $pos);
-					$joinFieldName = substr($fieldName, $pos + 1);
-					$joins[$joinTableName][$joinFieldName] = $fieldValue;
-					// $this->joinFields[$joinFieldName] = $fieldValue;
+			if (!empty($fieldsOrId)) {
+				$joins = array();
+				foreach ($fieldsOrId as $fieldName => $fieldValue) {
+					if (is_array($fieldValue)) {
+						// field is data for a related object
+						$this->inflateOject($fieldName, $fieldValue, $fieldsOrId);
+					} else if (isset($this->fieldDefinitions[$fieldName])) {
+						// field is part of this object's fields
+						$this->fields[$fieldName] = $fieldValue;
+					} else if (isset($this->derivedFieldDefinitions[$fieldName])) {
+						// field is a derived field for this object
+						$this->setDerivedField($fieldName, $fieldValue);
+					} else if (($pos = strpos($fieldName, '.')) !== false) {
+						// join data
+						$joinTableName = substr($fieldName, 0, $pos);
+						$joinFieldName = substr($fieldName, $pos + 1);
+						$joins[$joinTableName][$joinFieldName] = $fieldValue;
+						// $this->joinFields[$joinFieldName] = $fieldValue;
+					}
+				}
+
+				// At this point we are inflated / not new
+				$this->isNew = false;
+
+				// Construct objects using any join data passed in...
+				foreach ($joins as $joinTableName => $joinFields) {
+					$this->inflateObject($joinTableName, $joinFields, $joins);
 				}
 			}
-			// Construct objects using any join data passed in...
-			foreach ($joins as $joinTableName => $joinFields) {
-				$this->inflateObject($joinTableName, $joinFields, $joins);
-			}
-
 		} else if ($fieldsOrId != '') {
 			// an id was given
 			foreach ($this->getPkFieldNames() as $fieldName) {

@@ -372,7 +372,7 @@ if (count($innerJoins) > 0) {
 			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
 <?php endforeach; ?>
 		));
-		if (!$<?php echo $localVarName ?>->isLoaded()) {
+		if (!$<?php echo $localVarName ?>->isInflated()) {
 			$<?php echo $localVarName ?> = null;
 		}
 		$this->set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>);
@@ -625,7 +625,7 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 			}
 		}
 		$object->loadByCriteria($fields);
-		if ($object->isLoaded()) {
+		if ($object->isInflated()) {
 			return $object;
 		} else {
 			return null;

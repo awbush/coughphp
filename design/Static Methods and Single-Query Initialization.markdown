@@ -94,7 +94,7 @@ Some of the static methods might be generated like the following...
 		} else {
 			$object = new <?php echo $starterObjectClassName ?>($idOrIdArray);
 		}
-		if ($object->isLoaded()) {
+		if ($object->isInflated()) {
 			return $object;
 		} else {
 			return null;
@@ -112,7 +112,7 @@ Some of the static methods might be generated like the following...
 	 **/
 	public static function constructByFields($hash) {
 		return new <?php echo $starterObjectClassName ?>($hash);
-		// Would we need isLoaded status when using static methods? $object->setIsLoaded(true);
+		// Would we need isInflated status when using static methods? $object->setisInflated(true);
 	}
 	
 

@@ -280,7 +280,7 @@ or
 
 				$join = new Product2Os();
 				$join->loadByCriteria(array('product_id' => 1, 'os_id' => 2));
-				if ($join->isLoaded()) {
+				if ($join->isInflated()) {
 					$join->setIsRetired(true);
 					$join->save();
 				}

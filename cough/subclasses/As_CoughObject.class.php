@@ -77,17 +77,6 @@ class As_CoughObject extends CoughObject {
 	public function checkBySql($sql) {
 		return $this->loadBySql($sql);
 	}
-
-	/**
-	 * Set whether or not a check returned a result from the database.
-	 *
-	 * @param boolean $value - true if check returned a result, false if not.
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function setCheckReturnedResult($value) {
-		$this->setIsLoaded($value);
-	}
 	
 	/**
 	 * Get whether or not a check returned a result from the database.
@@ -98,8 +87,41 @@ class As_CoughObject extends CoughObject {
 	 * @author Anthony Bush
 	 **/
 	public function didCheckReturnResult() {
-		return $this->isLoaded();
+		return $this->isInflated();
 	}
+	
+	/**
+	 * Set whether or not a check returned a result from the database.
+	 *
+	 * @param boolean $isLoaded - true if check returned a result, false if not.
+	 * @return void
+	 * @author Anthony Bush
+	 **/
+	protected function setCheckReturnedResult($isLoaded) {
+		$this->isNew = !$isLoaded;
+	}
+	
+	/**
+	 * Set whether or load returned a result from the database.
+	 *
+	 * @param boolean $isLoaded
+	 * @return void
+	 * @author Anthony Bush
+	 **/
+	protected function setIsLoaded($isLoaded) {
+		$this->isNew = !$isLoaded;
+	}
+	
+	/**
+	 * Get whether or not a load returned a result from the database.
+	 *
+	 * @return boolean
+	 * @author Anthony Bush
+	 **/
+	public function isLoaded() {
+		return $this->isInflated();
+	}
+	
 	
 } // END class As_CoughObject
 

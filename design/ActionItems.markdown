@@ -23,9 +23,9 @@ Definitions
 Construction
 ------------
 
-	$order = new Order($id); // loads from database. Find out if load succeed via `$order->isLoaded()` <- TODO: Rename that function.
+	$order = new Order($id); // loads from database. Find out if load succeed via `$order->isInflated()` <- TODO: Rename that function.
 
-	$order = new Order($fields); // initializes the object with pre-existing data. `isLoaded` will return true, as it is assumed the pre-existing data was pulled from the source.
+	$order = new Order($fields); // initializes the object with pre-existing data. `isInflated` will return true, as it is assumed the pre-existing data was pulled from the source.
 
 	$order->load(); // loads from the database using the current key id. This method is useful when trying to construct a multi-PK object
 		// for example:

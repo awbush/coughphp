@@ -102,7 +102,7 @@
 	
 	/* Check if a newly instantiated object actually existed in the database.
 	$party = new PoliticalParty(2);
-	if ($party->isLoaded()) {
+	if ($party->isInflated()) {
 		echo('Returned Result' . "<br />\n");
 	} else {
 		echo('Did NOT Return Result' . "<br />\n");
