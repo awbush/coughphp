@@ -15,6 +15,6 @@ include_once('load.inc.php');
 $testDir = dirname(dirname(__FILE__));
 $test = new TestSuite('Testing all shared modules');
 $test->collect($testDir, new AS_TestCollector());
-$test->run(new HtmlReporter());
+$test->run(new TextReporter());
 
 ?>
