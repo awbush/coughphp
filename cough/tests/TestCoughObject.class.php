@@ -64,6 +64,11 @@ class TestCoughObject extends UnitTestCase
 		$this->assertEqual($contents, $str);
 	}
 	
+	public function testFailure()
+	{
+		$this->assertEqual(1, 0);
+	}
+	
 }
 
 ?>
