@@ -63,36 +63,37 @@ try {
 	$db->query('DELETE FROM product_order');
 	$db->query('DELETE FROM product');
 	$db->query('DELETE FROM customer');
-
+	
 	$product1 = new Product();
 	$product1->setCategory(1);
 	$product1->setId(1);
 	$product1->setPrice(50.01);
 	$product1->save();
-
+	
 	$product2 = new Product();
 	$product2->setCategory(1);
 	$product2->setId(2);
 	$product2->setPrice(50.12);
 	$product2->save();
-
+	
 	$customer = new Customer();
 	$customer->setId(1);
 	$customer->setName('Anthony');
 	$customer->save();
-
+	
 	$order = new ProductOrder();
 	$order->setProductCategory($product1->getCategory());
 	$order->setProductId($product1->getId());
 	$order->setCustomerId($customer->getId());
 	$order->save();
-
+	
 	$order = new ProductOrder();
 	$order->setProductCategory($product2->getCategory());
 	$order->setProductId($product2->getId());
 	$order->setCustomerId($customer->getId());
 	$order->save();
-
+	
+	// $customer = new Customer(1);
 	$orders = $customer->getProductOrder_Collection();
 	foreach ($orders as $order) {
 		echo 'Customer ' . $order->getCustomerId() . ' ordered category ' . $order->getProductCategory() . ', product ' . $order->getProductId() . "\n";
