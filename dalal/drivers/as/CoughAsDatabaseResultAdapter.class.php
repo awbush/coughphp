@@ -16,13 +16,13 @@ class CoughAsDatabaseResultAdapter extends CoughAbstractDatabaseResultAdapter
 
 	public function getRow()
 	{
-		return mysql_fetch_assoc($this->result);
+		return $this->result->getRow();
 	}
 
 	public function getRows()
 	{
 		$rows = array();
-		while ($row = mysql_fetch_assoc($this->result)) {
+		while ($row = $this->result->getRow()) {
 			$rows[] = $row;
 		}
 		return $rows;

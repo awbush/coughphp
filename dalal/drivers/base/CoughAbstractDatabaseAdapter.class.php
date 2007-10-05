@@ -62,7 +62,18 @@ abstract class CoughAbstractDatabaseAdapter
 	 **/
 	public function result($sql)
 	{
-		return array_pop($this->query($sql)->getRow());
+		$result = $this->query($sql)->getRow();
+		$numElements = count($result);
+		
+		if ($result === false) {
+			return null;
+		}
+		else if ($numElements == 1) {
+			return array_pop($result);
+		}
+		else if ($numElements > 1) {
+			return $result;
+		}
 	}
 	
 	/**

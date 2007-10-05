@@ -22,7 +22,10 @@ class CoughPdoDatabaseAdapter extends CoughAbstractDatabaseAdapter
 		$password = $dbConfig['pass'];
 		$database = $dbConfig['db_name'];
 		
-		return new CoughPdoDatabaseAdapter(new PDO("$driver:host=$host;dbname=$database", $username, $password));
+		$db = new PDO("$driver:host=$host;dbname=$database", $username, $password);
+		$db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+		
+		return new CoughPdoDatabaseAdapter($db);
 	}
 	
 	public function query($sql)
