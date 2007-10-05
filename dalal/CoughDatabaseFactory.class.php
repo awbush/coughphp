@@ -50,7 +50,8 @@
  * 
  * @author Anthony Bush
  **/
-class CoughDatabaseFactory {
+class CoughDatabaseFactory
+{
 	protected static $databases = array();
 	
 	/**
@@ -82,7 +83,7 @@ class CoughDatabaseFactory {
 	 *
 	 * @var string
 	 **/
-	protected static $adapterName;
+	protected static $adapterName = null;
 	
 	/**
 	 * the default database configuration
@@ -209,11 +210,10 @@ class CoughDatabaseFactory {
 		}
 	}
 	
-	
 	/**
 	 * Unit Test Methods
 	 *
-	 * The methods below are for unit testing purposes
+	 * The methods below are for unit testing purposes only!
 	 */
 	
 	public static function getDatabaseConfigs()
@@ -229,6 +229,13 @@ class CoughDatabaseFactory {
 	public static function getDatabases()
 	{
 		return self::$databases;
+	}
+	
+	public static function reset()
+	{
+		self::$databases = array();
+		self::$dbConfigs = array();
+		self::$adapterName = null;
 	}
 }
 

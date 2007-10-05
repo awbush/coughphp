@@ -139,9 +139,22 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 	
 	public function testExecute()
 	{
+		// test getLastInsertId before we have done any inserts
+		// NOTE: PDO returns string "0" and As_Database returns integer 0... I would prefer the return value to be 
+		// null, but perhaps this is not a meaningful issue
+		//$this->assertNull($this->db->getLastInsertId()); // currently fails
+		$this->assertEqual($this->db->getLastInsertId(), 0);
+		
 		// test execute insert
 		$numAffected = $this->db->execute("INSERT person VALUES ('', 'Venkman', 0, 3)");
 		$this->assertIdentical($numAffected, 1);
+		
+		// test getLastInsertId
+		// NOTE: PDO returns string 12, but As_Database returns integer 12... this may or may not be a discrepancy that
+		// needs to be resolved
+		$venkmanPersonId = $this->db->getLastInsertId();
+		//$this->assertIdentical($venkmanPersonId, 12); // currently fails
+		$this->assertEqual($venkmanPersonId, 12);
 		
 		// test insert succeeded
 		$result = $this->db->result('SELECT person.name FROM person WHERE person.person_id = 12');
