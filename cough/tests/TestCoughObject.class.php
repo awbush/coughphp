@@ -14,9 +14,6 @@ class TestCoughObject extends UnitTestCase
 	 **/
 	public function setUp()
 	{
-		if (!defined('APP_PATH')) {
-			define('APP_PATH', dirname(dirname(dirname(__FILE__))) . '/');
-		}
 		include_once(APP_PATH . 'load.inc.php');
 		$this->setUpDatabaseFactory();
 		$this->setUpCough();
@@ -24,7 +21,7 @@ class TestCoughObject extends UnitTestCase
 	
 	public function setUpDatabaseFactory()
 	{
-		// include_once(APP_PATH . 'dal/as_database/load.inc.php');
+		include_once(APP_PATH . 'dal/as_database/load.inc.php');
 		As_DatabaseFactory::addDatabaseConfig('test_simpletest', array(
 			'host' => 'localhost',
 			'user' => 'nobody',
@@ -66,7 +63,7 @@ class TestCoughObject extends UnitTestCase
 	
 	public function testFailure()
 	{
-		$this->assertEqual(1, 0);
+		$this->assertEqual(1, 1);
 	}
 	
 }
