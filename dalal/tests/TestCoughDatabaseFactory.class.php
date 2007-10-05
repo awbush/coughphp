@@ -158,6 +158,10 @@ class TestCoughDatabaseFactory extends UnitTestCase
 		CoughDatabaseFactory::addDatabaseConfig('pascal', $testDbConfig);
 		$pascalDb = CoughDatabaseFactory::getDatabase('pascal');
 		$this->assertIsA($pascalDb, 'CoughPdoDatabaseAdapter');
+		
+		// test getting the same database object back
+		$pascalDbReference = CoughDatabaseFactory::getDatabase('pascal');
+		$this->assertReference($pascalDb, $pascalDbReference);
 	}
 }
 
