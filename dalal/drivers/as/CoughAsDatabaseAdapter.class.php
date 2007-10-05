@@ -15,17 +15,17 @@ class CoughAsDatabaseAdapter extends CoughAbstractDatabaseAdapter
 	 * @return void
 	 * @author Lewis Zhang
 	 **/
-	public static function retrieveByDsn($dsn)
+	public static function retrieveByDbConfig($dbConfig)
 	{
 		// driver is irrelavent, as MattDatabase only supports mysql
-		$driver = $dsn['driver'];
+		$driver = $dbConfig['driver'];
 		
-		$host = $dsn['host'];
-		$username = $dsn['username'];
-		$password = $dsn['password'];
-		$database = $dsn['database'];
+		$host = $dbConfig['host'];
+		$username = $dbConfig['user'];
+		$password = $dbConfig['pass'];
+		$database = $dbConfig['db_name'];
 		
-		return new CoughAsDatabaseAdapter(new Database($database, $host, $username, $password));
+		return new CoughAsDatabaseAdapter(new As_Database($database, $host, $username, $password));
 	}
 	
 	public function query($sql)

@@ -37,20 +37,10 @@ abstract class CoughAbstractDatabaseAdapter
 	/**
 	 * returns a database object
 	 *
-	 * @return void
+	 * @return object - returns a concrete child of CoughAbstractDatabaseAdapter
 	 * @author Lewis Zhang
 	 **/
-	public static function retrieveByDsn($dsn)
-	{
-		switch ($dsn['dbLayer']) {
-			case 'pdo':
-				return CoughPdoDatabaseAdapter::retrieveByDsn($dsn);
-				break;
-			case 'matt_database':
-				return CoughAsDatabaseAdapter::retrieveByDsn($dsn);
-				break;
-		}
-	}
+	abstract public static function retrieveByDbConfig($dbConfig);
 	
 	/**
 	 * selects the specified database for this connection
@@ -300,7 +290,8 @@ abstract class CoughAbstractDatabaseAdapter
 	}
 	
 	/**
-	 * executes an INSERT query or performs an UPDATE, depending on whether the where condition applies to any existing rows
+	 * executes an INSERT query or performs an UPDATE, depending on whether the where condition applies to
+	 * any existing rows
 	 *
 	 * @return void
 	 * @author Lewis Zhang
@@ -318,11 +309,10 @@ abstract class CoughAbstractDatabaseAdapter
 	
 	/**
 	 * INSERTs or UPDATEs depending on whether a row with duplicate keys is found
-	 * returns the number of affected rows
 	 * TODO: this may not have an analogue in non-MySQL databases... maybe this should be removed since it might
 	 * break future compatibility with other databases
 	 *
-	 * @return int
+	 * @return int - the number of affected rows
 	 * @author Lewis Zhang
 	 **/
 	public function insertOnDuplicateKeyUpdate($tableName, $fields)
