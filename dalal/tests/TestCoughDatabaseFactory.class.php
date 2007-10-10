@@ -151,8 +151,8 @@ class TestCoughDatabaseFactory extends UnitTestCase
 			'driver' => 'mysql',
 			'host' => 'pascal.timepieceforyou.com',
 			'db_name' => 'cough_test',
-			'user' => 'root',
-			'pass' => 'PMASZt.9.yMw6xvV',
+			'user' => 'cough_test',
+			'pass' => 'cough_test',
 			'port' => '3306'
 		);
 		CoughDatabaseFactory::addDatabaseConfig('pascal', $testDbConfig);
