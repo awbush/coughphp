@@ -190,18 +190,6 @@ abstract class CoughObject {
 	 **/
 	protected $validatedData = false;
 
-	/**
-	 * Stores any custom join fields if passed into the constructor.
-	 *
-	 * @var string
-	 **/
-	protected $joinTableName = null;
-	protected $joinFields = array();
-	protected $modifiedJoinFields = array();
-	protected $isJoinTableModified = false;
-	protected $isJoinTableNew = false;
-	protected $collector = null;
-
 	// ----------------------------------------------------------------------------------------------
 	// CONSTRUCTORS and INITIALIZATION METHODS block BEGINS
 	// ----------------------------------------------------------------------------------------------
@@ -343,47 +331,6 @@ abstract class CoughObject {
 	// ----------------------------------------------------------------------------------------------
 	// GETTORS AND SETTORS block BEGINS
 	// ----------------------------------------------------------------------------------------------
-	
-	/**
-	 * Set a reference to the parent object.
-	 * 
-	 * Example:
-	 * 
-	 *     $order = new Order();
-	 *     $orderLine = new OrderLine();
-	 *     $orderLine->setCollector($order);
-	 * 
-	 * @param CoughObject $collector - the parent object
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function setCollector($collector) {
-		$this->collector = $collector;
-	}
-	
-	/**
-	 * Determine whether or not a collector has been set.
-	 *
-	 * @return boolean
-	 * @author Anthony Bush
-	 **/
-	public function hasCollector() {
-		if ($this->collector instanceof CoughObject) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	/**
-	 * Get the parent object
-	 *
-	 * @return CoughObject - the parent object
-	 * @author Anthony Bush
-	 **/
-	public function getCollector() {
-		return $this->collector;
-	}
 	
 	/**
 	 * Sets the object's primary key id to the passed value.
@@ -645,50 +592,6 @@ abstract class CoughObject {
 		}
 	}
 	
-	public function setJoinTableName($joinTableName) {
-		$this->joinTableName = $joinTableName;
-	}
-
-	public function getJoinTableName() {
-		return $this->joinTableName;
-	}
-
-	public function setIsJoinTableNew($isJoinTableNew) {
-		$this->isJoinTableNew = $isJoinTableNew;
-	}
-
-	public function getJoinFields() {
-		return $this->joinFields;
-	}
-	
-	public function setJoinFields($fieldValues) {
-		if (is_array($fieldValues)) {
-			foreach ($fieldValues as $fieldName => $fieldValue) {
-				$this->setJoinField($fieldName, $fieldValue);
-			}
-		}
-	}
-	
-	public function getJoinField($fieldName) {
-		if (array_key_exists($fieldName, $this->joinFields)) {
-			return $this->joinFields[$fieldName];
-		}
-		return null;
-	}
-	
-	public function setJoinField($fieldName, $fieldValue) {
-		if (array_key_exists($fieldName, $this->joinFields)) {
-			if ($this->joinFields[$fieldName] !== $fieldValue) {
-				$this->modifiedJoinFields[$fieldName] = $this->joinFields[$fieldName];
-				$this->isJoinTableModified = true;
-				$this->joinFields[$fieldName] = $fieldValue;
-			}
-		} else {
-			$this->isJoinTableModified = true;
-			$this->joinFields[$fieldName] = $fieldValue;
-		}
-	}
-	
 	// ----------------------------------------------------------------------------------------------
 	// GETTORS AND SETTORS block ENDS
 	// ----------------------------------------------------------------------------------------------
@@ -791,9 +694,6 @@ abstract class CoughObject {
 	 **/
 	protected function resetModified() {
 		$this->modifiedFields = array();
-		$this->modifiedJoinFields = array();
-		$this->isJoinTableModified = false;
-		$this->isJoinTableNew = false;
 	}
 
 	/**
@@ -841,17 +741,6 @@ abstract class CoughObject {
 	protected function setFieldsFromParentPk() {
 		if ($this->hasCollector()) {
 			$this->setFieldsIfDifferent($this->getCollector()->getPk());
-			
-			// $collector = $this->getCollector();
-			// foreach ($this->objectDefinitions as $objProperties) {
-			// 	if ($collector instanceof $objProperties['class_name']) {
-			// 		$getter = $objProperties['get_id_method']; // TODO: Make multi-key PK compliant
-			// 		if ($this->$getter() === null) {
-			// 			$this->setFields($collector->getPk());
-			// 		}
-			// 		break;
-			// 	}
-			// }
 		}
 	}
 
@@ -888,8 +777,6 @@ abstract class CoughObject {
 		$this->isNew = false;
 
 		$this->saveLoadedCollections();
-		
-		$this->saveJoinFields();
 		
 		$this->resetModified();
 		
@@ -1134,71 +1021,6 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Loads the collection using the configuration in `collectionDefinitions`.
-	 * 
-	 * You can override the SQL, element name, and orderBySQL options.
-	 * 
-	 * @todo Document parameters
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function _loadCollection($collectionName, $elementName = '', $sql = '', $orderBySQL = '') {
-		$def =& $this->collectionDefinitions[$collectionName];
-		
-		$collection = new $def['collection_class']();
-		
-		if (isset($def['join_table'])) {
-			$collection->setCollector($this, CoughCollection::MANY_TO_MANY, $def['join_table']);
-			
-			if (empty($sql) && $this->hasKeyId()) {
-				$sql = '
-					SELECT ' . $def['collection_table'] . '.*' . $this->getJoinSelectSql($collectionName) . '
-					FROM ' .$def['join_table'] . '
-					INNER JOIN ' . $def['collection_table'] . ' ON ' . $def['join_table'] . '.' . $def['collection_key']
-						. ' = ' . $def['collection_table'] . '.' . $def['collection_key'] . '
-					WHERE ' . $def['join_table'] . '.' . $def['relation_key'] . ' = ' . $this->db->quote($this->getKeyId());
-
-				if (isset($def['retired_column']) && ! empty($def['retired_column'])) {
-					$sql .= '
-						AND ' . $def['collection_table'] . '.' . $def['retired_column'] . ' = ' . $this->db->quote($def['is_not_retired']);
-				}
-
-				if (isset($def['join_table_attr'])) {
-					$joinAttr =& $def['join_table_attr'];
-					if (isset($joinAttr['retired_column']) && ! empty($joinAttr['retired_column'])) {
-						$sql .= '
-							AND ' . $def['join_table'] . '.' . $joinAttr['retired_column'] . ' = ' . $this->db->quote($joinAttr['is_not_retired']);
-					}
-				}
-			}
-			
-		} else {
-			$collection->setCollector($this, CoughCollection::ONE_TO_MANY);
-			
-			if (empty($sql) && $this->hasKeyId()) {
-				$sql = '
-					SELECT *
-					FROM ' . $def['collection_table'] . '
-					WHERE ' . $def['relation_key'] . ' = ' . $this->db->quote($this->getKeyId());
-
-				if (isset($def['retired_column']) && ! empty($def['retired_column'])) {
-					$sql .= '
-						AND ' . $def['retired_column'] . ' = ' . $this->db->quote($def['is_not_retired']);
-				}
-			}
-			
-		}
-		
-		if (empty($elementName)) {
-			$elementName = $def['element_class'];
-		}
-		
-		$collection->populateCollection($elementName, $sql, $orderBySQL);
-		
-		$this->collections[$collectionName] = $collection;
-	}
-	
-	/**
 	 * Calls the load method for the given collection name.
 	 *
 	 * @param string $collectionName - the name of the collection to load
@@ -1210,42 +1032,6 @@ abstract class CoughObject {
 		$this->$loadMethod();
 	}
 	
-	/**
-	 * Returns a string of all the join fields for the specified collection.
-	 * 
-	 * Ideally, this will just access a generated attribute, but for now
-	 * it does a DESCRIBE on the join table.
-	 * 
-	 * TODO: CoughGenerator: Generate an extra attribute 'join_table_fields'
-	 * that is an array of the fields on the join table.
-	 * 
-	 * TODO: Cough: Update this function to use the above when it is present.
-	 * If it is not present, continue to do the DESCRIBE.
-	 * 
-	 * @param string $collectionName - the collection name for which to get the join fields
-	 * @return string
-	 * @author Anthony Bush
-	 **/
-	protected function getJoinSelectSql($collectionName) {
-		$def =& $this->collectionDefinitions[$collectionName];
-		
-		// Get extra join fields on-the-fly
-		$joinFields = array();
-		$sql = 'DESCRIBE '. $this->dbName . '.' . $def['join_table'];
-		$result = $this->db->query($sql);
-		while ($row = $result->getRow()) {
-			$joinFieldName = $row['Field'];
-			$joinFields[] = $def['join_table'] . '.' . $joinFieldName . ' AS `' . $def['join_table'] . '.' . $joinFieldName . '`';
-		}
-		$result->freeResult();
-		if ( ! empty($joinFields)) {
-			$joinFieldSql = ',' . implode(',', $joinFields);
-		} else {
-			$joinFieldSql = '';
-		}
-		return $joinFieldSql;
-	}
-
 	/**
 	 * Tells whether or not the given collection name has been loaded.
 	 *
@@ -1283,45 +1069,18 @@ abstract class CoughObject {
 		// }
 	}
 	
-	protected function saveJoinFields() {
-		
-		if ($this->isJoinTableNew) {
-
-			$this->setJoinFields($this->getPk());
-			$this->setJoinFields($this->getCollector()->getPk());
-			$this->db->insertOnDupUpdate($this->getJoinTableName(),$this->getJoinFields());
-			
-		} else if ($this->isJoinTableModified) {
-
-			$this->setJoinFields($this->getPk());
-			$this->setJoinFields($this->getCollector()->getPk());
-			$fieldsToSave = array();
-			$whereFields = array();
-	
-			foreach ($this->getJoinFields() as $fieldName => $fieldValue) {
-				if (array_key_exists($fieldName, $this->modifiedJoinFields)) {
-					$whereFields[$fieldName] = $this->modifiedJoinFields[$fieldName];
-					$fieldsToSave[$fieldName] = $fieldValue;
-				} else {
-					$whereFields[$fieldName] = $fieldValue;
-				}
-			}
-			$this->db->insertOrUpdate($this->getJoinTableName(),$fieldsToSave,null,$whereFields);
-		}
-	}
-	
-	// TODO: Keep this and delete the above?
+	// TODO: Keep this?
 	protected function saveJoinData() {
 		$joinObj = $this->getJoinObject();
 		if (!$joinObj->hasKeyId()) {
 			// "new"
-			$joinObj->setJoinFields($this->getPk());
-			$joinObj->setJoinFields($this->getCollector()->getPk());
+			$joinObj->setFields($this->getPk());
+			$joinObj->setFields($this->getCollector()->getPk());
 			$joinObj->save(); // NOTE: previous join field saving did "insertOnDupUpdate" in case of join collisions when there are is no PK on a join table (we don't have to worry about it if we are just going to require that tables have a PK, otherwise the save method should take an option to allow ON DUPLICATE KEY UPDATE functionality)
 		} else if ($joinObj->hasModifiedFields()) {
 			// not "new"
-			$joinObj->setJoinFields($this->getPk());
-			$joinObj->setJoinFields($this->getCollector()->getPk());
+			$joinObj->setFields($this->getPk());
+			$joinObj->setFields($this->getCollector()->getPk());
 			$joinObj->save(); // NOTE: previous join field saving constructed a special WHERE clause (again to ensure join data is saved when there is no PK on the join table)...
 		}
 	}
@@ -1464,8 +1223,8 @@ abstract class CoughObject {
 				return $this->setField($field, $value);
 			}
 			
-			// Allow: addObjectName($object, $joinFields = null),
-			// which will invoke getCollection('object_name')->add($object, $joinFields);
+			// Allow: addObjectName($object),
+			// which will invoke getCollection('object_name')->add($object);
 			else if (strpos($method, 'add') === 0)
 			{
 				$objectName = self::underscore(substr($method, 3));
@@ -1474,15 +1233,7 @@ abstract class CoughObject {
 					if (isset($args[0]))
 					{
 						$objectOrId = $args[0];
-						if (isset($args[1]))
-						{
-							$joinFields = $args[1];
-						}
-						else
-						{
-							$joinFields = null;
-						}
-						return $this->getCollection($objectName)->add($objectOrId, $joinFields);
+						return $this->getCollection($objectName)->add($objectOrId);
 					}
 					return false;
 				}
@@ -1500,16 +1251,8 @@ abstract class CoughObject {
 						$objectOrId = $args[0];
 						$removedObject = $this->getCollection($objectName)->remove($objectOrId);
 						$def =& $this->collectionDefinitions[$objectName];
-						if (isset($def['join_table_attr']))
-						{
-							// Retire the join
-							$removedObject->setJoinField($def['join_table_attr']['retired_column'], $def['join_table_attr']['is_retired']);
-						}
-						else
-						{
-							// Null out the foreign key
-							$removedObject->setField($def['relation_key'], null);
-						}
+						// Null out the foreign key
+						$removedObject->setField($def['relation_key'], null);
 						return true;
 					}
 					return false;
@@ -1673,7 +1416,6 @@ abstract class CoughObject {
 						$joinTableName = substr($fieldName, 0, $pos);
 						$joinFieldName = substr($fieldName, $pos + 1);
 						$joins[$joinTableName][$joinFieldName] = $fieldValue;
-						// $this->joinFields[$joinFieldName] = $fieldValue;
 					}
 				}
 

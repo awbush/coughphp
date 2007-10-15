@@ -8,12 +8,9 @@
 abstract class CoughCollection extends ArrayObject {
 	
 	// Relationship managment
-	const NONE = 0;
-	const ONE_TO_MANY = 1;
-	const MANY_TO_MANY = 2;
 	protected $relationshipType = 0; // default to NONE
 	protected $collector = null; // a reference to the collector of the collection, if any. Used in conjuction with relationshipType.
-	protected $joinTableName = null;
+	protected $setElementCollectorMethod = '';
 	
 	/**
 	 * Whether or not {@link populateCollection} was run
@@ -224,22 +221,9 @@ abstract class CoughCollection extends ArrayObject {
 		return $this->collector;
 	}
 	
-	public function getJoinTableName() {
-		return $this->joinTableName; 
-	}
-	
-	public function setCollector($collector, $relationshipType, $joinTableName = null) {
+	public function setCollector($collector, $setElementCollectorMethod) {
 		$this->collector = $collector;
-		$this->relationshipType = $relationshipType;
-		$this->joinTableName = $joinTableName;
-	}
-	
-	public function isManyToManyCollection() {
-		return $this->relationshipType == self::MANY_TO_MANY;
-	}
-	
-	public function isOneToManyCollection() {
-		return $this->relationshipType == self::ONE_TO_MANY;
+		$this->setElementCollectorMethod = $setElementCollectorMethod;
 	}
 	
 	/**
@@ -307,7 +291,7 @@ abstract class CoughCollection extends ArrayObject {
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function add($objectOrId, $joinFields = null) {
+	public function add($objectOrId) {
 		if ( ! ($objectOrId instanceof CoughObject)) {
 			// It's an id, not an object.
 			$elementClassName = $this->elementClassName;
@@ -317,11 +301,9 @@ abstract class CoughCollection extends ArrayObject {
 		}
 		
 		// We have the object...
-		$object->setCollector($this->getCollector());
-		if ($this->isManyToManyCollection()) {
-			$object->setJoinTableName($this->getJoinTableName());
-			$object->setJoinFields($joinFields);
-			$object->setIsJoinTableNew(true);
+		if ($this->hasCollector()) {
+			$setMethod = $this->setElementCollectorMethod;
+			$object->$setMethod($this->getCollector());
 		}
 		
 		// Add the object to the collection
@@ -356,7 +338,6 @@ abstract class CoughCollection extends ArrayObject {
 			$objectToRemove = $this->offsetGet($key);
 			$this->offsetUnset($key);
 			$this->removedElements[] = $objectToRemove;
-			$objectToRemove->setCollector(null);
 			return $objectToRemove;
 		}
 		return false;
@@ -367,7 +348,6 @@ abstract class CoughCollection extends ArrayObject {
 			if ($element == $objectToRemove) {
 				$this->offsetUnset($key);
 				$this->removedElements[] = $objectToRemove;
-				$objectToRemove->setCollector(null);
 				return $objectToRemove;
 			}
 		}

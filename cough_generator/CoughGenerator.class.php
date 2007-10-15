@@ -397,28 +397,27 @@ if (count($innerJoins) > 0) {
 		$collectionClassName = $this->config->getStarterCollectionClassName($hasMany->getRefTable());
 		$localKey = $hasMany->getLocalKey();
 		$localVarName = $this->config->getCamelCase($hasMany->getRefTableName());
+		$criteria = array();
+		foreach ($hasMany->getRefKey() as $key => $column) {
+			$criteria[] = '`' . $column->getColumnName() . '` = \' . $this->db->quote($this->get'
+			            . $this->config->getTitleCase($localKey[$key]->getColumnName()) . '()) . \'';
+		}
 ?>
 	public function load<?php echo $objectTitleCase ?>_Collection() {
 		
-		// What are we collecting?
-		$elementClassName = '<?php echo $objectClassName ?>';
-		
-		// Get the base SQL (so we can use the same SELECT and JOINs as the element class)
-		$element = new $elementClassName();
-		$sql = $element->getLoadSqlWithoutWhere();
-		
-		// What criteria are we using?
-		$criteria = array(
-<?php foreach ($hasMany->getRefKey() as $key => $column): ?>
-			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
-<?php endforeach; ?>
-		);
-		$sql .= ' ' . $this->db->generateWhere($criteria);
+		$sql = '
+			SELECT
+				*
+			FROM
+				<?php echo $hasMany->getRefTableName() ?>
+			# TODO: Finish the generator here... need to build the WHERE clause.
+			LIMIT 100
+		';
 		
 		// Construct and populate the collection
 		$collection = new <?php echo $collectionClassName ?>();
-		$collection->setCollector($this, CoughCollection::ONE_TO_MANY); // TODO: Anthony: Remove type? The collection object should not need this info anymore... (and, FYI, all collections are one-to-many -- it only differs when we provide "direct access" to table2 without having to go through a join table.)
-		$collection->populateCollection($elementClassName, $sql);
+		$collection->setCollector($this, 'setTODO_FILL_THIS_IN_Object');
+		$collection->populateCollection('', $sql);
 		$this->set<?php echo $objectTitleCase ?>_Collection($collection);
 	}
 
