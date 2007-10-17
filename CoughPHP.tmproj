@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>dalal/CoughDatabaseFactory.class.php</string>
+	<string>test_generated_classes.php</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -26,44 +26,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>32</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>293</integer>
+				<integer>234</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>265</integer>
+			<integer>223</integer>
 		</dict>
 		<key>cough/CoughObject.class.php</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>15</integer>
+				<integer>25</integer>
 				<key>line</key>
-				<integer>741</integer>
+				<integer>740</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>713</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>741</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>742</integer>
-			</dict>
+			<integer>707</integer>
 		</dict>
 		<key>cough/tests/TestCoughObject.class.php</key>
 		<dict>
@@ -98,9 +82,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>5</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>197</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -410,7 +394,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>2</integer>
+				<integer>0</integer>
 				<key>line</key>
 				<integer>83</integer>
 			</dict>
@@ -498,9 +482,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>35</integer>
+				<integer>42</integer>
 				<key>line</key>
-				<integer>63</integer>
+				<integer>85</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
