@@ -728,21 +728,6 @@ abstract class CoughObject {
 			return false;
 		}
 	}
-	
-	/**
-	 * If the object has a parent, then this method will update its foreign
-	 * key with the value from the parent's primary key.
-	 * 
-	 * It's called automatically by {@link save()}.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function setFieldsFromParentPk() {
-		if ($this->hasCollector()) {
-			$this->setFieldsIfDifferent($this->getCollector()->getPk());
-		}
-	}
 
 	/**
 	 * Creates a new entry if needed, otherwise it updates an existing one.
@@ -759,9 +744,6 @@ abstract class CoughObject {
 		if ($this->isDeleted()) {
 			return false;
 		}
-		
-		// Update the child with it's parent id
-		$this->setFieldsFromParentPk();
 		
 		// Check for valid data.
 		if ( ! $this->validateData()) {
@@ -844,13 +826,14 @@ abstract class CoughObject {
 		
 		$this->db->selectDb($this->dbName);
 		if (!$this->hasKeyId()) {
-			$id = $this->db->insert($this->tableName, $fields);
+			$result = $this->db->insert($this->tableName, $fields);
+			if ($result) {
+				$this->setKeyId($result);
+			}
 		} else {
-			$this->db->insertOrUpdate($this->tableName, $fields, null, $this->getPk());
-			$id = null;
+			$result = $this->db->insertOrUpdate($this->tableName, $fields, null, $this->getPk());
 		}
-		if ($id != '') {
-			$this->setKeyId($id); // TODO: What is $id set to when a multi-pk exists? as long as it's null or empty, we are okay.
+		if ($result) {
 			return true;
 		} else {
 			return false;

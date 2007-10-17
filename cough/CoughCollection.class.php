@@ -227,6 +227,25 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
+	 * Calls the specified method with the specified parameters on all the
+	 * collected elements.
+	 * 
+	 * @param string $method - the method to call on all the collected elements
+	 * @param mixed $params - the parameters to call the method with; either an array (if sending multiple parameters) or a single value
+	 * @return void
+	 * @author Anthony Bush
+	 * @since 2007-10-16
+	 **/
+	public function callMethodOnChildren($method, $params = array()) {
+		if (!is_array($params)) {
+			$params = array($params);
+		}
+		foreach ($this as $element) {
+			call_user_func_array(array($element, $method), $params);
+		}
+	}
+	
+	/**
 	 * Runs save on each collected element that is a CoughObject
 	 * 
 	 * @param array $fieldsToUpdate - an array of fields to be updated. Don't specify to have only changed fields updated.
