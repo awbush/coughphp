@@ -32,7 +32,22 @@ abstract class CoughAbstractDatabaseAdapter
 	
 	abstract public function getLastInsertId();
 	
+	/**
+	 * returns a quoted version of the provided string using the underlying database's quoting mechanism
+	 * call quote instead for normal usage
+	 *
+	 * @return string
+	 * @author Lewis Zhang
+	 **/
 	abstract public function dbQuote($string);
+	
+	/**
+	 * returns the escaped version of the provided value 
+	 *
+	 * @return string
+	 * @author Lewis Zhang
+	 **/
+	abstract public function escape($string);
 	
 	/**
 	 * returns a database object

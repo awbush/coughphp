@@ -15,9 +15,9 @@ $config = array(
 	
 	// All databases will be scanned unless specified in the 'databases' parameter in the OPTIONAL CONFIG SECTION.
 	'dsn' => array(
-		'host' => 'localhost', // gomer
-		'user' => 'nobody', // root
-		'pass' => '', // 3v3ry0n3l@rp5!
+		'host' => 'pascal.timepieceforyou.com',
+		'user' => 'tpfy',
+		'pass' => 'tpfy',
 		'port' => 3306,
 		'driver' => 'mysql'
 	),
@@ -38,7 +38,7 @@ $config = array(
 	),
 	
 	'databases' => array(
-		'cough_test_fk' => array(
+		'timepieceforyou' => array(
 		),
 	),
 	

@@ -51,6 +51,21 @@ class CoughAsDatabaseAdapter extends CoughAbstractDatabaseAdapter
 	{
 		return $this->db->quote($string);
 	}
+	
+	/**
+	 * returns the escaped version of the provided string
+	 * NOTE: This is mysql specific
+	 *
+	 * @return string
+	 * @author Lewis Zhang
+	 **/
+	public function escape($string)
+	{
+		if (get_magic_quotes_gpc()) {
+			$string = stripslashes($string);
+		}
+		return mysql_real_escape_string($string, $this->db->connection);
+	}
 }
 
 ?>

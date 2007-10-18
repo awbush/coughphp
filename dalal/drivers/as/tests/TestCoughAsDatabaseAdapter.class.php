@@ -22,7 +22,7 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 		
 		$testDbConfig = array(
 			'driver' => 'mysql',
-			'host' => 'pascal.timepieceforyou.com',
+			'host' => '127.0.0.1', // TODO: localhost does not work for me???
 			'db_name' => 'cough_test',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
@@ -184,6 +184,11 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 		// test delete succeeded
 		$result = $this->db->result('SELECT COUNT(*) FROM person');
 		$this->assertIdentical($result, '0');
+	}
+	
+	public function testEscape()
+	{
+		
 	}
 }
 

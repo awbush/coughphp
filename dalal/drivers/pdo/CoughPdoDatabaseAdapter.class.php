@@ -11,7 +11,7 @@ class CoughPdoDatabaseAdapter extends CoughAbstractDatabaseAdapter
 	/**
 	 * creates a new PDO connection
 	 *
-	 * @return void
+	 * @return CoughPdoDatabaseAdapter
 	 * @author Lewis Zhang
 	 **/
 	public static function retrieveByDbConfig($dbConfig)
@@ -52,6 +52,20 @@ class CoughPdoDatabaseAdapter extends CoughAbstractDatabaseAdapter
 	public function dbQuote($string)
 	{
 		return $this->db->quote($string);
+	}
+	
+	/**
+	 * in PDO escaping is done by the quote() method (dbQuote() in the adapter)
+	 * TODO: deprecate escape() calls, and instead just use quote() all over
+	 *
+	 * @return string
+	 * @author Lewis Zhang
+	 **/
+	public function escape($string)
+	{
+		// hack to return a string that is escaped but not quoted
+		$quotedAndEscapedString = $this->dbQuote($string);
+		return substr($quotedAndEscapedString, 1, strlen($quotedAndEscapedString) - 2);
 	}
 }
 

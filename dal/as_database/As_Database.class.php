@@ -55,7 +55,7 @@ class As_Database {
 	 **/
 	protected $queryLog = array();
 	
-	public function __construct($dbName, $dbHost = 'localhost',$dbUser = 'nobody',$dbPassword = '', $dbPort = 3306) {
+	public function __construct($dbName, $dbHost = 'pascal.timepieceforyou.com',$dbUser = 'tpfy',$dbPassword = 'tpfy', $dbPort = 3306) {
 		$this->dbHost = $dbHost;
 		$this->dbUser = $dbUser;
 		$this->dbPassword = $dbPassword;
