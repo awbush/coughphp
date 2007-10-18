@@ -16,7 +16,7 @@ include_once('load.inc.php');
 $dbConfigs = array(
 	'cough_test' => array(
 		'db_name' => 'cough_test',
-		'host' => 'localhost',
+		'host' => 'dev',
 		'user' => 'nobody',
 		'pass' => '',
 		'port' => 3306,

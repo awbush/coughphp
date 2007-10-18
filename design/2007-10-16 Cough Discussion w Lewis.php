@@ -3,7 +3,53 @@
 
 // WHAT WE ARE GOING WITH (see below for full DISCUSSION ideas)
 
-// ... fill this in, then make the changes.
+// TODO: add this getter.
+$element = $this->getOrderLine_Collection()->get($object->getPk())
+
+// TODO: make sure getKeyId always returns a "string" / integer
+$hash = $object->getKeyId();
+
+// TODO: standarize CoughCollection API to more closely match CoughObject (e.g. loadBySql, etc.)
+
+class Order_Generated {
+	// proposed new "add" method:
+	public function addOrderLine(OrderLine $object) {
+		$object->setObjectId($this->getOrderId());
+		$object->setOrder_Object($this);
+		$this->getOrderLine_Collection()->add($object);
+		return $object; // also a new concept: return the added item in case user wants to perform more operations on it?
+	}
+	
+	public function removeOrderLine($objectOrId) {
+		$object = $this->getOrderLine_Collection()->remove($objectOrId);
+		$object->setOrderId(null);
+		$object->setOrder_Object(null);
+		return $object;
+	}
+	
+	// proposed new method that setKeyId will call:
+	public function notifyChildrenOfKeyChange(array $key) {
+		$orderLineFields = array(
+			'order_id' => $key['order_id']
+		);
+		$this->getOrderLine_Collection()->callMethodOnChildren('setFields', array($orderLineFields));
+		
+		$orderNoteFields = array(
+			'order_id' => $key['order_id']
+		);
+		$this->getOrderNotes_Collection()->callMethodOnChildren('setFields', array($orderNoteFields));
+		// etc. for all collections that have an FK to this object's PK
+		
+		// BTW, this implies that all the loads for the collections should not run queries in the case of key ID changing from NULL -> non-NULL. instead, empty collections should be constructed. Question is, do we have to set them as isPopulated?
+	}
+}
+
+class OrderLine_Collection_Generated {
+	// No new generated methods here. We will use the new generic method CoughCollection::callMethodOnChildren($method, $params);
+}
+
+
+
 
 // DISCUSSION
 class Order_Generated {
@@ -48,15 +94,6 @@ $collection->setField($fieldName, $fieldValue); // which calls the same method o
 // ok sounds good... this was the motivation for removing getCollector in the first palce right
 // yes, motiviation on removing it.
 // ok all our problems make sense to me now. EXELECENT! I am fine with the SET you are right it is only solving an edge case and it doesn't have to use a new method 
-
-// SOUNDS GOOD this text is so freaking small I can't read anything
-// and the pink highlighting is uber terrible
-// I"M NEVER USING THIS  TEXTMATE TEXTMATETEXTATNENANANANTEEETEEE
-// man I wish TextMate supported collaboration. SEE down the drain then. ya this is pretty nice all in all... this specific feature at least ok so we got this handelde? I think I'm gpong to move the compy to the backyardbrb
-
-// ok, thanks for the help!
-
-// you can change all that styling. My looks fine both font size and colors.
 
 // OKAY PROBLEM SOVLED! (we can always change in post-1.0 release BTW) AND *IF* we change it we will have a reason to and thus example code that shows the problem.
 
@@ -117,7 +154,7 @@ class OrderLine_Collection_Generated {
 
 
 $order = Order::retrieveByPk(543543);
-$order->loadOrderLine_Collection(); // <- lame naming conflicts... LOL YOU GET THE POINT hehehe
+$order->loadOrderLine_Collection();
 $order->setKeyId(343);
 	// nothing happens under plan (a)
 	// but plan (b) says it should notify the order line collection (AND all other un-loaded collections that have an order_id)

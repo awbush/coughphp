@@ -7,18 +7,6 @@
  **/
 abstract class CoughCollection extends ArrayObject {
 	
-	// Relationship managment
-	protected $relationshipType = 0; // default to NONE
-	protected $collector = null; // a reference to the collector of the collection, if any. Used in conjuction with relationshipType.
-	protected $setElementCollectorMethod = '';
-	
-	/**
-	 * Whether or not {@link populateCollection} was run
-	 *
-	 * @var string
-	 **/
-	protected $isPopulated = false;
-	
 	/**
 	 * The database name to use to running queries.
 	 * 
@@ -184,46 +172,6 @@ abstract class CoughCollection extends ArrayObject {
 		}
 		
 		$result->freeResult();
-		$this->setIsPopulated(true);
-	}
-	
-	/**
-	 * Returns whether or not the collection has been populated.
-	 *
-	 * @return boolean - true if the collection has been populated, false if not.
-	 * @author Anthony Bush
-	 * @todo Why do we need the isPopulated() methods?
-	 **/
-	public function isPopulated() {
-		return $this->isPopulated;
-	}
-	
-	/**
-	 * Sets the collection as "populated"
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 * @todo Why do we need the isPopulated() methods?
-	 **/
-	public function setIsPopulated($isPopulated) {
-		$this->isPopulated = $isPopulated;
-	}
-	
-	public function hasCollector() {
-		if ($this->collector instanceof CoughObject) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	public function getCollector() {
-		return $this->collector;
-	}
-	
-	public function setCollector($collector, $setElementCollectorMethod) {
-		$this->collector = $collector;
-		$this->setElementCollectorMethod = $setElementCollectorMethod;
 	}
 	
 	/**
@@ -310,22 +258,7 @@ abstract class CoughCollection extends ArrayObject {
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function add($objectOrId) {
-		if ( ! ($objectOrId instanceof CoughObject)) {
-			// It's an id, not an object.
-			$elementClassName = $this->elementClassName;
-			$object = new $elementClassName($objectOrId);
-		} else {
-			$object = $objectOrId;
-		}
-		
-		// We have the object...
-		if ($this->hasCollector()) {
-			$setMethod = $this->setElementCollectorMethod;
-			$object->$setMethod($this->getCollector());
-		}
-		
-		// Add the object to the collection
+	public function add(CoughObject $objectOrId) {
 		if ($object->hasKeyId()) {
 			$this->offsetSet($object->getKeyId(), $object);
 		} else {

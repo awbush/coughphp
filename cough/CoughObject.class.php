@@ -347,13 +347,20 @@ abstract class CoughObject {
 	 * @author Anthony Bush
 	 **/
 	public function setKeyId($id) {
-		if (is_array($id)) {
-			$this->setFields($id);
-		} else {
+		if (!is_array($id)) {
+			$key = array();
 			foreach ($this->getPkFieldNames() as $fieldName) {
-				$this->setField($fieldName, $id);
+				$key[$fieldName] = $id;
 			}
+		} else {
+			$key = $id;
 		}
+		$this->notifyChildrenOfKeyChange($key);
+		$this->setFields($key);
+	}
+	
+	public function notifyChildrenOfKeyChange(array $pk) {
+		// override this below
 	}
 	
 	/**
