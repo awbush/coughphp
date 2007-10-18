@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once('AS_TestCollector.class.php');
 

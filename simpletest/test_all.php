@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * Copy this file to any directory to have all the test files in that directory

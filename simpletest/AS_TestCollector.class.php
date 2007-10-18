@@ -1,4 +1,4 @@
-<?
+<?php
 
 class AS_TestCollector {
 
