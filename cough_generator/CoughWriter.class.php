@@ -29,7 +29,7 @@ class CoughWriter {
 	/**
 	 * Construct with optional configuration parameters.
 	 * 
-	 * @param mixed $config - either an array of configuration variables or a pre-constructed DatabaseSchemaGeneratorConfig object.
+	 * @param mixed $config - either an array of configuration variables or a pre-constructed CoughGeneratorConfig object.
 	 * @return void
 	 **/
 	public function __construct($config = array()) {
@@ -108,7 +108,16 @@ class CoughWriter {
 				$this->errorMessages[] = 'Unable to write to file (no permissions on file): ' . $fileName;
 			}
 		} else {
-			if (is_writeable(dirname($fileName))) {
+			$dirName = dirname($fileName);
+			
+			if (!file_exists($dirName)) {
+				mkdir($dirName, 0777, true);
+			} else if (!is_dir($dirName)) {
+				$this->errorMessages[] = 'An existing file conflicts with the generated directory path: ' . $fileName;
+				return;
+			}
+			
+			if (is_writeable($dirName)) {
 				$bytesWritten = file_put_contents($fileName, $fileContents);
 				if ($bytesWritten == 0) {
 					$this->errorMessages[] = 'Wrote zero bytes to ' . $fileName;
