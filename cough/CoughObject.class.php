@@ -407,21 +407,17 @@ abstract class CoughObject {
 	/**
 	 * Returns the current value of the object's primary key id.
 	 * 
-	 * If the key is multi-key, then it returns the same thing as {@link getPk()}
+	 * If the key is multi-key, this returns a unique string identifying itself
+	 * (a concatenation of the fields making up the PK).
 	 *
-	 * @return mixed
+	 * @return mixed - string for multi-key PKs, integer for single-key PKs
 	 * @author Anthony Bush
 	 **/
 	public function getKeyId() {
 		if (count($this->pkFieldNames) == 1) {
-			$fieldName = $this->pkFieldNames[0];
-			if (isset($this->fields[$fieldName])) {
-				return $this->fields[$fieldName];
-			} else {
-				return null;
-			}
+			return $this->fields[$this->pkFieldNames[0]];
 		} else {
-			return $this->getPk();
+			return implode(',', $this->getPk());
 		}
 	}
 	

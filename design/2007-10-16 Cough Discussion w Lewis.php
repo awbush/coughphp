@@ -3,10 +3,10 @@
 
 // WHAT WE ARE GOING WITH (see below for full DISCUSSION ideas)
 
-// TODO: add this getter.
+// DONE: add this getter.
 $element = $this->getOrderLine_Collection()->get($object->getPk())
 
-// TODO: make sure getKeyId always returns a "string" / integer
+// DONE: make sure getKeyId always returns a "string" / integer
 $hash = $object->getKeyId();
 
 // TODO: standarize CoughCollection API to more closely match CoughObject (e.g. loadBySql, etc.)
