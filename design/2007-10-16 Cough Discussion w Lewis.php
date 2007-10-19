@@ -29,15 +29,13 @@ class Order_Generated {
 	
 	// proposed new method that setKeyId will call:
 	public function notifyChildrenOfKeyChange(array $key) {
-		$orderLineFields = array(
-			'order_id' => $key['order_id']
-		);
-		$this->getOrderLine_Collection()->callMethodOnChildren('setFields', array($orderLineFields));
+		foreach ($this->getOrderLine_Collection() as $orderLine) {
+			$orderLine->setOrderId($key['order_id']);
+		}
 		
-		$orderNoteFields = array(
-			'order_id' => $key['order_id']
-		);
-		$this->getOrderNotes_Collection()->callMethodOnChildren('setFields', array($orderNoteFields));
+		foreach ($this->getOrderNotes_Collection() as $orderLine) {
+			$orderLine->setOrderId($key['order_id']);
+		}
 		// etc. for all collections that have an FK to this object's PK
 		
 		// BTW, this implies that all the loads for the collections should not run queries in the case of key ID changing from NULL -> non-NULL. instead, empty collections should be constructed. Question is, do we have to set them as isPopulated?
