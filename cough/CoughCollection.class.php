@@ -174,24 +174,41 @@ abstract class CoughCollection extends ArrayObject {
 		$result->freeResult();
 	}
 	
-	/**
-	 * Calls the specified method with the specified parameters on all the
-	 * collected elements.
-	 * 
-	 * @param string $method - the method to call on all the collected elements
-	 * @param mixed $params - the parameters to call the method with; either an array (if sending multiple parameters) or a single value
-	 * @return void
-	 * @author Anthony Bush
-	 * @since 2007-10-16
-	 **/
-	public function callMethodOnChildren($method, $params = array()) {
-		if (!is_array($params)) {
-			$params = array($params);
-		}
-		foreach ($this as $element) {
-			call_user_func_array(array($element, $method), $params);
-		}
+	public function load() {
+		$this->loadBySql($this->collectionSql);
 	}
+	
+	public function loadBySql($sql) {
+		$elementClassName = $this->elementClassName;
+		$this->db->selectDb($this->dbName);
+		$result = $this->db->query($sql);
+		if ($result->numRows() > 0) {
+			while ($row = $result->getRow()) {
+				$this->add($elementClassName::constructByFields($row));
+			}
+		}
+		$result->freeResult();
+	}
+
+	// 2007-10-18/AWB: Is this needed?
+	// /**
+	//  * Calls the specified method with the specified parameters on all the
+	//  * collected elements.
+	//  * 
+	//  * @param string $method - the method to call on all the collected elements
+	//  * @param mixed $params - the parameters to call the method with; either an array (if sending multiple parameters) or a single value
+	//  * @return void
+	//  * @author Anthony Bush
+	//  * @since 2007-10-16
+	//  **/
+	// public function callMethodOnChildren($method, $params = array()) {
+	// 	if (!is_array($params)) {
+	// 		$params = array($params);
+	// 	}
+	// 	foreach ($this as $element) {
+	// 		call_user_func_array(array($element, $method), $params);
+	// 	}
+	// }
 	
 	/**
 	 * Runs save on each collected element that is a CoughObject
