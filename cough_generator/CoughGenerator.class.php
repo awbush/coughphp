@@ -227,6 +227,7 @@ class CoughGenerator {
 	public function set<?php echo $titleCase ?>($value) {
 		$this->setField('<?php echo $columnName ?>', $value);
 	}
+	
 <?php
 		}
 		$attributeMethods = ob_get_clean();
@@ -263,6 +264,7 @@ class CoughGenerator {
 	public function set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>) {
 		$this->setObject('<?php echo $hasOne->getRefObjectName() ?>', $<?php echo $localVarName ?>);
 	}
+	
 <?php
 		}
 		$oneToOneMethods = ob_get_clean();
@@ -382,7 +384,7 @@ foreach ($hasMany->getRefKey() as $key => $column) {
 		// Generate the `notifyChildrenOfKeyChange()` method if it will be non-empty.
 		if (count($notifyCollections) > 0) {
 			$notifyChildrenOfKeyChangeMethod = "\t" . 'public function notifyChildrenOfKeyChange(array $key) {'
-			                                 . "\n" . implode("\n", $notifyCollections) . "\n\t}\n\t";
+			                                 . "\n" . implode("\n", $notifyCollections) . "\n\t}\n\t\n";
 		} else {
 			$notifyChildrenOfKeyChangeMethod = '';
 		}
