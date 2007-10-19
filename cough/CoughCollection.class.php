@@ -269,13 +269,33 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
+	 * Returns the element at the given key.  This can be the result from the
+	 * element's {@link CoughObject::getKeyId()} method (which always returns a
+	 * flattened string/integer) or the result from the element's {@link CoughObject::getPk()}
+	 * method (which always returns the array form of the key).
+	 *
+	 * @return mixed - the CoughObject if found, null if not.
+	 * @author Anthony Bush
+	 **/
+	public function get($key) {
+		if (is_array($key)) {
+			$key = implode(',', $key);
+		}
+		if ($this->offsetExists($key)) {
+			return $this->offsetGet($key);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
 	 * Adds a single element given either an ID of the current collection
 	 * object type to be added or the object itself.
 	 *
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function add(CoughObject $objectOrId) {
+	public function add(CoughObject $object) {
 		if ($object->hasKeyId()) {
 			$this->offsetSet($object->getKeyId(), $object);
 		} else {
