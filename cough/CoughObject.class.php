@@ -359,6 +359,20 @@ abstract class CoughObject {
 		$this->setFields($key);
 	}
 	
+	/**
+	 * This method's job is to notify related collections (if any) of the key change.
+	 * 
+	 * For example, if the schema is "order has many order lines" then on the
+	 * Order object the `notifyChildrenOfKeyChange` function might change the
+	 * order_id on all the order_line entities.  The code might look like:
+	 * 
+	 *     foreach ($this->getOrderLine_Collection() as $orderLine) {
+	 *         $orderLine->setOrderId($key['order_id']);
+	 *     }
+	 *
+	 * @return void
+	 * @author Anthony Bush
+	 **/
 	public function notifyChildrenOfKeyChange(array $pk) {
 		// override this below
 	}
