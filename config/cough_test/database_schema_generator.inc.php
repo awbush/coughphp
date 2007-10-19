@@ -15,9 +15,9 @@ $config = array(
 	
 	// All databases will be scanned unless specified in the 'databases' parameter in the OPTIONAL CONFIG SECTION.
 	'dsn' => array(
-		'host' => 'pascal.timepieceforyou.com',
-		'user' => 'tpfy',
-		'pass' => 'tpfy',
+		'host' => 'dev',
+		'user' => 'nobody',
+		'pass' => '',
 		'port' => 3306,
 		'driver' => 'mysql'
 	),
@@ -34,11 +34,13 @@ $config = array(
 	'field_settings' => array(
 		// In case of non FK detection, you can have the Database Schema Generator check for ID columns matching this regex.
 		// This is useful, for example, when no FK relationships set up)
-		'id_suffix' => '_id', // TODO: Do we even need this option? Should we make it regex? e.g., '/^(.*)_id$/'
+		'id_regex' => '/^(.*)_id$/',
+		'delete_flag_column' => 'is_retired',
+		'delete_flag_value' => '1',
 	),
 	
 	'databases' => array(
-		'timepieceforyou' => array(
+		'cough_test_fk' => array(
 		),
 	),
 	

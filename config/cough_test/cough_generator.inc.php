@@ -38,9 +38,9 @@ $config = array(
 	),
 	
 	'field_settings' => array(
-		'retired_column' => 'is_retired',
-		'is_retired_value' => '1',
-		'is_not_retired_value' => '0', // TODO: deprecate this. Have the code use != is_retired_value
+		'id_regex' => '/^(.*)_id$/',
+		'delete_flag_column' => 'is_retired',
+		'delete_flag_value' => '1',
 	),
 	
 	// We could change any of the above on a per database setting (like the output path)...

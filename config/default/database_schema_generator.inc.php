@@ -34,7 +34,7 @@ $config = array(
 	'field_settings' => array(
 		// In case of non FK detection, you can have the Database Schema Generator check for ID columns matching this regex.
 		// This is useful, for example, when no FK relationships set up)
-		'id_suffix' => '_id', // TODO: Do we even need this option? Should we make it regex? e.g., '/^(.*)_id$/'
+		'id_regex' => '/^(.*)_id$/',
 	),
 	
 );

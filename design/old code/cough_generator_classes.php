@@ -137,7 +137,7 @@ class CoughGenerator {
 			'ignore_tables_matching_regex' => '/(_bak$)|(^bak_)|(^temp_)/',
 		),
 		'field_settings' => array(
-			'id_suffix' => '_id',
+			'id_regex' => '/^(.*)_id$/',
 			'retired_column' => 'is_retired',
 			'is_retired_value' => '1',
 			'is_not_retired_value' => '0', // TODO: deprecate this. Have the code use != is_retired_value
@@ -164,7 +164,7 @@ class CoughGenerator {
 			// 		'tables' => array(
 			// 			'table_name' => array(
 			// 				'field_settings' => array(
-			// 					'id_suffix' => '_id',
+			// 					'id_regex' => '/^(.*)_id$/',
 			// 					'retired_column' => 'status',
 			// 					'is_retired_value' => 'cancelled',
 			// 				),

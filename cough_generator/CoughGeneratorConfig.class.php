@@ -31,9 +31,9 @@ class CoughGeneratorConfig extends CoughConfig {
 				'collection_extension_class_name' => 'CoughCollection',
 			),
 			'field_settings' => array(
-				'retired_column' => 'is_retired',
-				'is_retired_value' => '1',
-				'is_not_retired_value' => '0', // TODO: deprecate this. Have the code use != is_retired_value
+				'id_regex' => '/^(.*)_id$/',
+				'delete_flag_column' => 'is_retired',
+				'delete_flag_value' => '1',
 			),
 
 			// Now, we can override the global config on a per database level.
@@ -50,9 +50,9 @@ class CoughGeneratorConfig extends CoughConfig {
 			// 		'tables' => array(
 			// 			'table_name' => array(
 			// 				'field_settings' => array(
-			// 					'id_suffix' => '_id',
-			// 					'retired_column' => 'status',
-			// 					'is_retired_value' => 'cancelled',
+			// 					'id_regex' => '/^(.*)_id$/',
+			// 					'delete_flag_column' => 'is_retired',
+			// 					'delete_flag_value' => '1',
 			// 				),
 			// 			),
 			// 		),
@@ -168,6 +168,24 @@ class CoughGeneratorConfig extends CoughConfig {
 		return $this->getConfigValue('class_names/collection_extension_class_name', $dbName, $tableName);
 	}
 	
+	/**
+	 * Converts an id field into an object name (in most cases this simply
+	 * involves stripping off an "_id" suffix).
+	 *
+	 * @return mixed - string on successful conversion, false on failure
+	 * @author Anthony Bush
+	 **/
+	public function convertIdToObjectName($table, $id) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		$idRegex = $this->getConfigValue('field_settings/id_regex', $dbName, $tableName);
+		$matches = array();
+		if (preg_match($idRegex, $id, $matches)) {
+			return $matches[1];
+		} else {
+			return false;
+		}
+	}
 	
 	/**
 	 * getTitleCase() takes the given string and returns it in TitleCase format

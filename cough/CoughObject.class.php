@@ -660,7 +660,7 @@ abstract class CoughObject {
 	 * @todo Consider moving to something like prepared statements.
 	 **/
 	public function getLoadSqlWithoutWhere() {
-		return 'SELECT * FROM ' . $this->dbName . '.' . $this->tableName;
+		return 'SELECT * FROM `' . $this->dbName . '`.`' . $this->tableName . '`';
 	}
 	
 	/**
@@ -1433,6 +1433,13 @@ abstract class CoughObject {
 				$this->fields[$fieldName] = $fieldsOrId;
 			}
 			// TODO: Tom: To load or not to load automatically? I can give use cases on why someone wouldn't want it to autoload; plus the user should be using Object::constructByKey($key) anyway when they want it to pull from storage.
+			
+			// For others who do not understand the above:
+			// There are, at the moment, two ways to construct an object with a key:
+			// $customer = new Customer($customerId);
+			// $customer = Customer::constructByKey($customerId);
+			// The latter will always pull from the database and will return an object if the customer_id was found, or null if not found.
+			// The former will also pull from the database if the following line is left in (it's bad practice, but convenient):
 			$this->load();
 		}
 		

@@ -36,9 +36,8 @@ $config = array(
 	),
 	
 	'field_settings' => array(
-		'retired_column' => 'is_retired',
-		'is_retired_value' => '1',
-		'is_not_retired_value' => '0', // TODO: deprecate this. Have the code use != is_retired_value
+		'delete_flag_column' => 'is_retired',
+		'delete_flag_value' => '1',
 	),
 	
 );

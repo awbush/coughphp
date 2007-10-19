@@ -24,7 +24,7 @@ try {
 			echo 'Table ' . $table->getTableName() . ' has ' . "\n";
 			echo "\t" . count($table->getHasOneRelationships()) . ' one-to-one relationships.' . "\n";
 			echo "\t" . count($table->getHasManyRelationships()) . ' one-to-many relationships.' . "\n";
-			echo "\t" . count($table->getHabtmRelationships()) . ' many-to-many relationships.' . "\n";
+			// echo "\t" . count($table->getHabtmRelationships()) . ' many-to-many relationships.' . "\n";
 		}
 	}
 	
