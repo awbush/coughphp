@@ -211,91 +211,10 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 <?php endforeach; ?>
 	);
 
-<?php /*
-	protected $collectionDefinitions = array(
-
-		// One-to-many collections
 <?php
-	foreach ($table->getHasManyRelationships() as $hasMany):
-		// TODO: Do we need this check?
-		// many-to-many collection takes precedence.
-		// if (isset($manyToManyLinks[$linkTableName])) {
-		// 	continue;
-		// }
-		
-		// Set the values of retired column and set/not set values, but only if the linked table has the retired column.
-		if (isset($this->tables[$linkTableName]['variables'][$this->retiredColumn])) {
-			$retiredColumn = "'" . $this->retiredColumn . "'";
-			$isRetiredValue = "'" . $this->isRetiredValue . "'";
-			$isNotRetiredValue = "'" . $this->isNotRetiredValue . "'";
-		} else {
-			$retiredColumn = 'null';
-			$isRetiredValue = 'null';
-			$isNotRetiredValue = 'null';
-		}
-?>
-		'<?php echo $link['object_camel_name'] ?>' => array(
-			'element_class' => '<?php echo $link['element_class_name'] ?>',
-			'collection_class' => '<?php echo $link['collection_class_name'] ?>',
-			'collection_table' => '<?php echo $linkTableName ?>',
-			'collection_key' => '<?php echo $link['collection_key'] ?>',
-			'relation_key' => '<?php echo $primaryKeyName ?>',
-			'retired_column' => <?php echo $retiredColumn ?>,
-			'is_retired' => <?php echo $isRetiredValue ?>,
-			'is_not_retired' => <?php echo $isNotRetiredValue ?>
-
-		),
-<?php endforeach; ?>
-
-		// Many-to-many collections
-<?php foreach ($manyToManyLinks as $linkTableName => $link):
-
-	// Join table: Set the values of retired column and set/not set values, but only if the linked table has the retired column.
-	if (isset($this->tables[$linkTableName]['variables'][$this->retiredColumn])) {
-		$retiredColumn = "'" . $this->retiredColumn . "'";
-		$isRetiredValue = "'" . $this->isRetiredValue . "'";
-		$isNotRetiredValue = "'" . $this->isNotRetiredValue . "'";
-	} else {
-		$retiredColumn = 'null';
-		$isRetiredValue = 'null';
-		$isNotRetiredValue = 'null';
-	}
-	// Related Table: Set the values of retired column and set/not set values, but only if the linked table has the retired column.
-	if (isset($this->tables[$link['join_table_name']]['variables'][$this->retiredColumn])) {
-		$collectionTableRetiredColumn = "'" . $this->retiredColumn . "'";
-		$collectionTableIsRetiredValue = "'" . $this->isRetiredValue . "'";
-		$collectionTableIsNotRetiredValue = "'" . $this->isNotRetiredValue . "'";
-	} else {
-		$collectionTableRetiredColumn = 'null';
-		$collectionTableIsRetiredValue = 'null';
-		$collectionTableIsNotRetiredValue = 'null';
-	}
-
-?>
-		'<?php echo $link['object_camel_name'] ?>' => array(
-			'element_class' => '<?php echo $link['element_class_name'] ?>',
-			'collection_class' => '<?php echo $link['collection_class_name'] ?>',
-			'collection_table' => '<?php echo $linkTableName ?>',
-			'collection_key' => '<?php echo $link['collection_key'] ?>',
-			'join_table' => '<?php echo $link['join_table_name'] ?>',
-			'join_table_attr' => array(
-				'retired_column' => <?php echo $collectionTableRetiredColumn ?>,
-				'is_retired' => <?php echo $collectionTableIsRetiredValue ?>,
-				'is_not_retired' => <?php echo $collectionTableIsNotRetiredValue ?>
-
-			),
-			'join_primary_key' => '<?php echo $link['join_table_primary_key'] ?>',
-			'relation_key' => '<?php echo $primaryKeyName ?>',
-			'retired_column' => <?php echo $retiredColumn ?>,
-			'is_retired' => <?php echo $isRetiredValue ?>,
-			'is_not_retired' => <?php echo $isNotRetiredValue ?>
-
-		),
-<?php endforeach; ?>
-	);
-*/ ?>
-
-<?php
+// Loop through all related one-to-one relationships and for any that require a
+// non-NULL foreign key (i.e. the relationship MUST exist) go ahead and change
+// the default SELECT SQL to INNER JOIN to that relationship.
 $selectSql = array();
 $innerJoins = array();
 foreach ($table->getHasOneRelationships() as $hasOne) {
@@ -317,6 +236,7 @@ foreach ($table->getHasOneRelationships() as $hasOne) {
 		}
 	}
 }
+
 if (count($innerJoins) > 0) {
 ?>
 	public function getLoadSqlWithoutWhere() {
@@ -329,7 +249,7 @@ if (count($innerJoins) > 0) {
 <?php foreach ($innerJoins as $joinTable => $joinCriteria) { ?>
 				INNER JOIN <?php echo $joinTable . "\n" ?>
 					ON <?php echo implode("\n\t\t\t\t\tAND ", $joinCriteria) . "\n" ?>
-<? } ?>
+<?php } ?>
 		';
 	}
 <?php
@@ -340,8 +260,8 @@ if (count($innerJoins) > 0) {
 	// Generated attribute accessors (getters and setters)
 
 <?php
-	foreach ($table->getColumns() as $columnName => $column):
-		$titleCase = $this->config->getTitleCase($columnName);
+foreach ($table->getColumns() as $columnName => $column) {
+	$titleCase = $this->config->getTitleCase($columnName);
 ?>
 	public function get<?php echo $titleCase ?>() {
 		return $this->getField('<?php echo $columnName ?>');
@@ -351,20 +271,22 @@ if (count($innerJoins) > 0) {
 		$this->setField('<?php echo $columnName ?>', $value);
 	}
 
-<?php endforeach; ?>
+<?php
+}
+?>
 
 	// Generated one-to-one accessors (loaders, getters, and setters)
 
 <?php
-	foreach ($table->getHasOneRelationships() as $hasOne):
-		$objectTitleCase = $this->config->getTitleCase($hasOne->getRefObjectName());
-		$objectClassName = $this->config->getStarterObjectClassName($hasOne->getRefTable());
-		$localVarName = $this->config->getCamelCase($hasOne->getRefTableName()); //'object';
-		if ($localVarName == 'this') {
-			// avoid naming conflict
-			$localVarName = 'object';
-		}
-		$localKey = $hasOne->getLocalKey();
+foreach ($table->getHasOneRelationships() as $hasOne) {
+	$objectTitleCase = $this->config->getTitleCase($hasOne->getRefObjectName());
+	$objectClassName = $this->config->getStarterObjectClassName($hasOne->getRefTable());
+	$localVarName = $this->config->getCamelCase($hasOne->getRefTableName()); //'object';
+	if ($localVarName == 'this') {
+		// avoid naming conflict
+		$localVarName = 'object';
+	}
+	$localKey = $hasOne->getLocalKey();
 ?>
 	public function load<?php echo $objectTitleCase ?>_Object() {
 		$<?php echo $localVarName ?> = new <?php echo $objectClassName ?>(array(
@@ -386,22 +308,24 @@ if (count($innerJoins) > 0) {
 		$this->setObject('<?php echo $hasOne->getRefObjectName() ?>', $<?php echo $localVarName ?>);
 	}
 
-<?php endforeach; ?>
+<?php
+}
+?>
 
 	// Generated one-to-many collection loaders, getters, setters, adders, and removers
 
 <?php
-	foreach ($table->getHasManyRelationships() as $hasMany):
-		$objectTitleCase = $this->config->getTitleCase($hasMany->getRefObjectName());
-		$objectClassName = $this->config->getStarterObjectClassName($hasMany->getRefTable());
-		$collectionClassName = $this->config->getStarterCollectionClassName($hasMany->getRefTable());
-		$localKey = $hasMany->getLocalKey();
-		$localVarName = $this->config->getCamelCase($hasMany->getRefTableName());
-		$criteria = array();
-		foreach ($hasMany->getRefKey() as $key => $column) {
-			$criteria[] = '`' . $column->getColumnName() . '` = \' . $this->db->quote($this->get'
-			            . $this->config->getTitleCase($localKey[$key]->getColumnName()) . '()) . \'';
-		}
+foreach ($table->getHasManyRelationships() as $hasMany) {
+	$objectTitleCase = $this->config->getTitleCase($hasMany->getRefObjectName());
+	$objectClassName = $this->config->getStarterObjectClassName($hasMany->getRefTable());
+	$collectionClassName = $this->config->getStarterCollectionClassName($hasMany->getRefTable());
+	$localKey = $hasMany->getLocalKey();
+	$localVarName = $this->config->getCamelCase($hasMany->getRefTableName());
+	$criteria = array();
+	foreach ($hasMany->getRefKey() as $key => $column) {
+		$criteria[] = '`' . $column->getColumnName() . '` = \' . $this->db->quote($this->get'
+		            . $this->config->getTitleCase($localKey[$key]->getColumnName()) . '()) . \'';
+	}
 ?>
 	public function load<?php echo $objectTitleCase ?>_Collection() {
 		
@@ -441,16 +365,18 @@ if (count($innerJoins) > 0) {
 		return $removedObject;
 	}
 
-<?php endforeach; ?>
+<?php
+}
+?>
 
 	// Generated many-to-many collection loaders, getters, setters, adders, and removers
 
 <?php
-	foreach ($table->getHabtmRelationships() as $habtm):
-		$objectTitleCase = $this->config->getTitleCase($habtm->getRefObjectName());
-		$objectClassName = $this->config->getStarterObjectClassName($habtm->getRefTable());
-		$collectionClassName = $this->config->getStarterCollectionClassName($habtm->getRefTable());
-		$localKey = $habtm->getLocalKey();
+foreach ($table->getHabtmRelationships() as $habtm) {
+	$objectTitleCase = $this->config->getTitleCase($habtm->getRefObjectName());
+	$objectClassName = $this->config->getStarterObjectClassName($habtm->getRefTable());
+	$collectionClassName = $this->config->getStarterCollectionClassName($habtm->getRefTable());
+	$localKey = $habtm->getLocalKey();
 ?>
 	public function load<?php echo $objectTitleCase ?>_Collection() {
 		
@@ -496,7 +422,9 @@ if (count($innerJoins) > 0) {
 		return $removedObject;
 	}
 
-<?php endforeach; ?>
+<?php
+}
+?>
 }
 <?php
 		echo("\n?>\n");
