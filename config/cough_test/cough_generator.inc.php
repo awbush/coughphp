@@ -43,6 +43,24 @@ $config = array(
 		'is_not_retired_value' => '0', // TODO: deprecate this. Have the code use != is_retired_value
 	),
 	
+	// We could change any of the above on a per database setting (like the output path)...
+	// 'databases' => array(
+	// 	'cough_test_fk' => array(
+	// 		'paths' => array(
+	// 			'generated_classes' => $generated . 'cough_test_fk/',
+	// 			'starter_classes' => $generated . 'cough_test_fk/',
+	// 			'file_suffix' => '.class.php',
+	// 		),
+	// 	),
+	// 	'cough_test' => array(
+	// 		'paths' => array(
+	// 			'generated_classes' => $generated . 'cough_test/',
+	// 			'starter_classes' => $generated . 'cough_test/',
+	// 			'file_suffix' => '.class.php',
+	// 		),
+	// 	),
+	// ),
+	
 );
 
 ?>
