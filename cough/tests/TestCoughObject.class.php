@@ -2,6 +2,7 @@
 
 class TestCoughObject extends UnitTestCase
 {
+	protected $db = null; // the database object
 	
 	//////////////////////////////////////
 	// Set Up
@@ -14,24 +15,18 @@ class TestCoughObject extends UnitTestCase
 	 **/
 	public function setUp()
 	{
-		include_once(APP_PATH . 'load.inc.php');
 		$this->setUpDatabaseFactory();
-		$this->setUpCough();
 	}
 	
 	public function setUpDatabaseFactory()
 	{
-		include_once(APP_PATH . 'dal/as_database/load.inc.php');
+		require_once(APP_PATH . 'dal/as_database/load.inc.php');
 		As_DatabaseFactory::addDatabaseConfig('test_simpletest', array(
-			'host' => 'localhost',
-			'user' => 'nobody',
-			'pass' => ''
+			'host' => '127.0.0.1',
+			'user' => 'cough_test',
+			'pass' => 'cough_test'
 		));
-	}
-	
-	public function setUpCough()
-	{
-		// include_once(APP_PATH . 'cough/load.inc.php');
+		$this->db = As_DatabaseFactory::getDatabase('test_simpletest');
 	}
 	
 	//////////////////////////////////////
@@ -50,22 +45,11 @@ class TestCoughObject extends UnitTestCase
 	//////////////////////////////////////
 	// Tests...
 	//////////////////////////////////////
-
+	
 	public function testEcho()
 	{
-		$str = 'Test Echo';
-		ob_start();
-		echo $str;
-		$contents = ob_get_clean();
-		
-		$this->assertEqual($contents, $str);
+		$this->assertEqual('hello', 'hello');
 	}
-	
-	public function testFailure()
-	{
-		$this->assertEqual(1, 1);
-	}
-	
 }
 
 ?>

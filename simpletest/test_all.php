@@ -10,7 +10,7 @@
  * Only classes extending a simpletest class will be run.
  **/
 
-include_once('load.inc.php');
+require_once('load.inc.php');
 
 $testDir = dirname(dirname(__FILE__));
 $test = new TestSuite('Testing all shared modules');
