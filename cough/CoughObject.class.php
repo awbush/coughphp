@@ -46,21 +46,6 @@ abstract class CoughObject {
 	protected $derivedFieldDefinitions = array();
 	
 	/**
-	 * An array of all the collections and their attributes.
-	 *
-	 * The information is used by CoughObject to write SQL queries,
-	 * among other things.
-	 *
-	 * Format of "collection_name" => array of attributes
-	 *
-	 * @todo Document that array of attributes. For now just look at the
-	 * woc_Product_Generated class (at the defineCollections() function).
-	 *
-	 * @var array
-	 **/
-	protected $collectionDefinitions = array();
-	
-	/**
 	 * An array of all the objects and their attributes.
 	 *
 	 * The information is used by CoughObject to instantiate and load the
@@ -220,7 +205,6 @@ abstract class CoughObject {
 	 * Sets the cough object's basic identity:
 	 * 
 	 *    - {@link $objectDefinitions}
-	 *    - {@link $collectionDefinitions}
 	 *    - default values
 	 *
 	 * @return void
@@ -230,7 +214,6 @@ abstract class CoughObject {
 		$this->defineFields();
 		$this->defineDerivedFields();
 		$this->defineObjects();
-		$this->defineCollections();
 	}
 	
 	/**
@@ -261,13 +244,6 @@ abstract class CoughObject {
 	 * @return void
 	 **/
 	protected function defineObjects() {}
-	
-	/**
-	 * Override in sub-class to define collections the object possesses.
-	 *
-	 * @return void
-	 **/
-	protected function defineCollections() {}
 	
 	/**
 	 * Called at the end of __construct(). Override for special construction
@@ -947,22 +923,6 @@ abstract class CoughObject {
 	// ----------------------------------------------------------------------------------------------
 	// object database methods / collection handling methods block ENDS
 	// ----------------------------------------------------------------------------------------------
-
-	/**
-	 * Loads the object using the configuration in `objectDefinitions`.
-	 * 
-	 * Generic (aka generated) load methods, e.g. `loadProduct_Object`,
-	 * should call this method, e.g. `$this->_loadObject('product');`
-	 * 
-	 * @return void
-	 * @author Anthony Bush
-	 * @deprecated loads will be generated, override them for custom loads (i.e. lift requirements on how much definitions are required)
-	 **/
-	// protected function _loadObject($objectName) {
-	// 	$objectInfo = &$this->objectDefinitions[$objectName];
-	// 	$object = $objectInfo['class_name']::constructByKey($this->getRefFields($objectName));
-	// 	$this->setObject($objectName, $object);
-	// }
 	
 	/**
 	 * Calls the load method for the given object name.
@@ -1059,30 +1019,13 @@ abstract class CoughObject {
 	/**
 	 * Sets the object reference in memory (raw set).
 	 *
-	 * @param $collectionName - the name of the collection to get
-	 * @return CoughCollection - the requested collection object
+	 * @param $collectionName - the name of the collection to set
+	 * @param $collection - the value to set it to
+	 * @return void
 	 * @author Anthony Bush
 	 **/
 	protected function setCollection($collectionName, $collection) {
-		// if (isset($this->collectionDefinitions[$collectionName])) {
-			$this->collections[$collectionName] = $collection;
-		// }
-	}
-	
-	// TODO: Keep this?
-	protected function saveJoinData() {
-		$joinObj = $this->getJoinObject();
-		if (!$joinObj->hasKeyId()) {
-			// "new"
-			$joinObj->setFields($this->getPk());
-			$joinObj->setFields($this->getCollector()->getPk());
-			$joinObj->save(); // NOTE: previous join field saving did "insertOnDupUpdate" in case of join collisions when there are is no PK on a join table (we don't have to worry about it if we are just going to require that tables have a PK, otherwise the save method should take an option to allow ON DUPLICATE KEY UPDATE functionality)
-		} else if ($joinObj->hasModifiedFields()) {
-			// not "new"
-			$joinObj->setFields($this->getPk());
-			$joinObj->setFields($this->getCollector()->getPk());
-			$joinObj->save(); // NOTE: previous join field saving constructed a special WHERE clause (again to ensure join data is saved when there is no PK on the join table)...
-		}
+		$this->collections[$collectionName] = $collection;
 	}
 	
 	/**
@@ -1182,192 +1125,6 @@ abstract class CoughObject {
 		$this->validationErrors = array();
 	}
 	
-	/**
-	 * PHP Magic method to allow automatic getter -> getField / getDerivedField / getJoinField.
-	 * 
-	 * If no method can be called, it generates the same Fatal Error PHP does
-	 * when trying to call a non-existent method name.
-	 * 
-	 * @param string $method - the method name invoked by the caller.
-	 * @param array $args - the method arguments given by the caller.
-	 * @return mixed - return value of method user is calling.
-	 * @author Anthony Bush
-	 * @since 2007-04-13
-	 * @see http://us.php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.methods
-	 **/
-	public function __call($method, $args) {
-		$underscorePos = strrpos($method, '_');
-		
-		if ($underscorePos === false)
-		{
-			// Not a getJoin_, get*_Collection, or get*_Object call, so must be a field call.
-			
-			// Allow: getFieldName(), which will invoke getField('field_name').
-			if (strpos($method, 'get') === 0)
-			{
-				return $this->getField(self::underscore(substr($method, 3)));
-			}
-			
-			// Allow: setFieldName(), which will invoke setField('field_name').
-			else if (strpos($method, 'set') === 0)
-			{
-				$field = self::underscore(substr($method, 3));
-				if (isset($args[0]))
-				{
-					$value = $args[0];
-				}
-				else
-				{
-					$value = null;
-				}
-				return $this->setField($field, $value);
-			}
-			
-			// Allow: addObjectName($object),
-			// which will invoke getCollection('object_name')->add($object);
-			else if (strpos($method, 'add') === 0)
-			{
-				$objectName = self::underscore(substr($method, 3));
-				if (isset($this->collectionDefinitions[$objectName]))
-				{
-					if (isset($args[0]))
-					{
-						$objectOrId = $args[0];
-						return $this->getCollection($objectName)->add($objectOrId);
-					}
-					return false;
-				}
-			}
-			
-			// Allow: removeObjectName($object),
-			// which will invoke getCollection('object_name')->remove($object);
-			else if (strpos($method, 'remove') === 0)
-			{
-				$objectName = self::underscore(substr($method, 6));
-				if (isset($this->collectionDefinitions[$objectName]))
-				{
-					if (isset($args[0]))
-					{
-						$objectOrId = $args[0];
-						$removedObject = $this->getCollection($objectName)->remove($objectOrId);
-						$def =& $this->collectionDefinitions[$objectName];
-						// Null out the foreign key
-						$removedObject->setField($def['relation_key'], null);
-						return true;
-					}
-					return false;
-				}
-			}
-			
-		}
-		else
-		{
-			
-			// Allow: *_Object()
-			if ((substr($method, $underscorePos + 1) === 'Object'))
-			{
-				// Allow: get*_Object()
-				if (strpos($method, 'get') === 0)
-				{
-					$objectName = substr($method, 3, $underscorePos - 3);
-					return $this->getObject($objectName);
-				}
-				
-				// Allow: set*_Object($value)
-				else if (strpos($method, 'set') === 0)
-				{
-					$objectName = substr($method, 3, $underscorePos - 3);
-					if (isset($args[0]))
-					{
-						$value = $args[0];
-					}
-					else
-					{
-						$value = null;
-					}
-					return $this->setObject($objectName, $value);
-				}
-				
-				// Allow: load*_Object()
-				else if (strpos($method, 'load') === 0)
-				{
-					// deprecated, must provide a loadObjectName_Object() method.
-					// $objectName = substr($method, 5, $underscorePos - 5);
-					// return $this->_loadObject($objectName);
-				}
-
-			}
-			
-			// Allow: *_Collection()
-			else if ((substr($method, $underscorePos + 1) === 'Collection'))
-			{
-				// Allow: get*_Collection()
-				if (strpos($method, 'get') === 0)
-				{
-					$tables = explode('_', substr($method, 3, $underscorePos - 3));
-					if (count($tables) == 1)
-					{
-						return $this->getCollection($tables[0]);
-					}
-					else
-					{
-
-					}
-				}
-				
-				// Allow: load*_Collection()
-				else if (strpos($method, 'load') === 0)
-				{
-					// deprecated, must provide a loadCollectionName_Collection() method.
-					// $collectionName = substr($method, 5, $underscorePos - 5);
-					// return $this->_loadCollection($collectionName);
-				}
-			}
-			
-			// CONSIDER: getJoinName_Join() because (1) makes naming consistent for users AND less work for this magic method to do.
-			// Allow: getJoin_Customer_RelationshipStartDate calls, which will invoke getJoinField('relationship_start_date') for now.
-			else if (strpos($method, 'getJoin_') === 0)
-			{
-				$methodPieces = explode('_', $method);
-				if (count($methodPieces) == 3)
-				{
-					$field = self::underscore($methodPieces[2]);
-					return $this->getJoinField($field);
-				}
-			}
-			
-			// Allow: setJoin_Customer_RelationshipStartDate calls, which will invoke setJoinField('relationship_start_date', $value) for now.
-			else if (strpos($method, 'setJoin_') === 0)
-			{
-				$methodPieces = explode('_', $method);
-				if (count($methodPieces) == 3)
-				{
-					$field = self::underscore($methodPieces[2]);
-					if (isset($args[0]))
-					{
-						$value = $args[0];
-					}
-					else
-					{
-						$value = null;
-					}
-					return $this->setJoinField($field, $value);
-				}
-			}
-		}
-		
-		
-		// Don't break useful errors
-		$errorMsg = 'Call to undefined method ' . __CLASS__ . '::' . $method . '()';
-		$bt = debug_backtrace();
-		if (count($bt) > 1)
-		{
-			$errorMsg .= ' in <b>' . @$bt[1]['file'] . '</b> on line <b>' . @$bt[1]['line'] . '</b>';
-		}
-		$errorMsg .= '. CoughObject\'s magic method was invoked';
-		trigger_error($errorMsg, E_USER_ERROR);
-	}
-	
 	public static function titleCase($underscoredString) {
 		return str_replace(' ', '', str_replace('_', ' ', ucwords($underscoredString)));
 	}
@@ -1445,10 +1202,10 @@ abstract class CoughObject {
 		
 		// Set related entities that were passed in
 		foreach ($relatedEntities as $name => $value) {
-			if (isset($this->objectDefinitions[$name])) {
+			if ($value instanceof CoughObject) {
 				$this->setObject($name, $value);
-			} else if (isset($this->collectionDefinitions[$name])) {
-				$this->setCollection($name, $value); // TODO: Anthony: Make sure this doesn't conflict with other set for collections...
+			} else if ($value instanceof CoughCollection) {
+				$this->setCollection($name, $value);
 			}
 		}
 		
@@ -1463,11 +1220,7 @@ abstract class CoughObject {
 				}
 			}
 			// set the related object
-			// $this->setObject($objectName, new $this->objectDefinitions[$objectName]['class_name']($objectData));
-			// if we are going to use factory methods
 			$this->setObject($objectName, call_user_func(array($this->objectDefinitions[$objectName]['class_name'], 'constructByFields'), $objectData));
-			// if we had load methods that took data then we don't even need to know the class name:
-			// $this->loadObject($objectName, $objectData);
 		}
 		
 	}
