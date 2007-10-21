@@ -42,7 +42,9 @@ class MysqlTable extends SchemaTable implements DriverTable {
 		$sql = 'SHOW CREATE TABLE `' . $this->getTableName() . '`';
 		$result = $this->query($sql);
 		while ($row = mysql_fetch_assoc($result)) {
-			$this->parseCreateStatement($row['Create Table']);
+			if (isset($row['Create Table'])) {
+				$this->parseCreateStatement($row['Create Table']);
+			}
 		}
 		
 	}
