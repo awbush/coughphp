@@ -21,7 +21,7 @@ try {
 	echo "\n";
 	$schema->outputRelationshipCounts();
 	
-	echo "\n" . 'About to run the As_SchemaManipulator and re-output the relationships.' . "\n";
+	echo "\n" . 'About to run the SchemaManipulator and re-output the relationships.' . "\n";
 	
 	// Manipulate the schema (to add any missed relationships, e.g.)
 	$manipulator = new SchemaManipulator($schemaGeneratorConfig);
@@ -50,7 +50,7 @@ try {
 		}
 		echo "\n";
 	} else {
-		echo 'Success writing classes!' . "\n";
+		echo 'Success writing ' . count($classes) . ' classes!' . "\n";
 	}
 	
 	echo "\n" . 'PHP memory usage:' . "\n";
