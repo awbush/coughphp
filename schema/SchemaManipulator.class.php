@@ -168,7 +168,7 @@ class SchemaManipulator {
 		if (is_null($table)) {
 			// Try again for every other database
 			$firstDatabaseName = $firstDatabase->getDatabaseName();
-			foreach ($schema->getDatabases() as $database) {
+			foreach ($this->schema->getDatabases() as $database) {
 				if ($database->getDatabaseName() == $firstDatabaseName) {
 					continue;
 				}
