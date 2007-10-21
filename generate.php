@@ -6,41 +6,41 @@ try {
 	
 	// Which config to use?
 	$configName = 'cough_test';
-
-	// Database Schema Generator example
+	$schemaGeneratorConfigFile = CONFIG_PATH . $configName . '/database_schema_generator.inc.php';
+	$coughGeneratorConfigFile  = CONFIG_PATH . $configName . '/cough_generator.inc.php';
 
 	// Get the database config
-	include(CONFIG_PATH . $configName . '/database_schema_generator.inc.php');
-	$schemaGeneratorConfig = new DatabaseSchemaGeneratorConfig($config);
+	$schemaGeneratorConfig = DatabaseSchemaGeneratorConfig::constructFromFile($schemaGeneratorConfigFile);
 
 	// Load the schema into memory
 	$schemaGenerator = new DatabaseSchemaGenerator($schemaGeneratorConfig);
 	$schemaGenerator->enableVerbose();
 	$schema = $schemaGenerator->generateSchema();
 	
-	foreach ($schema->getDatabases() as $database) {
-		foreach ($database->getTables() as $table) {
-			// echo 'Table ' . sprintf('%20s', $table->getTableName()) . ' has ' . count($table->getHasOneRelationships()) . ' one-to-one relationships.' . "\n";
-			echo 'Table ' . $table->getTableName() . ' has ' . "\n";
-			echo "\t" . count($table->getHasOneRelationships()) . ' one-to-one relationships.' . "\n";
-			echo "\t" . count($table->getHasManyRelationships()) . ' one-to-many relationships.' . "\n";
-			// echo "\t" . count($table->getHabtmRelationships()) . ' many-to-many relationships.' . "\n";
-		}
-	}
+	// Dump some verbose messages.
+	echo "\n";
+	$schema->outputRelationshipCounts();
 	
-	// TODO: ? Allow external additions to the schema... e.g. loop through it with any custom naming standards and add any FK data based on those standards, e.g. using the cough naming conventions (or configuration?).
-	// $manipulator = new SchemaManipulator();
-	// $manipulator->addFksFromJointables($schema, '/.*2.*/');
-
+	echo "\n" . 'About to run the As_SchemaManipulator and re-output the relationships.' . "\n";
+	
+	// Manipulate the schema (to add any missed relationships, e.g.)
+	$manipulator = new SchemaManipulator($schemaGeneratorConfig);
+	$manipulator->enableVerbose();
+	$manipulator->manipulateSchema($schema);
+	
+	// Dump some verbose messages again to see if the manipulator added anything.
+	echo "\n";
+	$schema->outputRelationshipCounts();
+	
 	// Get the cough generator config
-	include(CONFIG_PATH . $configName . '/cough_generator.inc.php');
-	$coughGeneratorConfig = new CoughGeneratorConfig($config);
+	$coughGeneratorConfig = CoughGeneratorConfig::constructFromFile($coughGeneratorConfigFile);
 
 	// Generate files into memory
 	$coughGenerator = new CoughGenerator($coughGeneratorConfig);
 	$classes = $coughGenerator->generateCoughClasses($schema);
 	
 	// Write files to disk
+	echo "\n";
 	$coughWriter = new CoughWriter($coughGeneratorConfig);
 	if (!$coughWriter->writeClasses($classes)) {
 		echo 'Trouble writing classes:' . "\n";
@@ -53,6 +53,7 @@ try {
 		echo 'Success writing classes!' . "\n";
 	}
 	
+	echo "\n" . 'PHP memory usage:' . "\n";
 	echo number_format(memory_get_usage()) . " used\n";
 	echo number_format(memory_get_usage(true)) . " allocated\n";
 	

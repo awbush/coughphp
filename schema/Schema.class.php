@@ -63,38 +63,43 @@ class Schema {
 			foreach ($database->getTables() as $tableName => $table) {
 				foreach ($table->getForeignKeys() as $fk) {
 					
+					// Skip this fk if we've already linked it.
+					if ($fk->isLinked()) {
+						continue;
+					}
+					
 					// Get reference database
-					if (isset($fk['ref_database'])) {
-						$refDatabase = $table->getSchema()->getDatabase($fk['ref_database']);
+					if ($fk->hasRefDatabaseName()) {
+						$refDatabase = $table->getSchema()->getDatabase($fk->getRefDatabaseName());
 					} else {
 						$refDatabase = $table->getDatabase();
 					}
 					
 					// Get reference table
-					$refTable = $refDatabase->getTable($fk['ref_table']);
+					$refTable = $refDatabase->getTable($fk->getRefTableName());
 					
 					// Get reference columns
 					$refKey = array();
-					foreach ($fk['ref_key'] as $columnName) {
+					foreach ($fk->getRefKeyName() as $columnName) {
 						$refKey[] = $refTable->getColumn($columnName);
 					}
 					
 					// Get reference "object name"
-					if (isset($fk['ref_object_name'])) {
-						$refObjectName = $fk['ref_object_name'];
+					if ($fk->hasRefObjectName()) {
+						$refObjectName = $fk->getRefObjectName();
 					} else {
 						$refObjectName = $refTable->getTableName();
 					}
 					
 					// Get local columns
 					$localKey = array();
-					foreach ($fk['local_key'] as $columnName) {
+					foreach ($fk->getLocalKeyName() as $columnName) {
 						$localKey[] = $table->getColumn($columnName);
 					}
 					
 					// Get local "object name"
-					if (isset($fk['local_object_name'])) {
-						$localObjectName = $fk['local_object_name'];
+					if ($fk->hasLocalObjectName()) {
+						$localObjectName = $fk->getLocalObjectName();
 					} else {
 						$localObjectName = $table->getTableName();
 					}
@@ -124,77 +129,24 @@ class Schema {
 					$hasMany->setLocalKey($refKey);
 					
 					$refTable->addHasManyRelationship($hasMany);
+					
+					// Set the FK as linked so we don't link it up again.
+					$fk->setIsLinked(true);
 				}
 			}
 		}
-		
-		// 2007-09-12/AWB: Hmm... this part doesn't appear to be done...
-		// // Convert some one-to-many relationships into many-to-many relationships
-		// foreach ($this->getDatabases() as $dbName => $database) {
-		// 	foreach ($database->getTables() as $tableName => $table) {
-		// 		// 3. A potential many-to-many can be found....
-		// 		foreach ($table->getHasManyRelationships() as $hasManyKey => $hasMany) {
-		// 			foreach ($hasMany->getRefTable()->getHasOneRelationships() as $hasOne) {
-		// 				if ($hasOne->getRefTable() != $table) {
-		// 					// TODO: Anthony: washere
-		// 					echo 'Found Many-to-Many relationship (TODO Finish this code in Schema class on line ' . __LINE__ . ')' . "\n";
-		// 					// $habtm = new SchemaRelationship();
-		// 					// $habtm->setJoinTable($hasMany->getRefTable());
-		// 					// $table->addHabtmRelationship($habtm);
-		// 					// $table->removeHasManyRelationship($hasManyKey);
-		// 				}
-		// 			}
-		// 		}
-		// 		
-		// 	}
-		// }
-		
-		// foreach ($this->databases as $dbName => $db) {
-		// 	$this->schemas[$dbName] = array();
-		// 	foreach ($db->getTables() as $tableName => $table) {
-		// 		$this->schemas[$dbName][$tableName]['primary_key'] = $table->getPrimaryKey();
-		// 		$this->schemas[$dbName][$tableName]['columns'] = $table->getColumns();
-		// 		
-		// 		// get belongs to one relationships in the current database/schema
-		// 		$primaryKey = $table->getPrimaryKey();
-		// 		foreach ($table->getColumns() as $columnName => $column) {
-		// 			if ($this->isForeignKey($columnName)) {
-		// 				// If we have a multi-key PK (or no PK), search for related table.
-		// 				if (count($primaryKey) != 1 || !isset($primaryKey[$columnName])) {
-		// 
-		// 				}
-		// 
-		// 				foreach ($db->getTables() as $relatedTableName => $relatedTable) {
-		// 					if ($relatedTableName != $tableName) {
-		// 
-		// 					}
-		// 				}
-		// 			}
-		// 		}
-		// 		$this->schemas[$dbName][$tableName];
-		// 		$this->schemas[$dbName][$tableName]['belongs_to_one'] = $table->getColumns();
-		// 
-		// 		// TODO: get belongs to one relationships for other databases/schemads
-		// 						
-		// 		
-		// 	}
-		// }
 	}
 	
-	// // TODO: Split out into configuration options
-	// protected $idSuffix = '_id';
-	
-	// /**
-	//  * Returns whether or not the given dbColumnName is is a foreign key.
-	//  *
-	//  * @return boolean true if given column name is a foreign key, false if not.
-	//  * @author Anthony Bush
-	//  **/
-	// protected function isForeignKey($dbColumnName) {
-	// 	return (substr($dbColumnName, -strlen($this->idSuffix)) == $this->idSuffix
-	// 		&& (strpos($dbColumnName, '2') === false));
-	// }
-	
+	public function outputRelationshipCounts() {
+		foreach ($this->getDatabases() as $database) {
+			foreach ($database->getTables() as $table) {
+				echo 'Table ' . $table->getTableName() . ' has ' . "\n";
+				echo "\t" . count($table->getHasOneRelationships()) . ' one-to-one relationships.' . "\n";
+				echo "\t" . count($table->getHasManyRelationships()) . ' one-to-many relationships.' . "\n";
+				// echo "\t" . count($table->getHabtmRelationships()) . ' many-to-many relationships.' . "\n";
+			}
+		}
+	}
 	
 }
 

@@ -246,14 +246,11 @@ class CoughGenerator {
 			$localKey = $hasOne->getLocalKey();
 ?>
 	public function load<?php echo $objectTitleCase ?>_Object() {
-		$<?php echo $localVarName ?> = new <?php echo $objectClassName ?>(array(
+		$<?php echo $localVarName ?> = <?php echo $objectClassName ?>::constructByKey(array(
 <?php foreach ($hasOne->getRefKey() as $key => $column): ?>
 			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
 <?php endforeach; ?>
 		));
-		if (!$<?php echo $localVarName ?>->isInflated()) {
-			$<?php echo $localVarName ?> = null;
-		}
 		$this->set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>);
 	}
 
@@ -353,7 +350,7 @@ class CoughGenerator {
 		$this->setCollection('<?php echo $hasMany->getRefObjectName() ?>', $<?php echo $localVarName ?>);
 	}
 
-	public function add<?php echo $objectTitleCase ?>($object) {
+	public function add<?php echo $objectTitleCase ?>(<?php echo $objectClassName ?> $object) {
 <?php
 foreach ($hasMany->getRefKey() as $key => $column) {
 	$setReferenceIdMethod = 'set' . $this->config->getTitleCase($column->getColumnName());

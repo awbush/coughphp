@@ -73,11 +73,11 @@ class MysqlTable extends SchemaTable implements DriverTable {
 				$refKey[] = $this->trimBackticks($quotedKey);
 			}
 			
-			$this->addForeignKey(array(
-				'local_key' => $fKey,
-				'ref_table' => $refTable,
-				'ref_key' => $refKey
-			));
+			$schemaFk = new SchemaForeignKey();
+			$schemaFk->setLocalKeyName($fKey);
+			$schemaFk->setRefTableName($refTable);
+			$schemaFk->setRefKeyName($refKey);
+			$this->addForeignKey($schemaFk);
 
 			// echo 'Table ' . $this->getTableName() . ' has FK ' . implode(',', $fKey) . ' which points to table ' . $refTable . ' (' . implode(',', $refKey) . ')' . "\n";
 		}

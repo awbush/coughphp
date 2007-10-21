@@ -45,11 +45,11 @@ abstract class CoughConfig {
 	 * overridden first, then the database config and then the globally set config.
 	 * The first config it finds will be the one returned.
 	 * 
-	 * @param $key - separate config sections by a slash '/'. For example, if you
+	 * @param $configKey - separate config sections by a slash '/'. For example, if you
 	 * want the "match_table_name_prefixes" config in the "table_settings" section,
-	 * $key should be "table_settings/match_table_name_prefixes"
+	 * $configKey should be "table_settings/match_table_name_prefixes"
 	 *
-	 * @return void
+	 * @return mixed - config value or null if not found.
 	 * @author Anthony Bush
 	 **/
 	protected function getConfigValue($configKey, $dbName = null, $tableName = null, $scope = self::SCOPE_GLOBAL) {
@@ -75,7 +75,6 @@ abstract class CoughConfig {
 			$value = $this->getArrayValueFromMultiKey($this->config, $keys);
 		}
 		
-		// No config found, return null
 		return $value;
 	}
 	

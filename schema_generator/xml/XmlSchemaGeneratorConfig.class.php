@@ -9,6 +9,11 @@
  **/
 class XmlSchemaGeneratorConfig extends CoughConfig {
 	
+	public static function constructFromFile($filePath) {
+		include($filePath);
+		return new XmlSchemaGeneratorConfig($config);
+	}
+	
 	protected function initConfig() {
 		$this->config = array();
 	}

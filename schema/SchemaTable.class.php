@@ -130,12 +130,26 @@ class SchemaTable {
 	 * @throws Exception
 	 * @see $foreignKeys
 	 **/
-	public function addForeignKey($foreignKey) {
-		if (isset($foreignKey['local_key']) && isset($foreignKey['ref_table']) && isset($foreignKey['ref_key'])) {
+	public function addForeignKey(SchemaForeignKey $foreignKey) {
+		if (!$this->foreignKeyExists($foreignKey)) {
 			$this->foreignKeys[] = $foreignKey;
-		} else {
-			throw new Exception('First argument must be a foreign key (hash) containing local_key, ref_table, and ref_key. See documentation for SchemaTable::$foreignKeys.');
 		}
+	}
+	
+	/**
+	 * Check if the specified foreign key already exists (by comparing it's
+	 * local key name)
+	 *
+	 * @return bool - true if the specified foreign key already exists, false if not
+	 * @author Anthony Bush
+	 **/
+	public function foreignKeyExists(SchemaForeignKey $foreignKeyNeedle) {
+		foreach ($this->foreignKeys as $foreignKey) {
+			if ($foreignKey->getLocalKeyName() == $foreignKeyNeedle->getLocalKeyName()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function addHasOneRelationship($hasOneRelationship) {

@@ -2,6 +2,11 @@
 
 class DatabaseSchemaGeneratorConfig extends CoughConfig {
 	
+	public static function constructFromFile($filePath) {
+		include($filePath);
+		return new DatabaseSchemaGeneratorConfig($config);
+	}
+	
 	protected function initConfig() {
 		$this->config = array(
 			// REQUIRED CONFIG
@@ -54,6 +59,16 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 		return $this->config['dsn'];
 	}
 	
+	public function getIdRegex(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->getConfigValue('field_settings/id_regex', $dbName, $tableName);
+	}
+	
+	public function getTableNamePrefixes(SchemaDatabase $database) {
+		$dbName = $database->getDatabaseName();
+		return $this->getConfigValue('table_settings/match_table_name_prefixes', $dbName);
+	}
 	
 }
 

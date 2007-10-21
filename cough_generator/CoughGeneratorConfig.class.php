@@ -2,6 +2,11 @@
 
 class CoughGeneratorConfig extends CoughConfig {
 	
+	public static function constructFromFile($filePath) {
+		include($filePath);
+		return new CoughGeneratorConfig($config);
+	}
+	
 	protected function initConfig() {
 		$generated = dirname(dirname(__FILE__)) . '/generated/';
 
