@@ -34,7 +34,7 @@ $config = array(
 		'starter_object_suffix' => '',
 		'starter_collection_suffix' => '_Collection',
 		// You can use your own "AppCoughObject" class here instead, if you want.
-		'extension_class_name' => 'CoughObject',
+		'object_extension_class_name' => 'CoughObject',
 	),
 	
 	'field_settings' => array(
