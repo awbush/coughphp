@@ -33,6 +33,8 @@ $config = array(
 		'base_collection_suffix' => '_Collection_Generated',
 		'starter_object_suffix' => '',
 		'starter_collection_suffix' => '_Collection',
+		'object_extension_class_name' => 'CoughObject',
+		'collection_extension_class_name' => 'CoughCollection',
 	),
 	
 	'field_settings' => array(
