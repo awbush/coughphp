@@ -524,7 +524,7 @@ foreach ($table->getHabtmRelationships() as $habtm) {
 ?>
 }
 <?php
-		echo("\n?>\n");
+		echo("\n?>");
 		
 		// Add the class
 		$class = new CoughClass();
@@ -571,7 +571,7 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 	protected $elementClassName = '<?php echo $starterObjectClassName ?>';
 }
 <?php
-		echo("\n?>\n");
+		echo("\n?>");
 		
 		// Add the class
 		$class = new CoughClass();
@@ -653,7 +653,7 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 	 * No queries are run against the database.
 	 * 
 	 * @param array $hash - hash of [field_name] => [field_value] pairs
-	 * @return <?php echo $starterObjectClassName ?>
+	 * @return <?php echo $starterObjectClassName . "\n" ?>
 	 **/
 	public static function constructByFields($hash) {
 		return new <?php echo $starterObjectClassName ?>($hash);
@@ -661,7 +661,7 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 	
 }
 <?php
-		echo("\n?>\n");
+		echo("\n?>");
 		
 		// Add the class
 		$class = new CoughClass();
@@ -704,7 +704,7 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 class <?php echo $starterCollectionClassName ?> extends <?php echo $baseCollectionClassName ?> {
 }
 <?php
-		echo("\n?>\n");
+		echo("\n?>");
 		
 		// Add the class
 		$class = new CoughClass();
