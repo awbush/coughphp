@@ -5,7 +5,7 @@ try {
 	include_once(dirname(__FILE__) . '/config/application.inc.php');
 	
 	// Which config to use?
-	$configName = 'cough_test';
+	$configName = 'academic_superstore';
 	$schemaGeneratorConfigFile = CONFIG_PATH . $configName . '/database_schema_generator.inc.php';
 	$coughGeneratorConfigFile  = CONFIG_PATH . $configName . '/cough_generator.inc.php';
 
@@ -50,7 +50,11 @@ try {
 		}
 		echo "\n";
 	} else {
-		echo 'Success writing ' . count($classes) . ' classes!' . "\n";
+		$lineCount = 0;
+		foreach ($classes as $class) {
+			$lineCount += substr_count($class->getContents(),"\n");
+		}
+		echo 'Success writing ' . count($classes) . ' classes (' . number_format($lineCount) . ' lines) with ' . $schema->getNumberOfHasOneRelationships() . ' one-to-one relationships and ' . $schema->getNumberOfHasManyRelationships() . ' one-to-many relationships!' . "\n";
 	}
 	
 	echo "\n" . 'PHP memory usage:' . "\n";

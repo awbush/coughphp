@@ -148,6 +148,26 @@ class Schema {
 		}
 	}
 	
+	public function getNumberOfHasOneRelationships() {
+		$count = 0;
+		foreach ($this->getDatabases() as $database) {
+			foreach ($database->getTables() as $table) {
+				$count += count($table->getHasOneRelationships());
+			}
+		}
+		return $count;
+	}
+	
+	public function getNumberOfHasManyRelationships() {
+		$count = 0;
+		foreach ($this->getDatabases() as $database) {
+			foreach ($database->getTables() as $table) {
+				$count += count($table->getHasManyRelationships());
+			}
+		}
+		return $count;
+	}
+	
 }
 
 ?>
