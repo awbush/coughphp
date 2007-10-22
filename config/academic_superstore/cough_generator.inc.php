@@ -7,7 +7,7 @@
  **/
 
 
-$generated = dirname(__FILE__) . '/generated/';
+$generated = dirname(__FILE__) . '/output/';
 
 $config = array(
 	

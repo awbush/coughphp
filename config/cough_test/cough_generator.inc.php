@@ -7,7 +7,7 @@
  **/
 
 
-$generated = dirname(dirname(dirname(__FILE__))) . '/generated/';
+$generated = dirname(__FILE__) . '/output/';
 
 $config = array(
 	
@@ -18,8 +18,8 @@ $config = array(
 	),
 	
 	'paths' => array(
-		'generated_classes' => $generated,
-		'starter_classes' => $generated,
+		'generated_classes' => $generated . 'generated/',
+		'starter_classes' => $generated . 'concrete/',
 		'file_suffix' => '.class.php',
 	),
 	
@@ -27,7 +27,7 @@ $config = array(
 		// You can add prefixes to class names that are generated
 		'prefix' => '',
 		// Additionally, you can strip table prefixes from the generated class names (note that you might run into naming conflicts though.)
-		'strip_table_name_prefixes' => array('cust_', 'wfl_', 'baof_'),
+		'strip_table_name_prefixes' => array(),
 		// Suffixes...
 		'base_object_suffix' => '_Generated',
 		'base_collection_suffix' => '_Collection_Generated',
@@ -44,22 +44,22 @@ $config = array(
 	),
 	
 	// We could change any of the above on a per database setting (like the output path)...
-	// 'databases' => array(
-	// 	'cough_test_fk' => array(
-	// 		'paths' => array(
-	// 			'generated_classes' => $generated . 'cough_test_fk/',
-	// 			'starter_classes' => $generated . 'cough_test_fk/',
-	// 			'file_suffix' => '.class.php',
-	// 		),
-	// 	),
-	// 	'cough_test' => array(
-	// 		'paths' => array(
-	// 			'generated_classes' => $generated . 'cough_test/',
-	// 			'starter_classes' => $generated . 'cough_test/',
-	// 			'file_suffix' => '.class.php',
-	// 		),
-	// 	),
-	// ),
+	'databases' => array(
+		'cough_test_fk' => array(
+			'paths' => array(
+				'generated_classes' => $generated . 'cough_test_fk/generated/',
+				'starter_classes' => $generated . 'cough_test_fk/concrete/',
+				'file_suffix' => '.class.php',
+			),
+		),
+		'cough_test' => array(
+			'paths' => array(
+				'generated_classes' => $generated . 'cough_test/generated/',
+				'starter_classes' => $generated . 'cough_test/concrete/',
+				'file_suffix' => '.class.php',
+			),
+		),
+	),
 	
 );
 
