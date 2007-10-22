@@ -42,6 +42,56 @@ $config = array(
 		'delete_flag_value' => '1',
 	),
 	
+	'databases' => array(
+		'content' => array(
+			'class_names' => array(
+				'prefix' => 'con_',
+			),
+			'paths' => array(
+				'generated_classes' => $generated . 'content/generated/',
+				'starter_classes' => $generated . 'content/concrete/',
+			),
+		),
+		'customer' => array(
+			'paths' => array(
+				'generated_classes' => $generated . 'customer/generated/',
+				'starter_classes' => $generated . 'customer/concrete/',
+			),
+		),
+		'inventory' => array(
+			'class_names' => array(
+				'prefix' => 'inv_',
+			),
+			'paths' => array(
+				'generated_classes' => $generated . 'inventory/generated/',
+				'starter_classes' => $generated . 'inventory/concrete/',
+			),
+		),
+		'superstore' => array(
+			'paths' => array(
+				'generated_classes' => $generated . 'superstore/generated/',
+				'starter_classes' => $generated . 'superstore/concrete/',
+			),
+		),
+		'user' => array(
+			'class_names' => array(
+				'prefix' => 'usr_',
+			),
+			'paths' => array(
+				'generated_classes' => $generated . 'user/generated/',
+				'starter_classes' => $generated . 'user/concrete/',
+			),
+		),
+		'vendor_import' => array(
+			'class_names' => array(
+				'prefix' => 'vi_',
+			),
+			'paths' => array(
+				'generated_classes' => $generated . 'vendor_import/generated/',
+				'starter_classes' => $generated . 'vendor_import/concrete/',
+			),
+		),
+	)
 );
 
 ?>
