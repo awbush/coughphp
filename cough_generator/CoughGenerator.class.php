@@ -603,8 +603,6 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 		$phpdocTags = $this->generatePhpdocTags($table);
 		$phpdocTags[] = '@see ' . $baseObjectClassName . ', CoughObject';
 		
-		$extensionClassName = $this->config->getCollectionExtensionClassName($table);
-		
 		ob_start();
 		echo("<?php\n\n");
 		?>
@@ -694,8 +692,6 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 		
 		$phpdocTags = $this->generatePhpdocTags($table);
 		$phpdocTags[] = '@see ' . $baseCollectionClassName . ', CoughCollection';
-		
-		$extensionClassName = $this->config->getCollectionExtensionClassName($table);
 		
 		ob_start();
 		echo("<?php\n\n");
