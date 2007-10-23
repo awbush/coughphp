@@ -145,7 +145,7 @@ class As_Database {
 	 */
 	public function result($sql) {
 		$result = $this->query($sql);
-		if ($result->numRows()) {
+		if ($result->getNumRows()) {
 			return $result->result(0);
 		} else {
 			return false;
