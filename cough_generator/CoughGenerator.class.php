@@ -237,16 +237,24 @@ class CoughGenerator {
 		ob_start();
 		$objectDefinitions = array();
 		foreach ($table->getHasOneRelationships() as $hasOne) {
-			$objectTitleCase = $this->config->getTitleCase($hasOne->getRefObjectName());
 			$objectClassName = $this->config->getStarterObjectClassName($hasOne->getRefTable());
+			
+			// Get the object name
+			$objectName = $hasOne->getRefObjectName();
+			
+			// Get the title case name
+			$objectTitleCase = $this->config->getTitleCase($objectName);
+			
+			// Get the local variable name
 			$localVarName = $this->config->getCamelCase($hasOne->getRefTableName()); //'object';
 			if ($localVarName == 'this') {
-				// avoid naming conflict
+				// avoid naming conflict by renaming a "this" object name to "object"
 				$localVarName = 'object';
 			}
+			
 			$localKey = $hasOne->getLocalKey();
 			
-			$objectDefinitions[] = "\n\t\t'" . $hasOne->getRefObjectname() . "' => array("
+			$objectDefinitions[] = "\n\t\t'" . $objectName . "' => array("
 			                     . "\n\t\t\t'class_name' => '" . $this->config->getStarterObjectClassName($hasOne->getRefTable()) . "'\n\t\t),";
 			
 ?>
@@ -264,7 +272,7 @@ class CoughGenerator {
 	}
 	
 	public function set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>) {
-		$this->setObject('<?php echo $hasOne->getRefObjectName() ?>', $<?php echo $localVarName ?>);
+		$this->setObject('<?php echo $objectName ?>', $<?php echo $localVarName ?>);
 	}
 	
 <?php
