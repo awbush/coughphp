@@ -223,7 +223,7 @@ class CoughGenerator {
 	public function get<?php echo $titleCase ?>() {
 		return $this->getField('<?php echo $columnName ?>');
 	}
-
+	
 	public function set<?php echo $titleCase ?>($value) {
 		$this->setField('<?php echo $columnName ?>', $value);
 	}
@@ -235,6 +235,7 @@ class CoughGenerator {
 		
 		// Generate one-to-one methods
 		ob_start();
+		$objectDefinitions = array();
 		foreach ($table->getHasOneRelationships() as $hasOne) {
 			$objectTitleCase = $this->config->getTitleCase($hasOne->getRefObjectName());
 			$objectClassName = $this->config->getStarterObjectClassName($hasOne->getRefTable());
@@ -244,6 +245,10 @@ class CoughGenerator {
 				$localVarName = 'object';
 			}
 			$localKey = $hasOne->getLocalKey();
+			
+			$objectDefinitions[] = "\n\t\t'" . $hasOne->getRefObjectname() . "' => array("
+			                     . "\n\t\t\t'class_name' => '" . $this->config->getStarterObjectClassName($hasOne->getRefTable()) . "'\n\t\t),";
+			
 ?>
 	public function load<?php echo $objectTitleCase ?>_Object() {
 		$<?php echo $localVarName ?> = <?php echo $objectClassName ?>::constructByKey(array(
@@ -253,11 +258,11 @@ class CoughGenerator {
 		));
 		$this->set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>);
 	}
-
+	
 	public function get<?php echo $objectTitleCase ?>_Object() {
 		return $this->getObject('<?php echo $hasOne->getRefObjectName() ?>');
 	}
-
+	
 	public function set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>) {
 		$this->setObject('<?php echo $hasOne->getRefObjectName() ?>', $<?php echo $localVarName ?>);
 	}
@@ -266,6 +271,12 @@ class CoughGenerator {
 		}
 		$oneToOneMethods = ob_get_clean();
 		
+		// Generate the objectDefinitions parameter
+		if (empty($objectDefinitions)) {
+			$objectDefinitionsPhp = "\t" . 'protected $objectDefinitions = array();' . "\n\t\n";
+		} else {
+			$objectDefinitionsPhp = "\t" . 'protected $objectDefinitions = array(' . implode('', $objectDefinitions) . "\n\t" . ');' . "\n\t\n";
+		}
 		
 		// Generate one-to-many methods
 		ob_start();
@@ -325,11 +336,11 @@ class CoughGenerator {
 			}
 ?>
 	public function load<?php echo $objectTitleCase ?>_Collection() {
-
+		
 		// Always create the collection
 		$collection = new <?php echo $collectionClassName ?>();
 		$this->set<?php echo $objectTitleCase ?>_Collection($collection);
-
+		
 		// But only populate it if we have key ID
 		if ($this->hasKeyId()) {
 			$sql = '<?php echo "\n" . $loadSql . "\n\t\t\t" ?>';
@@ -341,15 +352,15 @@ class CoughGenerator {
 			}
 		}
 	}
-
+	
 	public function get<?php echo $objectTitleCase ?>_Collection() {
 		return $this->getCollection('<?php echo $hasMany->getRefObjectName() ?>');
 	}
-
+	
 	public function set<?php echo $objectTitleCase ?>_Collection($<?php echo $localVarName ?>) {
 		$this->setCollection('<?php echo $hasMany->getRefObjectName() ?>', $<?php echo $localVarName ?>);
 	}
-
+	
 	public function add<?php echo $objectTitleCase ?>(<?php echo $objectClassName ?> $object) {
 <?php
 foreach ($hasMany->getRefKey() as $key => $column) {
@@ -364,7 +375,7 @@ foreach ($hasMany->getRefKey() as $key => $column) {
 		$this->get<?php echo $objectTitleCase ?>_Collection()->add($object);
 		return $object;
 	}
-
+	
 	public function remove<?php echo $objectTitleCase ?>($objectOrId) {
 		$removedObject = $this->get<?php echo $objectTitleCase ?>_Collection()->remove($objectOrId);
 <?php foreach ($hasMany->getRefKey() as $key => $column): ?>
@@ -373,17 +384,37 @@ foreach ($hasMany->getRefKey() as $key => $column) {
 		$removedObject->set<?php echo $referralNameTitleCase ?>_Object(null);
 		return $removedObject;
 	}
-
+	
 <?php
 		}
 		$oneToManyMethods = ob_get_clean();
 		
 		// Generate the `notifyChildrenOfKeyChange()` method if it will be non-empty.
 		if (count($notifyCollections) > 0) {
-			$notifyChildrenOfKeyChangeMethod = "\t" . 'public function notifyChildrenOfKeyChange(array $key) {'
-			                                 . "\n" . implode("\n", $notifyCollections) . "\n\t}\n\t\n";
+			$notifyChildrenOfKeyChangePhp = "\t" . 'public function notifyChildrenOfKeyChange(array $key) {'
+			                              . "\n" . implode("\n", $notifyCollections) . "\n\t}\n\t\n";
 		} else {
-			$notifyChildrenOfKeyChangeMethod = '';
+			$notifyChildrenOfKeyChangePhp = '';
+		}
+		
+		// Loop through all related one-to-one relationships and if any require a
+		// non-NULL foreign key (i.e. the relationship MUST exist) go ahead and
+		// override the default getLoadSqlWithoutWhere method.
+		$shouldOverrideLoadSqlWithoutWhere = false;
+		foreach ($table->getHasOneRelationships() as $hasOne) {
+			if (!$hasOne->isKeyNullable($hasOne->getLocalKey())) {
+				$shouldOverrideLoadSqlWithoutWhere = true;
+				break;
+			}
+		}
+
+		// Generate the `getLoadSqlWithoutWhere()` method if needed
+		if ($shouldOverrideLoadSqlWithoutWhere) {
+			$getLoadSqlWithoutWherePhp = "\tpublic function getLoadSqlWithoutWhere() {"
+			                           . "\n\t\treturn '\n" . $this->generateLoadSql($table, array(), "\t\t\t") . "\n\t\t';"
+			                           . "\n\t}\n\t\n";
+		} else {
+			$getLoadSqlWithoutWherePhp = '';
 		}
 		
 		
@@ -422,107 +453,16 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 <?php endforeach; ?>
 	);
 	
-	protected $objectDefinitions = array(
-<?php foreach ($table->getHasOneRelationships() as $hasOne): ?>
-		'<?php echo $hasOne->getRefObjectname() ?>' => array(
-			'class_name' => '<?php echo $this->config->getStarterObjectClassName($hasOne->getRefTable()) ?>'
-		),
-<?php endforeach; ?>
-	);
-	
 <?php
-echo $notifyChildrenOfKeyChangeMethod;
-
-// Loop through all related one-to-one relationships and if any require a
-// non-NULL foreign key (i.e. the relationship MUST exist) go ahead and
-// override the default getLoadSqlWithoutWhere method.
-$shouldOverrideLoadSqlWithoutWhere = false;
-foreach ($table->getHasOneRelationships() as $hasOne) {
-	if (!$hasOne->isKeyNullable($hasOne->getLocalKey())) {
-		$shouldOverrideLoadSqlWithoutWhere = true;
-		break;
-	}
-}
-
-if ($shouldOverrideLoadSqlWithoutWhere) {
-?>
-	public function getLoadSqlWithoutWhere() {
-		return '<?php echo "\n" . $this->generateLoadSql($table, array(), "\t\t\t") . "\n\t\t" ?>';
-	}
-	
-<?php
-}
-?>
-	// Generated attribute accessors (getters and setters)
-
-<?php echo $attributeMethods ?>
-	// Generated one-to-one accessors (loaders, getters, and setters)
-
-<?php echo $oneToOneMethods ?>
-	// Generated one-to-many collection loaders, getters, setters, adders, and removers
-
-<?php
+echo $objectDefinitionsPhp;
+echo $notifyChildrenOfKeyChangePhp;
+echo $getLoadSqlWithoutWherePhp;
+echo "\t" . '// Generated attribute accessors (getters and setters)' . "\n\t\n";
+echo $attributeMethods;
+echo "\t" . '// Generated one-to-one accessors (loaders, getters, and setters)' . "\n\t\n";
+echo $oneToOneMethods;
+echo "\t" . '// Generated one-to-many collection loaders, getters, setters, adders, and removers' . "\n\t\n";
 echo $oneToManyMethods;
-
-/* many-to-many methods disbaled for now...
-?>
-
-	// Generated many-to-many collection loaders, getters, setters, adders, and removers
-
-<?php
-foreach ($table->getHabtmRelationships() as $habtm) {
-	$objectTitleCase = $this->config->getTitleCase($habtm->getRefObjectName());
-	$objectClassName = $this->config->getStarterObjectClassName($habtm->getRefTable());
-	$collectionClassName = $this->config->getStarterCollectionClassName($habtm->getRefTable());
-	$localKey = $habtm->getLocalKey();
-?>
-	public function load<?php echo $objectTitleCase ?>_Collection() {
-		
-		// What are we collecting?
-		$elementClassName = '<?php echo $objectClassName ?>';
-		
-		// Get the base SQL (so we can use the same SELECT and JOINs as the element class)
-		$element = new $elementClassName();
-		$sql = $element->getLoadSqlWithoutWhere();
-		
-		// What criteria are we using?
-		$criteria = array(
-<?php foreach ($habtm->getRefKey() as $key => $column): ?>
-			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
-<?php endforeach; ?>
-		);
-		$sql .= ' ' . $this->db->buildWhereSql($criteria);
-		
-		// Construct and populate the collection
-		$collection = new <?php echo $collectionClassName ?>();
-		$collection->loadBySql($sql);
-		$this->set<?php echo $objectTitleCase ?>_Collection($collection);
-	}
-
-	public function get<?php echo $objectTitleCase ?>_Collection() {
-		return $this->getCollection('<?php echo $habtm->getRefObjectName() ?>');
-	}
-
-	public function set<?php echo $objectTitleCase ?>_Collection($<?php echo $localVarName ?>) {
-		$this->setCollection('<?php echo $habtm->getRefObjectName() ?>', $<?php echo $localVarName ?>);
-	}
-
-	public function add<?php echo $objectTitleCase ?>($objectOrId) {
-		return $this->get<?php echo $objectTitleCase ?>_Collection()->add($objectOrId);
-	}
-
-	public function remove<?php echo $objectTitleCase ?>($objectOrId) {
-		$removedObject = $this->get<?php echo $objectTitleCase ?>_Collection()->remove($objectOrId);
-<?php foreach ($habtm->getRefKey() as $key => $columnName): ?>
-		$removedObject->set<?php echo $this->config->getTitleCase($columnName) ?>(null);		
-<?php endforeach; ?>
-		return $removedObject;
-	}
-
-<?php
-}
-
-*/
 ?>
 }
 <?php
