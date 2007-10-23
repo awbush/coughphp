@@ -491,7 +491,7 @@ foreach ($table->getHabtmRelationships() as $habtm) {
 			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
 <?php endforeach; ?>
 		);
-		$sql .= ' ' . $this->db->generateWhere($criteria);
+		$sql .= ' ' . $this->db->buildWhereSql($criteria);
 		
 		// Construct and populate the collection
 		$collection = new <?php echo $collectionClassName ?>();

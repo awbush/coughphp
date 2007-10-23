@@ -30,8 +30,8 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 		);
 		
 		CoughDatabaseFactory::setAdapter($this->adapterName);
-		CoughDatabaseFactory::addDatabaseConfig('pascal', $testDbConfig);
-		$this->db = CoughDatabaseFactory::getDatabase('pascal');
+		CoughDatabaseFactory::addDatabaseConfig('localtestdb', $testDbConfig);
+		$this->db = CoughDatabaseFactory::getDatabase('localtestdb');
 		
 		// We have to run this sql dump one query at a time
 		$this->coughTestDbResetSql = explode(';', file_get_contents(APP_PATH . 'dalal/drivers/as/tests/cough_test_db_reset.sql'));

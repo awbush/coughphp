@@ -54,8 +54,9 @@ require_once('cough/CoughIterator.class.php');
 require_once('cough/CoughCollection.class.php');
 require_once('cough/CoughObject.class.php');
 require_once('cough/CoughLoader.class.php');
+require_once('dalal/load.inc.php');
 
 // Load the Database Abstraction Layer / Database Adapter classes (TODO: use the dalal stuff, for now I'm hard coding it to just keep using the As Database classes)
-require_once('dal/as_database/load.inc.php');
-
+//require_once('dal/as_database/load.inc.php');
+// require_once(APP_PATH . 'dalal/load.inc.php');
 ?>

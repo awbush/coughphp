@@ -26,6 +26,11 @@ abstract class CoughAbstractDatabaseAdapter
 		$this->db = $db;
 	}
 	
+	public function getDb()
+	{
+		return $this->db;
+	}
+	
 	abstract public function query($sql);
 	
 	abstract public function execute($sql);
@@ -108,7 +113,7 @@ abstract class CoughAbstractDatabaseAdapter
 		else if ($string === false) {
 			return 0;
 		}
-		else if ($string instanceof SqlFunction) {
+		else if ($string instanceof As_SqlFunction) {
 			return $string->getString();
 		}
 		else {
@@ -124,7 +129,7 @@ abstract class CoughAbstractDatabaseAdapter
 	 **/
 	public function backtick($string)
 	{
-		if ($string instanceof SqlFunction) {
+		if ($string instanceof As_SqlFunction) {
 			return $string->getString();
 		}
 		else {
@@ -173,9 +178,14 @@ abstract class CoughAbstractDatabaseAdapter
 				$fieldNamesSql
 			FROM
 				$tableName
-			WHERE
-				$whereSql
 		";
+		
+		if (!empty($whereSql)) {
+			$sql = "
+				WHERE
+					$whereSql
+			";
+		}
 		
 		return $sql;
 	}
@@ -259,9 +269,14 @@ abstract class CoughAbstractDatabaseAdapter
 				$tableName
 			SET
 				$fieldAssignmentsSql
-			WHERE
-				$whereSql
 		";
+		
+		if (!empty($whereSql)) {
+			$sql .= "
+				WHERE
+					$whereSql
+			";
+		}
 		
 		return $sql;
 	}
@@ -308,9 +323,14 @@ abstract class CoughAbstractDatabaseAdapter
 		$sql = "
 			DELETE
 				$tableName
-			WHERE
-				$whereSql
 		";
+		
+		if (!empty($whereSql)) {
+			$sql .= "
+				WHERE
+					$whereSql
+			";
+		}
 		
 		return $sql;
 	}
@@ -324,7 +344,7 @@ abstract class CoughAbstractDatabaseAdapter
 	 **/
 	public function insertOrUpdate($tableName, $fields, $where)
 	{
-		$numRows = $this->result($this->buildSelectSql($tableName, array(new SqlFunction('COUNT(*)')), $where));
+		$numRows = $this->result($this->buildSelectSql($tableName, array(new As_SqlFunction('COUNT(*)')), $where));
 		if ($numRows > 0) {
 			$this->update($tableName, $fields, $where);
 		}
