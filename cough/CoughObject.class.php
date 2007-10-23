@@ -61,6 +61,16 @@ abstract class CoughObject {
 	protected $objectDefinitions = array();
 	
 	/**
+	 * The alias name of the database, which is used to ask the
+	 * {@link CoughDatabaseFactory} for a database object.
+	 * 
+	 * Override in sub class.
+	 * 
+	 * @var string
+	 **/
+	protected $dbAlias = null;
+	
+	/**
 	 * The name of the database the table is in.
 	 * 
 	 * Override in sub class.

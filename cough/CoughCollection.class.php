@@ -8,6 +8,16 @@
 abstract class CoughCollection extends ArrayObject {
 	
 	/**
+	 * The alias name of the database, which is used to ask the
+	 * {@link CoughDatabaseFactory} for a database object.
+	 * 
+	 * Override in sub class.
+	 * 
+	 * @var string
+	 **/
+	protected $dbAlias = null;
+	
+	/**
 	 * The database name to use to running queries.
 	 * 
 	 * Override in sub class.
