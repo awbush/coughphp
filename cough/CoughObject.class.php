@@ -199,7 +199,7 @@ abstract class CoughObject {
 		// before chaining to construct, make sure you override initializeDefinitions() within the subclass
 		//	and then invoke initializeDefinitions() in the constructor method.
 		$this->initializeDefinitions();
-
+		
 		// Get our reference to the database object
 		$this->db = CoughDatabaseFactory::getDatabase($this->dbAlias);
 		$this->db->selectDb($this->dbName);
@@ -625,7 +625,7 @@ abstract class CoughObject {
 	 **/
 	protected function getLoadSql() {
 		if ($this->hasKeyId()) {
-			$sql = $this->getLoadSqlWithoutWhere() . ' ' . $this->db->generateWhere($this->getPk());
+			$sql = $this->getLoadSqlWithoutWhere() . ' ' . $this->db->buildWhereSql($this->getPk());
 		} else {
 			$sql = '';
 		}
@@ -659,7 +659,7 @@ abstract class CoughObject {
 	 **/
 	public function loadByCriteria($where = array(), $additionalSql = '') {
 		if ( ! empty($where)) {
-			$sql = $this->getLoadSqlWithoutWhere() . ' ' . $this->db->generateWhere($where) . ' ' . $additionalSql;
+			$sql = $this->getLoadSqlWithoutWhere() . ' ' . $this->db->buildWhereSql($where) . ' ' . $additionalSql;
 			return $this->loadBySql($sql);
 		}
 		return false;
