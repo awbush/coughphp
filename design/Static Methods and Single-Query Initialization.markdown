@@ -78,7 +78,7 @@ Some of the static methods might be generated like the following...
 			$db = <?php echo $starterObjectClassName ?>::getDb();
 			$db->selectDb(self::$dbName);
 			$result = $db->query($sql);
-			if ($result->numRows() == 1) {
+			if ($result->getNumRows() == 1) {
 				return self::constructByFields($result->getRow());
 			}
 			$result->freeResult();
