@@ -1132,7 +1132,7 @@ abstract class CoughObject {
 	}
 	
 	public static function titleCase($underscoredString) {
-		return str_replace(' ', '', str_replace('_', ' ', ucwords($underscoredString)));
+		return str_replace(' ', '', ucwords(str_replace('_', ' ', $underscoredString)));
 	}
 	
 	public static function underscore($camelCasedString) {
