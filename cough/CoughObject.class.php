@@ -677,7 +677,7 @@ abstract class CoughObject {
 		if ( ! empty($sql)) {
 			$this->db->selectDb($this->dbName);
 			$result = $this->db->query($sql);
-			if ($result->numRows() == 1) {
+			if ($result->getNumRows() == 1) {
 				$this->inflate($result->getRow());
 				$inflated = true;
 			} else {
@@ -828,15 +828,11 @@ abstract class CoughObject {
 		$fields = $this->getInsertFields();
 		
 		$this->db->selectDb($this->dbName);
-		if (!$this->hasKeyId()) {
-			$result = $this->db->insert($this->tableName, $fields);
-			if ($result) {
+		$result = $this->db->insert($this->tableName, $fields);
+		if ($result) {
+			if (!$this->hasKeyId()) {
 				$this->setKeyId($result);
 			}
-		} else {
-			$result = $this->db->insertOrUpdate($this->tableName, $fields, null, $this->getPk());
-		}
-		if ($result) {
 			return true;
 		} else {
 			return false;
