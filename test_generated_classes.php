@@ -1,30 +1,38 @@
 <?php
 
-define('GENERATOR_OUTPUT_PATH', dirname(__FILE__) . '/generated/');
+define('GENERATOR_OUTPUT_PATH', dirname(__FILE__) . '/config/cough_test/output/cough_test_fk/');
 
-// Setup autoloader for the generated classes
-function __autoload($className) {
-	if (file_exists(GENERATOR_OUTPUT_PATH . $className . '.class.php')) {
-		include(GENERATOR_OUTPUT_PATH . $className . '.class.php');
-	}
-}
+// // Setup autoloader for the generated classes
+// function __autoload($className) {
+// 	if (file_exists(GENERATOR_OUTPUT_PATH . $className . '.class.php')) {
+// 		include(GENERATOR_OUTPUT_PATH . $className . '.class.php');
+// 	}
+// }
 
 // Load up the Cough module
 include_once('load.inc.php');
 
+foreach (glob(GENERATOR_OUTPUT_PATH . 'generated/*.php') as $filename) {
+	require_once($filename);
+}
+
+foreach (glob(GENERATOR_OUTPUT_PATH . 'concrete/*.php') as $filename) {
+	require_once($filename);
+}
+
 // Specify Database Configuration... (server, user, pass)
 $dbConfigs = array(
-	'cough_test' => array(
-		'db_name' => 'cough_test',
+	'cough_test_fk' => array(
+		'db_name' => 'cough_test_fk',
 		'host' => 'dev',
 		'user' => 'nobody',
-		'pass' => '',
-		'port' => 3306,
+		'pass' => null,
+		'port' => '3306',
 		'driver' => 'mysql'
 	)
 );
 
-As_DatabaseFactory::setDatabaseConfigs($dbConfigs);
+CoughDatabaseFactory::setDatabaseConfigs($dbConfigs);
 
 
 
@@ -56,8 +64,8 @@ As_DatabaseFactory::setDatabaseConfigs($dbConfigs);
 // Test cough_test_fk tables
 /////////////////////////////
 
-$db = As_DatabaseFactory::getDatabase('cough_test_fk');
-$db->startLoggingQueries();
+$db = CoughDatabaseFactory::getDatabase('cough_test_fk');
+$db->getDb()->startLoggingQueries();
 
 try {
 	$db->query('DELETE FROM product_order');
@@ -100,13 +108,11 @@ try {
 	}
 
 
-
-
-	print_r($db->getQueryLog());
+	print_r($db->getDb()->getQueryLog());
 	die();
 } catch (Exception $e) {
 	echo 'Query Log:' . "\n";
-	print_r($db->getQueryLog());
+	print_r($db->getDb()->getQueryLog());
 	throw $e;
 }
 
