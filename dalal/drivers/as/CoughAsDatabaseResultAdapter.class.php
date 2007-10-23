@@ -30,17 +30,17 @@ class CoughAsDatabaseResultAdapter extends CoughAbstractDatabaseResultAdapter
 
 	public function getNumRows()
 	{
-		return mysql_num_rows($this->result);
+		return $this->result->getNumRows();
 	}
 
 	public function result($rowNum)
 	{
-		return mysql_result($this->result, $rowNum);
+		return $this->result->result($rowNum);
 	}
 
 	public function freeResult()
 	{
-		return mysql_free_result($this->result);
+		return $this->result->freeResult();
 	}
 	
 } // END class CoughAsDatabaseResultAdapter
