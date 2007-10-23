@@ -398,6 +398,8 @@ foreach ($hasMany->getRefKey() as $key => $column) {
  **/
 abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionClassName ?> {
 	
+	protected $dbAlias = '<?php echo $dbName ?>';
+	
 	protected $dbName = '<?php echo $dbName ?>';
 	
 	protected $tableName = '<?php echo $tableName ?>';
@@ -567,6 +569,7 @@ foreach ($table->getHabtmRelationships() as $habtm) {
  * <?php echo implode("\n * ", $phpdocTags) . "\n"; ?>
  **/
 abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extensionClassName ?> {
+	protected $dbAlias = '<?php echo $dbName ?>';
 	protected $dbName = '<?php echo $dbName ?>';
 	protected $elementClassName = '<?php echo $starterObjectClassName ?>';
 }
