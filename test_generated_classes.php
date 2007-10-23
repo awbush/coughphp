@@ -64,8 +64,9 @@ CoughDatabaseFactory::setDatabaseConfigs($dbConfigs);
 // Test cough_test_fk tables
 /////////////////////////////
 
-$db = CoughDatabaseFactory::getDatabase('cough_test_fk');
-$db->getDb()->startLoggingQueries();
+$dbAdapter = CoughDatabaseFactory::getDatabase('cough_test_fk');
+$db = $dbAdapter->getDb();
+$db->startLoggingQueries();
 
 try {
 	$db->query('DELETE FROM product_order');
@@ -108,11 +109,11 @@ try {
 	}
 
 
-	print_r($db->getDb()->getQueryLog());
+	print_r($db->getQueryLog());
 	die();
 } catch (Exception $e) {
 	echo 'Query Log:' . "\n";
-	print_r($db->getDb()->getQueryLog());
+	print_r($db->getQueryLog());
 	throw $e;
 }
 
