@@ -175,7 +175,7 @@ abstract class CoughCollection extends ArrayObject {
 		
 		$this->db->selectDb($this->dbName);
 		$result = $this->db->query($collectionSQL);
-		if ($result->numRows() > 0) {
+		if ($result->getNumRows() > 0) {
 			while ($row = $result->getRow()) {
 				$this->add(call_user_func(array($elementClassName, 'constructByFields'), $row));
 			}
@@ -192,7 +192,7 @@ abstract class CoughCollection extends ArrayObject {
 		$elementClassName = $this->elementClassName;
 		$this->db->selectDb($this->dbName);
 		$result = $this->db->query($sql);
-		if ($result->numRows() > 0) {
+		if ($result->getNumRows() > 0) {
 			while ($row = $result->getRow()) {
 				$this->add(call_user_func(array($elementClassName, 'constructByFields'), $row));
 			}
