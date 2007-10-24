@@ -625,7 +625,7 @@ abstract class CoughObject {
 	 **/
 	protected function getLoadSql() {
 		if ($this->hasKeyId()) {
-			$sql = $this->getLoadSqlWithoutWhere() . ' ' . $this->db->buildWhereSql($this->getPk());
+			$sql = $this->getLoadSqlWithoutWhere() . ' WHERE ' . $this->db->buildWhereSql($this->getPk());
 		} else {
 			$sql = '';
 		}
@@ -659,7 +659,7 @@ abstract class CoughObject {
 	 **/
 	public function loadByCriteria($where = array(), $additionalSql = '') {
 		if ( ! empty($where)) {
-			$sql = $this->getLoadSqlWithoutWhere() . ' ' . $this->db->buildWhereSql($where) . ' ' . $additionalSql;
+			$sql = $this->getLoadSqlWithoutWhere() . ' WHERE ' . $this->db->buildWhereSql($where) . ' ' . $additionalSql;
 			return $this->loadBySql($sql);
 		}
 		return false;
