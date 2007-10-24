@@ -15,9 +15,9 @@ $config = array(
 	
 	// All databases will be scanned unless specified in the 'databases' parameter in the OPTIONAL CONFIG SECTION.
 	'dsn' => array(
-		'host' => '127.0.0.1',
-		'user' => 'root',
-		'pass' => 'inkblot',
+		'host' => 'localhost',
+		'user' => 'cough_test',
+		'pass' => 'cough_test',
 		'port' => 3306,
 		'driver' => 'mysql'
 	),
@@ -40,7 +40,7 @@ $config = array(
 	),
 	
 	'databases' => array(
-		'cough_object_test' => array(
+		'test_cough_object' => array(
 		),
 	),
 	
