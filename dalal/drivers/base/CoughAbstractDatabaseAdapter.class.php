@@ -321,7 +321,7 @@ abstract class CoughAbstractDatabaseAdapter
 		$whereSql = $this->buildWhereSql($where);
 		
 		$sql = "
-			DELETE
+			DELETE FROM
 				$tableName
 		";
 		
