@@ -5,7 +5,7 @@ try {
 	include_once(dirname(__FILE__) . '/config/application.inc.php');
 	
 	// Which config to use?
-	$configName = 'academic_superstore';
+	$configName = 'test_cough_object';
 	$schemaGeneratorConfigFile = CONFIG_PATH . $configName . '/database_schema_generator.inc.php';
 	$coughGeneratorConfigFile  = CONFIG_PATH . $configName . '/cough_generator.inc.php';
 
