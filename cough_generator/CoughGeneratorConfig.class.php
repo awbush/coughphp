@@ -79,18 +79,23 @@ class CoughGeneratorConfig extends CoughConfig {
 			$prefixes = $this->getConfigValue('class_names/strip_table_name_prefixes', $dbName, $tableName);
 			
 			// If a prefix exists in the table name, remove it
-			$tableNameWithoutPrefix = $tableName;
-			foreach ($prefixes as $prefix) {
-				if (substr($tableName, 0, strlen($prefix)) == $prefix) {
-					$tableNameWithoutPrefix = substr($tableName, strlen($prefix) - 1);
-					break;
-				}
-			}
+			$tableNameWithoutPrefix = $this->getTableNameWithoutPrefix($tableName, $prefixes);
 			
 			$className = $this->getTitleCase($tableNameWithoutPrefix);
 		}
 		
 		return $className;
+	}
+	
+	public function getTableNameWithoutPrefix($tableName, $prefixes) {
+		$tableNameWithoutPrefix = $tableName;
+		foreach ($prefixes as $prefix) {
+			if (substr($tableName, 0, strlen($prefix)) == $prefix) {
+				$tableNameWithoutPrefix = substr($tableName, strlen($prefix) - 1);
+				break;
+			}
+		}
+		return $tableNameWithoutPrefix;
 	}
 	
 	public function getClassFileName(CoughClass $class) {
@@ -176,11 +181,13 @@ class CoughGeneratorConfig extends CoughConfig {
 	/**
 	 * Converts an id field into an object name (in most cases this simply
 	 * involves stripping off an "_id" suffix).
+	 * 
+	 * Example input -> output might be "billing_addres_id" -> "billing_address"
 	 *
 	 * @return mixed - string on successful conversion, false on failure
 	 * @author Anthony Bush
 	 **/
-	public function convertIdToObjectName($table, $id) {
+	public function convertIdToEntityName($table, $id) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
 		$idRegex = $this->getConfigValue('field_settings/id_regex', $dbName, $tableName);
@@ -190,6 +197,104 @@ class CoughGeneratorConfig extends CoughConfig {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Given a table object, it gets the "entity name", currently just strips
+	 * any prefixes specified in the config from the table name, otherwise just
+	 * returns the table name.
+	 * 
+	 * e.g. "cust_address" will get entity name "address" if
+	 * strip_table_name_prefixes has 'cust_' in it.
+	 * 
+	 *
+	 * @return string
+	 * @author Anthony Bush
+	 **/
+	public function getEntityName($table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		$prefixes = $this->getConfigValue('class_names/strip_table_name_prefixes', $dbName, $tableName);
+		
+		// If a prefix exists in the table name, remove it
+		$tableNameWithoutPrefix = $this->getTableNameWithoutPrefix($tableName, $prefixes);
+		
+		return $tableNameWithoutPrefix;
+	}
+	
+	public function getForeignTableAliasName(SchemaRelationship $relationship) {
+		$localKey = $relationship->getLocalKey();
+		
+		// If there is only one local key and we can parse out a value from id_regex, then use that.
+		if (count($localKey) == 1) {
+			// Use field name.
+			$entityName = $this->convertIdToEntityName($relationship->getLocalTable(), $localKey[0]->getColumnName());
+			if ($entityName !== false) {
+				// We got a valid entity name
+				return $entityName;
+			}
+		}
+		
+		// Use reference table's "entity name".
+		return $this->getEntityName($relationship->getRefTable());
+	}
+	
+	public function getForeignObjectName(SchemaRelationship $relationship) {
+		$entityName = $this->getForeignTableAliasName($relationship);
+		return $this->getTitleCase($entityName) . '_Object';
+	}
+	
+	public function getForeignCollectionName($relationship, $relationships) {
+		// Step 1: loop through all relationships and count the number of
+		// collections to the table in question. If we have more than one, then
+		// we need to generate more unique name, e.g.
+		// Addresss::getOrder_Collection_ByBillingAddressId.
+		// If we don't have more than one, then use the naming without the "_By"
+		// section, e.g. Address::getOrder_Collection
+		
+		$tableName = $relationship->getRefTable()->getTableName();
+		
+		$numPotentialCollections = 0;
+		$numResolveableCollections = 0;
+		foreach ($relationships as $rel) {
+			if ($rel->getRefTable()->getTableName() == $tableName) {
+				$numPotentialCollections++;
+				$refKey = $rel->getRefKey();
+				if (count($refKey) == 1) {
+					$numResolveableCollections++;
+				}
+			}
+		}
+		
+		$entityName = $this->getEntityName($relationship->getRefTable());
+		$refKey = $relationship->getRefKey();
+		$baseName = $this->getTitleCase($entityName) . '_Collection';
+		
+		// If there is only one relationship to the other table OR we don't
+		// have a single key relationship, then use the base name.
+		if ($numPotentialCollections <= 1 || count($refKey) !== 1) {
+			return $baseName;
+		}
+		
+		// Add the remote field name to the base name
+		return $baseName . '_By' . $this->getTitleCase($refKey[0]->getColumName());
+	}
+	
+	/**
+	 * Returns an array of regexes to match against in order to determine if a
+	 * field should be considered an ID field, in order of precedence.
+	 *
+	 * @return array
+	 * @author Anthony Bush
+	 **/
+	public function getIdRegex(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		$idRegex = $this->getConfigValue('field_settings/id_regex', $dbName, $tableName);
+		if (!is_array($idRegex)) {
+			$idRegex = array($idRegex);
+		}
+		return $idRegex;
 	}
 	
 	/**

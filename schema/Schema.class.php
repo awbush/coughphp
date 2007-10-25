@@ -108,7 +108,7 @@ class Schema {
 					
 					// 1. The local table can pull a "has one" relationship to the reference table
 					
-					$hasOne = new SchemaRelationship();
+					$hasOne = new SchemaRelationshipHasOne();
 					$hasOne->setRefTable($refTable);
 					$hasOne->setRefObjectName($refObjectName);
 					$hasOne->setRefKey($refKey);
@@ -120,7 +120,7 @@ class Schema {
 					
 					// 2. The reference table can pull a "has many" relationship to the local table
 					
-					$hasMany = new SchemaRelationship();
+					$hasMany = new SchemaRelationshipHasMany();
 					$hasMany->setRefTable($table);
 					$hasMany->setRefObjectName($localObjectName);
 					$hasMany->setRefKey($localKey);
@@ -129,6 +129,10 @@ class Schema {
 					$hasMany->setLocalKey($refKey);
 					
 					$refTable->addHasManyRelationship($hasMany);
+					
+					// Link the has one and has many together
+					$hasOne->setHasManyRelationship($hasMany);
+					$hasMany->setHasOneRelationship($hasOne);
 					
 					// Set the FK as linked so we don't link it up again.
 					$fk->setIsLinked(true);

@@ -74,11 +74,9 @@ class SchemaManipulator {
 	 * Scans the schema and manipulates it by detecting FKs adding them to
 	 * tables.
 	 * 
-	 * It uses the id_regex config setting to find columns that might be FKs,
-	 * and uses match_table_name_prefixes to assist in locating a table that
-	 * matches the FK column name without it's id suffix (id_regex is used to
-	 * remove the suffix, just make sure it contains parenthesis around the
-	 * non-suffixed part, e.g. '/^(.*)_id$/').
+	 * It uses the id_to_tables_regex config setting to find columns that might
+	 * be FKs, and uses match_table_name_prefixes to assist in locating a table
+	 * that matches the FK column name.
 	 *
 	 * @return void
 	 * @author Anthony Bush
@@ -92,8 +90,8 @@ class SchemaManipulator {
 		{
 			foreach ($database->getTables() as $table)
 			{
-				// Get the per database/table setting for id_regex
-				$idRegex = $this->config->getIdRegex($table);
+				// Get the per database/table setting for id_to_tables_regex
+				$idToTableRegexes = $this->config->getIdToTableRegex($table);
 				
 				// Loop through the table's columns and setup an FK for any ID matches.
 				foreach ($table->getColumns() as $column)
@@ -105,44 +103,55 @@ class SchemaManipulator {
 					}
 					
 					// If the ID matches, scan the table suggested by the parsed value
-					// from the id_regex and the other config settings
+					// from the id_to_tables_regex and the other config settings
 					$matches = array();
-					if (preg_match($idRegex, $column->getColumnName(), $matches))
-					{
-						$refTable = $this->findTable($matches[1], $database);
-						
-						// Add the foreign key
-						if (!is_null($refTable) && count($refTable->getPrimaryKey()) == 1)
-						{
-							$refDatabaseName = $refTable->getDatabase()->getDatabaseName();
-							
-							$fk = new SchemaForeignKey();
-							$fk->setLocalKeyName(array($column->getColumnName()));
-							$fk->setRefTableName($refTable->getTableName());
-							
-							// Downgrade the ref primary key to an array of column names (no references to the objects)
-							$refKeyName = array();
-							foreach ($refTable->getPrimaryKey() as $pkColumn) {
-								$refKeyName[] = $pkColumn->getColumnName();
-							}
-							
-							$fk->setRefKeyName($refKeyName);
-							
-							if ($refDatabaseName != $database->getDatabaseName()) {
-								$fk->setRefDatabaseName($refDatabaseName);
-							}
-							
-							if ($this->verbose) {
-								echo 'Detected FK by name';
-								if ($table->foreignKeyExists($fk)) {
-									echo ' (which is already set up)';
-								}
-								echo ': ' . $table->getTableName() . ' (' . $column->getColumnName()
-									. ') => ' . $refTable->getTableName() . ' (' . implode(',', $refKeyName) . ')' . "\n";
-							}
-							
-							$table->addForeignKey($fk);
+					
+					foreach ($idToTableRegexes as $idToTableRegex) {
+						if (!preg_match($idToTableRegex, $column->getColumnName(), $matches)) {
+							continue;
 						}
+						
+						if (isset($matches[1]))
+						{
+							$refTable = $this->findTable($matches[1], $database);
+
+							// Add the foreign key
+							if (!is_null($refTable) && count($refTable->getPrimaryKey()) == 1)
+							{
+								$refDatabaseName = $refTable->getDatabase()->getDatabaseName();
+
+								$fk = new SchemaForeignKey();
+								$fk->setLocalKeyName(array($column->getColumnName()));
+								$fk->setRefTableName($refTable->getTableName());
+
+								// Downgrade the ref primary key to an array of column names (no references to the objects)
+								$refKeyName = array();
+								foreach ($refTable->getPrimaryKey() as $pkColumn) {
+									$refKeyName[] = $pkColumn->getColumnName();
+								}
+
+								$fk->setRefKeyName($refKeyName);
+
+								if ($refDatabaseName != $database->getDatabaseName()) {
+									$fk->setRefDatabaseName($refDatabaseName);
+								}
+
+								if ($this->verbose) {
+									echo 'Detected FK by name';
+									if ($table->foreignKeyExists($fk)) {
+										echo ' (which is already set up)';
+									}
+									echo ': ' . $table->getTableName() . ' (' . $column->getColumnName()
+										. ') => ' . $refTable->getTableName() . ' (' . implode(',', $refKeyName) . ')' . "\n";
+								}
+
+								$table->addForeignKey($fk);
+								
+								// Stop looping through idToTableRegexes because we found a match.
+								break;
+							}
+						}
+						
 					}
 					
 				}

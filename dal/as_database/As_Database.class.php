@@ -521,7 +521,7 @@ class As_Database {
 				break;
 		}
 		
-		throw new Exception('As_Database Error [' . $type . ']: ' . $sqlError);
+		throw new Exception('As_Database Error [' . $type . ']: ' . $sqlError . ' -- QUERY: ' . $sql);
 	}
 
 	public function getQuery() {

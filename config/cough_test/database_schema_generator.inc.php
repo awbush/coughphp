@@ -34,7 +34,7 @@ $config = array(
 	'field_settings' => array(
 		// In case of non FK detection, you can have the Database Schema Generator check for ID columns matching this regex.
 		// This is useful, for example, when no FK relationships set up)
-		'id_regex' => '/^(.*)_id$/',
+		'id_to_tables_regex' => '/^(.*)_id$/',
 		'delete_flag_column' => 'is_retired',
 		'delete_flag_value' => '1',
 	),

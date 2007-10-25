@@ -929,111 +929,7 @@ abstract class CoughObject {
 	// ----------------------------------------------------------------------------------------------
 	// object database methods / collection handling methods block ENDS
 	// ----------------------------------------------------------------------------------------------
-	
-	/**
-	 * Calls the load method for the given object name.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function loadObject($objectName) {
-		$loadMethod = 'load' . self::titleCase($objectName) . '_Object';
-		$this->$loadMethod();
-	}
-	
-	/**
-	 * Tells whether or not the given object name has been loaded.
-	 *
-	 * @return boolean
-	 * @author Anthony Bush
-	 * @todo Determine whether we need to switch to array_key_exists here. Depends on whether we set the value to null (in which case yes) or an empty object (in which case no) when the object is loaded, but not found in the database.
-	 **/
-	protected function isObjectLoaded($objectName) {
-		return isset($this->objects[$objectName]);
-	}
-	
-	/**
-	 * Returns the specified object for use (raw get).
-	 *
-	 * @param $objectName - the name of the object to get
-	 * @return CoughObject - the requested object
-	 * @author Anthony Bush
-	 **/
-	protected function getObject($objectName) {
-		if ( ! $this->isObjectLoaded($objectName)) {
-			$this->loadObject($objectName);
-		}
-		return $this->objects[$objectName];
-	}
-	
-	/**
-	 * Sets the object reference in memory (raw set).
-	 * 
-	 * This has no effect on the database. For example:
-	 * 
-	 *     $order->setCustomer($customer);
-	 * 
-	 * will not change the customer_id on the order. It is simply a way to pass
-	 * in pre-instantiated objects so that they do not have to be looked up in
-	 * the database.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function setObject($objectName, $object) {
-		if (isset($this->objectDefinitions[$objectName])) {
-			$this->objects[$objectName] = $object;
-		}
-	}
-	
-	/**
-	 * Calls the load method for the given collection name.
-	 *
-	 * @param string $collectionName - the name of the collection to load
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function loadCollection($collectionName) {
-		$loadMethod = 'load' . self::titleCase($collectionName) . '_Collection';
-		$this->$loadMethod();
-	}
-	
-	/**
-	 * Tells whether or not the given collection name has been loaded.
-	 *
-	 * @return boolean
-	 * @author Anthony Bush
-	 **/
-	protected function isCollectionLoaded($collectionName) {
-		return isset($this->collections[$collectionName]);
-	}
-	
-	/**
-	 * Returns the specified collection for use.
-	 *
-	 * @param $collectionName - the name of the collection to get
-	 * @return CoughCollection - the requested collection object
-	 * @author Anthony Bush
-	 **/
-	protected function getCollection($collectionName) {
-		if ( ! $this->isCollectionLoaded($collectionName)) {
-			$this->loadCollection($collectionName);
-		}
-		return $this->collections[$collectionName];
-	}
-	
-	/**
-	 * Sets the object reference in memory (raw set).
-	 *
-	 * @param $collectionName - the name of the collection to set
-	 * @param $collection - the value to set it to
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function setCollection($collectionName, $collection) {
-		$this->collections[$collectionName] = $collection;
-	}
-	
+		
 	/**
 	 * Validates data stored in the model. It is called automatically by `save`,
 	 * which will return false if this function sets any errors.
@@ -1176,9 +1072,9 @@ abstract class CoughObject {
 						$this->setDerivedField($fieldName, $fieldValue);
 					} else if (($pos = strpos($fieldName, '.')) !== false) {
 						// join data
-						$joinTableName = substr($fieldName, 0, $pos);
+						$joinObjectName = substr($fieldName, 0, $pos);
 						$joinFieldName = substr($fieldName, $pos + 1);
-						$joins[$joinTableName][$joinFieldName] = $fieldValue;
+						$joins[$joinObjectName][$joinFieldName] = $fieldValue;
 					}
 				}
 
@@ -1186,8 +1082,8 @@ abstract class CoughObject {
 				$this->isNew = false;
 
 				// Construct objects using any join data passed in...
-				foreach ($joins as $joinTableName => $joinFields) {
-					$this->inflateObject($joinTableName, $joinFields, $joins);
+				foreach ($joins as $joinObjectName => $joinFields) {
+					$this->inflateObject($joinObjectName, $joinFields, $joins);
 				}
 			}
 		} else if ($fieldsOrId != '') {
@@ -1208,11 +1104,8 @@ abstract class CoughObject {
 		
 		// Set related entities that were passed in
 		foreach ($relatedEntities as $name => $value) {
-			if ($value instanceof CoughObject) {
-				$this->setObject($name, $value);
-			} else if ($value instanceof CoughCollection) {
-				$this->setCollection($name, $value);
-			}
+			$setMethod = 'set' . $name;
+			$this->$setMethod($value);
 		}
 		
 	}
@@ -1226,11 +1119,11 @@ abstract class CoughObject {
 				}
 			}
 			// set the related object
-			$this->setObject($objectName, call_user_func(array($this->objectDefinitions[$objectName]['class_name'], 'constructByFields'), $objectData));
+			$setMethod = 'set' . $objectName;
+			$this->$setMethod(call_user_func(array($this->objectDefinitions[$objectName]['class_name'], 'constructByFields'), $objectData));
 		}
 		
 	}
 }
-
 
 ?>

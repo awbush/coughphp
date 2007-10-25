@@ -41,7 +41,7 @@ DROP TABLE IF EXISTS `book`;
 CREATE TABLE `book` (
   `book_id` int(11) NOT NULL auto_increment,
   `title` varchar(255) NOT NULL,
-  `author_id` int(11) NOT NULL,
+  `author_id` int(11) NOT NULL default '0',
   `introduction` text NOT NULL,
   `last_modified_datetime` timestamp NULL default NULL on update CURRENT_TIMESTAMP,
   `creation_datetime` datetime NOT NULL,

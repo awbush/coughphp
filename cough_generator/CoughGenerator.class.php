@@ -159,24 +159,31 @@ class CoughGenerator {
 		// the default SELECT SQL to INNER JOIN to that relationship.
 		$selectSql = array('`' . $tableName . '`.*');
 		$innerJoins = array();
-		foreach ($table->getHasOneRelationships() as $hasOne) {
-			if (!$hasOne->isKeyNullable($hasOne->getLocalKey()) && !in_array($hasOne->getRefTable()->getTableName(), $excludeTableJoins)) {
+		foreach ($table->getHasOneRelationships() as $hasOne)
+		{
+			if (!$hasOne->isKeyNullable($hasOne->getLocalKey()) && !in_array($hasOne->getRefTable()->getTableName(), $excludeTableJoins))
+			{
 				$refDbName = $hasOne->getRefTable()->getDatabase()->getDatabaseName();
 				$refTableName = $hasOne->getRefTable()->getTableName();
 				$localKey = $hasOne->getLocalKey();
-
-				$joinOnSql = array();
-				foreach ($hasOne->getRefKey() as $index => $refColumn) {
-					$joinOnSql[] = '`' . $tableName . '`.`' . $localKey[$index]->getColumnName() . '` = `' . $refTableName . '`.`' . $refColumn->getColumnName() . '`';
-				}
 				
-				// Append to INNER JOIN SQL.
-				$innerJoins['`' . $refDbName . '`.`' . $refTableName . '`'] = $joinOnSql;
+				$refTableAliasName = $this->config->getForeignTableAliasName($hasOne);
+				$refObjectName = $this->config->getForeignObjectName($hasOne);
 
 				// Append to SELECT SQL.
 				foreach ($hasOne->getRefTable()->getColumns() as $columnName => $refColumn) {
-					$selectSql[] = '`' . $refTableName . '`.`' . $columnName . '` AS `' . $refTableName . '.' . $columnName . '`';
+					$selectSql[] = '`' . $refTableAliasName . '`.`' . $columnName . '` AS `' . $refObjectName . '.' . $columnName . '`';
 				}
+				
+				// Generate the INNER JOIN criteria
+				$joinOnSql = array();
+				foreach ($hasOne->getRefKey() as $index => $refColumn) {
+					$joinOnSql[] = '`' . $tableName . '`.`' . $localKey[$index]->getColumnName() . '` = `' . $refTableAliasName . '`.`' . $refColumn->getColumnName() . '`';
+				}
+				
+				// Append to INNER JOIN SQL using the INNER JOIN criteria
+				$innerJoins['`' . $refDbName . '`.`' . $refTableName . '` AS `' . $refTableAliasName . '`'] = $joinOnSql;
+
 			}
 		}
 		
@@ -186,8 +193,8 @@ class CoughGenerator {
 		     . $indent . "\t`$dbName`.`$tableName`";
 		
 		foreach ($innerJoins as $joinTable => $joinCriteria) {
-			$sql .= "\n" . $indent . "\tINNER JOIN $joinTable"
-			      . "\n" . $indent . "\t\tON " . implode("\n$indent\t\tAND ", $joinCriteria);
+			$sql .= "\n$indent\tINNER JOIN $joinTable"
+			      . "\n$indent\t\tON " . implode("\n$indent\t\tAND ", $joinCriteria);
 		}
 		
 		return $sql;
@@ -238,15 +245,11 @@ class CoughGenerator {
 		$objectDefinitions = array();
 		foreach ($table->getHasOneRelationships() as $hasOne) {
 			$objectClassName = $this->config->getStarterObjectClassName($hasOne->getRefTable());
-			
-			// Get the object name
-			$objectName = $hasOne->getRefObjectName();
-			
-			// Get the title case name
-			$objectTitleCase = $this->config->getTitleCase($objectName);
+			$entityName = $this->config->getForeignTableAliasName($hasOne); // e.g. 'billing_address'
+			$objectName = $this->config->getForeignObjectName($hasOne); // e.g. 'BillingAddress_Object'
 			
 			// Get the local variable name
-			$localVarName = $this->config->getCamelCase($hasOne->getRefTableName()); //'object';
+			$localVarName = $this->config->getCamelCase($entityName); // e.g. 'billingAddress';
 			if ($localVarName == 'this') {
 				// avoid naming conflict by renaming a "this" object name to "object"
 				$localVarName = 'object';
@@ -255,24 +258,27 @@ class CoughGenerator {
 			$localKey = $hasOne->getLocalKey();
 			
 			$objectDefinitions[] = "\n\t\t'" . $objectName . "' => array("
-			                     . "\n\t\t\t'class_name' => '" . $this->config->getStarterObjectClassName($hasOne->getRefTable()) . "'\n\t\t),";
+			                     . "\n\t\t\t'class_name' => '" . $objectClassName . "'\n\t\t),";
 			
 ?>
-	public function load<?php echo $objectTitleCase ?>_Object() {
+	public function load<?php echo $objectName ?>() {
 		$<?php echo $localVarName ?> = <?php echo $objectClassName ?>::constructByKey(array(
 <?php foreach ($hasOne->getRefKey() as $key => $column): ?>
 			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
 <?php endforeach; ?>
 		));
-		$this->set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>);
+		$this->set<?php echo $objectName ?>($<?php echo $localVarName ?>);
 	}
 	
-	public function get<?php echo $objectTitleCase ?>_Object() {
-		return $this->getObject('<?php echo $hasOne->getRefObjectName() ?>');
+	public function get<?php echo $objectName ?>() {
+		if (!isset($this->objects['<?php echo $objectName ?>'])) {
+			$this->load<?php echo $objectName ?>();
+		}
+		return $this->objects['<?php echo $objectName ?>'];
 	}
 	
-	public function set<?php echo $objectTitleCase ?>_Object($<?php echo $localVarName ?>) {
-		$this->setObject('<?php echo $objectName ?>', $<?php echo $localVarName ?>);
+	public function set<?php echo $objectName ?>($<?php echo $localVarName ?>) {
+		$this->objects['<?php echo $objectName ?>'] = $<?php echo $localVarName ?>;
 	}
 	
 <?php
@@ -290,50 +296,58 @@ class CoughGenerator {
 		ob_start();
 		$notifyCollections = array(); // store generated foreachs for the `notifyChildrenOfKeyChange()` method we will be generating.
 		foreach ($table->getHasManyRelationships() as $hasMany) {
-			$objectTitleCase = $this->config->getTitleCase($hasMany->getRefObjectName());
-			$objectCamelCase = $this->config->getCamelCase($hasMany->getRefObjectName());
-			$objectClassName = $this->config->getStarterObjectClassName($hasMany->getRefTable());
-			$collectionClassName = $this->config->getStarterCollectionClassName($hasMany->getRefTable());
+			
+			$localCollectionName = $this->config->getForeignCollectionName($hasMany, $table->getHasManyRelationships()); // e.g. WflTicket_Collection_ByBillingAddressId
+			$localCollectionClassName = $this->config->getStarterCollectionClassName($hasMany->getRefTable()); // e.g. usr_WflTicket_Collection
+			
+			// Some debug....
+			// echo 'Generating ' . $baseObjectClassName . "<br />\n";
+			// echo 'Ref Table Name: ' . $hasMany->getRefTable()->getTableName() . "<br />\n";
+			// echo 'Local Table Name: ' . $hasMany->getLocalTable()->getTableName() . "<br />\n";
+			// echo 'Ref Keys: ';
+			// foreach ($hasMany->getRefKey() as $column) {
+			// 	echo $column->getColumnName() . ',';
+			// }
+			// echo "<br />\n";
+			// echo 'Local Keys: ';
+			// foreach ($hasMany->getLocalKey() as $column) {
+			// 	echo $column->getColumnName() . ',';
+			// }
+			// echo "<br />\n";
+			// echo 'Local collection name: ' . $localCollectionName . "<br />\n";
+			// echo 'Local collection class name: ' . $localCollectionClassName . "<br />\n";
+			// die();
+			
+			// 2007-10-24/AWB: TODO: make this better
+			$shouldGenerateAddersAndRemovers = true;
+			if (strpos('_By', $localCollectionName) !== false) {
+				$shouldGenerateAddersAndRemovers = false;
+			}
+			
+			$refEntityName = $this->config->getEntityName($hasMany->getRefTable()); // e.g. wfl_ticket
+			$refObjectTitleCase = $this->config->getTitleCase($refEntityName); // e.g. WflTicket
+			$refObjectCamelCase = $this->config->getCamelCase($refEntityName); // e.g. wflTicket
+			$refObjectClassName = $this->config->getStarterObjectClassName($hasMany->getRefTable()); // e.g. usr_WflTicket
+			
 			$localKey = $hasMany->getLocalKey();
 			$refKey = $hasMany->getRefKey();
-			$refTableName = $hasMany->getRefTable()->getTableName();
 			
-			$notifySql = "\t\tforeach (\$this->get" . $objectTitleCase . "_Collection() as \$" . $objectCamelCase . ") {\n";
+			$refObjectName = $this->config->getForeignObjectName($hasMany->getHasOneRelationship()); // e.g. BillingAddress_Object
+			$refTableAliasName = $hasMany->getRefTable()->getTableName(); // $this->config->getForeignTableAliasName($hasMany->getHasOneRelationship()); // e.g. billing_address
+			$localVarName = $refObjectCamelCase . 'Collection';
+			
+			$notifySql = "\t\tforeach (\$this->get" . $localCollectionName . "() as \$" . $refObjectCamelCase . ") {\n";
 			foreach ($refKey as $key => $column) {
 				$setter = 'set' . $this->config->getTitleCase($column->getColumnName());
-				$notifySql .= "\t\t\t\$" . $objectCamelCase . "->" . $setter . "(\$key['" . $localKey[$key]->getColumnName() . "']);\n";
+				$notifySql .= "\t\t\t\$" . $refObjectCamelCase . "->" . $setter . "(\$key['" . $localKey[$key]->getColumnName() . "']);\n";
 			}
 			$notifySql .= "\t\t}";
 			$notifyCollections[] = $notifySql;
 			
-			// Get the reference object name that will be used get*_Object,
-			// set*_Object, load*_Object on the related objects.
-			// e.g. if the current table we are generating for is order and has
-			// a relation to order_line table via order_foo_id then
-			// `$referralNameTitleCase` will hold OrderFoo and not Order.
-			if (count($localKey) > 1) {
-				// More than 1 key to make up the PK means we have to refer to
-				// the object on the remote side using the local object name
-				// instead of the remote_fk_id columns
-				$referralName = $hasMany->getLocalObjectName();
-			} else {
-				// Only 1 key, use the "id" field to determine an appropriate
-				// object name. If one can not be found, use the same one as in
-				// the above case.
-				$referralName = $this->config->convertIdToObjectName($hasMany->getRefTable(), $refKey[0]->getColumnName());
-				if (!$referralName) {
-					$referralName = $hasMany->getLocalObjectName();
-				}
-			}
-			$referralNameTitleCase = $this->config->getTitleCase($referralName);
-
-			// TODO: is `$localVarName` used?
-			$localVarName = $this->config->getCamelCase($hasMany->getRefTableName());
-
 			// Generate the criteria / WHERE clause information for loading the related object.
 			$criteria = array();
 			foreach ($refKey as $key => $column) {
-				$criteria[] = '`' . $refTableName . '`.`' . $column->getColumnName() . '` = \' . $this->db->quote($this->get'
+				$criteria[] = '`' . $refTableAliasName . '`.`' . $column->getColumnName() . '` = \' . $this->db->quote($this->get'
 				            . $this->config->getTitleCase($localKey[$key]->getColumnName()) . '()) . \'';
 			}
 
@@ -343,11 +357,11 @@ class CoughGenerator {
 				$loadSql .= "\n\t\t\t\tWHERE\n\t\t\t\t\t" . implode("\n\t\t\t\t\t", $criteria);
 			}
 ?>
-	public function load<?php echo $objectTitleCase ?>_Collection() {
+	public function load<?php echo $localCollectionName ?>() {
 		
 		// Always create the collection
-		$collection = new <?php echo $collectionClassName ?>();
-		$this->set<?php echo $objectTitleCase ?>_Collection($collection);
+		$collection = new <?php echo $localCollectionClassName ?>();
+		$this->set<?php echo $localCollectionName ?>($collection);
 		
 		// But only populate it if we have key ID
 		if ($this->hasKeyId()) {
@@ -356,20 +370,24 @@ class CoughGenerator {
 			// Construct and populate the collection
 			$collection->loadBySql($sql);
 			foreach ($collection as $element) {
-				$element->set<?php echo $referralNameTitleCase ?>_Object($this);
+				$element->set<?php echo $refObjectName ?>($this);
 			}
 		}
 	}
 	
-	public function get<?php echo $objectTitleCase ?>_Collection() {
-		return $this->getCollection('<?php echo $hasMany->getRefObjectName() ?>');
+	public function get<?php echo $localCollectionName ?>() {
+		if (!isset($this->collections['<?php echo $localCollectionName ?>'])) {
+			$this->load<?php echo $localCollectionName ?>();
+		}
+		return $this->collections['<?php echo $localCollectionName ?>'];
 	}
 	
-	public function set<?php echo $objectTitleCase ?>_Collection($<?php echo $localVarName ?>) {
-		$this->setCollection('<?php echo $hasMany->getRefObjectName() ?>', $<?php echo $localVarName ?>);
+	public function set<?php echo $localCollectionName ?>($<?php echo $localVarName ?>) {
+		$this->collections['<?php echo $localCollectionName ?>'] = $<?php echo $localVarName ?>;
 	}
 	
-	public function add<?php echo $objectTitleCase ?>(<?php echo $objectClassName ?> $object) {
+<?php if ($shouldGenerateAddersAndRemovers): ?>
+	public function add<?php echo $refObjectTitleCase ?>(<?php echo $refObjectClassName ?> $object) {
 <?php
 foreach ($hasMany->getRefKey() as $key => $column) {
 	$setReferenceIdMethod = 'set' . $this->config->getTitleCase($column->getColumnName());
@@ -379,20 +397,21 @@ foreach ($hasMany->getRefKey() as $key => $column) {
 <?php
 }
 ?>
-		$object->set<?php echo $referralNameTitleCase ?>_Object($this);
-		$this->get<?php echo $objectTitleCase ?>_Collection()->add($object);
+		$object->set<?php echo $refObjectName ?>($this);
+		$this->get<?php echo $localCollectionName ?>()->add($object);
 		return $object;
 	}
 	
-	public function remove<?php echo $objectTitleCase ?>($objectOrId) {
-		$removedObject = $this->get<?php echo $objectTitleCase ?>_Collection()->remove($objectOrId);
+	public function remove<?php echo $refObjectTitleCase ?>($objectOrId) {
+		$removedObject = $this->get<?php echo $localCollectionName ?>()->remove($objectOrId);
 <?php foreach ($hasMany->getRefKey() as $key => $column): ?>
-		$removedObject->set<?php echo $this->config->getTitleCase($column->getColumnName()) ?>(null);
+		$removedObject->set<?php echo $this->config->getTitleCase($column->getColumnName()) ?>(<?php echo $this->getDefaultValueStringForColumn($column) ?>);
 <?php endforeach; ?>
-		$removedObject->set<?php echo $referralNameTitleCase ?>_Object(null);
+		$removedObject->set<?php echo $refObjectName ?>(null);
 		return $removedObject;
 	}
 	
+<?php endif; ?>
 <?php
 		}
 		$oneToManyMethods = ob_get_clean();
@@ -447,7 +466,7 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 	
 	protected $fields = array(
 <?php foreach ($table->getColumns() as $columnName => $column): ?>
-		'<?php echo $columnName ?>' => <?php echo $this->getStringFromPhpValue($column->getDefaultValue()) ?>,
+		'<?php echo $columnName ?>' => <?php echo $this->getDefaultValueStringForColumn($column) ?>,
 <?php endforeach; ?>
 	);
 	
@@ -456,7 +475,7 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 		'<?php echo $columnName ?>' => array(
 			'db_column_name' => '<?php echo $columnName ?>',
 			'is_null_allowed' => <?php echo $this->getStringFromPhpValue($column->isNullAllowed()) ?>,
-			'default_value' => <?php echo $this->getStringFromPhpValue($column->getDefaultValue()) . "\n" ?>
+			'default_value' => <?php echo $this->getDefaultValueStringForColumn($column) . "\n" ?>
 		),
 <?php endforeach; ?>
 	);
@@ -716,6 +735,21 @@ class <?php echo $starterCollectionClassName ?> extends <?php echo $baseCollecti
 			return 'true';
 		} else {
 			return '"' . addslashes($phpValue) . '"';
+		}
+	}
+	
+	private function getDefaultValueStringForColumn(SchemaColumn $column) {
+		$defaultValue = $column->getDefaultValue();
+		if (in_array(strtolower($column->getType()), array('int', 'tinyint'))) {
+			if ($defaultValue === null) {
+				return 'null';
+			} else if (strlen($defaultValue) == 0) {
+				return '""';
+			} else {
+				return $defaultValue;
+			}
+		} else {
+			return $this->getStringFromPhpValue($defaultValue);
 		}
 	}
 	

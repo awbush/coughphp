@@ -32,7 +32,7 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 			'field_settings' => array(
 				// In case of non FK detection, you can have the Database Schema Generator check for ID columns matching this regex.
 				// This is useful, for example, when no FK relationships set up)
-				'id_regex' => '/^(.*)_id$/',
+				'id_to_tables_regex' => '/^(.*)_id$/',
 			),
 
 			// Now, we can override the global config on a per database level.
@@ -46,7 +46,7 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 			// 		'tables' => array(
 			// 			'table_name' => array(
 			// 				'field_settings' => array(
-			// 					'id_regex' => '/^(.*)_id$/',
+			// 					'id_to_tables_regex' => '/^(.*)_id$/',
 			// 				),
 			// 			),
 			// 		),
@@ -59,10 +59,22 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 		return $this->config['dsn'];
 	}
 	
-	public function getIdRegex(SchemaTable $table) {
+	/**
+	 * Returns an array of regexes to match against in order to determine if a
+	 * field can be mapped to a table name, in order of precedence.
+	 *
+	 * @return array
+	 * @author Anthony Bush
+	 **/
+	public function getIdToTableRegex(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		return $this->getConfigValue('field_settings/id_regex', $dbName, $tableName);
+		$regexes = $this->getConfigValue('field_settings/id_to_tables_regex', $dbName, $tableName);
+		if (!is_array($regexes)) {
+			return array($regexes);
+		} else {
+			return $regexes;
+		}
 	}
 	
 	public function getTableNamePrefixes(SchemaDatabase $database) {

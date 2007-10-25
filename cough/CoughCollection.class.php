@@ -289,8 +289,17 @@ abstract class CoughCollection extends ArrayObject {
 		if ($object->hasKeyId()) {
 			$this->offsetSet($object->getKeyId(), $object);
 		} else {
-			$this->append($object);
+			// Fails anonymousSave unit test:
+			// $this->append($object);
+			// so we have to make up a key that won't conflict
+			$this->offsetSet(CoughCollection::getUniqueKey(), $object);
 		}
+	}
+	
+	public static function getUniqueKey() {
+		static $count = 0;
+		++$count;
+		return 'NULL_KEY_' . $count;
 	}
 	
 	/**

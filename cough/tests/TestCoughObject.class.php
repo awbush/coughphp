@@ -322,7 +322,7 @@ class TestCoughObject extends UnitTestCase
 		
 		$murakami->addBook($windup);
 		$booksByMurakami = $murakami->getBook_Collection();
-		$this->assertReference($booksByMurakami->get(0), $windup);
+		$this->assertReference($booksByMurakami->getPosition(0), $windup);
 		
 		$murakami->save();
 		
@@ -349,7 +349,7 @@ class TestCoughObject extends UnitTestCase
 		
 		$heinlein->addBook($stranger);
 		$booksByHeinlein = $heinlein->getBook_Collection();
-		$this->assertReference($booksByHeinlein->get(0), $stranger);
+		$this->assertReference($booksByHeinlein->getPosition(0), $stranger);
 		
 		$heinlein->save();
 		
@@ -361,8 +361,6 @@ class TestCoughObject extends UnitTestCase
 		$heinlein->removeBook($stranger->getBookId());
 		$this->assertTrue($heinlein->getBook_Collection()->isEmpty());
 		
-		// removeObject arbitrarily sets the author id to NULL instead of the default
-		// value of int(0); is this the desired behavior?
 		$this->assertIdentical($stranger->getAuthorId(), 0);
 		$this->assertEqual($stranger->getAuthorId(), 0);
 		

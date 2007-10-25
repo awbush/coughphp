@@ -33,9 +33,9 @@ $config = array(
 	
 	'field_settings' => array(
 		// In case of non FK detection, you can have the Database Schema Generator check for ID columns matching this regex.
-		// This is useful, for example, when no FK relationships set up)
-		'id_regex' => '/^(.*)_id$/',
-		'id_index' => 1, // the index to access in the id_regex in order to get the table to look for, e.g. customer_id -> customer or default_billing_address_id => address (using /^)
+		// This is useful, for example, when no FK relationships set up). The first parenthesis match will be used to search
+		// for tables
+		'id_to_table_regex' => array('/^(.*)_id/', '/^parent_(.*)_id$/', '/^billing_(.*)_id$/', '/^shipping_(.*)_id$/'),
 	),
 	
 	'databases' => array(
