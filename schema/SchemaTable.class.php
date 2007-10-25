@@ -131,7 +131,7 @@ class SchemaTable {
 	 * @see $foreignKeys
 	 **/
 	public function addForeignKey(SchemaForeignKey $foreignKey) {
-		if (!$this->foreignKeyExists($foreignKey)) {
+		if (!$this->hasForeignKey($foreignKey)) {
 			$this->foreignKeys[] = $foreignKey;
 		}
 	}
@@ -143,13 +143,29 @@ class SchemaTable {
 	 * @return bool - true if the specified foreign key already exists, false if not
 	 * @author Anthony Bush
 	 **/
-	public function foreignKeyExists(SchemaForeignKey $foreignKeyNeedle) {
+	public function hasForeignKey(SchemaForeignKey $foreignKeyNeedle) {
 		foreach ($this->foreignKeys as $foreignKey) {
 			if ($foreignKey->getLocalKeyName() == $foreignKeyNeedle->getLocalKeyName()) {
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns the existing foreign key (with same local key name) if one
+	 * exists, otherwise returns null.
+	 *
+	 * @return mixed - SchemaForeignKey if found, null if not.
+	 * @author Anthony Bush
+	 **/
+	public function getForeignKey(SchemaForeignKey $foreignKeyNeedle) {
+		foreach ($this->foreignKeys as $foreignKey) {
+			if ($foreignKey->getLocalKeyName() == $foreignKeyNeedle->getLocalKeyName()) {
+				return $foreignKey;
+			}
+		}
+		return null;
 	}
 
 	public function addHasOneRelationship($hasOneRelationship) {

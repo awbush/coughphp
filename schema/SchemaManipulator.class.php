@@ -138,7 +138,7 @@ class SchemaManipulator {
 
 								if ($this->verbose) {
 									echo 'Detected FK by name';
-									if ($table->foreignKeyExists($fk)) {
+									if ($table->hasForeignKey($fk)) {
 										echo ' (which is already set up)';
 									}
 									echo ': ' . $table->getTableName() . ' (' . $column->getColumnName()

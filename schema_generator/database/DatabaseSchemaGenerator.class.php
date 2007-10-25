@@ -149,7 +149,7 @@ class DatabaseSchemaGenerator extends SchemaGenerator {
 		$schema = $this->getSchema();
 		$schema->linkRelationships();
 		
-		return $this->getSchema();
+		return $schema;
 	}
 	
 	/**
