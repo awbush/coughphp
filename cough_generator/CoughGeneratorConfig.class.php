@@ -91,28 +91,24 @@ class CoughGeneratorConfig extends CoughConfig {
 		$tableNameWithoutPrefix = $tableName;
 		foreach ($prefixes as $prefix) {
 			if (substr($tableName, 0, strlen($prefix)) == $prefix) {
-				$tableNameWithoutPrefix = substr($tableName, strlen($prefix) - 1);
+				$tableNameWithoutPrefix = substr($tableName, strlen($prefix));
 				break;
 			}
 		}
 		return $tableNameWithoutPrefix;
 	}
 	
-	public function getClassFileName(CoughClass $class) {
-		$dbName = $class->getDatabaseName();
-		$tableName = $class->getTableName();
-		
-		// Get file path
+	public function getClassFilePath(CoughClass $class) {
 		if ($class->isStarterClass()) {
-			$filePath = $this->getConfigValue('paths/starter_classes', $dbName, $tableName);
+			return $this->getConfigValue('paths/starter_classes', $class->getDatabaseName(), $class->getTableName());
 		} else {
-			$filePath = $this->getConfigValue('paths/generated_classes', $dbName, $tableName);
+			return $this->getConfigValue('paths/generated_classes', $class->getDatabaseName(), $class->getTableName());
 		}
-		
-		// Get file suffix
-		$fileSuffix = $this->getConfigValue('paths/file_suffix', $dbName, $tableName);
-		
-		// Put it all together
+	}
+	
+	public function getClassFileName(CoughClass $class) {
+		$filePath = $this->getClassFilePath($class);
+		$fileSuffix = $this->getConfigValue('paths/file_suffix', $class->getDatabaseName(), $class->getTableName());
 		return $filePath . $class->getClassName() . $fileSuffix;
 	}
 	
@@ -277,7 +273,9 @@ class CoughGeneratorConfig extends CoughConfig {
 		}
 		
 		// Add the remote field name to the base name
-		return $baseName . '_By' . $this->getTitleCase($refKey[0]->getColumName());
+		$value = $baseName . '_By' . $this->getTitleCase($refKey[0]->getColumnName());
+		echo $value . "\n";
+		return $value;
 	}
 	
 	/**

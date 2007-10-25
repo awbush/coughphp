@@ -35,7 +35,7 @@ $config = array(
 		// In case of non FK detection, you can have the Database Schema Generator check for ID columns matching this regex.
 		// This is useful, for example, when no FK relationships set up). The first parenthesis match will be used to search
 		// for tables
-		'id_to_table_regex' => array('/^(.*)_id/', '/^parent_(.*)_id$/', '/^billing_(.*)_id$/', '/^shipping_(.*)_id$/'),
+		'id_to_table_regex' => array('/^parent_(.*)_id$/', '/^billing_(.*)_id$/', '/^shipping_(.*)_id$/', '/^(.*)_id/'),
 	),
 	
 	'databases' => array(
@@ -44,6 +44,15 @@ $config = array(
 		'inventory' => array(),
 		'superstore' => array(),
 		'user' => array(
+			
+			// Override some ignore table settings for the user database.
+			'table_settings' => array(
+				'match_table_name_prefixes' => array('cust_','wfl_','baof_','inv_'),
+				'ignore_tables_matching_regex' => '/(^(bak_|temp_))|((_bak)$|^(address)$)/',
+			),
+			
+			
+			
 			// I DON'T LIKE THIS IDEA:
 			// 'skip_unspecified_tables' => true, // This may be the solution to the problem mentioned below.
 

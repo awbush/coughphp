@@ -15,6 +15,7 @@ class SchemaManipulator {
 	 * @var boolean
 	 **/
 	protected $verbose = false;
+	protected $debug = false;
 	
 	/**
 	 * A reference to the schema to manipulate
@@ -74,7 +75,7 @@ class SchemaManipulator {
 	 * Scans the schema and manipulates it by detecting FKs adding them to
 	 * tables.
 	 * 
-	 * It uses the id_to_tables_regex config setting to find columns that might
+	 * It uses the id_to_table_regex config setting to find columns that might
 	 * be FKs, and uses match_table_name_prefixes to assist in locating a table
 	 * that matches the FK column name.
 	 *
@@ -90,7 +91,7 @@ class SchemaManipulator {
 		{
 			foreach ($database->getTables() as $table)
 			{
-				// Get the per database/table setting for id_to_tables_regex
+				// Get the per database/table setting for id_to_table_regex
 				$idToTableRegexes = $this->config->getIdToTableRegex($table);
 				
 				// Loop through the table's columns and setup an FK for any ID matches.
@@ -103,12 +104,18 @@ class SchemaManipulator {
 					}
 					
 					// If the ID matches, scan the table suggested by the parsed value
-					// from the id_to_tables_regex and the other config settings
+					// from the id_to_table_regex and the other config settings
 					$matches = array();
 					
 					foreach ($idToTableRegexes as $idToTableRegex) {
 						if (!preg_match($idToTableRegex, $column->getColumnName(), $matches)) {
+							if ($this->debug) {
+								echo "\tit_to_table_regex '$idToTableRegex' did not match " . $column->getColumnName() . "\n";
+							}
 							continue;
+						}
+						if ($this->debug) {
+							echo "\tit_to_table_regex '$idToTableRegex' matched " . $column->getColumnName() . "\n";
 						}
 						
 						if (isset($matches[1]))
@@ -141,8 +148,10 @@ class SchemaManipulator {
 									if ($table->hasForeignKey($fk)) {
 										echo ' (which is already set up)';
 									}
-									echo ': ' . $table->getTableName() . ' (' . $column->getColumnName()
-										. ') => ' . $refTable->getTableName() . ' (' . implode(',', $refKeyName) . ')' . "\n";
+									$dbName = $table->getDatabase()->getDatabaseName();
+									$refDbName = $refTable->getDatabase()->getDatabaseName();
+									echo ': ' . $dbName . '.' . $table->getTableName() . ' (' . $column->getColumnName()
+										. ') => ' . $refDbName . '.' . $refTable->getTableName() . ' (' . implode(',', $refKeyName) . ')' . "\n";
 								}
 
 								$table->addForeignKey($fk);

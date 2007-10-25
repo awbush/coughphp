@@ -1,0 +1,97 @@
+#!/usr/bin/php
+<?php
+
+try {
+	// Include the Cough generation classes
+	include_once(dirname(dirname(__FILE__)) . '/cough_generator/load.inc.php');
+	
+	// Which config to use?
+	if (!isset($_SERVER['argc'])) {
+		echo 'This script must be run from the command line.';
+		exit();
+	}
+	
+	function echo_usage() {
+		echo 'Pass at least one flag and one config_name, e.g. `./cough -g config_name`' . "\n";
+		echo 'Options:' . "\n";
+		echo "\t-g [--generate] generate for specified configs\n";
+		echo "\t-s [--status]   show status for specified configs\n";
+		echo "\t-v [--verbose]  enable verbose mode\n";
+	}
+	
+	// Parse arguments
+	$argCount = $_SERVER['argc'];
+	$args = $_SERVER['argv'];
+	switch ($argCount) {
+		case 0:
+		case 1:
+		case 2:
+			echo_usage();
+			exit();
+			break;
+		default:
+			$verbose = false;
+			$commands = array();
+			$configs = array();
+			for ($i = 1; $i < $argCount; $i++) {
+				if (in_array($args[$i], array('-v', '--verbose'))) {
+					$verbose = true;
+				} else if ($args[$i][0] == '-') {
+					$commands[] = $args[$i];
+				} else {
+					$configs[] = $args[$i];
+				}
+			}
+			break;
+	}
+	
+	// Quit if not enough info
+	if (empty($commands) || empty($configs)) {
+		echo_usage();
+		exit();
+	}
+	
+	// Process all commands
+	$facade = new CoughGeneratorFacade();
+	foreach ($commands as $command) {
+		switch ($command) {
+			case '--generate';
+			case '-g':
+				if ($verbose) {
+					$facade->enableVerbose();
+				} else {
+					$facade->disableVerbose();
+				}
+				foreach ($configs as $configName) {
+					$message = 'Generating for ' . $configName;
+					echo $message . "\n";
+					echo str_repeat('=', strlen($message)) . "\n";
+					$facade->generate($configName);
+				}
+				break;
+			case '--status':
+			case '-s':
+				if ($verbose) {
+					$facade->enableVerbose();
+				} else {
+					$facade->disableVerbose();
+				}
+				foreach ($configs as $configName) {
+					$message = 'Showing status for ' . $configName;
+					echo $message . "\n";
+					echo str_repeat('=', strlen($message)) . "\n";
+					$facade->showStatus($configName);
+				}
+				break;
+			default:
+				echo 'Un-recognized command: ' . $command . "\n";
+				break;
+		}
+	}
+	
+	
+} catch (Exception $e) {
+	echo $e->getMessage() . "\n";
+}
+
+?>

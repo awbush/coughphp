@@ -10,6 +10,7 @@ include('CoughClass.class.php');
 include('CoughConfig.class.php');
 include('CoughGenerator.class.php');
 include('CoughGeneratorConfig.class.php');
+include('CoughGeneratorFacade.class.php');
 include('CoughWriter.class.php');
 
 // Load the core schema generation classes
