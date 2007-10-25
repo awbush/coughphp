@@ -289,14 +289,18 @@ abstract class CoughCollection extends ArrayObject {
 		if ($object->hasKeyId()) {
 			$this->offsetSet($object->getKeyId(), $object);
 		} else {
-			// Fails anonymousSave unit test:
-			// $this->append($object);
-			// so we have to make up a key that won't conflict
-			$this->offsetSet(CoughCollection::getUniqueKey(), $object);
+			$this->offsetSet(CoughCollection::getTemporaryKey(), $object);
 		}
 	}
 	
-	public static function getUniqueKey() {
+	/**
+	 * Returns a temporary key for adding an object that does not have a key ID
+	 * yet.
+	 *
+	 * @return string
+	 * @author Anthony Bush
+	 **/
+	protected static function getTemporaryKey() {
 		static $count = 0;
 		++$count;
 		return 'NULL_KEY_' . $count;
