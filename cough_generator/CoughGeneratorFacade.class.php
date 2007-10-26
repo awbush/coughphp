@@ -65,6 +65,15 @@ class CoughGeneratorFacade {
 	protected function generateFromConfigPath($configPath) {
 		
 		try {
+			if (!file_exists($configPath)) {
+				echo 'Config path does not exist: ' . $configPath . "\n";
+				return;
+			}
+			if (!is_dir($configPath)) {
+				echo 'Config path is not a directory: ' . $configPath . "\n";
+				return;
+			}
+			
 			// Which config to use?
 			$schemaGeneratorConfigFile = $configPath . 'database_schema_generator.inc.php';
 			$coughGeneratorConfigFile  = $configPath . 'cough_generator.inc.php';
