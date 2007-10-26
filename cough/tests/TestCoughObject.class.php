@@ -20,6 +20,7 @@ class TestCoughObject extends UnitTestCase
 		$this->setUpDatabase();
 		$this->initializeDatabase();
 		$this->resetCoughTestDatabase();
+		$this->generateCoughTestClasses();
 		$this->includeCoughTestClasses();
 	}
 	
@@ -48,7 +49,7 @@ class TestCoughObject extends UnitTestCase
 	public function initializeDatabase()
 	{
 		// We have to run this sql dump one query at a time
-		$this->coughTestDbResetSql = explode(';', file_get_contents(dirname(__FILE__) . '/test_cough_object.sql'));
+		$this->coughTestDbResetSql = explode(';', file_get_contents(dirname(__FILE__) . '/config/db_setup.sql'));
 		
 		// the last element is a blank string, so get rid of it
 		array_pop($this->coughTestDbResetSql);
@@ -60,9 +61,19 @@ class TestCoughObject extends UnitTestCase
 		require_once(dirname(dirname(dirname(__FILE__))) . '/load.inc.php');
 	}
 	
+	public function generateCoughTestClasses()
+	{
+		// include the CoughGenerator
+		require_once(dirname(dirname(dirname(__FILE__))) . '/cough_generator/load.inc.php');
+		ob_start();
+		$facade = new CoughGeneratorFacade();
+		$facade->generate(dirname(__FILE__) . '/config/');
+		ob_end_clean();
+	}
+	
 	public function includeCoughTestClasses()
 	{
-		$classPath = dirname(dirname(dirname(__FILE__))) . '/config/test_cough_object/output/';
+		$classPath = dirname(__FILE__) . '/config/output/';
 		// include Cough generated classes
 		foreach (glob($classPath . 'generated/*.php') as $filename) {
 			require_once($filename);
@@ -80,7 +91,34 @@ class TestCoughObject extends UnitTestCase
 	
 	public function tearDown()
 	{
-		$this->resetCoughTestDatabase();
+		$this->emptyCoughTestDatabase();
+		$this->removeGeneratedFiles();
+	}
+	
+	public function emptyCoughTestDatabase()
+	{
+		$sqlCommands = explode(';', file_get_contents(dirname(__FILE__) . '/config/db_teardown.sql'));
+		
+		// the last element is a blank string, so get rid of it
+		array_pop($sqlCommands);
+		
+		foreach ($sqlCommands as $sql) {
+			$this->db->execute($sql);
+		}
+	}
+	
+	public function removeGeneratedFiles()
+	{
+		$classPath = dirname(__FILE__) . '/config/output/';
+		// include Cough generated classes
+		foreach (glob($classPath . 'generated/*.php') as $filename) {
+			require_once($filename);
+		}
+		
+		// include Cough user classes
+		foreach (glob($classPath . 'concrete/*.php') as $filename) {
+			require_once($filename);
+		}
 	}
 
 	//////////////////////////////////////
