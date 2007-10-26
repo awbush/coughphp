@@ -467,11 +467,24 @@ class TestCoughObject extends UnitTestCase
 		// $this->dump($bookJoinsInTravis);
 		$this->assertEqual(count($bookJoinsInTravis), 2);
 		
-		// fails for same reason as next lines, but this shows what is different.
-		$mistmaches = $this->getFieldMismatches($bookJoinsInTravis->getPosition(0)->getBook_Object(), $book);
-		$this->assertTrue(empty($mistmaches), implode("\n", $mistmaches));
+		// This test is similar to the 4 that are commented out below, but this shows what is different
+		// AND it ignores the creation_datetime and last_modified_datetime differences b/c they are
+		// intentionally not autoloaded after a save. Just manually call load() after save if you want
+		// to get the updated data.
+		$mismatches = $this->getFieldMismatches($bookJoinsInTravis->getPosition(0)->getBook_Object(), $book);
+		
+		// Unset mistmatches that we know to be intentional
+		if (isset($mismatches['creation_datetime'])) {
+			unset($mismatches['creation_datetime']);
+		}
+		if (isset($mismatches['last_modified_datetime'])) {
+			unset($mismatches['last_modified_datetime']);
+		}
+		
+		$this->assertTrue(empty($mismatches), implode("\n", $mismatches));
 		
 		// these fail because the $book and $book2 don't have some default values set after save like creation_datetime
+		// (which is intentional; call load() after save if you want to get the updated data.)
 		// $this->assertIdentical($bookJoinsInTravis->getPosition(0)->getBook_Object(), $book);
 		// $this->assertIdentical($bookJoinsInTravis->getPosition(1)->getBook_Object(), $book2);
 
@@ -483,6 +496,7 @@ class TestCoughObject extends UnitTestCase
 		$this->assertEqual(count($bookJoinsInLbj), 2);
 		
 		// these fail because the $book and $book2 don't have some default values set after save like creation_datetime
+		// (which is intentional; call load() after save if you want to get the updated data.)
 		// $this->assertIdentical($bookJoinsInLbj->getPosition(0)->getBook_Object(), $book);
 		// $this->assertIdentical($bookJoinsInLbj->getPosition(1)->getBook_Object(), $book2);
 
@@ -502,7 +516,7 @@ class TestCoughObject extends UnitTestCase
 				ob_start();
 				var_dump($fields2[$key]);
 				$value2 = trim(ob_get_clean());
-				$mismatches[] = 'Key "' . $key . '" mismatches: (' . $value1 . ') != (' . $value2 . ')';
+				$mismatches[$key] = 'Key "' . $key . '" mismatches: (' . $value1 . ') != (' . $value2 . ')';
 			}
 		}
 		return $mismatches;
