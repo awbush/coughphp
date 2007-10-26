@@ -154,7 +154,8 @@ class TestCoughGenerator extends UnitTestCase
 		// Test that the correct number of classes were generated
 		$numClassesPerTable = 4;
 		$numTables = 4;
-		$this->assertEqual(count($classes), $numClassesPerTable * $numTables, 'Incorrect number of classes generated.');
+		$expectedNumClasses = $numClassesPerTable * $numTables;
+		$this->assertEqual(count($classes), $expectedNumClasses, 'Incorrect number of classes generated (' .  count($classes) . ' where generated, but ' . $expectedNumClasses . ' where expected).');
 		
 		// Test that we generated for the correct tables
 		$tables = array('author', 'book', 'book2library', 'library');
