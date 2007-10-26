@@ -1,0 +1,66 @@
+#!/usr/bin/php
+<?php
+
+include_once('load.inc.php');
+
+$appPath = dirname(dirname(__FILE__)) . '/';
+
+// Which config to use?
+if (!isset($_SERVER['argc'])) {
+	echo 'This script must be run from the command line.';
+	exit();
+}
+
+function echo_usage() {
+	echo 'Pass a list of tests to run, e.g. `./test cough cough_generator`' . "\n";
+	echo 'A list of valid tests follows:' . "\n";
+	echo "\tcough - test the core CoughObject and CoughCollection classes\n";
+	echo "\tcough_generator - test the generator to make sure different config options produce the expected output\n";
+	echo "\tdalal - test the database abstraction layer adapters\n";
+}
+
+// Parse arguments
+$argCount = $_SERVER['argc'];
+$args = $_SERVER['argv'];
+switch ($argCount) {
+	case 0:
+	case 1:
+		echo_usage();
+		exit();
+		break;
+	default:
+		$tests = array();
+		for ($i = 1; $i < $argCount; $i++) {
+			$tests[] = $args[$i];
+		}
+		break;
+}
+
+// Run tests
+foreach ($tests as $test) {
+	switch ($test) {
+		case 'cough':
+			$test = new TestSuite('Running cough tests...');
+			$test->addTestFile($appPath . 'cough/tests/TestCoughObject.class.php');
+			$test->run(new TextReporter());
+			break;
+		
+		case 'cough_generator':
+			$test = new TestSuite('Running cough_generator tests...');
+			$test->addTestFile($appPath . 'cough_generator/tests/TestCoughGenerator.class.php');
+			$test->run(new TextReporter());
+			break;
+		
+		case 'dalal':
+			$test = new TestSuite('Running dalal tests...');
+			$test->addTestFile($appPath . 'dalal/tests/TestCoughDatabaseFactory.class.php');
+			$test->run(new TextReporter());
+			break;
+		
+		default:
+			echo 'Unknown test "' . $test . '"' . "\n";
+			break;
+	}
+}
+
+?>
