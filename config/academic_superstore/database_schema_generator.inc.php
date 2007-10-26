@@ -47,7 +47,6 @@ $config = array(
 			
 			// Override some ignore table settings for the user database.
 			'table_settings' => array(
-				'match_table_name_prefixes' => array('cust_','wfl_','baof_','inv_'),
 				'ignore_tables_matching_regex' => '/(^(bak_|temp_))|((_bak)$|^(address)$)/',
 			),
 			
