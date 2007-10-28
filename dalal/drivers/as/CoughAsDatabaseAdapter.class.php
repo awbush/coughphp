@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Matt Database abstraction layer wrapper
+ * AS Database abstraction layer wrapper
  *
  * @package default
  * @author Lewis Zhang
@@ -9,7 +9,7 @@
 class CoughAsDatabaseAdapter extends CoughAbstractDatabaseAdapter
 {	
 	/**
-	 * creates a new MattDatabase connection from a DSN
+	 * creates a new As_Database connection from a DSN
 	 * NOTE: this may or may not apply after the DatabaseFactory changes to include CoughAbstractDatabaseAdapter
 	 *
 	 * @return void
@@ -17,7 +17,10 @@ class CoughAsDatabaseAdapter extends CoughAbstractDatabaseAdapter
 	 **/
 	public static function retrieveByDbConfig($dbConfig)
 	{
-		// driver is irrelavent, as MattDatabase only supports mysql
+		// Load the AS DAL framework.
+		require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/dal/as/load.inc.php');
+		
+		// driver is irrelavent, as As_Database only supports mysql
 		$driver = $dbConfig['driver'];
 		
 		$host = $dbConfig['host'];
@@ -32,8 +35,8 @@ class CoughAsDatabaseAdapter extends CoughAbstractDatabaseAdapter
 	{
 		$result = $this->db->query($sql);
 		return CoughAsDatabaseResultAdapter::retrieveByResult($result);
-		// TODO: MattDatabase always returns an object, so we need to find out how to return false when the query failed
-		// 2007-10-28/AWB: You mean As_Database, and it throws an error when the query fails.  If that is not acceptable we can catch the error here and return false in that case.  I think throwing an error is the more correct thing to do though as it provides access to error messages, etc.  If that sounds good, we should make other database adapters throw errors here instead of returning false.
+		// TODO: As_Database always returns an object, so we need to find out how to return false when the query failed
+		// 2007-10-28/AWB: It throws an error when the query fails.  If that is not acceptable we can catch the error here and return false in that case.  I think throwing an error is the more correct thing to do though as it provides access to error messages, etc.  If that sounds good, we should make other database adapters throw errors here instead of returning false.
 	}
 	
 	public function execute($sql)

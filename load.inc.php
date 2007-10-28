@@ -58,6 +58,6 @@ require_once('cough/CoughObject.class.php');
 // require_once('cough/CoughLoader.class.php');
 
 // Load the DAL Adapter classes
-require_once('dalal/load.inc.php');
+require_once('dalal/CoughDatabaseFactory.class.php');
 
 ?>

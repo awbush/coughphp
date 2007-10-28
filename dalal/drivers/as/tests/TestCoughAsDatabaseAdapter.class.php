@@ -18,9 +18,10 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 	 **/
 	public function setUp()
 	{
-		include_once(APP_PATH . 'dalal/load.inc.php');
+		require_once(APP_PATH . 'dalal/CoughDatabaseFactory.class.php');
 		
 		$testDbConfig = array(
+			'adapter' => $this->adapterName,
 			'driver' => 'mysql',
 			'host' => '127.0.0.1', // TODO: localhost does not work for me???
 			'db_name' => 'cough_test',
@@ -29,7 +30,6 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 			'port' => '3306'
 		);
 		
-		CoughDatabaseFactory::setAdapter($this->adapterName);
 		CoughDatabaseFactory::addDatabaseConfig('localtestdb', $testDbConfig);
 		$this->db = CoughDatabaseFactory::getDatabase('localtestdb');
 		

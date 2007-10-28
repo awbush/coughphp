@@ -13,7 +13,7 @@ class TestCoughDatabaseFactory extends UnitTestCase
 	 **/
 	public function setUp()
 	{
-		include_once(APP_PATH . 'dalal/load.inc.php');
+		require_once(APP_PATH . 'dalal/CoughDatabaseFactory.class.php');
 	}
 	
 	//////////////////////////////////////
@@ -125,15 +125,6 @@ class TestCoughDatabaseFactory extends UnitTestCase
 		$databases = CoughDatabaseFactory::getDatabases();
 		$this->assertNotNull($databases['testDbAlias']);
 		$this->assertIdentical($databases['testDbAlias'], $testDbObject);
-	}
-	
-	public function testSetAdapter()
-	{
-		$this->assertNull(CoughDatabaseFactory::getAdapter());
-		CoughDatabaseFactory::setAdapter('pdo');
-		$this->assertIdentical(CoughDatabaseFactory::getAdapter(), 'pdo');
-		CoughDatabaseFactory::setAdapter('this_should_stay_pdo');
-		$this->assertIdentical(CoughDatabaseFactory::getAdapter(), 'pdo');
 	}
 	
 	public function testGetDatabase()

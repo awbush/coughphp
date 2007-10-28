@@ -3,13 +3,12 @@
 /**
  * A simple factory that provides access to an application's database objects.
  * It should be dynamically initialized, and can hold mixed types of database
- * objects (e.g. PEAR::DB, AS Database, DatabaseConnector, Persistent).
+ * adapter objects.
  * 
  * EXAMPLE INITIALIZATION:
  * 
- * CoughDatabaseFactory::addDatabase('content', new As_Database('content'));
- * CoughDatabaseFactory::addDatabase('user', new As_Database('user'));
- * CoughDatabaseFactory::addDatabase('new_user', new As_Database('new_user'));
+ * CoughDatabaseFactory::addDatabase('content', CoughPdoDatabaseAdapter::retrieveByDbConfig($config1));
+ * CoughDatabaseFactory::addDatabase('user', CoughAsDatabaseAdapter::retrieveByDbConfig($config2));
  * 
  * EXAMPLE RETRIEVAL:
  * 
@@ -23,6 +22,8 @@
  *    
  *    $dbConfigs = array(
  *        'foo' => array(
+ *            'adapter' => 'as',
+ *            'driver' => 'mysql',
  *            'db_name' => 'new_user',
  *            'host' => 'localhost',
  *            'user' => 'nobody',
@@ -30,6 +31,8 @@
  *            'port' => 3307,
  *        ),
  *        'user' => array(
+ *            'adapter' => 'as',
+ *            'driver' => 'mysql',
  *            'db_name' => 'user',
  *            'host' => 'localhost',
  *            'user' => 'nobody',
@@ -64,7 +67,8 @@ class CoughDatabaseFactory
 	 * Format:
 	 * 
 	 * [dbAlias] => array(
-	 *     'driver' => 'mysqli',
+	 *     'adapter' => 'as',
+	 *     'driver' => 'mysql',
 	 *     'host' => 'localhost',
 	 *     'db_name' => 'user',
 	 *     'user' => 'nobody',
@@ -74,32 +78,7 @@ class CoughDatabaseFactory
 	 * 
 	 * @var array
 	 **/
-	protected static $dbConfigs = array(); // [dbAlias] => [config array]
-	
-	/**
-	 * the adapter to use (otherwise known as dalal)
-	 * 
-	 * This can be set with CoughDatabaseFactory::setAdapter('adapter_name').
-	 *
-	 * @var string
-	 **/
-	protected static $adapterName = null;
-	
-	/**
-	 * the default database configuration
-	 * 
-	 * This holds common driver and port values, and gets array_merge'd with the user database config.
-	 *
-	 * @var array
-	 **/
-	protected static $defaultDbConfig = array(
-		'driver' => 'mysql',
-		'host' => 'localhost',
-		'db_name' => null,
-		'user' => null,
-		'pass' => null,
-		'port' => '3306'
-	);
+	protected static $dbConfigs = array();
 	
 	/**
 	 * Sets all the database configs at once.
@@ -112,7 +91,7 @@ class CoughDatabaseFactory
 	{
 		self::$dbConfigs = array();
 		foreach ($dbConfigs as $dbAlias => $dbConfig) {
-			self::$dbConfigs[$dbAlias] = array_merge(self::$defaultDbConfig, $dbConfig);
+			self::$dbConfigs[$dbAlias] = $dbConfig;
 		}
 	}
 	
@@ -125,25 +104,7 @@ class CoughDatabaseFactory
 	 **/
 	public static function addDatabaseConfig($dbAlias, $dbConfig)
 	{
-		self::$dbConfigs[$dbAlias] = array_merge(self::$defaultDbConfig, $dbConfig);
-	}
-	
-	/**
-	 * specifies which database adapter to use (e.g. as, pdo, creole)
-	 * 
-	 * This defaults to 'as', the adapter that comes prepackaged with Cough.
-	 * WARNING: This only sets the adapter once; subsequent calls will do nothing
-	 *
-	 * @return bool - whether or not the adapter was set
-	 * @author Lewis Zhang
-	 **/
-	public static function setAdapter($adapterName)
-	{
-		if (is_null(self::$adapterName)) {
-			self::$adapterName = $adapterName;
-			return true;
-		}
-		return false;
+		self::$dbConfigs[$dbAlias] = $dbConfig;
 	}
 	
 	public static function addDatabase($dbAlias, $dbObject) {
@@ -152,41 +113,25 @@ class CoughDatabaseFactory
 	
 	public static function getDatabase($dbAlias)
 	{
-		// we have to make sure the the adapter name is set (at least to default 'as') before doing anything
-		self::setAdapter('as');
-		
-		if (isset(self::$databases[$dbAlias])) {
+		if (isset(self::$databases[$dbAlias]))
+		{
 			// We already have the database object in memory
-			$dbObject = self::$databases[$dbAlias];
-			
-			return $dbObject;
+			return self::$databases[$dbAlias];
 		}
-		else {
+		else
+		{
 			// The database object is not already in memory, attempt to add it.
-			if (isset(self::$dbConfigs[$dbAlias])) {
+			if (isset(self::$dbConfigs[$dbAlias]))
+			{
 				// Use the config to construct and add the database:
-				$config =& self::$dbConfigs[$dbAlias];
-				self::addDatabase($dbAlias, self::retrieveAdapterByDbConfig($config));
+				$dbObject = self::retrieveAdapterByDbConfig(self::$dbConfigs[$dbAlias]);
+				self::addDatabase($dbAlias, $dbObject);
+				return $dbObject;
 			}
-			else {
-				// No configuration information... we should throw error here instead of relaying on As_Database class default host/user/pass values.
-				// if (is_null($dbName)) {
-				// 	$newDbName = $dbAlias;
-				// }
-				// else {
-				// 	$newDbName = $dbName;
-				// }
-				// // No config? Try creating using generate host/user/pass
-				// self::addDatabase($dbAlias, new As_Database($newDbName));
-				
-				// lzhang: I've decided to return null for now
+			else
+			{
 				return null;
 			}
-			
-			// We have the database object in memory now.
-			$dbObject = self::$databases[$dbAlias];
-			
-			return $dbObject;
 		}
 	}
 	
@@ -198,13 +143,29 @@ class CoughDatabaseFactory
 	 **/
 	protected static function retrieveAdapterByDbConfig($dbConfig)
 	{
-		switch (self::$adapterName) {
+		if (isset($dbConfig['adapter'])) {
+			$adapter = $dbConfig['adapter'];
+		} else {
+			$adapter = 'as';
+		}
+		
+		// Make sure the base classes are loaded
+		$driverPath = dirname(__FILE__) . '/drivers/';
+		require_once($driverPath . 'base/CoughAbstractDatabaseAdapter.class.php');
+		require_once($driverPath . 'base/CoughAbstractDatabaseResultAdapter.class.php');
+		
+		// Load the concrete adapter classes and return a database adapter object.
+		switch ($adapter) {
 			case 'pdo':
+				require_once($driverPath . 'pdo/CoughPdoDatabaseAdapter.class.php');
+				require_once($driverPath . 'pdo/CoughPdoDatabaseResultAdapter.class.php');
 				return CoughPdoDatabaseAdapter::retrieveByDbConfig($dbConfig);
 				break;
 			
 			case 'as':
 			default:
+				require_once($driverPath . 'as/CoughAsDatabaseAdapter.class.php');
+				require_once($driverPath . 'as/CoughAsDatabaseResultAdapter.class.php');
 				return CoughAsDatabaseAdapter::retrieveByDbConfig($dbConfig);
 				break;
 		}
@@ -221,11 +182,6 @@ class CoughDatabaseFactory
 		return self::$dbConfigs;
 	}
 	
-	public static function getAdapter()
-	{
-		return self::$adapterName;
-	}
-	
 	public static function getDatabases()
 	{
 		return self::$databases;
@@ -235,7 +191,6 @@ class CoughDatabaseFactory
 	{
 		self::$databases = array();
 		self::$dbConfigs = array();
-		self::$adapterName = null;
 	}
 }
 

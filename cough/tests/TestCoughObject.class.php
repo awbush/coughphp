@@ -34,8 +34,9 @@ class TestCoughObject extends UnitTestCase
 	public function setUpDatabase()
 	{
 		$testDbConfig = array(
+			'adapter' => 'as',
 			'driver' => 'mysql',
-			'host' => 'localhost', // TODO: localhost does not work for me???
+			'host' => 'localhost',
 			'db_name' => 'test_cough_object',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
