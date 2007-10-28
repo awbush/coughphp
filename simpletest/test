@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-include_once('load.inc.php');
+include_once(dirname(__FILE__) . '/load.inc.php');
 
 $appPath = dirname(dirname(__FILE__)) . '/';
 
@@ -36,9 +36,9 @@ switch ($argCount) {
 		break;
 }
 
-// Run tests
-foreach ($tests as $test) {
-	switch ($test) {
+// If there's only one test, run it. Otherwise, invoke a new test script with the desired test.
+if (count($tests) == 1) {
+	switch ($tests[0]) {
 		case 'cough':
 			$test = new TestSuite('Running cough tests...');
 			$test->addTestFile($appPath . 'cough/tests/TestCoughObject.class.php');
@@ -61,6 +61,12 @@ foreach ($tests as $test) {
 			echo 'Unknown test "' . $test . '"' . "\n";
 			break;
 	}
+	return;
+}
+
+// Run tests
+foreach ($tests as $test) {
+	system($args[0] . ' ' . $test) . "\n";
 }
 
 ?>
