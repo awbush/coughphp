@@ -33,6 +33,7 @@ class CoughAsDatabaseAdapter extends CoughAbstractDatabaseAdapter
 		$result = $this->db->query($sql);
 		return CoughAsDatabaseResultAdapter::retrieveByResult($result);
 		// TODO: MattDatabase always returns an object, so we need to find out how to return false when the query failed
+		// 2007-10-28/AWB: You mean As_Database, and it throws an error when the query fails.  If that is not acceptable we can catch the error here and return false in that case.  I think throwing an error is the more correct thing to do though as it provides access to error messages, etc.  If that sounds good, we should make other database adapters throw errors here instead of returning false.
 	}
 	
 	public function execute($sql)
@@ -54,18 +55,26 @@ class CoughAsDatabaseAdapter extends CoughAbstractDatabaseAdapter
 	
 	/**
 	 * returns the escaped version of the provided string
-	 * NOTE: This is mysql specific
 	 *
 	 * @return string
 	 * @author Lewis Zhang
 	 **/
 	public function escape($string)
 	{
-		if (get_magic_quotes_gpc()) {
-			$string = stripslashes($string);
-		}
-		return mysql_real_escape_string($string);
+		return $this->db->escape($string);
 	}
+	
+	/**
+	 * selects the specified database for this connection
+	 *
+	 * @return void
+	 * @author Anthony Bush
+	 **/
+	public function selectDb($databaseName)
+	{
+		$this->db->selectDB($databaseName);
+	}
+	
 }
 
 ?>

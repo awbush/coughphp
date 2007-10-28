@@ -112,13 +112,17 @@ class TestCoughObject extends UnitTestCase
 		$classPath = dirname(__FILE__) . '/config/output/';
 		// include Cough generated classes
 		foreach (glob($classPath . 'generated/*.php') as $filename) {
-			require_once($filename);
+			unlink($filename);
 		}
 		
 		// include Cough user classes
 		foreach (glob($classPath . 'concrete/*.php') as $filename) {
-			require_once($filename);
+			unlink($filename);
 		}
+		
+		rmdir($classPath . 'generated');
+		rmdir($classPath . 'concrete');
+		rmdir($classPath);
 	}
 
 	//////////////////////////////////////

@@ -101,6 +101,10 @@ class TestCoughGenerator extends UnitTestCase
 		foreach (glob($classPath . 'concrete/*.php') as $filename) {
 			unlink($filename);
 		}
+		
+		rmdir($classPath . 'generated');
+		rmdir($classPath . 'concrete');
+		rmdir($classPath);
 	}
 	
 	//////////////////////////////////////

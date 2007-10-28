@@ -64,15 +64,11 @@ abstract class CoughAbstractDatabaseAdapter
 	
 	/**
 	 * selects the specified database for this connection
-	 * TODO: is this the right thing to do? I'm assuming this is MySQL specific as well
 	 *
-	 * @return CoughAbstractDatabaseResultAdapter
+	 * @return void
 	 * @author Lewis Zhang
 	 **/
-	public function selectDb($databaseName)
-	{
-		return $this->query("use `$databaseName`");
-	}
+	abstract public function selectDb($databaseName);
 	
 	/**
 	 * returns the first value of the result of a select query

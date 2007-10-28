@@ -67,6 +67,19 @@ class CoughPdoDatabaseAdapter extends CoughAbstractDatabaseAdapter
 		$quotedAndEscapedString = $this->dbQuote($string);
 		return substr($quotedAndEscapedString, 1, strlen($quotedAndEscapedString) - 2);
 	}
+	
+	/**
+	 * selects the specified database for this connection
+	 * TODO: Is there a better way to do this in PDO? e.g. like mysql_select_db instead of running a query.
+	 *
+	 * @return void
+	 * @author Anthony Bush
+	 **/
+	public function selectDb($databaseName)
+	{
+		$this->execute("USE `$databaseName`");
+	}
+	
 }
 
 ?>
