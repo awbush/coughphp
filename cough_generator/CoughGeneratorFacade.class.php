@@ -56,7 +56,7 @@ class CoughGeneratorFacade {
 	
 	protected function getConfigPath($configNameOrPath) {
 		if (file_exists($configNameOrPath)) {
-			return $configNameOrPath;
+			return rtrim($configNameOrPath, '/') . '/';
 		} else {
 			return dirname(dirname(__FILE__)) . '/config/' . $configNameOrPath . '/';
 		}

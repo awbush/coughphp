@@ -274,7 +274,6 @@ class CoughGeneratorConfig extends CoughConfig {
 		
 		// Add the remote field name to the base name
 		$value = $baseName . '_By' . $this->getTitleCase($refKey[0]->getColumnName());
-		echo $value . "\n";
 		return $value;
 	}
 	
