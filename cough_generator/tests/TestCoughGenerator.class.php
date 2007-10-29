@@ -310,6 +310,153 @@ class TestCoughGenerator extends UnitTestCase
 	// TODO: Write another one for an FK schema (and don't pass the schema through the SchemaManipulator) to see if FK relationships are setup correctly without help from the SchemaManipulator.
 	
 	// TODO: We'll also have to figure out how to "uninclude" a class or make sure that each test uses different generated class names so we don't get "cannot redeclare class" errors
+	
+	
+	/**
+	 * A foreign key example...
+	 *
+	 * @author Anthony Bush
+	 **/
+	public function testConfig2()
+	{
+		$configName = 'test_config2';
+		$configPath = dirname(__FILE__) . '/test_configs/' . $configName . '/';
+		
+		// Setup the database
+		$this->executeSqlFile($configPath . 'db_setup.sql');
+		
+		// Which config to use?
+		$schemaGeneratorConfigFile = $configPath . 'database_schema_generator.inc.php';
+		$coughGeneratorConfigFile  = $configPath . 'cough_generator.inc.php';
+
+		// Get the database config
+		$schemaGeneratorConfig = DatabaseSchemaGeneratorConfig::constructFromFile($schemaGeneratorConfigFile);
+
+		// Load the schema into memory
+		$schemaGenerator = new DatabaseSchemaGenerator($schemaGeneratorConfig);
+		$schema = $schemaGenerator->generateSchema();
+
+		// Manipulate the schema (to add any missed relationships, e.g.)
+		$manipulator = new SchemaManipulator($schemaGeneratorConfig);
+		$manipulator->manipulateSchema($schema);
+
+		// Get the cough generator config
+		$coughGeneratorConfig = CoughGeneratorConfig::constructFromFile($coughGeneratorConfigFile);
+
+		// Generate files into memory
+		$coughGenerator = new CoughGenerator($coughGeneratorConfig);
+		$classes = $coughGenerator->generateCoughClasses($schema);
+		
+		// Write files to disk
+		$coughWriter = new CoughWriter($coughGeneratorConfig);
+		$this->assertTrue($coughWriter->writeClasses($classes), 'Unable to write classes to disk.');
+		
+		// Start asserting
+		
+		// Test that the correct number of classes were generated
+		$numClassesPerTable = 4;
+		$numTables = 3;
+		$expectedNumClasses = $numClassesPerTable * $numTables;
+		$this->assertEqual(count($classes), $expectedNumClasses, 'Incorrect number of classes generated (' .  count($classes) . ' where generated, but ' . $expectedNumClasses . ' where expected).');
+		
+		// Test that we generated for the correct tables
+		$tables = array('customer' => true, 'product' => true, 'product_order' => true);
+		$tablesGeneratedFor = array();
+		foreach ($classes as $class) {
+			$tablesGeneratedFor[$class->getTableName()] = true;
+		}
+		$this->assertEqual(ksort($tables), ksort($tablesGeneratedFor), 'Did not generate for exactly the tables in question.');
+		
+		// Test that we got all the expected names for each class.
+		$expectedClassNamesAndMethods = array(
+			'Customer' => array(
+				'constructByKey',
+				'constructByFields'
+			),
+			'Customer_Generated' => array(
+				'notifyChildrenOfKeyChange',
+				'getId',
+				'setId',
+				'loadProductOrder_Collection',
+				'getProductOrder_Collection',
+				'setProductOrder_Collection',
+				'addProductOrder',
+				'removeProductOrder',
+			),
+			'Customer_Collection' => array(),
+			'Customer_Collection_Generated' => array(),
+			'Product' => array(
+				'constructByKey',
+				'constructByFields'
+			),
+			'Product_Generated' => array(
+				'notifyChildrenOfKeyChange',
+				'getCategory',
+				'setCategory',
+				'getId',
+				'setId',
+				'getPrice',
+				'setPrice',
+				'loadProductOrder_Collection',
+				'getProductOrder_Collection',
+				'setProductOrder_Collection',
+				'addProductOrder',
+				'removeProductOrder',
+			),
+			'Product_Collection' => array(),
+			'Product_Collection_Generated' => array(),
+			'ProductOrder' => array(
+				'constructByKey',
+				'constructByFields'
+			),
+			'ProductOrder_Generated' => array(
+				'getLoadSqlWithoutWhere',
+				'getNo',
+				'setNo',
+				'getProductCategory',
+				'setProductCategory',
+				'getProductId',
+				'setProductId',
+				'getCustomerId',
+				'setCustomerId',
+				'loadProduct_Object',
+				'getProduct_Object',
+				'setProduct_Object',
+				'loadCustomer_Object',
+				'getCustomer_Object',
+				'setCustomer_Object',
+			),
+			'ProductOrder_Collection' => array(),
+			'ProductOrder_Collection_Generated' => array(),
+		);
+		$expectedClassNames = asort(array_keys($expectedClassNamesAndMethods));
+		$generatedClassNames = asort(array_keys($classes));
+		$this->assertEqual($expectedClassNames, $generatedClassNames, 'Incorrect class names generated.');
+		
+		// Include all the classes
+		$this->includeGeneratedClasses($configName);
+		
+		// Test that we got the expected methods generated for each class.
+		foreach ($expectedClassNamesAndMethods as $className => $expectedMethods)
+		{
+			foreach ($expectedMethods as $expectedMethod)
+			{
+				$this->assertTrue(method_exists($className, $expectedMethod), 'Method ' . $className . '::' . $expectedMethod . '() does not exist.');
+			}
+		}
+		
+		// TODO: go more in depth to make sure the generated queries JOIN correctly and alias correctly.
+		
+		
+		// Remove the generated files
+		$this->removeGeneratedClasses($configName);
+		
+		// Restore the database to it's state before running this test case
+		$this->executeSqlFile($configPath . 'db_teardown.sql');
+	}
+	
+	
+	
 }
 
 ?>
