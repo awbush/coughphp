@@ -41,14 +41,7 @@ class TestCoughDatabaseFactory extends UnitTestCase
 			'port'	=> '3307'
 		);
 		
-		$expectedConfig = array(
-			'driver' => 'mysql',
-			'host' => 'localhost',
-			'db_name' => 'testDbName',
-			'user' => null,
-			'pass' => null,
-			'port' => '3307'
-		);
+		$expectedConfig = $testConfig;
 		
 		CoughDatabaseFactory::addDatabaseConfig('testConfigAlias', $testConfig);
 		$dbConfigs = CoughDatabaseFactory::getDatabaseConfigs();
@@ -83,34 +76,7 @@ class TestCoughDatabaseFactory extends UnitTestCase
 			)
 		);
 		
-		$expectedConfigs = array(
-			'testConfig1' => array(
-				'driver' => 'mysql',
-				'host' => 'localhost',
-				'db_name' => 'testConfigDbName',
-				'user' => null,
-				'pass' => null,
-				'port' => '3307'
-			),
-			
-			'testConfig2' => array(
-				'driver' => 'mysql',
-				'host' => 'localhost',
-				'db_name' => 'test2DbName',
-				'user' => 'user2',
-				'pass' => 'pass2',
-				'port' => '3306'
-			),
-			
-			'testConfig3' => array(
-				'driver' => 'postgres',
-				'host' => 'testconfig2.domain.tld',
-				'db_name' => 'testDbName',
-				'user' => null,
-				'pass' => null,
-				'port' => '3306'
-			)
-		);
+		$expectedConfigs = $testConfigs;
 		
 		CoughDatabaseFactory::setDatabaseConfigs($testConfigs);
 		$dbConfigs = CoughDatabaseFactory::getDatabaseConfigs();
@@ -137,22 +103,53 @@ class TestCoughDatabaseFactory extends UnitTestCase
 		CoughDatabaseFactory::addDatabase('existingDbAlias', $testDbObject);
 		$this->assertIdentical(CoughDatabaseFactory::getDatabase('existingDbAlias'), $testDbObject);
 		
-		// test existing database config behavior (CoughDatabaseFactory will generate a db)
+		// test default adapter = "as"
 		$testDbConfig = array(
 			'driver' => 'mysql',
-			'host' => 'pascal.timepieceforyou.com',
-			'db_name' => 'cough_test',
+			'host' => 'localhost',
+			'db_name' => 'test_cough_object',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
 			'port' => '3306'
 		);
-		CoughDatabaseFactory::addDatabaseConfig('pascal', $testDbConfig);
-		$pascalDb = CoughDatabaseFactory::getDatabase('pascal');
-		$this->assertIsA($pascalDb, 'CoughPdoDatabaseAdapter');
+		CoughDatabaseFactory::addDatabaseConfig('cough_test1', $testDbConfig);
+		$test1Db = CoughDatabaseFactory::getDatabase('cough_test1');
+		$this->assertIsA($test1Db, 'CoughAsDatabaseAdapter');
+		
+		// test specifying adapter as "as"
+		$testDbConfig = array(
+			'adapter' => 'as',
+			'driver' => 'mysql',
+			'host' => 'localhost',
+			'db_name' => 'test_cough_object',
+			'user' => 'cough_test',
+			'pass' => 'cough_test',
+			'port' => '3306'
+		);
+		CoughDatabaseFactory::addDatabaseConfig('cough_test2', $testDbConfig);
+		$test2Db = CoughDatabaseFactory::getDatabase('cough_test2');
+		$this->assertIsA($test2Db, 'CoughAsDatabaseAdapter');
+		
+		// test specifying adapter as "pdo"
+		$testDbConfig = array(
+			'adapter' => 'pdo',
+			'driver' => 'mysql',
+			'host' => 'localhost',
+			'db_name' => 'test_cough_object',
+			'user' => 'cough_test',
+			'pass' => 'cough_test',
+			'port' => '3306'
+		);
+		CoughDatabaseFactory::addDatabaseConfig('cough_test3', $testDbConfig);
+		$test3Db = CoughDatabaseFactory::getDatabase('cough_test3');
+		$this->assertIsA($test3Db, 'CoughPdoDatabaseAdapter');
 		
 		// test getting the same database object back
-		$pascalDbReference = CoughDatabaseFactory::getDatabase('pascal');
-		$this->assertReference($pascalDb, $pascalDbReference);
+		$test1DbReference = CoughDatabaseFactory::getDatabase('cough_test1');
+		$this->assertReference($test1Db, $test1DbReference);
+		$this->assertIdentical($test1Db, $test1DbReference);
+		$this->assertNotIdentical($test2Db, $test1DbReference);
+		$this->assertNotIdentical($test3Db, $test1DbReference);
 	}
 }
 

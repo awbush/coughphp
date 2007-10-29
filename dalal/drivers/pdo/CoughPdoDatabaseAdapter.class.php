@@ -16,11 +16,31 @@ class CoughPdoDatabaseAdapter extends CoughAbstractDatabaseAdapter
 	 **/
 	public static function retrieveByDbConfig($dbConfig)
 	{
-		$driver = $dbConfig['driver'];
-		$host = $dbConfig['host'];
-		$username = $dbConfig['user'];
-		$password = $dbConfig['pass'];
-		$database = $dbConfig['db_name'];
+		if (isset($dbConfig['driver'])) {
+			$driver = $dbConfig['driver'];
+		} else {
+			$driver = 'mysql';
+		}
+		if (isset($dbConfig['host'])) {
+			$host = $dbConfig['host'];
+		} else {
+			$host = 'localhost';
+		}
+		if (isset($dbConfig['user'])) {
+			$username = $dbConfig['user'];
+		} else {
+			$username = 'nobody';
+		}
+		if (isset($dbConfig['pass'])) {
+			$password = $dbConfig['pass'];
+		} else {
+			$password = '';
+		}
+		if (isset($dbConfig['db_name'])) {
+			$database = $dbConfig['db_name'];
+		} else {
+			$database = '';
+		}
 		
 		$db = new PDO("$driver:host=$host;dbname=$database", $username, $password);
 		$db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);

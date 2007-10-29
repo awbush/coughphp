@@ -21,14 +21,35 @@ class CoughAsDatabaseAdapter extends CoughAbstractDatabaseAdapter
 		require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/dal/as/load.inc.php');
 		
 		// driver is irrelavent, as As_Database only supports mysql
-		$driver = $dbConfig['driver'];
+		// $driver = $dbConfig['driver'];
 		
-		$host = $dbConfig['host'];
-		$username = $dbConfig['user'];
-		$password = $dbConfig['pass'];
-		$database = $dbConfig['db_name'];
+		if (isset($dbConfig['host'])) {
+			$host = $dbConfig['host'];
+		} else {
+			$host = 'localhost';
+		}
+		if (isset($dbConfig['user'])) {
+			$username = $dbConfig['user'];
+		} else {
+			$username = 'nobody';
+		}
+		if (isset($dbConfig['pass'])) {
+			$password = $dbConfig['pass'];
+		} else {
+			$password = '';
+		}
+		if (isset($dbConfig['db_name'])) {
+			$database = $dbConfig['db_name'];
+		} else {
+			$database = '';
+		}
+		if (isset($dbConfig['port'])) {
+			$port = $dbConfig['port'];
+		} else {
+			$port = 3306;
+		}
 		
-		return new CoughAsDatabaseAdapter(new As_Database($database, $host, $username, $password));
+		return new CoughAsDatabaseAdapter(new As_Database($database, $host, $username, $password, $port));
 	}
 	
 	public function query($sql)
