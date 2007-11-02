@@ -141,7 +141,7 @@ class CoughDatabaseFactory
 	 * @return object - a concrete child class of CoughAbstractDatabaseAdapter
 	 * @author Lewis Zhang
 	 **/
-	protected static function retrieveAdapterByDbConfig($dbConfig)
+	public static function retrieveAdapterByDbConfig($dbConfig)
 	{
 		if (isset($dbConfig['adapter'])) {
 			$adapter = $dbConfig['adapter'];

@@ -31,8 +31,12 @@ abstract class CoughConfig {
 	protected function mergeIntoConfig($config) {
 		// Only override the inner most pieces (currently just the 2nd level)
 		foreach ($config as $key1 => $value1) {
-			foreach ($value1 as $key2 => $value2) {
-				$this->config[$key1][$key2] = $value2;
+			if (is_array($value1)) {
+				foreach ($value1 as $key2 => $value2) {
+					$this->config[$key1][$key2] = $value2;
+				}
+			} else {
+				$this->config[$key1] = $value1;
 			}
 		}
 	}

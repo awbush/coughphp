@@ -159,31 +159,34 @@ class CoughGenerator {
 		// the default SELECT SQL to INNER JOIN to that relationship.
 		$selectSql = array('`' . $tableName . '`.*');
 		$innerJoins = array();
-		foreach ($table->getHasOneRelationships() as $hasOne)
-		{
-			if (!$hasOne->isKeyNullable($hasOne->getLocalKey()) && !in_array($hasOne->getRefTable()->getTableName(), $excludeTableJoins))
+		
+		if ($this->config->shouldGenerateLoadSqlInnerJoins($table)) {
+			foreach ($table->getHasOneRelationships() as $hasOne)
 			{
-				$refDbName = $hasOne->getRefTable()->getDatabase()->getDatabaseName();
-				$refTableName = $hasOne->getRefTable()->getTableName();
-				$localKey = $hasOne->getLocalKey();
-				
-				$refTableAliasName = $this->config->getForeignTableAliasName($hasOne);
-				$refObjectName = $this->config->getForeignObjectName($hasOne);
+				if (!$hasOne->isKeyNullable($hasOne->getLocalKey()) && !in_array($hasOne->getRefTable()->getTableName(), $excludeTableJoins))
+				{
+					$refDbName = $hasOne->getRefTable()->getDatabase()->getDatabaseName();
+					$refTableName = $hasOne->getRefTable()->getTableName();
+					$localKey = $hasOne->getLocalKey();
 
-				// Append to SELECT SQL.
-				foreach ($hasOne->getRefTable()->getColumns() as $columnName => $refColumn) {
-					$selectSql[] = '`' . $refTableAliasName . '`.`' . $columnName . '` AS `' . $refObjectName . '.' . $columnName . '`';
-				}
-				
-				// Generate the INNER JOIN criteria
-				$joinOnSql = array();
-				foreach ($hasOne->getRefKey() as $index => $refColumn) {
-					$joinOnSql[] = '`' . $tableName . '`.`' . $localKey[$index]->getColumnName() . '` = `' . $refTableAliasName . '`.`' . $refColumn->getColumnName() . '`';
-				}
-				
-				// Append to INNER JOIN SQL using the INNER JOIN criteria
-				$innerJoins['`' . $refDbName . '`.`' . $refTableName . '` AS `' . $refTableAliasName . '`'] = $joinOnSql;
+					$refTableAliasName = $this->config->getForeignTableAliasName($hasOne);
+					$refObjectName = $this->config->getForeignObjectName($hasOne);
 
+					// Append to SELECT SQL.
+					foreach ($hasOne->getRefTable()->getColumns() as $columnName => $refColumn) {
+						$selectSql[] = '`' . $refTableAliasName . '`.`' . $columnName . '` AS `' . $refObjectName . '.' . $columnName . '`';
+					}
+
+					// Generate the INNER JOIN criteria
+					$joinOnSql = array();
+					foreach ($hasOne->getRefKey() as $index => $refColumn) {
+						$joinOnSql[] = '`' . $tableName . '`.`' . $localKey[$index]->getColumnName() . '` = `' . $refTableAliasName . '`.`' . $refColumn->getColumnName() . '`';
+					}
+
+					// Append to INNER JOIN SQL using the INNER JOIN criteria
+					$innerJoins['`' . $refDbName . '`.`' . $refTableName . '` AS `' . $refTableAliasName . '`'] = $joinOnSql;
+
+				}
 			}
 		}
 		
@@ -320,7 +323,7 @@ class CoughGenerator {
 			
 			// 2007-10-24/AWB: TODO: make this better
 			$shouldGenerateAddersAndRemovers = true;
-			if (strpos('_By', $localCollectionName) !== false) {
+			if (strpos($localCollectionName, '_By') !== false) {
 				$shouldGenerateAddersAndRemovers = false;
 			}
 			

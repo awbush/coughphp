@@ -294,6 +294,17 @@ class CoughGeneratorConfig extends CoughConfig {
 		return $idRegex;
 	}
 	
+	public function shouldGenerateLoadSqlInnerJoins(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		$option = $this->getConfigValue('load_sql_inner_joins', $dbName, $tableName);
+		if ($option == 'enabled') {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/**
 	 * getTitleCase() takes the given string and returns it in TitleCase format
 	 * (sometimes called UpperCamelCase), with underscores removed.
