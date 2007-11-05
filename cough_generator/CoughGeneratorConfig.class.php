@@ -76,12 +76,7 @@ class CoughGeneratorConfig extends CoughConfig {
 		$className = $this->getConfigValue('class_name', $dbName, $tableName, CoughConfig::SCOPE_TABLE);
 		
 		if (is_null($className)) {
-			$prefixes = $this->getConfigValue('class_names/strip_table_name_prefixes', $dbName, $tableName);
-			
-			// If a prefix exists in the table name, remove it
-			$tableNameWithoutPrefix = $this->getTableNameWithoutPrefix($tableName, $prefixes);
-			
-			$className = $this->getTitleCase($tableNameWithoutPrefix);
+			$className = $this->getTitleCase($this->getEntityName($table));
 		}
 		
 		return $className;
@@ -207,15 +202,19 @@ class CoughGeneratorConfig extends CoughConfig {
 	 * @return string
 	 * @author Anthony Bush
 	 **/
-	public function getEntityName($table) {
+	public function getEntityName(SchemaTable $table) {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
-		$prefixes = $this->getConfigValue('class_names/strip_table_name_prefixes', $dbName, $tableName);
 		
-		// If a prefix exists in the table name, remove it
-		$tableNameWithoutPrefix = $this->getTableNameWithoutPrefix($tableName, $prefixes);
+		// Check if a custom entity name is set via the configuration, if not, then use strip_table_name_prefixes option.
+		$entityName = $this->getConfigValue('entity_name', $dbName, $tableName, CoughConfig::SCOPE_TABLE);
+		if (is_null($entityName)) {
+			// If a prefix exists in the table name, remove it
+			$prefixes = $this->getConfigValue('class_names/strip_table_name_prefixes', $dbName, $tableName);
+			$entityName = $this->getTableNameWithoutPrefix($tableName, $prefixes);
+		}
 		
-		return $tableNameWithoutPrefix;
+		return $entityName;
 	}
 	
 	public function getForeignTableAliasName(SchemaRelationship $relationship) {

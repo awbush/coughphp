@@ -78,6 +78,11 @@ class Schema {
 					// Get reference table
 					$refTable = $refDatabase->getTable($fk->getRefTableName());
 					
+					if (is_null($refTable)) {
+						echo 'ERROR IN DATABASE SCHEMA: FK setup to non-existing table. Take a look at ' . $dbName . '.' . $tableName . "\n";
+						die();
+					}
+					
 					// Get reference columns
 					$refKey = array();
 					foreach ($fk->getRefKeyName() as $columnName) {

@@ -864,7 +864,7 @@ abstract class CoughObject {
 		$fields = $this->getUpdateFields();
 		if (!empty($fields)) {
 			$this->db->selectDb($this->dbName);
-			$this->db->update($this->tableName, $fields, null, $this->getPk());
+			$this->db->update($this->tableName, $fields, $this->getPk());
 		}
 		return true;
 	}
