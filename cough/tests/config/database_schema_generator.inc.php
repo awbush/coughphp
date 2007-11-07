@@ -24,6 +24,10 @@ $config = array(
 	
 	// OPTIONAL ADDITIONAL CONFIG
 	
+	'database_settings' => array(
+		'include_databases_matching_regex' => '/^(test_cough_object)$/',
+	),
+	
 	'table_settings' => array(
 		// This match setting is so the database scanner can resolve relationships better, e.g. know that when it sees "ticket_id" that a "wfl_ticket" table is an acceptable match.
 		'match_table_name_prefixes' => array(), // Example: array('cust_', 'wfl_', 'baof_'),
@@ -37,11 +41,6 @@ $config = array(
 		'id_to_table_regex' => '/^(.*)_id$/',
 		'delete_flag_column' => 'is_retired',
 		'delete_flag_value' => '1',
-	),
-	
-	'databases' => array(
-		'test_cough_object' => array(
-		),
 	),
 	
 );
