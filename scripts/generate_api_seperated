@@ -1,0 +1,8 @@
+#!/bin/sh
+
+phpdoc -d ../cough/ -i Test*.class.php,*.inc.php -t ../docs/api_seperated/cough -dn cough
+phpdoc -d ../cough_generator/ -i Test*.class.php,*.inc.php -t ../docs/api_seperated/cough_generator -dn cough_generator
+phpdoc -d ../dal/as/ -i Test*.class.php,*.inc.php -t ../docs/api_seperated/dal_as -dn dal_as
+phpdoc -d ../dalal/ -i Test*.class.php,*.inc.php -t ../docs/api_seperated/dalal -dn dalal
+phpdoc -d ../schema/ -i Test*.class.php,*.inc.php -t ../docs/api_seperated/schema -dn schema
+phpdoc -d ../schema_generator/ -i Test*.class.php,*.inc.php -t ../docs/api_seperated/schema_generator -dn schema_generator

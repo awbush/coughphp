@@ -1,0 +1,3 @@
+#!/bin/sh
+
+phpdoc -d ../cough/,../cough_generator/,../dal/as/,../dalal/,../schema/,../schema_generator/ -i Test*.class.php,*.inc.php -t ../docs/api/
