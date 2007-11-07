@@ -536,7 +536,6 @@ abstract class CoughObject {
 	 * 
 	 * @param array $fields - format of [field_name] => [new_value]
 	 * @return void
-	 * @todo Anthony: Make this like inflate? -- make it recursive, e.g. if 'account' => array('name' => 'Bob') is passed in, then do getObject('account')->setFields(array('name' => 'Bob')); OR maybe we need setFieldsIfDifferent(array('name' => array('new' => 'Bob', 'old' => 'Fred')))
 	 **/
 	public function setFields($fields) {
 		foreach ($fields as $fieldName => $fieldValue) {
