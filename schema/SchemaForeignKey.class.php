@@ -2,6 +2,8 @@
 
 class SchemaForeignKey {
 	
+	protected $localDatabaseName = '';
+	protected $localTableName = '';
 	protected $localKeyName = array();
 	protected $localObjectName = '';
 	protected $refDatabaseName = '';
@@ -11,6 +13,12 @@ class SchemaForeignKey {
 	protected $isLinked = false;
 
 	public function __construct($data = array()) {
+		if (isset($data['local_database_name'])) {
+			$this->setLocalDatabaseName($data['local_database_name']);
+		}
+		if (isset($data['local_table_name'])) {
+			$this->setLocalTableName($data['local_table_name']);
+		}
 		if (isset($data['local_key_name'])) {
 			$this->setLocalKey($data['local_key_name']);
 		}
@@ -18,7 +26,7 @@ class SchemaForeignKey {
 			$this->setLocalObjectName($data['local_object_name']);
 		}
 		if (isset($data['ref_database_name'])) {
-			$this->setRefDatabase($data['ref_database_name']);
+			$this->setRefDatabaseName($data['ref_database_name']);
 		}
 		if (isset($data['ref_table_name'])) {
 			$this->setRefTable($data['ref_table_name']);
@@ -30,7 +38,13 @@ class SchemaForeignKey {
 			$this->setRefObjectName($data['ref_object_name']);
 		}
 	}
-
+	
+	public function getLocalDatabaseName() {
+		return $this->localDatabaseName;
+	}
+	public function getLocalTableName() {
+		return $this->localTableName;
+	}
 	public function getLocalKeyName() {
 		return $this->localKeyName;
 	}
@@ -62,6 +76,12 @@ class SchemaForeignKey {
 		return $this->isLinked;
 	}
 
+	public function setLocalDatabaseName($localDatabaseName) {
+		$this->localDatabaseName = $localDatabaseName;
+	}
+	public function setLocalTableName($localTableName) {
+		$this->localTableName = $localTableName;
+	}
 	public function setLocalKeyName($localKeyName) {
 		$this->localKeyName = $localKeyName;
 	}

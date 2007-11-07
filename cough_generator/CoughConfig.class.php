@@ -112,49 +112,6 @@ abstract class CoughConfig {
 		return $value;
 	}
 	
-	/**
-	 * Returns whether not the given database name should be processed.
-	 * 
-	 * @param string $dbName
-	 * @return boolean
-	 * @author Anthony Bush
-	 * @todo Should we move this into one of the concrete config classes or rename the function?
-	 **/
-	public function shouldProcessDatabase($dbName) {
-		// If custom database config is specified, then only return true if the given database object is in there.
-		if (isset($this->config['databases'])) {
-			if (!isset($this->config['databases'][$dbName])) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * Returns whether not the given table name (for the given database name)
-	 * should be processed.
-	 * 
-	 * @param string $tableName
-	 * @return boolean
-	 * @author Anthony Bush
-	 * @todo Should we move this into one of the concrete config classes or rename the function?
-	 **/
-	public function shouldProcessTable($dbName, $tableName) {
-		// If custom database config is specified AND custom table config is specified, then only return true if the given database object is in there.
-		if (isset($this->config['databases'])) {
-			if (isset($this->config['databases'][$dbName])) {
-				if (isset($this->config['databases'][$dbName]['tables'])) {
-					if (!isset($this->config['databases'][$dbName]['tables'][$tableName])) {
-						return false;
-					}
-				}
-			} else {
-				return false; // databases array specified, but the database for this table is not in it.
-			}
-		}
-		return true;
-	}
-	
 }
 
 ?>

@@ -87,9 +87,9 @@ class SchemaManipulator {
 		$this->schema = $schema;
 		
 		// add any missed FKs that we can detect via naming A.S. conventions
-		foreach ($schema->getDatabases() as $database)
+		foreach ($schema->getDatabases() as $localDatabaseName => $database)
 		{
-			foreach ($database->getTables() as $table)
+			foreach ($database->getTables() as $localTableName => $table)
 			{
 				// Get the per database/table setting for id_to_table_regex
 				$idToTableRegexes = $this->config->getIdToTableRegex($table);
@@ -120,29 +120,28 @@ class SchemaManipulator {
 						
 						if (isset($matches[1]))
 						{
-							$refTable = $this->findTable($matches[1], $database);
+							$refTable = $this->findTable($matches[1], $table);
 
 							// Add the foreign key
 							if (!is_null($refTable) && count($refTable->getPrimaryKey()) == 1)
 							{
 								$refDatabaseName = $refTable->getDatabase()->getDatabaseName();
-
+								
 								$fk = new SchemaForeignKey();
+								$fk->setLocalDatabaseName($localDatabaseName);
+								$fk->setLocalTableName($localTableName);
 								$fk->setLocalKeyName(array($column->getColumnName()));
+								$fk->setRefDatabaseName($refDatabaseName);
 								$fk->setRefTableName($refTable->getTableName());
-
+								
 								// Downgrade the ref primary key to an array of column names (no references to the objects)
 								$refKeyName = array();
 								foreach ($refTable->getPrimaryKey() as $pkColumn) {
 									$refKeyName[] = $pkColumn->getColumnName();
 								}
-
+								
 								$fk->setRefKeyName($refKeyName);
-
-								if ($refDatabaseName != $database->getDatabaseName()) {
-									$fk->setRefDatabaseName($refDatabaseName);
-								}
-
+								
 								if ($this->verbose) {
 									echo 'Detected FK by name';
 									if ($table->hasForeignKey($fk)) {
@@ -153,7 +152,7 @@ class SchemaManipulator {
 									echo ': ' . $dbName . '.' . $table->getTableName() . ' (' . $column->getColumnName()
 										. ') => ' . $refDbName . '.' . $refTable->getTableName() . ' (' . implode(',', $refKeyName) . ')' . "\n";
 								}
-
+								
 								$table->addForeignKey($fk);
 								
 								// Stop looping through idToTableRegexes because we found a match.
@@ -179,15 +178,16 @@ class SchemaManipulator {
 	 * @return mixed - SchemaTable if found, null if not
 	 * @author Anthony Bush
 	 **/
-	protected function findTable($tableNameMatch, $firstDatabase = null)
+	protected function findTable($tableNameMatch, SchemaTable $sourceTable)
 	{
+		$firstDatabase = $sourceTable->getDatabase();
 		$table = $this->findTableInDatabase($tableNameMatch, $firstDatabase);
 		
 		if (is_null($table)) {
 			// Try again for every other database
 			$firstDatabaseName = $firstDatabase->getDatabaseName();
-			foreach ($this->schema->getDatabases() as $database) {
-				if ($database->getDatabaseName() == $firstDatabaseName) {
+			foreach ($this->schema->getDatabases() as $dbName => $database) {
+				if ($dbName == $firstDatabaseName || !$this->config->shouldScanForJoin($sourceTable, $database)) {
 					continue;
 				}
 				$table = $this->findTableInDatabase($tableNameMatch, $database);

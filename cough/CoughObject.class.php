@@ -1007,7 +1007,7 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Returns the validation errors set by `valdiateData()`.
+	 * Returns the validation errors set by `validateData()`.
 	 *
 	 * @return array
 	 * @author Anthony Bush

@@ -75,8 +75,12 @@ class MysqlTable extends SchemaTable implements DriverTable {
 				$refKey[] = $this->trimBackticks($quotedKey);
 			}
 			
+			$dbName = $this->getDatabase()->getDatabaseName();
 			$schemaFk = new SchemaForeignKey();
+			$schemaFk->setLocalDatabaseName($dbName);
+			$schemaFk->setLocalTableName($this->getTableName());
 			$schemaFk->setLocalKeyName($fKey);
+			$schemaFk->setRefDatabaseName($dbName);
 			$schemaFk->setRefTableName($refTable);
 			$schemaFk->setRefKeyName($refKey);
 			$this->addForeignKey($schemaFk);

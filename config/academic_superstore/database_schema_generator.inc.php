@@ -24,11 +24,15 @@ $config = array(
 	
 	// OPTIONAL ADDITIONAL CONFIG
 	
+	'database_settings' => array(
+		'include_databases_matching_regex' => '/^(content|customer|inventory|superstore|user|vendor_import)$/',
+	),
+	
 	'table_settings' => array(
 		// This match setting is so the database scanner can resolve relationships better, e.g. know that when it sees "ticket_id" that a "wfl_ticket" table is an acceptable match.
 		'match_table_name_prefixes' => array('cust_','wfl_','baof_','inv_'), // Example: array('cust_', 'wfl_', 'baof_'),
 		// You can ignore tables all together, too:
-		'ignore_tables_matching_regex' => '/(^(bak_|temp_))|((_bak)$)/', // ignore tables that start with bak_ or temp_ or end with _bak
+		'exclude_tables_matching_regex' => '/(^(bak_|temp_))|((_bak)$)/', // ignore tables that start with bak_ or temp_ or end with _bak
 	),
 	
 	'field_settings' => array(
@@ -47,20 +51,9 @@ $config = array(
 			
 			// Override some ignore table settings for the user database.
 			'table_settings' => array(
-				'ignore_tables_matching_regex' => '/(^(bak_|temp_))|((_bak)$|^(address)$)/',
+				'exclude_tables_matching_regex' => '/(^(bak_|temp_))|((_bak)$|^(address)$)/',
 			),
 			
-			
-			
-			// I DON'T LIKE THIS IDEA:
-			// 'skip_unspecified_tables' => true, // This may be the solution to the problem mentioned below.
-
-			// I LIKE THIS IDEA: (require the user to explicitly name tables in the database they don't want included). Note that this is in addition to the 'table_settings/ignore_tables_matching_regex' option, and that it should be added inside the table_settings array instead of floating out here.
-			// 'ignore_tables' => array(), // array of table names to ingore during scanning. This may be the solution to the problem mentioned below.
-			// ACTUALLY, you don't need that option because 'table_settings/ignore_tables_matching_regex' allows for this functionality, e.g. I can ignore tables starting with bak_ or temp_, ending in _bak, or exactly "some_table_i_hate" or "some_other_table_thats_useless" using:
-			// 'ignore_tables_matching_regex' => '/(^(bak_|temp_))|((_bak)$)|(^(some_table_i_hate|some_other_table_that_is_useless)$)/'
-			// while it might not be trivial to all people, I would expect the intended audience (PHP Developer) to consider it trivial.
-				
 			
 			// 'tables' => array(
 			// 	'baof_login2role' => array(

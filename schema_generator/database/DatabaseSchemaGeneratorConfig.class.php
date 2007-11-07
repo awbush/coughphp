@@ -22,12 +22,20 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 
 			// OPTIONAL ADDITIONAL CONFIG
 			
+			'database_settings' => array(
+				'include_databases_matching_regex' => '/.*/',
+				'exclude_databases_matching_regex' => '/(_bak$)|(^bak_)|(^temp_)/',
+			),
+			
 			// You can override table_settings only on a per-database level and not a per-table level (b/c it doesn't make sense to)
 			'table_settings' => array(
-				// This match setting is so the database scanner can resolve relationships better, e.g. know that when it sees "ticket_id" that a "wfl_ticket" table is an acceptable match.
+				// This match setting is so the database scanner can resolve
+				// relationships better, e.g. know that when it sees "ticket_id"
+				// that a "wfl_ticket" table is an acceptable match.
 				'match_table_name_prefixes' => array(), // Example: array('cust_', 'wfl_', 'baof_'),
-				// You can ignore tables all together, too:
-				'ignore_tables_matching_regex' => '/(_bak$)|(^bak_)|(^temp_)/',
+				
+				'include_tables_matching_regex' => '/.*/',
+				'exclude_tables_matching_regex' => '/(_bak$)|(^bak_)|(^temp_)/',
 			),
 
 			'field_settings' => array(
@@ -35,6 +43,8 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 				// This is useful, for example, when no FK relationships set up)
 				'id_to_table_regex' => '/^(.*)_id$/',
 			),
+			
+			'acceptable_join_databases' => 'all',
 
 			// Now, we can override the global config on a per database level.
 			// 'databases' => array(
@@ -84,26 +94,77 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 	}
 	
 	/**
+	 * Returns whether not the given database name should be processed.
+	 * 
+	 * @param string $dbName
+	 * @return boolean
+	 * @author Anthony Bush
+	 **/
+	public function shouldProcessDatabase($dbName) {
+		
+		// Check that the database should be included.
+		$includeRegex = $this->getConfigValue('database_settings/include_databases_matching_regex', $dbName);
+		if (!preg_match($includeRegex, $dbName)) {
+			return false;
+		}
+		
+		// Check that the database should not be excluded.
+		$excludeRegex = $this->getConfigValue('database_settings/exclude_databases_matching_regex', $dbName);
+		if (preg_match($excludeRegex, $dbName)) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * Returns whether not the given table name (for the given database name)
 	 * should be processed.
 	 * 
 	 * @param string $tableName
 	 * @return boolean
 	 * @author Anthony Bush
-	 * @todo Should we move this into one of the concrete config classes or rename the function?
 	 **/
 	public function shouldProcessTable($dbName, $tableName) {
-		if (!parent::shouldProcessTable($dbName, $tableName)) {
+		
+		// Check that the table should be included.
+		$includeRegex = $this->getConfigValue('table_settings/include_tables_matching_regex', $dbName);
+		if (!preg_match($includeRegex, $tableName)) {
 			return false;
 		}
 		
-		// Also check that the table is not set to be ignored via the regex.
-		$ignoreRegex = $this->getConfigValue('table_settings/ignore_tables_matching_regex', $dbName);
-		if (preg_match($ignoreRegex, $tableName)) {
+		// Check that the table should not be excluded.
+		$excludeRegex = $this->getConfigValue('table_settings/exclude_tables_matching_regex', $dbName);
+		if (preg_match($excludeRegex, $tableName)) {
 			return false;
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Returns whether or not a the $sourceTable cares about the $refDatabase when looking
+	 * for joins.
+	 * 
+	 * @param SchemaTable $sourceTable - the source table that is trying to link up related joins
+	 * @param SchemaDatabase $refDatabase - the dest database to scan if shouldScanForJoin() returns true
+	 * @return boolean
+	 * @author Anthony Bush
+	 * @since 2007-11-06
+	 **/
+	public function shouldScanForJoin(SchemaTable $sourceTable, SchemaDatabase $refDatabase) {
+		$dbName = $sourceTable->getDatabase()->getDatabaseName();
+		$tableName = $sourceTable->getTableName();
+		$option = $this->getConfigValue('acceptable_join_databases', $dbName, $tableName);
+		if (is_array($option)) {
+			// yes, but only for databases in the array.
+			$refDbName = $refDatabase->getDatabaseName();
+			if (in_array($refDbName, $option)) {
+				return true;
+			}
+		} else if ($option == 'all') {
+			return true;
+		}
+		return false;
 	}
 	
 	

@@ -24,11 +24,16 @@ $config = array(
 	
 	// OPTIONAL ADDITIONAL CONFIG
 	
+	'database_settings' => array(
+		'include_databases_matching_regex' => '/.*/',
+		'exclude_tables_matching_regex' => '/(_bak$)|(^bak_)|(^temp_)/',
+	),
+	
 	'table_settings' => array(
 		// This match setting is so the database scanner can resolve relationships better, e.g. know that when it sees "ticket_id" that a "wfl_ticket" table is an acceptable match.
 		'match_table_name_prefixes' => array(), // Example: array('cust_', 'wfl_', 'baof_'),
-		// You can ignore tables all together, too:
-		'ignore_tables_matching_regex' => '/(_bak$)|(^bak_)|(^temp_)/',
+		'include_tables_matching_regex' => '/.*/',
+		'exclude_tables_matching_regex' => '/(_bak$)|(^bak_)|(^temp_)/',
 	),
 	
 	'field_settings' => array(

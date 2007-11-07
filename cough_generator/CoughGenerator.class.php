@@ -247,6 +247,11 @@ class CoughGenerator {
 		ob_start();
 		$objectDefinitions = array();
 		foreach ($table->getHasOneRelationships() as $hasOne) {
+			
+			if (!$this->config->shouldGenerateHasOneMethods($hasOne)) {
+				continue;
+			}
+			
 			$objectClassName = $this->config->getStarterObjectClassName($hasOne->getRefTable());
 			$entityName = $this->config->getForeignTableAliasName($hasOne); // e.g. 'billing_address'
 			$objectName = $this->config->getForeignObjectName($hasOne); // e.g. 'BillingAddress_Object'
@@ -299,6 +304,10 @@ class CoughGenerator {
 		ob_start();
 		$notifyCollections = array(); // store generated foreachs for the `notifyChildrenOfKeyChange()` method we will be generating.
 		foreach ($table->getHasManyRelationships() as $hasMany) {
+			
+			if (!$this->config->shouldGenerateHasManyMethods($hasMany)) {
+				continue;
+			}
 			
 			$localCollectionName = $this->config->getForeignCollectionName($hasMany, $table->getHasManyRelationships()); // e.g. WflTicket_Collection_ByBillingAddressId
 			$localCollectionClassName = $this->config->getStarterCollectionClassName($hasMany->getRefTable()); // e.g. usr_WflTicket_Collection

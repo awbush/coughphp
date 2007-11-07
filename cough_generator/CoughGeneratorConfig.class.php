@@ -21,6 +21,9 @@ class CoughGeneratorConfig extends CoughConfig {
 				'starter_classes' => $generated . 'starter_classes/',
 				'file_suffix' => '.class.php',
 			),
+			'load_sql_inner_joins' => 'disabled', // valid options: enabled, disabled
+			'generate_has_one_methods' => 'all', // valid options: all, none, or array of databases to generate join methods for.
+			'generate_has_many_methods' => 'all', // valid options: all, none, or array of databases to generate join methods for.
 			'class_names' => array(
 				// You can add prefixes to class names that are generated
 				'prefix' => '',
@@ -302,6 +305,40 @@ class CoughGeneratorConfig extends CoughConfig {
 		} else {
 			return false;
 		}
+	}
+	
+	public function shouldGenerateHasOneMethods(SchemaRelationship $hasOne) {
+		$table = $hasOne->getLocalTable();
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		$option = $this->getConfigValue('generate_has_one_methods', $dbName, $tableName);
+		if (is_array($option)) {
+			// yes, but only for databases in the array.
+			$refDbName = $hasOne->getRefTable()->getDatabase()->getDatabaseName();
+			if (in_array($refDbName, $option)) {
+				return true;
+			}
+		} else if ($option == 'all') {
+			return true;
+		}
+		return false;
+	}
+	
+	public function shouldGenerateHasManyMethods(SchemaRelationship $hasMany) {
+		$table = $hasMany->getLocalTable();
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		$option = $this->getConfigValue('generate_has_many_methods', $dbName, $tableName);
+		if (is_array($option)) {
+			// yes, but only for databases in the array.
+			$refDbName = $hasMany->getRefTable()->getDatabase()->getDatabaseName();
+			if (in_array($refDbName, $option)) {
+				return true;
+			}
+		} else if ($option == 'all') {
+			return true;
+		}
+		return false;
 	}
 	
 	/**
