@@ -9,7 +9,7 @@
  * CoughObject and have all your classes extend that one; this way you can add
  * custom functionality to Cough without modifying the Cough source.
  * 
- * @package CoughPHP
+ * @package cough
  **/
 abstract class CoughObject {
 

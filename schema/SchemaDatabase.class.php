@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * SchemaDatabase contains information about one database (its tables).
+ *
+ * @package schema
+ * @author Anthony Bush
+ **/
 class SchemaDatabase {
 	
 	protected $server = null; // reference to parent object

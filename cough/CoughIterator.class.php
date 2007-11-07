@@ -3,7 +3,7 @@
 /**
  * undocumented class CoughIterator
  * 
- * @package CoughPHP
+ * @package cough
  **/
 class CoughIterator extends ArrayIterator {
 }

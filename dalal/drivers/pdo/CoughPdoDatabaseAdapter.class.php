@@ -3,7 +3,7 @@
 /**
  * PDO database abstraction layer wrapper
  *
- * @package default
+ * @package dalal
  * @author Lewis Zhang
  **/
 class CoughPdoDatabaseAdapter extends CoughAbstractDatabaseAdapter

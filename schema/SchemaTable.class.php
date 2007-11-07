@@ -1,12 +1,10 @@
 <?php
 
 /**
- * Take a tableName and database link and provide access to the tables
- * properties, such as its columns.
- * 
- * @package Schema
+ * SchemaTable contains information about one table (its columns).
+ *
+ * @package schema
  * @author Anthony Bush
- * @copyright Anthony Bush (http://anthonybush.com/), 2006-08-26
  **/
 class SchemaTable {
 	

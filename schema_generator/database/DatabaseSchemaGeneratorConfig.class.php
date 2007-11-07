@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Config class for DatabaseSchemaGenerator.
+ * 
+ * It abstracts the implementation of configuration specification, as well
+ * as makes it easy for the DatabaseSchemaGenerator to perform different actions
+ * based on the user's configuration.
+ *
+ * @package schema_generator
+ * @author Anthony Bush
+ **/
 class DatabaseSchemaGeneratorConfig extends CoughConfig {
 	
 	public static function constructFromFile($filePath) {

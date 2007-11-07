@@ -4,7 +4,7 @@
  * CoughGenerator creates these, CoughWriter compares them to what's on disk
  * and chooses which ones to write to disk (and where).
  * 
- * @package CoughPHP
+ * @package cough_generator
  * @author Anthony Bush
  **/
 class CoughClass {

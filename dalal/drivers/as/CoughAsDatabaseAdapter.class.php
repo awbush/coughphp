@@ -3,7 +3,7 @@
 /**
  * AS Database abstraction layer wrapper
  *
- * @package default
+ * @package dalal
  * @author Lewis Zhang
  **/
 class CoughAsDatabaseAdapter extends CoughAbstractDatabaseAdapter

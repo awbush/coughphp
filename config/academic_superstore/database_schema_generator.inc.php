@@ -5,7 +5,7 @@
  * You don't have to pass these to the schema generator as it will use
  * reasonable defaults. The are replicated here to make them easy to change.
  *
- * @package CoughPHP
+ * @package schema_generator
  * @author Anthony Bush
  **/
 

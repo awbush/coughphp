@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Base config class for other config classes to extend.
+ *
+ * @package cough_generator
+ * @author Anthony Bush
+ **/
 abstract class CoughConfig {
 	const SCOPE_GLOBAL = 1;
 	const SCOPE_DATABASE = 2;

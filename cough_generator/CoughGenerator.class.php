@@ -3,7 +3,7 @@
 /**
  * CoughGenerator takes config and schema and generates CoughClass objects.
  * 
- * @package CoughPHP
+ * @package cough_generator
  * @author Anthony Bush
  **/
 class CoughGenerator {

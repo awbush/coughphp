@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Defines the interface for a Database Driver.
+ *
+ * @package schema_generator
+ * @author Anthony Bush
+ **/
 interface DriverDatabase {
 	
 	/**

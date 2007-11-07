@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * SchemaRelationshipHasMany adds methods to pull it's "has one"
+ * counterpart.
+ *
+ * @package schema
+ * @author Anthony Bush
+ **/
 class SchemaRelationshipHasMany extends SchemaRelationship {
 	
 	protected $hasOneRelationship = null;

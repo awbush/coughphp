@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * undocumented class
+ *
+ * @package cough
+ **/
 class CoughInstancePool
 {
 	protected static $instances = array();

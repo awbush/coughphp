@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Implements the interface for the Database Driver.
+ *
+ * @package schema_generator
+ * @author Anthony Bush
+ **/
 class MysqlDatabase extends SchemaDatabase implements DriverDatabase {
 	
 	protected $dbLink = null;

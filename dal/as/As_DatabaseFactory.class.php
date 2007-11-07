@@ -47,7 +47,7 @@
  *    
  *    As_DatabaseFactory::setDatabaseConfigs($dbConfigs);
  * 
- * 
+ * @package dal_as
  * @author Anthony Bush
  **/
 class As_DatabaseFactory {

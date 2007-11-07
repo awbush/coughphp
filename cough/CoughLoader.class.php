@@ -13,7 +13,7 @@
  * until it finds it:
  * 
  *     1. APP_PATH . 'models/dbName/'
- *     2. SHARED_PATH . 'models/debName/'
+ *     2. SHARED_PATH . 'models/dbName/'
  * 
  * Then, it will load the generated classes followed by the sub classes:
  * 
@@ -26,7 +26,7 @@
  * next. This allows it to work in cases where the sub class has no corresponding
  * generated class.
  *
- * @package CoughPHP
+ * @package cough
  * @author Anthony Bush
  **/
 class CoughLoader {

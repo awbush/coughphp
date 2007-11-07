@@ -9,6 +9,7 @@
  * 
  * This file is released under the FreeBSD license.
  * 
+ * @package dal_as
  * @author Anthony Bush
  **/
 class As_Database {

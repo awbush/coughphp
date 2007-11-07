@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Schema contains one or more databases, which each may have info about one or
+ * more tables, which each may have info about one or more columns, which each
+ * have info about whether it is a primary key, null is allowed, its type, etc.
+ *
+ * @package schema
+ * @author Anthony Bush
+ **/
 class Schema {
 	
 	/**

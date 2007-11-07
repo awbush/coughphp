@@ -4,7 +4,7 @@
  * this wraps a DatabaseResult object with a Cough compliant result object interface
  * NOTE: this is nearly identical to DatabaseResult
  *
- * @package default
+ * @package dalal
  * @author Lewis Zhang
  **/
 class CoughAsDatabaseResultAdapter extends CoughAbstractDatabaseResultAdapter

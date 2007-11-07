@@ -3,7 +3,7 @@
 /**
  * Extends the new CoughObject and provides backwards compatibility to some of the old methods...
  *
- * @package default
+ * @package cough
  * @author Anthony Bush
  **/
 class As_CoughObject extends CoughObject {

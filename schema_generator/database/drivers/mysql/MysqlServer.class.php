@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Implements the interface for Server Driver, which:
+ * 
  * Given connection credentials, it gives read-only access to seeing what
  * databases, tables, and columns are available.
  * 
@@ -16,9 +18,8 @@
  *     $server->loadDatabase('db_name');
  *     print_r($dba->getDatabase('db_name'));
  * 
- * @package Schema
+ * @package schema_generator
  * @author Anthony Bush
- * @copyright Anthony Bush (http://anthonybush.com/), 2006-08-26
  **/
 class MysqlServer extends Schema implements DriverServer {
 	

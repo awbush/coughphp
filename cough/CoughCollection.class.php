@@ -3,7 +3,7 @@
 /**
  * undocumented abstract class CoughCollection
  * 
- * @package CoughPHP
+ * @package cough
  **/
 abstract class CoughCollection extends ArrayObject {
 	

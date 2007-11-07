@@ -3,7 +3,8 @@
 /**
  * The base SchemaRelationship class contains and provides accessors to the
  * local table object and key and the reference (foreign) table object and key.
- *
+ * 
+ * @package schema
  * @author Anthony Bush
  * @todo 2007-10-24/AWB: consider deprecating the "ObjectName" stuff as it doesn't get set at the schema level, but instead at the generation level (e.g. a config function might take one of the objects and return the "ObjectName" but it is not pre-filled here)
  **/

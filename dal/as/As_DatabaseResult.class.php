@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Database Result class which the query method of {@link As_Database} returns.
+ *
+ * @package dal_as
+ **/
 class As_DatabaseResult {
 	private $result;
 

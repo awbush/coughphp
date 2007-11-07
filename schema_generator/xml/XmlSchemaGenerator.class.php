@@ -4,7 +4,7 @@
  * Takes XML config info and generates a schema (a collection of databases
  * each containing a collection of tables each containing a collection of columns)
  *
- * @package Schema
+ * @package schema_generator
  * @author Anthony Bush
  * @todo Write this class...
  **/

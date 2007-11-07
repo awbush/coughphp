@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Driver interface for server
+ * Defines the interface for a Server Driver.
  *
- * @package Schema
+ * @package schema_generator
  * @author Anthony Bush
  **/
 interface DriverServer {

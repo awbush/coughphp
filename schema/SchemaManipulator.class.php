@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Takes a schema (and config) and runs through the schema in an effort to
+ * detect foreign keys that may have been missed (or simply weren't specified
+ * at the database level).
+ *
+ * @package schema
+ * @author Anthony Bush
+ **/
 class SchemaManipulator {
 	
 	/**
@@ -55,7 +63,7 @@ class SchemaManipulator {
 	 * Enable verbose mode
 	 *
 	 * @return void
-	 * @see {@link $verbose}
+	 * @see $verbose
 	 **/
 	public function enableVerbose() {
 		$this->verbose = true;
@@ -65,7 +73,7 @@ class SchemaManipulator {
 	 * Disable verbose mode
 	 *
 	 * @return void
-	 * @see {@link $verbose}
+	 * @see $verbose
 	 **/
 	public function disableVerbose() {
 		$this->verbose = false;

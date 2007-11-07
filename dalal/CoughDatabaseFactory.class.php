@@ -51,6 +51,7 @@
  *    CoughDatabaseFactory::setDatabaseConfigs($dbConfigs);
  * 
  * 
+ * @package dalal
  * @author Anthony Bush
  **/
 class CoughDatabaseFactory

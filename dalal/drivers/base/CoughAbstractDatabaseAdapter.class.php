@@ -3,7 +3,7 @@
 /**
  * database abstraction layer abstraction layer
  *
- * @package default
+ * @package dalal
  * @author Lewis Zhang
  **/
 abstract class CoughAbstractDatabaseAdapter

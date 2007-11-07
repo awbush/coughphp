@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Config class for CoughGenerator.
+ * 
+ * It abstracts the implementation of configuration specification, as well
+ * as makes it easy for the CoughGenerator to perform different actions
+ * based on the user's configuration.
+ *
+ * @package cough_generator
+ * @author Anthony Bush
+ **/
 class CoughGeneratorConfig extends CoughConfig {
 	
 	public static function constructFromFile($filePath) {

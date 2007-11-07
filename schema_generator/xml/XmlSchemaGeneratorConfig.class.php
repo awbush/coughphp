@@ -4,7 +4,7 @@
  * XML Schema Generator takes an XML schema file and generates the Schema
  * objects that CoughGenerator takes.
  *
- * @package Schema
+ * @package schema_generator
  * @author Anthony Bush
  **/
 class XmlSchemaGeneratorConfig extends CoughConfig {

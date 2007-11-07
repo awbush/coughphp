@@ -45,7 +45,7 @@
  * 
  * @author Anthony Bush, Tom Warmbrodt, Lewis Zhang
  * @copyright 2005-2007 Anthony Bush, Tom Warmbrodt, Lewis Zhang. CoughPHP is open source protected by the FreeBSD License.
- * @package CoughPHP
+ * @package cough
  **/
 
 // Load the Cough framework

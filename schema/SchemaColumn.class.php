@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * SchemaColumn contains information about one column (its attributes).
+ *
+ * @package schema
+ * @author Anthony Bush
+ **/
 class SchemaColumn {
 	
 	protected $table = null; // reference to parent object

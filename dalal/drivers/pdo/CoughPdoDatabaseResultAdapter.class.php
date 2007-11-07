@@ -3,7 +3,7 @@
 /**
  * this wraps a PDOStatement object with Matt_Database style method names
  *
- * @package default
+ * @package dalal
  * @author Lewis Zhang
  **/
 class CoughPdoDatabaseResultAdapter extends CoughAbstractDatabaseResultAdapter

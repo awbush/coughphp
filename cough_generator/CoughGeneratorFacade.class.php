@@ -14,7 +14,7 @@
  * 
  * Facade design pattern: "create a simplified interface of an existing interface to ease usage for common tasks"
  *
- * @package CoughPHP
+ * @package cough_generator
  * @author Anthony Bush
  **/
 class CoughGeneratorFacade {
@@ -30,7 +30,7 @@ class CoughGeneratorFacade {
 	 * Enable verbose mode
 	 *
 	 * @return void
-	 * @see {@link $verbose}
+	 * @see $verbose
 	 **/
 	public function enableVerbose() {
 		$this->verbose = true;
@@ -40,7 +40,7 @@ class CoughGeneratorFacade {
 	 * Disable verbose mode
 	 *
 	 * @return void
-	 * @see {@link $verbose}
+	 * @see $verbose
 	 **/
 	public function disableVerbose() {
 		$this->verbose = false;
@@ -310,6 +310,5 @@ class CoughGeneratorFacade {
 	}
 	
 }
-
 
 ?>

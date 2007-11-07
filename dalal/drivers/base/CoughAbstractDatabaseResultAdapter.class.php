@@ -3,7 +3,7 @@
 /**
  * undocumented class
  *
- * @package default
+ * @package dalal
  * @author Lewis Zhang
  **/
 abstract class CoughAbstractDatabaseResultAdapter

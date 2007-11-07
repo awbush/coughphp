@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * undocumented class
+ *
+ * @package schema
+ * @author Anthony Bush
+ **/
 class SchemaForeignKey {
 	
 	protected $localDatabaseName = '';

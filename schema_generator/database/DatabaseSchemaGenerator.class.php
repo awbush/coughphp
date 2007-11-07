@@ -4,7 +4,7 @@
  * Takes database config info and generates a schema (a collection of databases
  * each containing a collection of tables each containing a collection of columns)
  *
- * @package CoughPHP
+ * @package schema_generator
  * @author Anthony Bush
  **/
 class DatabaseSchemaGenerator extends SchemaGenerator {
@@ -156,7 +156,7 @@ class DatabaseSchemaGenerator extends SchemaGenerator {
 	 * Enable verbose mode
 	 *
 	 * @return void
-	 * @see {@link $verbose}
+	 * @see $verbose
 	 **/
 	public function enableVerbose() {
 		$this->verbose = true;
@@ -166,7 +166,7 @@ class DatabaseSchemaGenerator extends SchemaGenerator {
 	 * Disable verbose mode
 	 *
 	 * @return void
-	 * @see {@link $verbose}
+	 * @see $verbose
 	 **/
 	public function disableVerbose() {
 		$this->verbose = false;
