@@ -65,7 +65,14 @@ class As_Database {
 		$this->initConnection();
 		$this->selectDB($dbName);
 	}
-
+	
+	public function __destruct()
+	{
+		if ($this->inTransaction) {
+			$this->rollback();
+		}
+	}
+	
 	public function selectDB($dbName) {
 		if ($dbName != $this->dbName) {
 			if (!mysql_select_db($dbName,$this->connection)) {
