@@ -81,7 +81,8 @@ Some of the static methods might be generated like the following...
 			if ($result->getNumRows() == 1) {
 				return self::constructByFields($result->getRow());
 			}
-			$result->freeResult();
+			// result will be freed once function ends since it is local variable.
+			// $result->freeResult();
 		}
 		return null;
 	}

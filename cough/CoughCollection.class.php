@@ -180,8 +180,8 @@ abstract class CoughCollection extends ArrayObject {
 				$this->add(call_user_func(array($elementClassName, 'constructByFields'), $row));
 			}
 		}
-		
-		$result->freeResult();
+		// result will be freed once function ends since it is local variable.
+		// $result->freeResult();
 	}
 	
 	public function load() {
@@ -197,7 +197,8 @@ abstract class CoughCollection extends ArrayObject {
 				$this->add(call_user_func(array($elementClassName, 'constructByFields'), $row));
 			}
 		}
-		$result->freeResult();
+		// result will be freed once function ends since it is local variable.
+		// $result->freeResult();
 	}
 	
 	/**

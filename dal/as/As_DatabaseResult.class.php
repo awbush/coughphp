@@ -7,9 +7,15 @@
  **/
 class As_DatabaseResult {
 	private $result;
+	private $freed = false;
 
 	public function __construct($result) {
 		$this->result = $result;
+	}
+	
+	public function __destruct()
+	{
+		@$this->freeResult();
 	}
 
 	public function getRow() {

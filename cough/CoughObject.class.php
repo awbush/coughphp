@@ -682,7 +682,8 @@ abstract class CoughObject {
 			} else {
 				// load failed because the unique dataset couldn't be selected
 			}
-			$result->freeResult();
+			// result will be freed once function ends since it is local variable.
+			// $result->freeResult();
 		} else {
 			// load failed because no SQL was given
 		}
