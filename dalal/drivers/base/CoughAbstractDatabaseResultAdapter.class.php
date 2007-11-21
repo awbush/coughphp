@@ -21,7 +21,7 @@ abstract class CoughAbstractDatabaseResultAdapter
 		$this->result = $result;
 	}
 	
-	abstract public static function retrieveByResult($result);
+	//abstract public static function retrieveByResult($result);
 	
 	abstract public function getRow();
 	

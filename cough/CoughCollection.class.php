@@ -272,7 +272,7 @@ abstract class CoughCollection extends ArrayObject {
 		if (is_array($key)) {
 			$key = implode(',', $key);
 		}
-		if ($this->offsetExists($key)) {
+		if (isset($this[$key])) { // don't use offsetExists b/c it doesn't work in PHP <= 5.2.1
 			return $this->offsetGet($key);
 		} else {
 			return null;
@@ -310,8 +310,8 @@ abstract class CoughCollection extends ArrayObject {
 	/**
 	 * Removes a single element given either an ID of the current collection
 	 * object type to be removed or the object itself.
-	 *
-	 * @return CoughObject - the element that was removed
+	 * 
+	 * @return mixed - CoughObject that was removed, or false if no element could be found/removed.
 	 * @author Anthony Bush
 	 **/
 	public function remove($objectOrId) {
@@ -326,8 +326,20 @@ abstract class CoughCollection extends ArrayObject {
 		}
 	}
 	
+	/**
+	 * Removes a single element from the collection by key.
+	 * 
+	 * Due to a bug in PHP 5.2.1 and earlier, we do not use offsetExists()...
+	 * This has the drawback of not working when a value exists, but is null,
+	 * but if that ever happens behavior is UNDEFINED anyway (i.e. how do you have
+	 * a null element in a CoughCollection? It makes no sense.)
+	 * See http://bugs.php.net/bug.php?id=40872 for more details.
+	 *
+	 * @return mixed - CoughObject that was removed, or false if no element could be found/removed.
+	 * @author Anthony Bush
+	 **/
 	protected function removeByKey($key) {
-		if ($this->offsetExists($key)) {
+		if (isset($this[$key])) {
 			$objectToRemove = $this->offsetGet($key);
 			$this->offsetUnset($key);
 			$this->removedElements[] = $objectToRemove;
@@ -336,6 +348,12 @@ abstract class CoughCollection extends ArrayObject {
 		return false;
 	}
 	
+	/**
+	 * Removes a single element from the collection by comparing references.
+	 *
+	 * @return mixed - CoughObject that was removed, or false if no element could be found/removed.
+	 * @author Anthony Bush
+	 **/
 	protected function removeByReference($objectToRemove) {
 		foreach ($this as $key => $element) {
 			if ($element == $objectToRemove) {
@@ -398,10 +416,7 @@ abstract class CoughCollection extends ArrayObject {
 		
 		// Step 4: Setup the collection with the new sorted array
 		$this->exchangeArray($sorted);
-		
 	}
-	
 }
-
 
 ?>

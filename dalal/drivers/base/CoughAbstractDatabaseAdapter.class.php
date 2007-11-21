@@ -60,7 +60,7 @@ abstract class CoughAbstractDatabaseAdapter
 	 * @return object - returns a concrete child of CoughAbstractDatabaseAdapter
 	 * @author Lewis Zhang
 	 **/
-	abstract public static function retrieveByDbConfig($dbConfig);
+	//abstract public static function retrieveByDbConfig($dbConfig);
 	
 	/**
 	 * selects the specified database for this connection
