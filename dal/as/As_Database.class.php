@@ -49,6 +49,13 @@ class As_Database {
 	protected $logQueries = false;
 	
 	/**
+	 * Whether or not to log backtraces when logging queries
+	 *
+	 * @var string
+	 **/
+	protected $logBacktraces = false;
+	
+	/**
 	 * Logged queries since logQueries was turned on
 	 * 
 	 * @return void
@@ -134,7 +141,19 @@ class As_Database {
 		}
 		$finish = microtime(true);
 		if ($this->logQueries) {
-			$this->queryLog[] = array('sql' => $sql, 'time' => ($finish - $start));
+			$newLog = array(
+				'sql' => $sql,
+				'time' => ($finish - $start),
+			);
+			
+			if ($this->logBacktraces) {
+				ob_start();
+				debug_print_backtrace();
+				$newLog['backtrace'] = ob_get_clean();
+			}
+			
+			$this->queryLog[] = $newLog;
+			
 		}
 		
 		return new As_DatabaseResult($result);
@@ -163,7 +182,18 @@ class As_Database {
 	public function getAffectedRows() {
 		return mysql_affected_rows($this->connection);
 	}
-
+	
+	/**
+	 * Returns the number of found rows from the last run query.
+	 * 
+	 * Make sure to put SQL_CALC_FOUND_ROWS immediately after the SELECT in
+	 * order for this to work.
+	 **/
+	public function getFoundRows()
+	{
+		return $this->result('SELECT FOUND_ROWS()');
+	}
+	
 	/**
 	 * Perform an INSERT.
 	 * This function is Persistent Compatible.
@@ -536,16 +566,22 @@ class As_Database {
 		return $this->query;
 	}
 	
-	public function startLoggingQueries() {
+	public function startLoggingQueries($logBacktraces = false) {
 		$this->logQueries = true;
+		$this->logBacktraces = $logBacktraces;
 	}
 	
 	public function stopLoggingQueries() {
 		$this->logQueries = false;
+		$this->logBacktraces = false;
 	}
 	
 	public function getQueryLog() {
 		return $this->queryLog;
+	}
+	
+	public function clearQueryLog() {
+		$this->queryLog = array();
 	}
 	
 	public function getQueryLogTime() {
