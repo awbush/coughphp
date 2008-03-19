@@ -8,37 +8,8 @@
 abstract class CoughCollection extends ArrayObject {
 	
 	/**
-	 * The alias name of the database, which is used to ask the
-	 * {@link CoughDatabaseFactory} for a database object.
-	 * 
-	 * Override in sub class.
-	 * 
-	 * @var string
-	 **/
-	protected $dbAlias = null;
-	
-	/**
-	 * The database name to use to running queries.
-	 * 
-	 * Override in sub class.
-	 * 
-	 * @var string
-	 **/
-	protected $dbName = null;
-	
-	/**
-	 * The collection SQL to use by default.
-	 * 
-	 * Override in sub class using defineCollectionSql
-	 * 
-	 * @var string
-	 **/
-	protected $collectionSql = '';
-	
-	/**
 	 * The name of the element class that will be used when adding new
-	 * elements to the collection (can be overridden when calling
-	 * `populateCollection`).
+	 * elements to the collection
 	 * 
 	 * Override this in sub class.
 	 * 
@@ -47,158 +18,71 @@ abstract class CoughCollection extends ArrayObject {
 	protected $elementClassName;
 	
 	/**
-	 * The default ORDER BY clause to be used when populating the collection.
-	 * 
-	 * Override this in sub class using defineDefaultOrderClause()
-	 * 
-	 * @var string
-	 **/
-	protected $orderBySQL;
-	
-	/**
-	 * Reference to database object.
-	 *
-	 * @var mixed
-	 **/
-	protected $db;
-	
-	/**
-	 * Holds all the removed elements (unsaved)
+	 * Holds all the (unsaved) removed elements
 	 *
 	 * @var array of CoughObjects
 	 **/
 	protected $removedElements = array();
 	
+	public function __construct() {
+		parent::__construct(array(), 0, 'CoughIterator');
+	}
+	
+	/**
+	 * Returns a new iterator for the collection.
+	 *
+	 * @return CoughIterator
+	 **/
 	public function getIterator() {
-		return new CoughIterator( $this );
-	}
-	
-	public function __construct($specialArgs=array()) {
-		parent::__construct($array=array(), $flags=0, $iterator_class='CoughIterator');
-		$this->initializeDefinitions($specialArgs);
-		$this->db = CoughDatabaseFactory::getDatabase($this->dbAlias);
-	}
-	
-	protected function initializeDefinitions($specialArgs=array()) {
-		$this->defineCollectionSql();
-		$this->defineDefaultOrderClause();
-		$this->defineSpecialCriteria($specialArgs);
+		return new CoughIterator($this);
 	}
 	
 	/**
-	 * Set custom SQL to be used when populating the collection.
-	 * Override this in sub class.
+	 * Returns a reference to the database object to use for queries.
+	 *
+	 * @return CoughAbstractDatabaseAdapter
+	 **/
+	public function getDb() {
+		return call_user_func(array($this->elementClassName, 'getDb'));
+	}
+	
+	/**
+	 * Returns the base SQL to use for the collection.
+	 * 
+	 * Defaults to just calling the object's {@link getLoadSql()} static method.
+	 * 
+	 * Override in sub class to use different SQL.
+	 *
+	 * @return mixed - return value of CoughObject::getLoadSql()
+	 **/
+	public function getLoadSql() {
+		return call_user_func(array($this->elementClassName, 'getLoadSql'));
+	}
+	
+	/**
+	 * Loads the collection using the SQL provided by {@link getLoadSql()}
 	 *
 	 * @return void
-	 * @todo Tom: What if we changed this to a getter and only called it when needed (e.g. no SQL passed in to populateCollection)?
 	 **/
-	protected function defineCollectionSql() {
-		$elementClassName = $this->elementClassName;
-		$element = new $elementClassName();
-		$this->collectionSql = $element->getLoadSqlWithoutWhere();
-	}
-	
-	/**
-	 * Set default ORDER BY clause to be used when populating the collection.
-	 * Override this in sub class.
-	 *
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	protected function defineDefaultOrderClause() {
-		$this->orderBySQL = '';
-	}
-	
-	/**
-	 * Modify the collectionSQL based on special parameters.
-	 * Override this in sub class.
-	 *
-	 * @return void
-	 * @todo Tom: Why? (provide good examples)
-	 **/
-	protected function defineSpecialCriteria($specialArgs=array()) {
-		// this modifies the collectionSQL based on special parameters
-	}
-	
-	/**
-	 * Allows you to set the ORDER BY SQL after the Collection has been
-	 * instantiated.
-	 * 
-	 * Example values:
-	 * 
-	 *     - "ORDER BY field_name ASC"
-	 *     - "ORDER BY field_name ASC LIMIT 50 OFFSET 100"
-	 * 
-	 * @param string $orderBySQL - the SQL to use for ordering.
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function setOrderBy($orderBySQL) {
-		$this->orderBySQL = $orderBySQL;
-	}
-	
-	/**
-	 * Populates the collection with optional overrides for both the element
-	 * class name and the SQL (you can override either one, or both, or neither)
-	 *
-	 * TODO: $overrideOrderBySQL may be unnecessary, will be deprecated
-	 * 
-	 * @param string $overrideElementClassName - the element class name to instantiate for each collected item
-	 * @param string $overrideSQL - the full SQL query to use
-	 * @return void
-	 * @author Anthony Bush
-	 **/
-	public function populateCollection($overrideElementClassName='', $overrideSQL='', $overrideOrderBySQL = null) {
-		
-		// Get collectionSQL
-		if ( ! empty($overrideSQL)) {
-			$collectionSQL = $overrideSQL;
-		} else {
-			$collectionSQL = $this->collectionSql;
-		}
-		
-		// Append ORDER BY SQL
-		if ( ! is_null($overrideOrderBySQL)) {
-			$collectionSQL .= ' ' . $overrideOrderBySQL;
-		} else {
-			$collectionSQL .= ' ' . $this->orderBySQL;
-		}
-		
-		// Get collected element class name
-		if ($overrideElementClassName != '') {
-			$elementClassName = $overrideElementClassName;
-		} else {
-			$elementClassName = $this->elementClassName;
-		}
-		
-		// Populate the collection
-		
-		$this->db->selectDb($this->dbName);
-		$result = $this->db->query($collectionSQL);
-		if ($result->getNumRows() > 0) {
-			while ($row = $result->getRow()) {
-				$this->add(call_user_func(array($elementClassName, 'constructByFields'), $row));
-			}
-		}
-		// result will be freed once function ends since it is local variable.
-		// $result->freeResult();
-	}
-	
 	public function load() {
-		$this->loadBySql($this->collectionSql);
+		$this->loadBySql($this->getLoadSql());
 	}
 	
+	/**
+	 * Loads the collection using the provided SQL
+	 *
+	 * @return void
+	 **/
 	public function loadBySql($sql) {
 		$elementClassName = $this->elementClassName;
-		$this->db->selectDb($this->dbName);
-		$result = $this->db->query($sql);
+		$db = $this->getDb();
+		$db->selectDb(call_user_func(array($elementClassName, 'getDbName')));
+		$result = $db->query($sql);
 		if ($result->getNumRows() > 0) {
 			while ($row = $result->getRow()) {
 				$this->add(call_user_func(array($elementClassName, 'constructByFields'), $row));
 			}
 		}
-		// result will be freed once function ends since it is local variable.
-		// $result->freeResult();
 	}
 	
 	/**
@@ -209,16 +93,23 @@ abstract class CoughCollection extends ArrayObject {
 	 * @author Anthony Bush
 	 **/
 	public function save() {
+		$temporaryKeys = array();
+		
+		// Save all elements and keep track of temporary keys so that we can update them.
 		foreach ($this as $key => $element) {
-			// Save the element, updating the collection's key if there wasn't one.
 			if (!$element->hasKeyId()) {
-				$element->save();
-				$this->offsetUnset($key);
-				$this->offsetSet($element->getKeyId(), $element);
-			} else {
-				$element->save();
+				$temporaryKeys[$key] = $element;
 			}
+			$element->save();
 		}
+		
+		// Update the temporary keys
+		foreach ($temporaryKeys as $key => $element) {
+			$this->offsetUnset($key);
+			$this->offsetSet($element->getKeyId(), $element);
+		}
+		
+		// Save all the removed items
 		foreach ($this->removedElements as $element) {
 			$element->save();
 		}
@@ -260,12 +151,13 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Returns the element at the given key.  This can be the result from the
-	 * element's {@link CoughObject::getKeyId()} method (which always returns a
-	 * flattened string/integer) or the result from the element's {@link CoughObject::getPk()}
-	 * method (which always returns the array form of the key).
-	 *
-	 * @return mixed - the CoughObject if found, null if not.
+	 * Returns the element at the given key.
+	 * 
+	 * @param mixed $key the result from the element's {@link CoughObject::getKeyId()}
+	 * method (which always returns a flattened string/integer) or the result from
+	 * the element's {@link CoughObject::getPk()} method (which always returns the
+	 * array form of the key).
+	 * @return mixed the CoughObject if found, null if not.
 	 * @author Anthony Bush
 	 **/
 	public function get($key) {
@@ -366,57 +258,107 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Sort the collection after population via the return value of the
-	 * specified method name of the collected objects.
+	 * Sort the collection from an array of keys (where the keys are in the
+	 * desired order).
 	 * 
-	 * For example:
-	 * 
-	 *    $pc = new woc_Product_Collection();
-	 *    $pc->populateCollection();
-	 *    $pc->sortBy('getName'); // equal to $pc->sortBy('getName', 'a');
-	 *    // or
-	 *    $pc->sortyBy('getName', 'd') // sorts descending
-	 * 
-	 * TODO: Future functionality could allow an array of objectMethodNames for
-	 * the first parameter allowing a multi-sort option.
-	 * 
-	 * @param string $objectMethodName - the method name of the collected objects to use for get a value to sort against
-	 * @param string $direction - 'a' or 'd' for ascending or descending
+	 * @param array $keys ordered key IDs for the elements in the collection.
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function sortBy($objectMethodName, $direction = 'a') {
-		
-		// Step 1: For each collected element, copy the key and value of the
-		// given object method name into a temp array.
-		$sortMe = array();
-		$it = $this->getIterator();
-		while ($it->valid()) {
-			$sortMe[$it->key()] = $it->current()->$objectMethodName();
-			$it->next();
+	public function sortByKeys($keys) {
+		$sorted = array();
+		foreach ($keys as $key) {
+			$sorted[$key] = $this->offsetGet($key);
 		}
-		
-		// Step 2: Sort the array by the value from the object method name
-		switch (strtolower($direction[0])) {
-			case 'd':
+		$this->exchangeArray($sorted);
+	}
+	
+	/**
+	 * Sort the collection from the return value of the specified method name of the
+	 * collected objects.
+	 * 
+	 * Example:
+	 * 
+	 *     $collection->sortByMethod('getProductName', SORT_DESC);
+	 * 
+	 * @param string $methodName
+	 * @param int $direction SORT_ASC or SORT_DESC (PHP sort order constant)
+	 * @return void
+	 * @author Anthony Bush
+	 **/
+	public function sortByMethod($methodName, $direction = SORT_ASC) {
+		$sortMe = array();
+		foreach ($this as $key => $element) {
+			$sortMe[$key] = $element->$methodName();
+		}
+		switch ($direction) {
+			case SORT_DESC:
 				arsort($sortMe);
 			break;
-			
-			case 'a':
+			case SORT_ASC:
 			default:
 				asort($sortMe);
 			break;
 		}
+		$this->sortByKeys(array_keys($sortMe));
+	}
+	
+	/**
+	 * Sort the collection from the return value of the specified method names of the
+	 * collected objects.
+	 * 
+	 * Examples:
+	 * 
+	 *     $collection->sortByMethods('getManufacturerName', 'getProductName');
+	 *     $collection->sortByMethods('getManufacturerName', SORT_DESC, 'getProductName', SORT_DESC);
+	 *     $collection->sortByMethods('getManufacturerName', SORT_DESC, 'getProductName', SORT_ASC);
+	 *     $collection->sortByMethods('getManufacturerName', SORT_DESC, SORT_STRING, 'getProductName', SORT_STRING);
+	 * 
+	 * @param string $methodName
+	 * @param int $direction SORT_ASC or SORT_DESC (PHP sort order constant)
+	 * @param int $type SORT_REGULAR, SORT_STRING, or SORT_NUMERIC (PHP sort type constant)
+	 * @return void
+	 * @see http://php.net/array_multisort
+	 * @author Anthony Bush
+	 **/
+	public function sortByMethods() {
+		$multisortArgs = func_get_args();
+		$keyValueArrays = array();
 		
-		// Step 3: Get a copy of the sorted collection with objects (key => obj)
-		$sorted = array();
-		foreach (array_keys($sortMe) as $key) {
-			$sorted[$key] = $this->offsetGet($key);
+		if (empty($multisortArgs))
+		{
+			throw new Exception('missing parameter in sortByMethods');
 		}
 		
-		// Step 4: Setup the collection with the new sorted array
-		$this->exchangeArray($sorted);
+		// Build multisortArgs with references to the key value pair arrays to do the sorting on.
+		foreach ($multisortArgs as $argIndex => $arg) {
+			if (!is_int($arg)) {
+				// NOTE: We add the 'A' b/c we don't want array_multisort to re-index "numeric" keys.
+				$keyValueArrays[$argIndex] = array();
+				foreach ($this as $key => $element) {
+					$keyValueArrays[$argIndex]['A' . $key] = $element->$arg();
+				}
+				// Have to store references to the key value pairs for call_user_func_array to work with array_multisort.
+				$multisortArgs[$argIndex] = &$keyValueArrays[$argIndex];
+			}
+		}
+		
+		// Sort
+		$success = call_user_func_array('array_multisort', $multisortArgs);
+		
+		if ($success)
+		{
+			// Update the collection
+			// NOTE: Can't use sortByKeys() b/c we have to strip the 'A' hack from above.
+			$sorted = array();
+			foreach (array_keys($multisortArgs[0]) as $key) {
+				$key = substr($key, 1);
+				$sorted[$key] = $this->offsetGet($key);
+			}
+			$this->exchangeArray($sorted);
+		}
 	}
+	
 }
 
 ?>

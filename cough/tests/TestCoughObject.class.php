@@ -16,6 +16,7 @@ class TestCoughObject extends UnitTestCase
 	 **/
 	public function setUp()
 	{
+		error_reporting(E_ALL);
 		$this->includeDependencies();
 		$this->setUpDatabase();
 		$this->initializeDatabase();
@@ -26,8 +27,9 @@ class TestCoughObject extends UnitTestCase
 	
 	public function resetCoughTestDatabase()
 	{
-		foreach ($this->coughTestDbResetSql as $sql) {
-			$this->db->execute($sql);
+		foreach ($this->coughTestDbResetSql as $sql)
+		{
+			$this->db->query($sql);
 		}
 	}
 	
@@ -40,10 +42,11 @@ class TestCoughObject extends UnitTestCase
 			'db_name' => 'test_cough_object',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
-			'port' => '3306'
+			'port' => '3306',
+			'aliases' => array('test_cough_object'),
 		);
 		
-		CoughDatabaseFactory::addDatabaseConfig('test_cough_object', $testDbConfig);
+		CoughDatabaseFactory::addConfig($testDbConfig);
 		$this->db = CoughDatabaseFactory::getDatabase('test_cough_object');
 	}
 	
@@ -60,6 +63,7 @@ class TestCoughObject extends UnitTestCase
 	{
 		// include Cough + dependencies; this should be the only include necessary
 		require_once(dirname(dirname(dirname(__FILE__))) . '/load.inc.php');
+		require_once(APP_PATH . 'as_database/load.inc.php');
 	}
 	
 	public function generateCoughTestClasses()
@@ -76,12 +80,14 @@ class TestCoughObject extends UnitTestCase
 	{
 		$classPath = dirname(__FILE__) . '/config/output/';
 		// include Cough generated classes
-		foreach (glob($classPath . 'generated/*.php') as $filename) {
+		foreach (glob($classPath . 'generated/*.php') as $filename)
+		{
 			require_once($filename);
 		}
 		
 		// include Cough user classes
-		foreach (glob($classPath . 'concrete/*.php') as $filename) {
+		foreach (glob($classPath . 'concrete/*.php') as $filename)
+		{
 			require_once($filename);
 		}
 	}
@@ -103,8 +109,9 @@ class TestCoughObject extends UnitTestCase
 		// the last element is a blank string, so get rid of it
 		array_pop($sqlCommands);
 		
-		foreach ($sqlCommands as $sql) {
-			$this->db->execute($sql);
+		foreach ($sqlCommands as $sql)
+		{
+			$this->db->query($sql);
 		}
 	}
 	
@@ -112,12 +119,14 @@ class TestCoughObject extends UnitTestCase
 	{
 		$classPath = dirname(__FILE__) . '/config/output/';
 		// include Cough generated classes
-		foreach (glob($classPath . 'generated/*.php') as $filename) {
+		foreach (glob($classPath . 'generated/*.php') as $filename)
+		{
 			unlink($filename);
 		}
 		
 		// include Cough user classes
-		foreach (glob($classPath . 'concrete/*.php') as $filename) {
+		foreach (glob($classPath . 'concrete/*.php') as $filename)
+		{
 			unlink($filename);
 		}
 		
@@ -139,6 +148,10 @@ class TestCoughObject extends UnitTestCase
 		$newBook->save();
 		
 		$this->assertIdentical($newBook->getBookId(), 1);
+		
+		// test the most basic case (insert with no values)
+		$newBook2 = new Book();
+		$newBook2->save();
 		
 		$this->resetCoughTestDatabase();
 	}
@@ -444,13 +457,12 @@ class TestCoughObject extends UnitTestCase
 		// print_r($this->db->getDb()->getQueryLog());
 		
 		$this->assertNotNull($author->getAuthorId());
+		
 		$this->assertNotNull($book->getBookId());
 		$this->assertNotNull($book->getAuthorId());
 		$this->assertIdentical($book->getAuthorId(), $author->getAuthorId());
 		
-		// this fails... why?
 		$this->assertNotNull($book2->getBookId());
-		
 		$this->assertNotNull($book2->getAuthorId());
 		$this->assertIdentical($book2->getAuthorId(), $author->getAuthorId());
 		
@@ -517,10 +529,13 @@ class TestCoughObject extends UnitTestCase
 		$mismatches = $this->getFieldMismatches($bookJoinsInTravis->getPosition(0)->getBook_Object(), $book);
 		
 		// Unset mistmatches that we know to be intentional
-		if (isset($mismatches['creation_datetime'])) {
+		if (isset($mismatches['creation_datetime']))
+		{
 			unset($mismatches['creation_datetime']);
 		}
-		if (isset($mismatches['last_modified_datetime'])) {
+		
+		if (isset($mismatches['last_modified_datetime']))
+		{
 			unset($mismatches['last_modified_datetime']);
 		}
 		
@@ -547,12 +562,15 @@ class TestCoughObject extends UnitTestCase
 		$this->assertEqual($bookJoinsInLbj->getPosition(1)->getBook_Object()->getBookId(), $book2->getBookId());
 	}
 	
-	public function getFieldMismatches($object1, $object2) {
+	public function getFieldMismatches($object1, $object2)
+	{
 		$mismatches = array();
 		$fields1 = $object1->getFields();
 		$fields2 = $object2->getFields();
-		foreach ($fields1 as $key => $value) {
-			if ($value != $fields2[$key]) {
+		foreach ($fields1 as $key => $value)
+		{
+			if ($value != $fields2[$key])
+			{
 				ob_start();
 				var_dump($value);
 				$value1 = trim(ob_get_clean());

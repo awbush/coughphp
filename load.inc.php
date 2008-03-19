@@ -52,12 +52,19 @@
 require_once('cough/CoughIterator.class.php');
 require_once('cough/CoughCollection.class.php');
 require_once('cough/CoughObject.class.php');
+require_once('cough/CoughObjectStaticInterface.class.php');
+require_once('cough/CoughDatabaseInterface.class.php');
+require_once('cough/CoughDatabaseResultInterface.class.php');
+require_once('cough/CoughDatabaseFactory.class.php');
 
 // 2007-10-28/AWB: No longer load the CoughLoader by default in order to give
 // choice to users on whether they want to use that, an Autoloader or explicit inclusion.
 // require_once('cough/CoughLoader.class.php');
 
 // Load the DAL Adapter classes
-require_once('dalal/CoughDatabaseFactory.class.php');
+// require_once('dalal/CoughDatabaseFactory.class.php');
+// require_once('dalal/SqlSelectQuery.class.php');
+
+require_once('as_query/load.inc.php');
 
 ?>

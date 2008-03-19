@@ -1,7 +1,7 @@
 <?php
 
 /**
- * undocumented class
+ * Unused class, but will be available in the future.
  *
  * @package cough
  **/

@@ -56,7 +56,7 @@ class TestCoughGenerator extends UnitTestCase
 			'port' => '3306'
 		);
 		
-		CoughDatabaseFactory::addDatabaseConfig('test_cough_object', $testDbConfig);
+		CoughDatabaseFactory::addConfig('test_cough_object', $testDbConfig);
 		$this->db = CoughDatabaseFactory::getDatabase('test_cough_object');
 	}
 	
@@ -69,7 +69,7 @@ class TestCoughGenerator extends UnitTestCase
 		array_pop($sqlCommands);
 
 		foreach ($sqlCommands as $sql) {
-			$this->db->execute($sql);
+			$this->db->query($sql);
 		}
 	}
 	
@@ -173,7 +173,9 @@ class TestCoughGenerator extends UnitTestCase
 		$expectedClassNamesAndMethods = array(
 			'Author' => array(
 				'constructByKey',
-				'constructByFields'
+				'constructBySql',
+				'constructByFields',
+				'getLoadSql'
 			),
 			'Author_Generated' => array(
 				'notifyChildrenOfKeyChange',
@@ -197,11 +199,12 @@ class TestCoughGenerator extends UnitTestCase
 			'Author_Collection_Generated' => array(),
 			'Book' => array(
 				'constructByKey',
-				'constructByFields'
+				'constructBySql',
+				'constructByFields',
+				'getLoadSql'
 			),
 			'Book_Generated' => array(
 				'notifyChildrenOfKeyChange',
-				'getLoadSqlWithoutWhere',
 				'getBookId',
 				'setBookId',
 				'getTitle',
@@ -229,10 +232,11 @@ class TestCoughGenerator extends UnitTestCase
 			'Book_Collection_Generated' => array(),
 			'Book2library' => array(
 				'constructByKey',
-				'constructByFields'
+				'constructBySql',
+				'constructByFields',
+				'getLoadSql'
 			),
 			'Book2library_Generated' => array(
-				'getLoadSqlWithoutWhere',
 				'getBook2libraryId',
 				'setBook2libraryId',
 				'getBookId',
@@ -256,7 +260,9 @@ class TestCoughGenerator extends UnitTestCase
 			'Book2library_Collection_Generated' => array(),
 			'Library' => array(
 				'constructByKey',
-				'constructByFields'
+				'constructBySql',
+				'constructByFields',
+				'getLoadSql'
 			),
 			'Library_Generated' => array(
 				'notifyChildrenOfKeyChange',
@@ -371,7 +377,9 @@ class TestCoughGenerator extends UnitTestCase
 		$expectedClassNamesAndMethods = array(
 			'Customer' => array(
 				'constructByKey',
-				'constructByFields'
+				'constructBySql',
+				'constructByFields',
+				'getLoadSql'
 			),
 			'Customer_Generated' => array(
 				'notifyChildrenOfKeyChange',
@@ -387,7 +395,9 @@ class TestCoughGenerator extends UnitTestCase
 			'Customer_Collection_Generated' => array(),
 			'Product' => array(
 				'constructByKey',
-				'constructByFields'
+				'constructBySql',
+				'constructByFields',
+				'getLoadSql'
 			),
 			'Product_Generated' => array(
 				'notifyChildrenOfKeyChange',
@@ -407,10 +417,11 @@ class TestCoughGenerator extends UnitTestCase
 			'Product_Collection_Generated' => array(),
 			'ProductOrder' => array(
 				'constructByKey',
-				'constructByFields'
+				'constructBySql',
+				'constructByFields',
+				'getLoadSql'
 			),
 			'ProductOrder_Generated' => array(
-				'getLoadSqlWithoutWhere',
 				'getNo',
 				'setNo',
 				'getProductCategory',

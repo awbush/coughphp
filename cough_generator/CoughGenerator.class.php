@@ -272,7 +272,7 @@ class CoughGenerator {
 	public function load<?php echo $objectName ?>() {
 		$<?php echo $localVarName ?> = <?php echo $objectClassName ?>::constructByKey(array(
 <?php foreach ($hasOne->getRefKey() as $key => $column): ?>
-			'<?php echo $column->getColumnName() ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
+			'<?php echo '`' . $column->getTable()->getTableName() . '`.`' . $column->getColumnName() . '`' ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
 <?php endforeach; ?>
 		));
 		$this->set<?php echo $objectName ?>($<?php echo $localVarName ?>);
@@ -359,7 +359,7 @@ class CoughGenerator {
 			// Generate the criteria / WHERE clause information for loading the related object.
 			$criteria = array();
 			foreach ($refKey as $key => $column) {
-				$criteria[] = '`' . $refTableAliasName . '`.`' . $column->getColumnName() . '` = \' . $this->db->quote($this->get'
+				$criteria[] = '`' . $refTableAliasName . '`.`' . $column->getColumnName() . '` = \' . $db->quote($this->get'
 				            . $this->config->getTitleCase($localKey[$key]->getColumnName()) . '()) . \'';
 			}
 
@@ -377,6 +377,7 @@ class CoughGenerator {
 		
 		// But only populate it if we have key ID
 		if ($this->hasKeyId()) {
+			$db = <?php echo $refObjectClassName; ?>::getDb();
 			$sql = '<?php echo "\n" . $loadSql . "\n\t\t\t" ?>';
 
 			// Construct and populate the collection
@@ -416,10 +417,12 @@ foreach ($hasMany->getRefKey() as $key => $column) {
 	
 	public function remove<?php echo $refObjectTitleCase ?>($objectOrId) {
 		$removedObject = $this->get<?php echo $localCollectionName ?>()->remove($objectOrId);
+		if (is_object($removedObject)) {
 <?php foreach ($hasMany->getRefKey() as $key => $column): ?>
-		$removedObject->set<?php echo $this->config->getTitleCase($column->getColumnName()) ?>(<?php echo $this->getDefaultValueStringForColumn($column) ?>);
+			$removedObject->set<?php echo $this->config->getTitleCase($column->getColumnName()) ?>(<?php echo $this->getDefaultValueStringForColumn($column) ?>);
 <?php endforeach; ?>
-		$removedObject->set<?php echo $refObjectName ?>(null);
+			$removedObject->set<?php echo $refObjectName ?>(null);
+		}
 		return $removedObject;
 	}
 	
@@ -448,8 +451,8 @@ foreach ($hasMany->getRefKey() as $key => $column) {
 		}
 
 		// Generate the `getLoadSqlWithoutWhere()` method if needed
-		if ($shouldOverrideLoadSqlWithoutWhere) {
-			$getLoadSqlWithoutWherePhp = "\tpublic function getLoadSqlWithoutWhere() {"
+		if (true || $shouldOverrideLoadSqlWithoutWhere) {
+			$getLoadSqlWithoutWherePhp = "\tpublic static function getLoadSql() {"
 			                           . "\n\t\treturn '\n" . $this->generateLoadSql($table, array(), "\t\t\t") . "\n\t\t';"
 			                           . "\n\t}\n\t\n";
 		} else {
@@ -468,13 +471,10 @@ foreach ($hasMany->getRefKey() as $key => $column) {
  **/
 abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionClassName ?> {
 	
-	protected $dbAlias = '<?php echo $dbName ?>';
-	
-	protected $dbName = '<?php echo $dbName ?>';
-	
-	protected $tableName = '<?php echo $tableName ?>';
-	
-	protected $pkFieldNames = array('<?php echo implode("','", array_keys($table->getPrimaryKey())) ?>');
+	protected static $db = null;
+	protected static $dbName = '<?php echo $dbName; ?>';
+	protected static $tableName = '<?php echo $tableName; ?>';
+	protected static $pkFieldNames = array('<?php echo implode("','", array_keys($table->getPrimaryKey())) ?>');
 	
 	protected $fields = array(
 <?php foreach ($table->getColumns() as $columnName => $column): ?>
@@ -494,6 +494,71 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 	
 <?php
 echo $objectDefinitionsPhp;
+?>
+	// Static Definition Methods
+	
+	public static function getDb() {
+		if (is_null(self::$db)) {
+			self::$db = CoughDatabaseFactory::getDatabase('<?php echo $dbName; ?>');
+		}
+		return self::$db;
+	}
+	
+	public static function getDbName() {
+		return self::$dbName;
+	}
+	
+	public static function getTableName() {
+		return self::$tableName;
+	}
+	
+	public static function getPkFieldNames() {
+		return self::$pkFieldNames;
+	}
+	
+	// Static Construction (factory) Methods
+	
+	/**
+	 * Constructs a new <?php echo $starterObjectClassName ?> object from
+	 * a single id (for single key PKs) or a hash of [field_name] => [field_value].
+	 * 
+	 * The key is used to pull data from the database, and, if no data is found,
+	 * null is returned. You can use this function with any unique keys or the
+	 * primary key as long as a hash is used. If the primary key is a single
+	 * field, you may pass its value in directly without using a hash.
+	 * 
+	 * @param mixed $idOrHash - id or hash of [field_name] => [field_value]
+	 * @return mixed - <?php echo $starterObjectClassName ?> or null if no record found.
+	 **/
+	public static function constructByKey($idOrHash) {
+		return CoughObject::constructByKey($idOrHash, '<?php echo $starterObjectClassName ?>');
+	}
+	
+	/**
+	 * Constructs a new <?php echo $starterObjectClassName ?> object from custom SQL.
+	 * 
+	 * @param string $sql
+	 * @return mixed - <?php echo $starterObjectClassName ?> or null if exactly one record could not be found.
+	 **/
+	public static function constructBySql($sql) {
+		return CoughObject::constructBySql($sql, '<?php echo $starterObjectClassName ?>');
+	}
+	
+	/**
+	 * Constructs a new <?php echo $starterObjectClassName ?> object after
+	 * checking the fields array to make sure the appropriate subclass is
+	 * used.
+	 * 
+	 * No queries are run against the database.
+	 * 
+	 * @param array $hash - hash of [field_name] => [field_value] pairs
+	 * @return <?php echo $starterObjectClassName . "\n" ?>
+	 **/
+	public static function constructByFields($hash) {
+		return new <?php echo $starterObjectClassName ?>($hash);
+	}
+	
+<?php
 echo $notifyChildrenOfKeyChangePhp;
 echo $getLoadSqlWithoutWherePhp;
 echo "\t" . '// Generated attribute accessors (getters and setters)' . "\n\t\n";
@@ -593,54 +658,7 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
  *
  * <?php echo implode("\n * ", $phpdocTags) . "\n"; ?>
  **/
-class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassName ?> {
-	
-	// Static Construction (factory) Methods
-	
-	/**
-	 * Constructs a new <?php echo $starterObjectClassName ?> object from
-	 * a single id (for single key PKs) or a hash of [field_name] => [field_value].
-	 * 
-	 * The key is used to pull data from the database, and, if no data is found,
-	 * null is returned. You can use this function with any unique keys or the
-	 * primary key as long as a hash is used. If the primary key is a single
-	 * field, you may pass its value in directly without using a hash.
-	 * 
-	 * @param mixed $idOrHash - id or hash of [field_name] => [field_value]
-	 * @return mixed - <?php echo $starterObjectClassName ?> or null if no record found.
-	 **/
-	public static function constructByKey($idOrHash) {
-		$object = new <?php echo $starterObjectClassName ?>();
-		if (is_array($idOrHash)) {
-			$fields = $idOrHash;
-		} else {
-			$fields = array();
-			foreach ($object->getPkFieldNames() as $fieldName) {
-				$fields[$fieldName] = $idOrHash;
-			}
-		}
-		$object->loadByCriteria($fields);
-		if ($object->isInflated()) {
-			return $object;
-		} else {
-			return null;
-		}
-	}
-	
-	/**
-	 * Constructs a new <?php echo $starterObjectClassName ?> object after
-	 * checking the fields array to make sure the appropriate subclass is
-	 * used.
-	 * 
-	 * No queries are run against the database.
-	 * 
-	 * @param array $hash - hash of [field_name] => [field_value] pairs
-	 * @return <?php echo $starterObjectClassName . "\n" ?>
-	 **/
-	public static function constructByFields($hash) {
-		return new <?php echo $starterObjectClassName ?>($hash);
-	}
-	
+class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassName ?> implements CoughObjectStaticInterface {	
 }
 <?php
 		echo("\n?>");

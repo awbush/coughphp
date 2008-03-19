@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php
 
+error_reporting(E_ALL);
 include_once(dirname(__FILE__) . '/load.inc.php');
 
 $appPath = dirname(dirname(__FILE__)) . '/';
@@ -42,6 +43,7 @@ if (count($tests) == 1) {
 		case 'cough':
 			$test = new TestSuite('Running cough tests...');
 			$test->addTestFile($appPath . 'cough/tests/TestCoughObject.class.php');
+			$test->addTestFile($appPath . 'cough/tests/TestCoughCollection.class.php');
 			$test->run(new TextReporter());
 			break;
 		

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * undocumented class CoughIterator
+ * CoughCollection objects use CoughIterator
  * 
  * @package cough
  **/
-class CoughIterator extends ArrayIterator {
+class CoughIterator extends ArrayIterator
+{
 }
-
 
 ?>

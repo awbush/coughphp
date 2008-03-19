@@ -21,19 +21,8 @@ abstract class CoughObject {
 	 *
 	 * @var array
 	 * @see defineFields()
-	 * @todo Tom: Why?
 	 **/
 	protected $fieldDefinitions = array();
-	
-	/**
-	 * The primary key field names
-	 *
-	 * Override in sub class.
-	 * 
-	 * @var array
-	 * @see getPkFieldNames(), getPk(), defineFields()
-	 **/
-	protected $pkFieldNames = array();
 	
 	/**
 	 * An array of derived field definitions
@@ -54,40 +43,12 @@ abstract class CoughObject {
 	 * Format of [objectName] => [array of attributes]
 	 *
 	 * TODO: Document that array of attributes. For now just look at the
-	 * woc_Product_Generated class (at the defineObjects() function).
+	 * one of the generated class's defineObjects().
 	 *
 	 * @var array
 	 **/
 	protected $objectDefinitions = array();
 	
-	/**
-	 * The alias name of the database, which is used to ask the
-	 * {@link CoughDatabaseFactory} for a database object.
-	 * 
-	 * Override in sub class.
-	 * 
-	 * @var string
-	 **/
-	protected $dbAlias = null;
-	
-	/**
-	 * The name of the database the table is in.
-	 * 
-	 * Override in sub class.
-	 * 
-	 * @var string
-	 **/
-	protected $dbName = null;
-	
-	/**
-	 * The name of table the object maps to.
-	 *
-	 * Override in sub class.
-	 * 
-	 * @var string
-	 **/
-	protected $tableName;
-
 	/**
 	 * An array of all the currently initialized or set fields.
 	 *
@@ -95,7 +56,6 @@ abstract class CoughObject {
 	 *
 	 * @var array
 	 * @see getField(), getFields(), getFieldsWithoutPk(), setField(), setFields()
-	 * @todo Tom: Why?
 	 **/
 	protected $fields = array();
 
@@ -134,14 +94,6 @@ abstract class CoughObject {
 	 **/
 	protected $objects = array();
 
-	/**
-	 * A reference to the DatabaseConnector object; used for executing the
-	 * queries.
-	 *
-	 * @var DatabaseConnector
-	 **/
-	protected $db;
-	
 	/**
 	 * Stores whether or not the object has been deleted from the database.
 	 * 
@@ -196,13 +148,7 @@ abstract class CoughObject {
 	 * @return void
 	 **/
 	public function __construct($fieldsOrID = array(), $relatedEntities = array()) {
-		// before chaining to construct, make sure you override initializeDefinitions() within the subclass
-		//	and then invoke initializeDefinitions() in the constructor method.
 		$this->initializeDefinitions();
-		
-		// Get our reference to the database object
-		$this->db = CoughDatabaseFactory::getDatabase($this->dbAlias);
-		$this->db->selectDb($this->dbName);
 		
 		// Initialize fields and related entities
 		$this->inflate($fieldsOrID, $relatedEntities);
@@ -220,18 +166,10 @@ abstract class CoughObject {
 	 * @return void
 	 **/
 	protected function initializeDefinitions() {
-		$this->defineDbConfig();
 		$this->defineFields();
 		$this->defineDerivedFields();
 		$this->defineObjects();
 	}
-	
-	/**
-	 * Override in sub-class to set $dbName and $tableName via code.
-	 *
-	 * @return void
-	 **/
-	protected function defineDbConfig() {}
 
 	/**
 	 * Override in sub-class to define fields the object possesses, including
@@ -264,6 +202,69 @@ abstract class CoughObject {
 	protected function finishConstruction() {}
 	
 	/**
+	 * Constructs a new object from a single id (for single key PKs) or a hash of
+	 * [field_name] => [field_value].
+	 * 
+	 * The key is used to pull data from the database, and, if no data is found,
+	 * null is returned. You can use this function with any unique keys or the
+	 * primary key as long as a hash is used. If the primary key is a single
+	 * field, you may pass its value in directly without using a hash.
+	 * 
+	 * @param mixed $idOrHash - id or hash of [field_name] => [field_value]
+	 * @return mixed - CoughObject or null if no record found.
+	 * @todo PHP 5.3: switch from call_user_func to static::methodName() and remove the $className parameter
+	 **/
+	public static function constructByKey($idOrHash, $className) {
+		if (is_array($idOrHash)) {
+			$fields = $idOrHash;
+		} else {
+			$fields = array();
+			$tableName = call_user_func(array($className, 'getTableName'));
+			foreach (call_user_func(array($className, 'getPkFieldNames')) as $fieldName) {
+				$fields[$tableName . '.' . $fieldName] = $idOrHash;
+			}
+		}
+		
+		if (!empty($fields)) {
+			$db = call_user_func(array($className, 'getDb'));
+			$sql = call_user_func(array($className, 'getLoadSql'));
+			if (is_object($sql)) {
+				$sql->addWhere($fields);
+				$sql = $sql->getString();
+			} else {
+				$query = new As_Query($db);
+				$sql .= ' WHERE ' . $query->buildWhereSql($fields);
+			}
+			return call_user_func(array($className, 'constructBySql'), $sql);
+		}
+		return null;
+	}
+	
+	/**
+	 * Constructs a new object from custom SQL.
+	 *
+	 * @param string $sql
+	 * @return mixed - CoughObject if exactly one row found, null otherwise.
+	 * @todo PHP 5.3: switch from call_user_func to static::methodName() and remove the $className parameter
+	 **/
+	public static function constructBySql($sql, $className) {
+		if (!empty($sql)) {
+			$db = call_user_func(array($className, 'getDb'));
+			$dbName = call_user_func(array($className, 'getDbName'));
+			$db->selectDb($dbName);
+			$result = $db->query($sql);
+			if ($result->getNumRows() == 1) {
+				return call_user_func(array($className, 'constructByFields'), $result->getRow());
+			} else {
+				// load failed because the unique dataset couldn't be selected
+			}
+		} else {
+			// load failed because no SQL was given
+		}
+		return null;
+	}
+	
+	/**
 	 * Clone only the non-primary key fields.
 	 * 
 	 * Usage:
@@ -284,7 +285,7 @@ abstract class CoughObject {
 		}
 		
 		// Mark all fields as having been modified (except key ID) so that a call to save() will complete the clone.
-		$this->setKeyId(null);
+		$this->setKeyId(null, false);
 		$this->resetModified();
 		foreach (array_keys($this->getFieldsWithoutPk()) as $fieldName) {
 			$this->setModifiedField($fieldName);
@@ -329,10 +330,11 @@ abstract class CoughObject {
 	 *     * Call this with a non-array value to set all keys to the same value.
 	 * 
 	 * @param mixed $id
+	 * @param boolean $notifyChildren whether or not to notify children (collections) of the key change.  Think of it as a cascade update of the FKs.
 	 * @return void
 	 * @author Anthony Bush
 	 **/
-	public function setKeyId($id) {
+	public function setKeyId($id, $notifyChildren = true) {
 		if (!is_array($id)) {
 			$key = array();
 			foreach ($this->getPkFieldNames() as $fieldName) {
@@ -341,7 +343,9 @@ abstract class CoughObject {
 		} else {
 			$key = $id;
 		}
-		$this->notifyChildrenOfKeyChange($key);
+		if ($notifyChildren) {
+			$this->notifyChildrenOfKeyChange($key);
+		}
 		$this->setFields($key);
 	}
 	
@@ -377,12 +381,17 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Returns whether or not the object is inflated (i.e. pulled from
-	 * persistent storage)
+	 * Returns whether or not the object is inflated (i.e. pulled from persistent
+	 * storage)
 	 * 
 	 * This method returns the opposite of {@link isNew()}
 	 * 
-	 * @return void
+	 * The reason this method isn't called `isLoaded()` is because it's possible for
+	 * an object to become inflated from data that was not loaded from a database /
+	 * persistent storage.  It's meant to answer the question, "Can I call the
+	 * getters on this object and expect to get meaningful values?"
+	 * 
+	 * @return boolean
 	 * @author Anthony Bush
 	 * @see isNew()
 	 **/
@@ -396,14 +405,19 @@ abstract class CoughObject {
 	 * If the key is multi-key, this returns a unique string identifying itself
 	 * (a concatenation of the fields making up the PK).
 	 *
-	 * @return mixed - string for multi-key PKs, integer for single-key PKs
+	 * @return mixed - string for multi-key PKs, integer/string for single-key PKs
 	 * @author Anthony Bush
 	 **/
 	public function getKeyId() {
-		if (count($this->pkFieldNames) == 1) {
-			return $this->fields[$this->pkFieldNames[0]];
+		$pkFieldNames = $this->getPkFieldNames();
+		if (count($pkFieldNames) === 1) {
+			return $this->fields[$pkFieldNames[0]];
 		} else {
-			return implode(',', $this->getPk());
+			$keyId = '';
+			foreach ($pkFieldNames as $fieldName) {
+				$keyId .= $this->fields[$fieldName] . ',';
+			}
+			return substr_replace($keyId, '', -1);
 		}
 	}
 	
@@ -416,7 +430,7 @@ abstract class CoughObject {
 	 **/
 	public function getPk() {
 		$pk = array();
-		foreach ($this->pkFieldNames as $fieldName) {
+		foreach ($this->getPkFieldNames() as $fieldName) {
 			$pk[$fieldName] = $this->fields[$fieldName];
 		}
 		return $pk;
@@ -431,13 +445,16 @@ abstract class CoughObject {
 	 * @todo If NULL is a valid value for a PK, this function needs an update.
 	 **/
 	public function hasKeyId() {
+		
+		$pkFieldNames = $this->getPkFieldNames();
+		
 		// Must have at least one field marked as PK.
-		if (empty($this->pkFieldNames)) {
+		if (empty($pkFieldNames)) {
 			return false;
 		}
 		
 		// All PK fields must be initialized
-		foreach ($this->pkFieldNames as $fieldName) {
+		foreach ($pkFieldNames as $fieldName) {
 			if (!isset($this->fields[$fieldName])) {
 				return false;
 			}
@@ -491,17 +508,6 @@ abstract class CoughObject {
 			unset($fields[$fieldName]);
 		}
 		return $fields;
-	}
-	
-	/**
-	 * Get the primary key field names as an array.
-	 *
-	 * @return array
-	 * @author Anthony Bush
-	 * @since 2007-07-06
-	 **/
-	public function getPkFieldNames() {
-		return $this->pkFieldNames;
 	}
 	
 	/**
@@ -603,93 +609,6 @@ abstract class CoughObject {
 	// object database methods / collection handling methods block BEGINS
 	// ----------------------------------------------------------------------------------------------
 	
-	/**
-	 * Retrieves the object's data from the database, loading it into memory.
-	 * 
-	 * @return boolean - whether or not load was able to find a record in the database.
-	 * @author Anthony Bush
-	 **/
-	public function load() {
-		return $this->loadBySql($this->getLoadSql());
-	}
-	
-	/**
-	 * Returns the current SQL statement that the {@link load()} method should
-	 * run.
-	 * 
-	 * Override this in sub classes for custom SQL.
-	 *
-	 * @return mixed - string of SQL or empty string if no SQL to run.
-	 * @author Anthony Bush
-	 **/
-	protected function getLoadSql() {
-		if ($this->hasKeyId()) {
-			$sql = $this->getLoadSqlWithoutWhere() . ' WHERE ' . $this->db->buildWhereSql($this->getPk());
-		} else {
-			$sql = '';
-		}
-		return $sql;
-	}
-	
-	/**
-	 * Returns the core SQL statement that other load methods should build upon
-	 * (no WHERE clause is returned). This allows other functions (like
-	 * {@link loadByCriteria()} and even other collections) to share the same
-	 * SELECT and FROM portions of the SQL.
-	 * 
-	 * Override this in sub classes for custom SQL. Trailing white-space is not
-	 * required. The SQL should be runnable on it's own (i.e. no syntax errors)
-	 *
-	 * @return string
-	 * @author Anthony Bush
-	 * @todo Consider moving to something like prepared statements.
-	 **/
-	public function getLoadSqlWithoutWhere() {
-		return 'SELECT * FROM `' . $this->dbName . '`.`' . $this->tableName . '`';
-	}
-	
-	/**
-	 * Provides a way to load by an array of "key" => "value" pairs.
-	 *
-	 * @param array $where - an array of "key" => "value" pairs to search for
-	 * @param boolean $additionalSql - add ORDER BYs and LIMITs here.
-	 * @return boolean - true if initialized object with data, false otherwise.
-	 * @author Anthony Bush
-	 **/
-	public function loadByCriteria($where = array(), $additionalSql = '') {
-		if ( ! empty($where)) {
-			$sql = $this->getLoadSqlWithoutWhere() . ' WHERE ' . $this->db->buildWhereSql($where) . ' ' . $additionalSql;
-			return $this->loadBySql($sql);
-		}
-		return false;
-	}
-	
-	/**
-	 * Provides a way to load by custom SQL.
-	 *
-	 * @param string $sql
-	 * @return boolean - true if initialized object with data, false otherwise.
-	 * @author Anthony Bush
-	 **/
-	public function loadBySql($sql) {
-		$inflated = false;
-		if ( ! empty($sql)) {
-			$this->db->selectDb($this->dbName);
-			$result = $this->db->query($sql);
-			if ($result->getNumRows() == 1) {
-				$this->inflate($result->getRow());
-				$inflated = true;
-			} else {
-				// load failed because the unique dataset couldn't be selected
-			}
-			// result will be freed once function ends since it is local variable.
-			// $result->freeResult();
-		} else {
-			// load failed because no SQL was given
-		}
-		return $inflated;
-	}
-
 	/**
 	 * Clear the list of modified fields and other modified flags.
 	 *
@@ -827,11 +746,15 @@ abstract class CoughObject {
 		
 		$fields = $this->getInsertFields();
 		
-		$this->db->selectDb($this->dbName);
-		$result = $this->db->insert($this->tableName, $fields);
-		if ($result) {
+		$db = $this->getDb();
+		$db->selectDb($this->getDbName());
+		$query = As_Query::getInsertQuery($db);
+		$query->setTableName($this->getTableName());
+		$query->setFields($fields);
+		$numAffectedRows = $db->execute($query->getString());
+		if ($numAffectedRows > 0) {
 			if (!$this->hasKeyId()) {
-				$this->setKeyId($result);
+				$this->setKeyId($db->getLastInsertId());
 			}
 			return true;
 		} else {
@@ -863,8 +786,13 @@ abstract class CoughObject {
 	protected function update() {
 		$fields = $this->getUpdateFields();
 		if (!empty($fields)) {
-			$this->db->selectDb($this->dbName);
-			$this->db->update($this->tableName, $fields, $this->getPk());
+			$db = $this->getDb();
+			$db->selectDb($this->getDbName());
+			$query = As_Query::getUpdateQuery($db);
+			$query->setTableName($this->getTableName());
+			$query->setFields($fields);
+			$query->setWhere($this->getPk());
+			$db->execute($query->getString());
 		}
 		return true;
 	}
@@ -908,7 +836,10 @@ abstract class CoughObject {
 	 **/
 	public function delete() {
 		if ($this->hasKeyId()) {
-			$this->db->delete($this->tableName, $this->getPk());
+			$db = $this->getDb();
+			$db->selectDb($this->getDbName());
+			$query = new As_Query($db);
+			$db->execute('DELETE FROM `' . $this->getTableName() . '` WHERE ' . $query->buildWhereSql($this->getPk()));
 			$this->isDeleted = true;
 			return true;
 		} else {
@@ -1036,6 +967,128 @@ abstract class CoughObject {
 	}
 	
 	/**
+	 * Unsets all keys on the given array that start with the specified prefix.
+	 * 
+	 * @param array $arr
+	 * @param string $prefix
+	 * @return void
+	 * @author Anthony Bush, Richard Pistole
+	 * @since 2008-02-20
+	 **/
+	public static function unsetKeysWithPrefix(&$arr, $prefix)
+	{
+		foreach (array_keys($arr) as $key)
+		{
+			if (strpos($key, $prefix) === 0)
+			{
+				unset($arr[$key]);
+			}
+		}
+	}
+	
+	/**
+	 * Returns a sub array of the given array containing all elements that have keys
+	 * starting with the specified prefix.  The resulting array's keys have the
+	 * prefix removed.
+	 * 
+	 * @param array $arr
+	 * @param string $prefix
+	 * @return array
+	 * @author Anthony Bush, Richard Pistole
+	 * @since 2008-02-20
+	 **/
+	public static function getKeysWithPrefix(&$arr, $prefix)
+	{
+		$subArr = array();
+		$prefixLength = strlen($prefix);
+		foreach ($arr as $key => $value)
+		{
+			if (strpos($key, $prefix) === 0)
+			{
+				$subArr[substr($key, $prefixLength)] = $value;
+			}
+		}
+		return $subArr;
+	}
+	
+	/**
+	 * Returns a sub array of the given array containing all elements that have keys
+	 * starting with the specified prefix.  The resulting array's keys have the
+	 * prefix removed.
+	 * 
+	 * The array passed by reference has all the items that were added to the
+	 * returned array removed.
+	 * 
+	 * @param array $arr
+	 * @param string $prefix
+	 * @return void
+	 * @author Anthony Bush, Richard Pistole
+	 * @since 2008-02-20
+	 **/
+	public static function splitArrayWithPrefix(&$arr, $prefix)
+	{
+		$subArr = array();
+		$prefixLength = strlen($prefix);
+		foreach (array_keys($arr) as $key)
+		{
+			if (strpos($key, $prefix) === 0)
+			{
+				$subArr[substr($key, $prefixLength)] = $arr[$key];
+				unset($arr[$key]);
+			}
+		}
+		return $subArr;
+	}
+	
+	/**
+	 * Helper method for generating SELECT criteria for other join tables.
+	 * 
+	 * For example, you might need the following SQL:
+	 * 
+	 *     $sql = '
+	 *     SELECT
+	 *         product.*
+	 *         , `manufacturer`.`manufacturer_id` AS `Manufacturer_Object.manufacturer_id`
+	 *         , `manufacturer`.`name` AS `Manufacturer_Object.name`
+	 *         , `manufacturer`.`description` AS `Manufacturer_Object.description`
+	 *         , `manufacturer`.`url` AS `Manufacturer_Object.url`
+	 *     FROM
+	 *         product
+	 *         INNER JOIN manufacturer USING (manufacturer_id)
+	 *     ';
+	 * 
+	 * But, rather than hand coding all the fields (which might change) on the
+	 * manufacturer join, you can use getFieldAliases():
+	 * 
+	 *     $sql = '
+	 *     SELECT
+	 *         product.*
+	 *         , ' . CoughObject::getFieldAliases('con_Manufacturer', 'Manufacturer_Object') . '
+	 *     FROM
+	 *         product
+	 *         INNER JOIN manufacturer USING (manufacturer_id)
+	 *     ';
+	 *
+	 * @return array of field Aliases
+	 * @author Anthony Bush, Richard Pistole
+	 * @since 2008-02-21
+	 **/
+	public static function getFieldAliases($className, $objectName)
+	{
+		$aliases = array();
+		
+		$object = new $className();
+		$tableName = call_user_func(array($className, 'getTableName'));
+
+		foreach(array_keys($object->getFields()) as $key)
+		{
+			$aliases[] =  '`' . $tableName. '`.`' . $key . '` AS `' . $objectName . '.' . $key . '`';
+		}
+
+		return $aliases;			
+	}
+	
+	/**
 	 * Returns object to it's own state, except what you want to keep. By
 	 * default it empties everything; overridden version only empties yours.
 	 *
@@ -1052,7 +1105,7 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Inflate/Invigorate
+	 * Inflate/Invigorate the object with data.
 	 *
 	 * @return void
 	 **/
@@ -1063,7 +1116,7 @@ abstract class CoughObject {
 				foreach ($fieldsOrId as $fieldName => $fieldValue) {
 					if (is_array($fieldValue)) {
 						// field is data for a related object
-						$this->inflateOject($fieldName, $fieldValue, $fieldsOrId);
+						$this->inflateObject($fieldName, $fieldValue, $fieldsOrId);
 					} else if (isset($this->fieldDefinitions[$fieldName])) {
 						// field is part of this object's fields
 						$this->fields[$fieldName] = $fieldValue;
@@ -1091,15 +1144,6 @@ abstract class CoughObject {
 			foreach ($this->getPkFieldNames() as $fieldName) {
 				$this->fields[$fieldName] = $fieldsOrId;
 			}
-			// TODO: Tom: To load or not to load automatically? I can give use cases on why someone wouldn't want it to autoload; plus the user should be using Object::constructByKey($key) anyway when they want it to pull from storage.
-			
-			// For others who do not understand the above:
-			// There are, at the moment, two ways to construct an object with a key:
-			// $customer = new Customer($customerId);
-			// $customer = Customer::constructByKey($customerId);
-			// The latter will always pull from the database and will return an object if the customer_id was found, or null if not found.
-			// The former will also pull from the database if the following line is left in (it's bad practice, but convenient):
-			$this->load();
 		}
 		
 		// Set related entities that were passed in
@@ -1110,6 +1154,11 @@ abstract class CoughObject {
 		
 	}
 	
+	/**
+	 * This helper method for {@link inflate()} handles inflation of related objects.
+	 *
+	 * @return void
+	 **/
 	protected function inflateObject($objectName, $objectData, &$additionalData = array()) {
 		if (isset($this->objectDefinitions[$objectName])) {
 			// append to the object data any additional object data that isn't part of this object (read: chain inflation).
@@ -1125,5 +1174,3 @@ abstract class CoughObject {
 		
 	}
 }
-
-?>
