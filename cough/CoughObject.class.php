@@ -460,7 +460,20 @@ abstract class CoughObject {
 			}
 		}
 		
-		// Search for non-set key exhausted.
+		// If it's a new object, then all the key fields must have been modified
+		if ($this->isNew()) {
+			$numModified = 0;
+			foreach ($pkFieldNames as $fieldName) {
+				if (isset($this->modifiedFields[$fieldName])) {
+					++$numModified;
+				}
+			}
+			if ($numModified != count($pkFieldNames)) {
+				return false;
+			}
+		}
+		
+		// Search exhausted: unable to disprove key's existance
 		return true;
 	}
 	

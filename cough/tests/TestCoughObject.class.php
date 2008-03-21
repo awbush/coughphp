@@ -153,6 +153,12 @@ class TestCoughObject extends UnitTestCase
 		$newBook2 = new Book();
 		$newBook2->save();
 		
+		// Check initial state of the object
+		$newBook3 = new TableWithoutAutoIncrement();
+		$this->assertTrue($newBook3->isNew(), 'New object should return true for isNew');
+		$this->assertFalse($newBook3->isInflated(), 'New object should return false for isInflated');
+		$this->assertFalse($newBook3->hasKeyId(), 'New object with PK that defaults to zero and has no auto_increment should not have a key ID');
+		
 		$this->resetCoughTestDatabase();
 	}
 	

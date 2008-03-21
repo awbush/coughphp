@@ -96,3 +96,8 @@ CREATE TABLE `library` (
 -- Dumping data for table `library`
 -- 
 
+DROP TABLE IF EXISTS `table_without_auto_increment`;
+CREATE TABLE `table_without_auto_increment` (
+  `id` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;
