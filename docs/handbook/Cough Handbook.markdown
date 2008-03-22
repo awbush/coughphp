@@ -308,6 +308,7 @@ The main time doing something like the above would be useful is when pulling dat
 			// Load aliases and add them onto the authors
 			$db = Alias::getDb();
 			$sql = 'SELECT * FROM alias ORDER BY author_id';
+			$db->selectDb(Alias::getDbName());
 			$result = $db->query($sql);
 			$lastAuthor = null;
 			$lastAuthorId = null;
@@ -322,6 +323,9 @@ The main time doing something like the above would be useful is when pulling dat
 				}
 				$aliases->add(Alias::constructByFields($row));
 			}
+			if (is_object($lastAuthor)) {
+				$lastAuthor->setAlias_Collection($aliases);
+			}
 		}
 	}
 	?>
@@ -330,6 +334,7 @@ Dependencies
 ------------
 
 * PHP5 (any version?)
+* MySQL (it should be possible to hook up other database drivers, but out of the box only support for MySQL is included)
 
 Installation
 ------------
