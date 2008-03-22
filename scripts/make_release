@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if test ! $# -eq 2
+then
+	echo Usage: $0 "cough_checkout_path" "output_name"
+	echo For example, from the scripts folder you could run:
+	echo "./make_release ../ ../../coughphp-1.1"
+	echo which will create "coughphp-1.1.tar.gz"
+	exit 1
+fi
+
+cp -rp "$1" "$2"
+rm -rf "$2/design" "$2/simpletest" "$2/docs/developer" "$2/scripts/make_release" "$2/CoughPHP.tmproj"
+find "$2" -type d -name .svn -or -name tests -print0 | xargs -0 rm -rf
+tar -czf "$2.tar.gz" "$2"
