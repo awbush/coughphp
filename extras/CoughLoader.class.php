@@ -3,28 +3,34 @@
 /**
  * CoughLoader simplifies inclusion of Cough objects and collections.
  * 
- * Example Usage:
+ * NOTE: If you haven't tried the Autoloader, we recommend you try it first
+ * because it greatly simplifies development -- not just for cough -- but in
+ * general.
  * 
+ * CoughLoader Usage follows:
+ * 
+ * Configure CoughLoader
+ * 
+ *     include_once('coughphp/extras/CoughLoader.class.php');
  *     CoughLoader::addModelPath(APP_PATH . 'models/');
  *     CoughLoader::addModelPath(SHARED_PATH . 'models/');
- *     CoughLoader::loadCoughClasses('dbName', 'Order');
  * 
- * In the above example, CoughLoader will first look for the `dbName` folder
- * until it finds it:
+ * Using it to load all classes for a given database:
  * 
- *     1. APP_PATH . 'models/dbName/'
- *     2. SHARED_PATH . 'models/dbName/'
+ *     CoughLoader::loadCoughClasses('dbName');
  * 
- * Then, it will load the generated classes followed by the sub classes:
+ * Using it to load one class:
  * 
- *     1. models/dbName/generated/generated_classes/Order_Generated.class.php
- *     2. models/dbName/generated/generated_classes/Order_Collection_Generated.class.php
- *     3. models/dbName/classes/Order.class.php
- *     4. models/dbName/classes/Order_Collection.class.php
+ *     CoughLoader::loadCoughClasses('dbName', 'ClassName');
+ *  
+ * Using it to load multiple classes:
  * 
- * If it doesn't find a particular file it simply skips it and continues to the
- * next. This allows it to work in cases where the sub class has no corresponding
- * generated class.
+ *     CoughLoader::loadCoughClasses('dbName', array('ClassName1', 'ClassName2'));
+ * 
+ * Note the class name must be the concrete object class name.  For example, if
+ * the `Author_Collection` class is needed, specify `Author`.  It will load the
+ * generated classes and then the concrete classes for both `Author` and
+ * `Author_Colleciton`.
  *
  * @package cough
  * @author Anthony Bush

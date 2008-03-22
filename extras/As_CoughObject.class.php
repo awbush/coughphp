@@ -2,7 +2,11 @@
 
 /**
  * Extends the new CoughObject and provides backwards compatibility to some of the old methods...
- *
+ * 
+ * As of 1.1 this class is no longer usable due to the static method changes.  It
+ * could be made to work, but only through expensive operations (constructing new
+ * objects just to throw them away).
+ * 
  * @package cough
  * @author Anthony Bush
  **/

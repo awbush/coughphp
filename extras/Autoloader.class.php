@@ -5,12 +5,12 @@
  * 
  * Sample Usage:
  * 
- *     Autoloader::addClassPath('/path/to/classes/');
- *     Autoloader::setCacheFilePath('/path/to/class_path_cache.php');
- *     Autoloader::excludeFolderNamesMatchingRegex('/^CVS|starter_classes|\..*$/');
- *     function __autoload($className) {
- *         Autoloader::loadClass($className);
- *     }
+ *     include_once('coughphp/extras/Autoloader.class.php');
+ *     Autoloader::addClassPath('app_path/classes/');
+ *     Autoloader::addClassPath('shared_path/classes/');
+ *     Autoloader::setCacheFilePath('app_path/tmp/class_path_cache.txt');
+ *     Autoloader::excludeFolderNamesMatchingRegex('/^CVS|\..*$/');
+ *     spl_autoload_register(array('Autoloader', 'loadClass'));
  * 
  * @package default
  * @author Anthony Bush

@@ -52,9 +52,25 @@
  *    
  *    CoughDatabaseFactory::setConfigs($configs);
  * 
+ * The config array supports other parameters as well, but you shouldn't have to
+ * use them.  Here are all the options that are available:
+ * 
+ *     array(
+ *         'adapter' => 'as',  # optional, default: as
+ *         'adapter_class_prefix' => 'CoughAs',  # optional, default: 'Cough' plus the titlecase of adapter
+ *         'adapter_class_path' => '/my/path/',  # optional, default: cough module directory plus "dal" plus adapter
+ *         'aliases' => array('another_alias'),
+ *         'driver' => 'mysql',
+ *         'host' => 'localhost',
+ *         'db_name' => 'user',
+ *         'user' => 'nobody',
+ *         'pass' => '',
+ *         'port' => 3306
+ *     );
  * 
  * @package dal
  * @author Anthony Bush, Lewis Zhang
+ * @see $configs
  **/
 class CoughDatabaseFactory
 {

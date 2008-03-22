@@ -334,12 +334,22 @@ Dependencies
 Installation
 ------------
 
-Extract the zip.  In your application, just include the core `load.inc.php` file.  If you want to use the `As_Database` module, then include it as well.  For example:
+Extract the zip.  In your application, just include the core `load.inc.php` file.  If you want to use the `As_Database` module, then include it as well.  What follows is an example that also configures the database information:
 
 	<?php
-	include_once('modules/coughphp-1.1/load.inc.php');
+	include_once('modules/coughphp-1.1/cough/load.inc.php');
 	include_once('modules/coughphp-1.1/as_database/load.inc.php');
+	CoughDatabaseFactory::addConfig(array(
+		'aliases' => array('main_db'),
+		'driver' => 'mysql',
+		'host' => 'localhost',
+		'user' => 'nobody',
+		'pass' => '',
+		'port' => 3306
+	));
 	?>
+
+See the CoughDatabaseFactory API for more options.
 
 We recommend using an autoloader of some sort as well.  We've included one that has path caching features so that it only has to scan for a class's location once.  See the Autoloader section for usage info.
 
