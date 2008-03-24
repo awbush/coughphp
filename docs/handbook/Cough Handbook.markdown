@@ -440,8 +440,8 @@ Notice how in our custom `constructByName` we build upon the SQL set in the `get
 
 For more, see the `As_SelectQuery` and `As_Query` class documentation.  The methods are very flexible and can take a variety of parameters.  For example, `addWhere` can take strings or arrays.
 
-Some Other Section
-------------------
+Misc
+----
 
 Documentation here has yet to be filed under the appropriate section.  It was mostly thought of while writing another section but goes into more detail than was appropriate for the section being written.
 
