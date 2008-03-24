@@ -1,7 +1,7 @@
 Constructing Collections
 ========================
 
-Collections can be retreived in many ways, including:
+Collections can be retrieved in many ways, including:
 
 * From a related object
 * Through manual instantiation.

@@ -193,11 +193,13 @@ Retrieve an author using custom SQL:
 	$author = Author::constructBySql($sql);
 	?>
 
-Best practices note:  Put custom SQL for an object as another `constructBy` method, like so:
+Best practices note:  Put custom SQL for an object as another `constructBy` static method, like so:
 
 	<?php
-	class Author extends CoughObject implements CoughStaticInterface {
-		public static function constructByName($firstName, $lastName) {
+	class Author extends CoughObject implements CoughStaticInterface
+	{
+		public static function constructByName($firstName, $lastName)
+		{
 			$db = self::getDb();
 			$sql = '
 				SELECT
@@ -214,7 +216,7 @@ Best practices note:  Put custom SQL for an object as another `constructBy` meth
 	}
 	?>
 
-You can use the above method just like the other `constructBy` methods:
+You can use the above method just like the other `constructBy` static methods:
 
 	<?php
 	$author = Author::constructByName('Anthony', 'Bush');
@@ -248,7 +250,7 @@ Check if the collection is empty:
 	// does not work: empty($authors);
 	?>
 
-Loop through all authors in the collection:
+Loop through all authors in the collection just like an array:
 
 	<?php
 	foreach ($authors as $authorId => $author) {
@@ -268,8 +270,10 @@ Get an author at a specific position (regardless of key values):
 	<?php
 	// First author
 	$authors->getPosition(0);
+	
 	// Last author
 	$authors->getPosition(count($authors) - 1);
+	
 	// Random author (2 ways)
 	$authors->getPosition(rand(0, count($authors) - 1));
 	$authors->get(array_rand($authors));
@@ -301,15 +305,20 @@ Manually build a collection with pre-loaded data:
 The main time doing something like the above would be useful is when pulling data that doesn't all belong to the same thing in one query.  For example, we could pull all the authors in the database with one query, then all the author aliases in the database with a second query, then merge the data.  We might add a method to the Author_Collection object that looks like this:
 
 	<?php
-	class Author_Collection extends CoughCollection {
-		public function loadAuthorsAndTheirAliases() {
+	class Author_Collection extends CoughCollection
+	{
+		public function loadAuthorsAndTheirAliases()
+		{
 			// Load authors
 			$this->load();
-			// Load aliases and add them onto the authors
+			
+			// Load aliases
 			$db = Alias::getDb();
 			$sql = 'SELECT * FROM alias ORDER BY author_id';
 			$db->selectDb(Alias::getDbName());
 			$result = $db->query($sql);
+			
+			// Add aliases onto the authors
 			$lastAuthor = null;
 			$lastAuthorId = null;
 			while ($row = $result->getRow()) {
@@ -330,11 +339,17 @@ The main time doing something like the above would be useful is when pulling dat
 	}
 	?>
 
-Dependencies
-------------
+Dependencies / Requirements
+---------------------------
 
-* PHP5 (any version?)
-* MySQL (it should be possible to hook up other database drivers, but out of the box only support for MySQL is included)
+* PHP5
+* MySQL (It should be possible to hook up other database drivers, but out of the box only MySQL support is included.)
+
+Not required but useful:
+
+* OOP knowledge (when overriding static methods you need to know to use `self::` instead of `$this->` and vice versa)
+* SQL knowledge (when overriding default generated SQL)
+* Regular expression knowledge (when customizing the generator configs)
 
 Installation
 ------------
@@ -403,14 +418,14 @@ Here's an example:
 
 	<?php
 	public function Author extends CoughObject implements CoughStaticInterface {
-		public function getLoadSql() {
+		public static function getLoadSql() {
 			$sql = new As_SelectQuery(self::getDb());
 			$sql->addSelect('author.*');
 			$sql->addFrom('author');
 			$sql->setOrderBy('author.last_name, author.first_name');
 			return $sql;
 		}
-		public function constructByName($firstName, $lastName) {
+		public static function constructByName($firstName, $lastName) {
 			$sql = self::getLoadSql();
 			$sql->addWhere(array(
 				'author.first_name' => $firstName,
@@ -447,4 +462,8 @@ Each of the above methods are slightly different:
 * `getPk` always returns an array (hash of key => value pairs).
 * `getKeyId` returns a comma separated list of the values making up the primary key.  (This means it will be the same as the direct accessor when there is only one column making up the primary key.)
 * `getAuthorId` is a direct accessor to the `author_id` field.
+
+### General Rules ###
+
+* Put all customized model logic in the concrete classes.  Never change any of the generated classes because they will be overridden the next time the generator is run.
 
