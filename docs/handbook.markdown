@@ -1,14 +1,19 @@
 Cough Handbook
 ==============
 
-1. What is Cough?
-2. Cough in Action
-3. Dependencies
-4. Installation
-5. Generating Cough Classes
-6. Additional Features
-	a. Autoloader
-	b. Query Helpers
+<ol style="list-style-type: decimal">
+<li>What is Cough?</li>
+<li>Cough in Action</li>
+<li>Dependencies</li>
+<li>Installation</li>
+<li>Generating Cough Classes</li>
+<li>Additional Features
+	<ol style="list-style-type: lower-alpha">
+	<li>Autoloader</li>
+	<li>Query Helpers</li>
+	</ol>
+</li>
+</ol>
 
 What is Cough
 -------------
