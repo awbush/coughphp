@@ -6,22 +6,9 @@ Cough Handbook
 3. Dependencies
 4. Installation
 5. Generating Cough Classes
-6. Using Cough Classes
-	a. Basic Usage
-	b. Creating
-	c. Collections
-	d. Related Objects
-		i. Has One
-		ii. Has Many
-		iii. Has and Belongs to Many
-	e. Performance Concerns
-7. Additional Features
+6. Additional Features
 	a. Autoloader
 	b. Query Helpers
-8. Versions
-	a. 1.1
-	b. 1.2
-
 
 What is Cough
 -------------
@@ -382,11 +369,6 @@ Use the cough executable in the scripts folder:
 	./scripts/cough
 
 For example configurations, see the `config_examples` folder.  To get up quick, just duplicate the default folder and change the database settings in the `database_schema_generator.inc.php` file.  For more advanced examples, see the `more` config example.
-
-Using Cough Classes
--------------------
-
-We may need to move stuff from "Cough In Action" into here, or just go into more depth here.
 
 Additional Features
 -------------------
