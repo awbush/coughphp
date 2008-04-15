@@ -1081,17 +1081,22 @@ abstract class CoughObject {
 	 *         product
 	 *         INNER JOIN manufacturer USING (manufacturer_id)
 	 *     ';
-	 *
+	 * 
+	 * @param string $className class to get fields for, e.g. Address
+	 * @param string $objectName object to alias fields to, e.g. BillingAddress_Object
+	 * @param string $tableName optional table name; use if aliasing the table name (e.g. address to billing_address)
 	 * @return array of field Aliases
 	 * @author Anthony Bush, Richard Pistole
 	 * @since 2008-02-21
 	 **/
-	public static function getFieldAliases($className, $objectName)
+	public static function getFieldAliases($className, $objectName, $tableName = '')
 	{
 		$aliases = array();
 		
 		$object = new $className();
-		$tableName = call_user_func(array($className, 'getTableName'));
+		if (empty($tableName)) {
+			$tableName = call_user_func(array($className, 'getTableName'));
+		}
 
 		foreach(array_keys($object->getFields()) as $key)
 		{

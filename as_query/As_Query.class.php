@@ -130,13 +130,18 @@ class As_Query
 	 * builds a WHERE clause from the supplied array
 	 *
 	 * @return string
-	 * @author Lewis Zhang
+	 * @author Lewis Zhang, Anthony Bush
+	 * @throws Exception
 	 **/
 	public function buildWhereSql($where)
 	{
 		if (empty($where))
 		{
 			return '';
+		}
+		
+		if (!is_object($this->db)) {
+			throw new Exception('Must construct As_Query with a database object if building WHERE SQL.');
 		}
 		
 		$clauseSql = '';

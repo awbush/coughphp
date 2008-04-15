@@ -267,8 +267,10 @@ class As_Database {
 			foreach($sortedArray as $position => $value) {
 				if(isset($quoteMapArray[$position]) && $quoteMapArray[$position])  {
 					$value = $this->quote($value);
+					$sql .= $value . ',';
 				}
 			}
+			$sql = substr_replace($sql,'',-1);
 			$sql .= "),";
 		}
 		$sql = substr_replace($sql,'',-1);
