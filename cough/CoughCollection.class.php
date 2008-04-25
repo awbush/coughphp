@@ -1,7 +1,7 @@
 <?php
 
 /**
- * undocumented abstract class CoughCollection
+ * CoughCollection collects CoughObjects.
  * 
  * @package cough
  **/
@@ -53,7 +53,7 @@ abstract class CoughCollection extends ArrayObject {
 	 * 
 	 * Override in sub class to use different SQL.
 	 *
-	 * @return mixed - return value of CoughObject::getLoadSql()
+	 * @return mixed return value of CoughObject::getLoadSql()
 	 **/
 	public function getLoadSql() {
 		return call_user_func(array($this->elementClassName, 'getLoadSql'));
@@ -86,9 +86,8 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Runs save on each collected element that is a CoughObject
+	 * Run save on each collected (or removed) element.
 	 * 
-	 * @param array $fieldsToUpdate - an array of fields to be updated. Don't specify to have only changed fields updated.
 	 * @return void
 	 * @author Anthony Bush
 	 **/
@@ -121,8 +120,8 @@ abstract class CoughCollection extends ArrayObject {
 	 *
 	 * $n = 0 gets first element, $n = (count - 1) gets last element.
 	 *
-	 * @param $n - which element to get (in range 0 to count - 1).
-	 * @return mixed - nth element in array.
+	 * @param int $n which element to get (in range 0 to count - 1).
+	 * @return mixed nth element in array.
 	 * @author Anthony Bush
 	 **/
 	public function getPosition($n) {
@@ -139,7 +138,7 @@ abstract class CoughCollection extends ArrayObject {
 	/**
 	 * Find out whether or not the collection is empty.
 	 *
-	 * @return boolean - true if nothing is in the collection, false otherwise.
+	 * @return boolean true if nothing is in the collection, false otherwise.
 	 * @author Anthony Bush
 	 **/
 	public function isEmpty() {
@@ -172,9 +171,9 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Adds a single element given either an ID of the current collection
-	 * object type to be added or the object itself.
-	 *
+	 * Adds a single element (even if it doesn't have a key ID yet).
+	 * 
+	 * @param CoughObject $object
 	 * @return void
 	 * @author Anthony Bush
 	 **/
@@ -200,10 +199,10 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Removes a single element given either an ID of the current collection
-	 * object type to be removed or the object itself.
+	 * Removes a single element given either an ID or the object itself.
 	 * 
-	 * @return mixed - CoughObject that was removed, or false if no element could be found/removed.
+	 * @param CoughObject|int|string $objectOrId object or ID to remove (ID must be result from $object->getKeyId()).
+	 * @return mixed CoughObject that was removed, or false if no element could be found/removed.
 	 * @author Anthony Bush
 	 **/
 	public function remove($objectOrId) {
@@ -227,7 +226,7 @@ abstract class CoughCollection extends ArrayObject {
 	 * a null element in a CoughCollection? It makes no sense.)
 	 * See http://bugs.php.net/bug.php?id=40872 for more details.
 	 *
-	 * @return mixed - CoughObject that was removed, or false if no element could be found/removed.
+	 * @return mixed CoughObject that was removed, or false if no element could be found/removed.
 	 * @author Anthony Bush
 	 **/
 	protected function removeByKey($key) {
@@ -243,7 +242,7 @@ abstract class CoughCollection extends ArrayObject {
 	/**
 	 * Removes a single element from the collection by comparing references.
 	 *
-	 * @return mixed - CoughObject that was removed, or false if no element could be found/removed.
+	 * @return mixed CoughObject that was removed, or false if no element could be found/removed.
 	 * @author Anthony Bush
 	 **/
 	protected function removeByReference($objectToRemove) {
@@ -277,9 +276,13 @@ abstract class CoughCollection extends ArrayObject {
 	 * Sort the collection from the return value of the specified method name of the
 	 * collected objects.
 	 * 
-	 * Example:
+	 * Examples:
 	 * 
+	 *     <code>
+	 *     $collection->sortByMethod('getProductName');
+	 *     $collection->sortByMethod('getProductName', SORT_ASC);
 	 *     $collection->sortByMethod('getProductName', SORT_DESC);
+	 *     </code>
 	 * 
 	 * @param string $methodName
 	 * @param int $direction SORT_ASC or SORT_DESC (PHP sort order constant)
@@ -309,10 +312,12 @@ abstract class CoughCollection extends ArrayObject {
 	 * 
 	 * Examples:
 	 * 
+	 *     <code>
 	 *     $collection->sortByMethods('getManufacturerName', 'getProductName');
 	 *     $collection->sortByMethods('getManufacturerName', SORT_DESC, 'getProductName', SORT_DESC);
 	 *     $collection->sortByMethods('getManufacturerName', SORT_DESC, 'getProductName', SORT_ASC);
 	 *     $collection->sortByMethods('getManufacturerName', SORT_DESC, SORT_STRING, 'getProductName', SORT_STRING);
+	 *     </code>
 	 * 
 	 * @param string $methodName
 	 * @param int $direction SORT_ASC or SORT_DESC (PHP sort order constant)

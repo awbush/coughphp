@@ -142,6 +142,7 @@ class As_Database {
 		$finish = microtime(true);
 		if ($this->logQueries) {
 			$newLog = array(
+				'database' => $this->dbName,
 				'sql' => $sql,
 				'time' => ($finish - $start),
 			);
@@ -186,6 +187,17 @@ class As_Database {
 
 	public function getAffectedRows() {
 		return mysql_affected_rows($this->connection);
+	}
+	
+	/**
+	 * Returns the error message from the last query run.
+	 *
+	 * @return string
+	 * @author Anthony Bush
+	 * @since 2008-04-16
+	 **/
+	public function getError() {
+		return mysql_error($this->connection);
 	}
 	
 	/**
