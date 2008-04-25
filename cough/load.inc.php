@@ -1,6 +1,6 @@
 <?php
 /**
- * Lightweight Collection-Handling Framework (CHF) for PHP5 :: version 1.1
+ * Lightweight Collection-Handling Framework (CHF) for PHP5 :: version 1.1.2
  * "CoughPHP" for short. ;)
  * 
  *       ___
