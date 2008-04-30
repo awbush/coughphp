@@ -375,6 +375,79 @@ Use the cough executable in the scripts folder:
 
 For example configurations, see the `config_examples` folder.  To get up quick, just duplicate the default folder and change the database settings in the `database_schema_generator.inc.php` file.  For more advanced examples, see the `more` config example.
 
+### Cough Generation Example ###
+
+If your application directory structure looks like this:
+
+	/var/www/html/com.coughphp/
+		config/
+		models/
+		views/
+		controllers/
+		classes/
+		modules/
+			coughphp/
+			lightvc/
+		webroot/
+
+You could use the following commands:
+
+	cd /var/www/html/com.coughphp/
+	cp -r modules/coughphp/config_examples/default config/cough
+
+Then edit `config/cough/database_schema_generator.inc.php` so it has your database info.
+
+Then edit `config/cough/cough_generator.inc.php` so that the output path is the models directory; the default setup puts generated classes in an `output` directory in the same directory as the config files.  For this example, we need only change the line:
+
+	$generated = dirname(__FILE__) . '/output/';
+
+to:
+
+	$generated = dirname(dirname(dirname(__FILE__))) . '/models/';
+
+Then we can invoke the generator:
+
+	./modules/coughphp/scripts/cough -g config/cough
+
+If you want, you can make your own generation script so you don't have to remember the above.  For example, consider making a `generate` script in the models directory:
+
+	#!/bin/sh
+	../modules/coughphp/scripts/cough -g ../config/cough
+
+Note that the above only works if you run the script from the models directory, like so:
+
+	cd /var/www/html/com.coughphp/models/
+	./generate
+
+If you use version control, this makes it incredibly easy to see the changes made by the generator because you are already in the directory of interest.
+
+### Some Notes ###
+
+It is recommended to keep your custom generator configs OUT of the CoughPHP directory.  This will make it easier to upgrade CoughPHP, among other things.  You don't necessarily have to put them in your application config directory, however.  If your models are shared across applications, then you might consider putting the config in the models directory, such as in the following directory structure:
+
+	/var/www/html/
+		store/
+			config/
+			views/
+			controllers/
+			classes/
+			webroot/
+		back_office/
+			config/
+			views/
+			controllers/
+			classes/
+			webroot/
+		shared/
+			models/
+				generator_config/ <- putting the cough generator config
+				                     directory next to models keeps the
+				                     generated items and their config close.
+			modules/
+				coughphp/
+				lightvc/
+
+
 Additional Features
 -------------------
 
