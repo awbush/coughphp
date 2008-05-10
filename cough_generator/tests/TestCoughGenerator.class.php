@@ -42,7 +42,8 @@ class TestCoughGenerator extends UnitTestCase
 		require_once(dirname(dirname(__FILE__)) . '/load.inc.php');
 		
 		// include Cough so we can include and test the generated classes.
-		require_once(dirname(dirname(dirname(__FILE__))) . '/load.inc.php');
+		require_once(dirname(dirname(dirname(__FILE__))) . '/cough/load.inc.php');
+		require_once(dirname(dirname(dirname(__FILE__))) . '/as_database/load.inc.php');
 	}
 	
 	public function setUpDatabaseConnection()
@@ -53,10 +54,11 @@ class TestCoughGenerator extends UnitTestCase
 			'db_name' => 'test_cough_object',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
-			'port' => '3306'
+			'port' => '3306',
+			'aliases' => array('test_cough_object')
 		);
 		
-		CoughDatabaseFactory::addConfig('test_cough_object', $testDbConfig);
+		CoughDatabaseFactory::addConfig($testDbConfig);
 		$this->db = CoughDatabaseFactory::getDatabase('test_cough_object');
 	}
 	
