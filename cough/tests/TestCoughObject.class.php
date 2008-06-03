@@ -568,6 +568,23 @@ class TestCoughObject extends UnitTestCase
 		$this->assertEqual($bookJoinsInLbj->getPosition(1)->getBook_Object()->getBookId(), $book2->getBookId());
 	}
 	
+	public function testTransactions()
+	{
+		$author = new Author();
+		$author->setName('Haruki Murakami');
+		$this->assertTrue($author->save());
+		
+		$db = Author::getDb();
+		$db->startTransaction();
+		$db->delete('author', array(1 => 1));
+		$db->rollback();
+		
+		$authors = new Author_Collection();
+		$authors->load();
+		
+		$this->assertEqual(count($authors), 1);
+	}
+	
 	public function getFieldMismatches($object1, $object2)
 	{
 		$mismatches = array();
