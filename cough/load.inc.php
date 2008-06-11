@@ -57,6 +57,7 @@
 
 // Load the Cough framework
 require_once('CoughIterator.class.php');
+require_once('CoughKeyValueIterator.class.php');
 require_once('CoughCollection.class.php');
 require_once('CoughObject.class.php');
 require_once('CoughObjectStaticInterface.class.php');

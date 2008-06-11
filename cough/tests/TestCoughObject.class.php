@@ -10,19 +10,35 @@ class TestCoughObject extends UnitTestCase
 	//////////////////////////////////////
 	
 	/**
-	 * This method is run by simpletest before running all test*() methods.
+	 * Some things we only need to setup once (like generate all the code from the DB)
+	 **/
+	public function __construct()
+	{
+		error_reporting(E_ALL);
+		$this->includeDependencies();
+		$this->setUpDatabase();
+		$this->loadSetupSql();
+		$this->resetCoughTestDatabase();
+		$this->generateCoughTestClasses();
+		$this->includeCoughTestClasses();
+	}
+	
+	/**
+	 * Some things we only need to teardown once (like delete all the generated code)
+	 **/
+	public function __destruct()
+	{
+		$this->removeGeneratedFiles();
+	}
+	
+	/**
+	 * This method is run by simpletest before running each test*() method.
 	 *
 	 * @return void
 	 **/
 	public function setUp()
 	{
-		error_reporting(E_ALL);
-		$this->includeDependencies();
-		$this->setUpDatabase();
-		$this->initializeDatabase();
 		$this->resetCoughTestDatabase();
-		$this->generateCoughTestClasses();
-		$this->includeCoughTestClasses();
 	}
 	
 	public function resetCoughTestDatabase()
@@ -35,22 +51,19 @@ class TestCoughObject extends UnitTestCase
 	
 	public function setUpDatabase()
 	{
-		$testDbConfig = array(
-			'adapter' => 'as',
-			'driver' => 'mysql',
-			'host' => 'localhost',
-			'db_name' => 'test_cough_object',
-			'user' => 'cough_test',
-			'pass' => 'cough_test',
-			'port' => '3306',
-			'aliases' => array('test_cough_object'),
-		);
+		// Use connection information from the generation config (and just add the aliases)
+		include(dirname(__FILE__) . '/config/database_schema_generator.inc.php');
+		
+		$dbName = 'test_cough_object';
+		$testDbConfig = $config['dsn'];
+		$testDbConfig['aliases'] = array($dbName);
+		$testDbConfig['db_name'] = $dbName;
 		
 		CoughDatabaseFactory::addConfig($testDbConfig);
-		$this->db = CoughDatabaseFactory::getDatabase('test_cough_object');
+		$this->db = CoughDatabaseFactory::getDatabase($dbName);
 	}
 	
-	public function initializeDatabase()
+	public function loadSetupSql()
 	{
 		// We have to run this sql dump one query at a time
 		$this->coughTestDbResetSql = explode(';', file_get_contents(dirname(__FILE__) . '/config/db_setup.sql'));
@@ -63,7 +76,7 @@ class TestCoughObject extends UnitTestCase
 	{
 		// include Cough + dependencies; this should be the only include necessary
 		require_once(dirname(dirname(dirname(__FILE__))) . '/load.inc.php');
-		require_once(APP_PATH . 'as_database/load.inc.php');
+		require_once(dirname(dirname(dirname(__FILE__))) . '/as_database/load.inc.php');
 	}
 	
 	public function generateCoughTestClasses()
@@ -99,7 +112,6 @@ class TestCoughObject extends UnitTestCase
 	public function tearDown()
 	{
 		$this->emptyCoughTestDatabase();
-		$this->removeGeneratedFiles();
 	}
 	
 	public function emptyCoughTestDatabase()
@@ -158,8 +170,6 @@ class TestCoughObject extends UnitTestCase
 		$this->assertTrue($newBook3->isNew(), 'New object should return true for isNew');
 		$this->assertFalse($newBook3->isInflated(), 'New object should return false for isInflated');
 		$this->assertFalse($newBook3->hasKeyId(), 'New object with PK that defaults to zero and has no auto_increment should not have a key ID');
-		
-		$this->resetCoughTestDatabase();
 	}
 	
 	public function testLoadObject()
@@ -190,8 +200,6 @@ class TestCoughObject extends UnitTestCase
 		
 		$this->assertIdentical($newBook->getIntroduction(), $sameBook->getIntroduction());
 		$this->assertIdentical($newBook->getCreationDatetime(), $sameBook->getCreationDatetime());
-		
-		$this->resetCoughTestDatabase();
 	}
 	
 	public function testUpdateObject()
@@ -210,8 +218,6 @@ class TestCoughObject extends UnitTestCase
 		$sameAuthor = Author::constructByKey($newAuthor->getAuthorId());
 		
 		$this->assertIdentical($sameAuthor->getName(), 'Mark Twain');
-		
-		$this->resetCoughTestDatabase();
 	}
 	
 	public function testRetireObject()
@@ -230,8 +236,6 @@ class TestCoughObject extends UnitTestCase
 		
 		// not sure if this one should pass... depends on how we are doing retired handling
 		$this->assertIsA(Library::constructByKey($newLibrary->getLibraryId()), 'Library');
-		
-		$this->resetCoughTestDatabase();
 	}
 	
 	public function testDeleteObject()
@@ -244,8 +248,6 @@ class TestCoughObject extends UnitTestCase
 		$newLibrary->delete();
 		
 		$this->assertNull(Library::constructByKey($newLibrary->getLibraryId()));
-		
-		$this->resetCoughTestDatabase();
 	}
 	
 	public function testSetAndGetObject()
@@ -325,8 +327,6 @@ class TestCoughObject extends UnitTestCase
 		$stranger->save();
 		
 		$this->assertNotEqual($stranger->getAuthorId(), $heinlein->getAuthorId());
-		
-		$this->resetCoughTestDatabase();
 	}
 	
 	public function testAddAndRemoveObject()
@@ -431,8 +431,6 @@ class TestCoughObject extends UnitTestCase
 		$this->assertTrue($sameHeinlein->getBook_Collection()->isEmpty());
 		
 		// TODO make sure that book id is unset now after database save
-		
-		$this->resetCoughTestDatabase();
 	}
 	
 	public function testAnonymousSave()
@@ -471,8 +469,6 @@ class TestCoughObject extends UnitTestCase
 		$this->assertNotNull($book2->getBookId());
 		$this->assertNotNull($book2->getAuthorId());
 		$this->assertIdentical($book2->getAuthorId(), $author->getAuthorId());
-		
-		$this->resetCoughTestDatabase();
 	}
 	
 	public function testManyToMany()

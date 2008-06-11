@@ -38,6 +38,15 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
+	 * Returns a new key-value iterator for the collection.
+	 *
+	 * @return CoughKeyValueIterator
+	 **/
+	public function getKeyValueIterator($value, $key = 'getKeyId') {
+		return new CoughKeyValueIterator($this, $value, $key);
+	}
+	
+	/**
 	 * Returns a reference to the database object to use for queries.
 	 *
 	 * @return CoughAbstractDatabaseAdapter

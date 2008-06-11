@@ -6,10 +6,9 @@ class TestCoughCollection extends UnitTestCase
 	// Set Up
 	//////////////////////////////////////
 	
-	public function setUp()
+	public function __construct()
 	{
 		$this->includeDependencies();
-		$this->setUpFakeDatabase();
 	}
 	
 	public function includeDependencies()
@@ -18,21 +17,6 @@ class TestCoughCollection extends UnitTestCase
 		require_once(dirname(dirname(dirname(__FILE__))) . '/load.inc.php');
 		require_once(dirname(__FILE__) . '/config/SortableElement.class.php');
 		require_once(dirname(__FILE__) . '/config/SortableCollection.class.php');
-	}
-	
-	public function setUpFakeDatabase()
-	{
-		$testDbConfig = array(
-			'adapter' => 'as',
-			'driver' => 'mysql',
-			'host' => 'localhost',
-			'db_name' => 'test_cough_object',
-			'user' => 'cough_test',
-			'pass' => 'cough_test',
-			'port' => '3306'
-		);
-
-		CoughDatabaseFactory::addConfig('none', $testDbConfig);
 	}
 	
 	//////////////////////////////////////
@@ -274,6 +258,67 @@ class TestCoughCollection extends UnitTestCase
 			$collection->sortByKeys($keyPermutation);
 			$this->assertEqual($keyPermutation, $collection->getArrayKeys());
 		}
+	}
+	
+	public function testGetKeyValueIteratorWithGetKeyId()
+	{
+		$collection = $this->buildSortableCollection();
+		
+		// Lack of a second parameter to `getKeyValueIterator()` should mean the
+		// `getKeyId()` method is used on every object.
+
+		$manualData = array();
+		foreach ($collection as $keyId => $element)
+		{
+			$manualData[$keyId] = $element->getProductName();
+		}
+		
+		$iterator = $collection->getKeyValueIterator('getProductName');
+		$iteratorData = array();
+		foreach ($iterator as $keyId => $productName)
+		{
+			$iteratorData[$keyId] = $productName;
+		}
+		
+		$this->assertIdentical($manualData, $iteratorData);
+		
+		// count should work
+		$this->assertIdentical(count($manualData), count($iterator));
+		$this->assertIdentical(count($collection), count($iterator));
+		
+		// empty should work
+		$this->assertIdentical(empty($manualData), empty($iterator));
+		$this->assertIdentical(empty($collection), empty($iterator));
+	}
+	
+	public function testGetKeyValueIteratorWithCustomKeyId()
+	{
+		$collection = $this->buildSortableCollection();
+		
+		// Specifying the second parameter should work
+		
+		$manualData = array();
+		foreach ($collection as $element)
+		{
+			$manualData[$element->getPrice()] = $element->getProductName();
+		}
+		
+		$iterator = $collection->getKeyValueIterator('getProductName', 'getPrice');
+		$iteratorData = array();
+		foreach ($iterator as $keyId => $productName)
+		{
+			$iteratorData[$keyId] = $productName;
+		}
+		
+		$this->assertIdentical($manualData, $iteratorData);
+		
+		// count should work
+		$this->assertIdentical(count($manualData), count($iterator));
+		$this->assertIdentical(count($collection), count($iterator));
+		
+		// empty should work
+		$this->assertIdentical(empty($manualData), empty($iterator));
+		$this->assertIdentical(empty($collection), empty($iterator));
 	}
 	
 }
