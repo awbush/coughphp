@@ -25,12 +25,7 @@ class TestCoughGenerator extends UnitTestCase
 	// Set Up
 	//////////////////////////////////////
 	
-	/**
-	 * This method is run by simpletest before running all test*() methods.
-	 *
-	 * @return void
-	 **/
-	public function setUp()
+	public function __construct()
 	{
 		$this->includeDependencies();
 		$this->setUpDatabaseConnection();
