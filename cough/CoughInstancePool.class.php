@@ -27,7 +27,7 @@ class CoughInstancePool
 	{
 		if (is_object($instanceOrClassName))
 		{
-			$className = get_class($object);
+			$className = get_class($instanceOrClassName);
 		}
 		else
 		{
