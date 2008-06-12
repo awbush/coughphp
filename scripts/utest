@@ -61,7 +61,7 @@ SEE ALSO
 
 // simpletest is not strict compatible, so remove it
 $oldErrorReporting = error_reporting();
-error_reporting($oldErrorReporting & !E_STRICT);
+error_reporting($oldErrorReporting & ~E_STRICT);
 
 // Run Tests
 require_once(SIMPLETEST_PATH . 'autorun.php');
