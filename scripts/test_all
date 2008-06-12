@@ -15,7 +15,7 @@ $oldErrorReporting = error_reporting();
 error_reporting($oldErrorReporting & ~E_STRICT);
 
 require_once(SIMPLETEST_PATH . 'autorun.php');
-$coughPath = dirname(dirname(__FILE__));
+$coughPath = dirname(dirname(__FILE__)) . '/';
 $test = new TestSuite('Running cough tests...');
 
 $test->addTestFile($coughPath . 'cough/tests/TestCoughObject.class.php');
