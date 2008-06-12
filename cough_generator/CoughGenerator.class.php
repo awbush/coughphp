@@ -498,22 +498,22 @@ echo $objectDefinitionsPhp;
 	// Static Definition Methods
 	
 	public static function getDb() {
-		if (is_null(self::$db)) {
-			self::$db = CoughDatabaseFactory::getDatabase('<?php echo $dbName; ?>');
+		if (is_null(<?php echo $starterObjectClassName ?>::$db)) {
+			<?php echo $starterObjectClassName ?>::$db = CoughDatabaseFactory::getDatabase('<?php echo $dbName; ?>');
 		}
-		return self::$db;
+		return <?php echo $starterObjectClassName ?>::$db;
 	}
 	
 	public static function getDbName() {
-		return self::$dbName;
+		return <?php echo $starterObjectClassName ?>::$dbName;
 	}
 	
 	public static function getTableName() {
-		return self::$tableName;
+		return <?php echo $starterObjectClassName ?>::$tableName;
 	}
 	
 	public static function getPkFieldNames() {
-		return self::$pkFieldNames;
+		return <?php echo $starterObjectClassName ?>::$pkFieldNames;
 	}
 	
 	// Static Construction (factory) Methods
@@ -658,7 +658,7 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
  *
  * <?php echo implode("\n * ", $phpdocTags) . "\n"; ?>
  **/
-class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassName ?> implements CoughObjectStaticInterface {	
+class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassName ?> implements CoughObjectStaticInterface {
 }
 <?php
 		echo("\n?>");
