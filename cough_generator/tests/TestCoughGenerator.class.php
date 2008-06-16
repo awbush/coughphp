@@ -132,6 +132,13 @@ class TestCoughGenerator extends UnitTestCase
 			         . "==============================================\n"
 			         . $diffOutput . "\n"
 			         . "==============================================\n\n";
+			
+			if (!empty($diffOutput))
+			{
+				$message .= "<: " . substr_count($diffOutput, "\n<") . "\n";
+				$message .= ">: " . substr_count($diffOutput, "\n>") . "\n\n";
+			}
+			
 			$this->assertTrue(empty($diffOutput), $message);
 			
 			// 4. Clean up files
@@ -144,15 +151,6 @@ class TestCoughGenerator extends UnitTestCase
 			$this->executeSqlFile($configPath . 'db_setup/db_teardown.sql');
 		}
 	}
-	
-	
-	//////////////////////////////////////
-	// Tests...
-	//////////////////////////////////////
-	
-	// TODO: Write another test method like the one above for a config that makes use of the class_name options (ignoring tables, adding prefixes, stripping table name prefixes, etc.)
-	
-	// TODO: Write another one for an FK schema (and don't pass the schema through the SchemaManipulator) to see if FK relationships are setup correctly without help from the SchemaManipulator.
 	
 }
 
