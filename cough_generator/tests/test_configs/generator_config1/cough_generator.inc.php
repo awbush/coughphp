@@ -1,6 +1,9 @@
 <?php
 
-$generated = dirname(__FILE__) . '/output/';
+if (!isset($outputDir))
+{
+	$outputDir = dirname(__FILE__) . '/output/';
+}
 
 $config = array(
 	
@@ -10,8 +13,8 @@ $config = array(
 	),
 	
 	'paths' => array(
-		'generated_classes' => $generated . 'generated/',
-		'starter_classes' => $generated . 'concrete/',
+		'generated_classes' => $outputDir . 'generated/',
+		'starter_classes' => $outputDir . 'concrete/',
 		'file_suffix' => '.class.php',
 	),
 	

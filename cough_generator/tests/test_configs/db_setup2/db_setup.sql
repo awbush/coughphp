@@ -1,3 +1,10 @@
+-- foreign keys: yes
+-- multi-key primary key: yes
+-- "retire/delete" colums: no
+-- one-to-one relationships: yes
+-- one-to-many relationships: yes
+-- many-to-many relationships: yes (customer has many ordered products and a product has many customers)
+
 DROP TABLE IF EXISTS `customer`;
 CREATE TABLE  `customer` (
   `id` int(11) NOT NULL,

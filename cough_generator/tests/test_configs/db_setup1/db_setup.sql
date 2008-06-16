@@ -1,20 +1,9 @@
--- phpMyAdmin SQL Dump
--- version 2.8.0.3-Debian-1
--- http://www.phpmyadmin.net
--- 
--- Host: localhost
--- Generation Time: Oct 23, 2007 at 08:57 PM
--- Server version: 5.0.22
--- PHP Version: 5.1.2
--- 
--- Database: `cough_test2`
--- 
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `author`
--- 
+-- foreign keys: no
+-- multi-key primary key: no
+-- "retire/delete" colums: is_retired
+-- one-to-one relationships: yes
+-- one-to-many relationships: yes
+-- many-to-many relationships: yes
 
 DROP TABLE IF EXISTS `author`;
 CREATE TABLE `author` (
@@ -25,17 +14,6 @@ CREATE TABLE `author` (
   `is_retired` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`author_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- 
--- Dumping data for table `author`
--- 
-
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `book`
--- 
 
 DROP TABLE IF EXISTS `book`;
 CREATE TABLE `book` (
@@ -49,17 +27,6 @@ CREATE TABLE `book` (
   PRIMARY KEY  (`book_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
--- 
--- Dumping data for table `book`
--- 
-
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `book2library`
--- 
-
 DROP TABLE IF EXISTS `book2library`;
 CREATE TABLE `book2library` (
   `book2library_id` int(11) NOT NULL auto_increment,
@@ -71,17 +38,6 @@ CREATE TABLE `book2library` (
   PRIMARY KEY  (`book2library_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
--- 
--- Dumping data for table `book2library`
--- 
-
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `library`
--- 
-
 DROP TABLE IF EXISTS `library`;
 CREATE TABLE `library` (
   `library_id` int(11) NOT NULL auto_increment,
@@ -91,8 +47,3 @@ CREATE TABLE `library` (
   `is_retired` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`library_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- 
--- Dumping data for table `library`
--- 
-
