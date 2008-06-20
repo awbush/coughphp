@@ -139,7 +139,7 @@ abstract class Book_Generated extends CoughObject {
 		$tableName = Book::getTableName();
 		return '
 			SELECT
-				`book`.*
+				`' . $tableName . '`.*
 				, ' . implode("\n\t\t\t\t, ", CoughObject::getFieldAliases('Author', 'Author_Object', 'author')) . '
 			FROM
 				`' . Book::getDbName() . '`.`' . $tableName . '`
@@ -237,8 +237,8 @@ abstract class Book_Generated extends CoughObject {
 			$tableName = Book2library::getTableName();
 			$sql = '
 				SELECT
-					`book2library`.*
-					, ' . implode("\n\t\t\t\t, ", CoughObject::getFieldAliases('Library', 'Library_Object', 'library')) . '
+					`' . $tableName . '`.*
+					, ' . implode("\n\t\t\t\t\t, ", CoughObject::getFieldAliases('Library', 'Library_Object', 'library')) . '
 				FROM
 					`' . Book2library::getDbName() . '`.`' . $tableName . '`
 					INNER JOIN `' . Library::getDbName() . '`.`' . Library::getTableName() . '` AS `library`

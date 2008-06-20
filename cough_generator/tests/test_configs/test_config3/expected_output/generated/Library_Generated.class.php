@@ -187,8 +187,8 @@ abstract class Library_Generated extends CoughObject {
 			$tableName = Book2library::getTableName();
 			$sql = '
 				SELECT
-					`book2library`.*
-					, ' . implode("\n\t\t\t\t, ", CoughObject::getFieldAliases('Book', 'Book_Object', 'book')) . '
+					`' . $tableName . '`.*
+					, ' . implode("\n\t\t\t\t\t, ", CoughObject::getFieldAliases('Book', 'Book_Object', 'book')) . '
 				FROM
 					`' . Book2library::getDbName() . '`.`' . $tableName . '`
 					INNER JOIN `' . Book::getDbName() . '`.`' . Book::getTableName() . '` AS `book`
