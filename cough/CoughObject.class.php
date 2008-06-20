@@ -1076,7 +1076,7 @@ abstract class CoughObject {
 	 *     $sql = '
 	 *     SELECT
 	 *         product.*
-	 *         , ' . CoughObject::getFieldAliases('con_Manufacturer', 'Manufacturer_Object') . '
+	 *         , ' . implode("\n\t, ", CoughObject::getFieldAliases('con_Manufacturer', 'Manufacturer_Object')) . '
 	 *     FROM
 	 *         product
 	 *         INNER JOIN manufacturer USING (manufacturer_id)

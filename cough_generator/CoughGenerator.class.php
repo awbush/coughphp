@@ -154,10 +154,16 @@ class CoughGenerator {
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
 		
+		$escapedIndent = str_replace(array("\n", "\t"), array('\n', '\t'), $indent);
+		
+		$concreteClassName = $this->config->getStarterObjectClassName($table);
+		
 		// Loop through all related one-to-one relationships and for any that require a
 		// non-NULL foreign key (i.e. the relationship MUST exist) go ahead and change
 		// the default SELECT SQL to INNER JOIN to that relationship.
-		$selectSql = array('`' . $tableName . '`.*');
+		
+		$variables = array('$tableName = ' . $concreteClassName . '::getTableName();');
+		$selectSql = array("`' . \$tableName . '`.*");
 		$innerJoins = array();
 		
 		if ($this->config->shouldGenerateLoadSqlInnerJoins($table)) {
@@ -171,21 +177,29 @@ class CoughGenerator {
 
 					$refTableAliasName = $this->config->getForeignTableAliasName($hasOne);
 					$refObjectName = $this->config->getForeignObjectName($hasOne);
-
+					$refConcreteClassName = $this->config->getStarterObjectClassName($hasOne->getRefTable());
+					
+					// We don't need to store these as we only use each reference table once (we alias them all)
+					// $variables[] = '$tableName' . $refConcreteClassName . ' = ' . $refConcreteClassName . '::getTableName();';
+					
 					// Append to SELECT SQL.
-					foreach ($hasOne->getRefTable()->getColumns() as $columnName => $refColumn) {
-						$selectSql[] = '`' . $refTableAliasName . '`.`' . $columnName . '` AS `' . $refObjectName . '.' . $columnName . '`';
-					}
+					$selectSql[] = "' . implode(" . '"\n' . $escapedIndent . '\t, "' . ", CoughObject::getFieldAliases('$refConcreteClassName', '$refObjectName', '$refTableAliasName')) . '";
+					
+					// Rather than hard-code the columns, we'll use the newly added `getFieldAliases` static method (above line).
+					// foreach ($hasOne->getRefTable()->getColumns() as $columnName => $refColumn) {
+					// 	$selectSql[] = '`' . $refTableAliasName . '`.`' . $columnName . '` AS `' . $refObjectName . '.' . $columnName . '`';
+					// }
 
 					// Generate the INNER JOIN criteria
 					$joinOnSql = array();
 					foreach ($hasOne->getRefKey() as $index => $refColumn) {
-						$joinOnSql[] = '`' . $tableName . '`.`' . $localKey[$index]->getColumnName() . '` = `' . $refTableAliasName . '`.`' . $refColumn->getColumnName() . '`';
+						$joinOnSql[] = "`' . \$tableName . '`.`" . $localKey[$index]->getColumnName() . '` = `' . $refTableAliasName . '`.`' . $refColumn->getColumnName() . '`';
 					}
-
+					
 					// Append to INNER JOIN SQL using the INNER JOIN criteria
-					$innerJoins['`' . $refDbName . '`.`' . $refTableName . '` AS `' . $refTableAliasName . '`'] = $joinOnSql;
-
+					$joinTable = "`' . $refConcreteClassName::getDbName() . '`.`' . $refConcreteClassName::getTableName() . '` AS `" . $refTableAliasName . "`";
+					$innerJoins[$joinTable] = $joinOnSql;
+					
 				}
 			}
 		}
@@ -193,14 +207,14 @@ class CoughGenerator {
 		$sql = $indent . "SELECT\n"
 		     . $indent . "\t" . implode("\n$indent\t, ", $selectSql) . "\n"
 		     . $indent . "FROM\n"
-		     . $indent . "\t`$dbName`.`$tableName`";
+		     . $indent . "\t`' . $concreteClassName::getDbName() . '`.`' . \$tableName . '`";
 		
 		foreach ($innerJoins as $joinTable => $joinCriteria) {
 			$sql .= "\n$indent\tINNER JOIN $joinTable"
 			      . "\n$indent\t\tON " . implode("\n$indent\t\tAND ", $joinCriteria);
 		}
 		
-		return $sql;
+		return array($variables, $sql);
 	}
 
 	/**
@@ -244,7 +258,7 @@ class CoughGenerator {
 		
 		
 		// Generate one-to-one methods
-		ob_start();
+		$oneToOneMethods = '';
 		$objectDefinitions = array();
 		foreach ($table->getHasOneRelationships() as $hasOne) {
 			
@@ -268,30 +282,45 @@ class CoughGenerator {
 			$objectDefinitions[] = "\n\t\t'" . $objectName . "' => array("
 			                     . "\n\t\t\t'class_name' => '" . $objectClassName . "'\n\t\t),";
 			
-?>
-	public function load<?php echo $objectName ?>() {
-		$<?php echo $localVarName ?> = <?php echo $objectClassName ?>::constructByKey(array(
-<?php foreach ($hasOne->getRefKey() as $key => $column): ?>
-			'<?php echo '`' . $column->getTable()->getTableName() . '`.`' . $column->getColumnName() . '`' ?>' => $this->get<?php echo $this->config->getTitleCase($localKey[$key]->getColumnName()) ?>(),
-<?php endforeach; ?>
-		));
-		$this->set<?php echo $objectName ?>($<?php echo $localVarName ?>);
-	}
-	
-	public function get<?php echo $objectName ?>() {
-		if (!isset($this->objects['<?php echo $objectName ?>'])) {
-			$this->load<?php echo $objectName ?>();
+			// generate load*_Object()
+			$oneToOneMethods .= "\tpublic function load" . $objectName . "() {\n";
+			$refKey = $hasOne->getRefKey();
+			if (count($refKey) == 1)
+			{
+				// Only one column key -- generate simplified code (one line)
+				reset($refKey);
+				list($key) = each($refKey);
+				$titleCase = $this->config->getTitleCase($localKey[$key]->getColumnName());
+				$oneToOneMethods .= "\t\t\$this->set" . $objectName . "(" . $objectClassName . "::constructByKey(\$this->get" . $titleCase . "()));\n";
+			}
+			else
+			{
+				// Multi-column key
+				$oneToOneMethods .= "\t\t\$tableName = " . $objectClassName . "::getTableName();\n"
+				                  . "\t\t\$" . $localVarName . " = " . $objectClassName . "::constructByKey(array(\n";
+				foreach ($refKey as $key => $column)
+				{
+					$titleCase = $this->config->getTitleCase($localKey[$key]->getColumnName());
+					$oneToOneMethods .= "\t\t\t'`' . \$tableName . '`.`" . $column->getColumnName() . "`' => \$this->get" . $titleCase . "(),\n";
+				}
+				$oneToOneMethods .= "\t\t));\n"
+				                  . "\t\t\$this->set" . $objectName . "(\$" . $localVarName . ");\n";
+			}
+			$oneToOneMethods .= "\t}\n\t\n";
+			
+			// generate get*_Object()
+			$oneToOneMethods .= "\tpublic function get" . $objectName . "() {\n"
+			                  . "\t\tif (!isset(\$this->objects['" . $objectName . "'])) {\n"
+			                  . "\t\t\t\$this->load" . $objectName . "();\n"
+			                  . "\t\t}\n"
+			                  . "\t\treturn \$this->objects['" . $objectName . "'];\n"
+			                  . "\t}\n\t\n";
+			
+			// generate set*_Object()
+			$oneToOneMethods .= "\tpublic function set" . $objectName . "(\$" . $localVarName . ") {\n"
+			                  . "\t\t\$this->objects['" . $objectName . "'] = \$" . $localVarName . ";\n"
+			                  . "\t}\n\t\n";
 		}
-		return $this->objects['<?php echo $objectName ?>'];
-	}
-	
-	public function set<?php echo $objectName ?>($<?php echo $localVarName ?>) {
-		$this->objects['<?php echo $objectName ?>'] = $<?php echo $localVarName ?>;
-	}
-	
-<?php
-		}
-		$oneToOneMethods = ob_get_clean();
 		
 		// Generate the objectDefinitions parameter
 		if (empty($objectDefinitions)) {
@@ -359,12 +388,12 @@ class CoughGenerator {
 			// Generate the criteria / WHERE clause information for loading the related object.
 			$criteria = array();
 			foreach ($refKey as $key => $column) {
-				$criteria[] = '`' . $refTableAliasName . '`.`' . $column->getColumnName() . '` = \' . $db->quote($this->get'
+				$criteria[] = "`' . \$tableName . '`.`" . $column->getColumnName() . '` = \' . $db->quote($this->get'
 				            . $this->config->getTitleCase($localKey[$key]->getColumnName()) . '()) . \'';
 			}
 
 			// Build the loadSql for loading the related object.
-			$loadSql = $this->generateLoadSql($hasMany->getRefTable(), array($table->getTableName()), "\t\t\t\t");
+			list($variables, $loadSql) = $this->generateLoadSql($hasMany->getRefTable(), array($table->getTableName()), "\t\t\t\t");
 			if (count($criteria) > 0) {
 				$loadSql .= "\n\t\t\t\tWHERE\n\t\t\t\t\t" . implode("\n\t\t\t\t\t", $criteria);
 			}
@@ -378,6 +407,7 @@ class CoughGenerator {
 		// But only populate it if we have key ID
 		if ($this->hasKeyId()) {
 			$db = <?php echo $refObjectClassName; ?>::getDb();
+			<?php echo implode("\n\t\t\t", $variables) . "\n" ?>
 			$sql = '<?php echo "\n" . $loadSql . "\n\t\t\t" ?>';
 
 			// Construct and populate the collection
@@ -451,10 +481,15 @@ foreach ($hasMany->getRefKey() as $key => $column) {
 		}
 
 		// Generate the `getLoadSqlWithoutWhere()` method if needed
+		// NOTE: we always generate this in PHP < 5.3 (no "static" keyword => have to generate all static methods)
 		if (true || $shouldOverrideLoadSqlWithoutWhere) {
-			$getLoadSqlWithoutWherePhp = "\tpublic static function getLoadSql() {"
-			                           . "\n\t\treturn '\n" . $this->generateLoadSql($table, array(), "\t\t\t") . "\n\t\t';"
-			                           . "\n\t}\n\t\n";
+			list($variables, $sql) = $this->generateLoadSql($table, array(), "\t\t\t");
+			
+			$getLoadSqlWithoutWherePhp
+			    = "\tpublic static function getLoadSql() {"
+			    . "\n\t\t" . implode("\n\t\t", $variables)
+			    . "\n\t\treturn '\n" . $sql . "\n\t\t';"
+			    . "\n\t}\n\t\n";
 		} else {
 			$getLoadSqlWithoutWherePhp = '';
 		}
@@ -498,22 +533,22 @@ echo $objectDefinitionsPhp;
 	// Static Definition Methods
 	
 	public static function getDb() {
-		if (is_null(self::$db)) {
-			self::$db = CoughDatabaseFactory::getDatabase('<?php echo $dbName; ?>');
+		if (is_null(<?php echo $starterObjectClassName ?>::$db)) {
+			<?php echo $starterObjectClassName ?>::$db = CoughDatabaseFactory::getDatabase('<?php echo $dbName; ?>');
 		}
-		return self::$db;
+		return <?php echo $starterObjectClassName ?>::$db;
 	}
 	
 	public static function getDbName() {
-		return self::$dbName;
+		return <?php echo $starterObjectClassName ?>::$dbName;
 	}
 	
 	public static function getTableName() {
-		return self::$tableName;
+		return <?php echo $starterObjectClassName ?>::$tableName;
 	}
 	
 	public static function getPkFieldNames() {
-		return self::$pkFieldNames;
+		return <?php echo $starterObjectClassName ?>::$pkFieldNames;
 	}
 	
 	// Static Construction (factory) Methods
@@ -658,7 +693,7 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
  *
  * <?php echo implode("\n * ", $phpdocTags) . "\n"; ?>
  **/
-class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassName ?> implements CoughObjectStaticInterface {	
+class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassName ?> implements CoughObjectStaticInterface {
 }
 <?php
 		echo("\n?>");

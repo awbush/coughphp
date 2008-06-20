@@ -8,13 +8,7 @@ class TestCoughCollection extends UnitTestCase
 	
 	public function __construct()
 	{
-		$this->includeDependencies();
-	}
-	
-	public function includeDependencies()
-	{
-		// include Cough + dependencies; this should be the only include necessary
-		require_once(dirname(dirname(dirname(__FILE__))) . '/load.inc.php');
+		require_once(dirname(dirname(__FILE__)) . '/load.inc.php');
 		require_once(dirname(__FILE__) . '/config/SortableElement.class.php');
 		require_once(dirname(__FILE__) . '/config/SortableCollection.class.php');
 	}

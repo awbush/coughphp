@@ -2,7 +2,7 @@
 <?php
 
 // CHANGE THIS TO YOUR `simpletest` PATH. (e.g. if it's in the include path, set it to empty string).
-define('SIMPLETEST_PATH', dirname(dirname(dirname(__FILE__))) . '/simpletest/simpletest_1.0.1beta2/');
+define('SIMPLETEST_PATH', 'simpletest/');
 
 
 /////////////////////////////////
@@ -58,6 +58,10 @@ SEE ALSO
 ';
 }
 
+
+// simpletest is not strict compatible, so remove it
+$oldErrorReporting = error_reporting();
+error_reporting($oldErrorReporting & ~E_STRICT);
 
 // Run Tests
 require_once(SIMPLETEST_PATH . 'autorun.php');
