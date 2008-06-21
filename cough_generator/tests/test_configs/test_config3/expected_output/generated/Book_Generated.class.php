@@ -70,13 +70,13 @@ abstract class Book_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(Book::$db)) {
-			Book::$db = CoughDatabaseFactory::getDatabase('test_cough_object');
+			Book::$db = CoughDatabaseFactory::getDatabase(Book::$dbName);
 		}
 		return Book::$db;
 	}
 	
 	public static function getDbName() {
-		return Book::$dbName;
+		return CoughDatabaseFactory::getDatabaseName(Book::$dbName);
 	}
 	
 	public static function getTableName() {
