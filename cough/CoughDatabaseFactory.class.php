@@ -84,6 +84,15 @@ class CoughDatabaseFactory
 	protected static $databases = array();
 	
 	/**
+	 * Format:
+	 * 
+	 * [alias] => [actual_db_name]
+	 *
+	 * @var array
+	 **/
+	protected static $databaseNames = array();
+	
+	/**
 	 * An array of database config info.
 	 * 
 	 * When a database is retrieved, if it is not already created, then it gets
@@ -125,7 +134,8 @@ class CoughDatabaseFactory
 	}
 	
 	/**
-	 * Sets the database config for the specified database alias.
+	 * Adds the database config for later use.  Make sure to specified the 'aliases'
+	 * or the 'db_name_hash' value.
 	 *
 	 * @return void
 	 * @see $configs
@@ -133,14 +143,54 @@ class CoughDatabaseFactory
 	 **/
 	public static function addConfig($config)
 	{
+		// Add database name mappings to the config if not already there, and add to the
+		// global hash as well.
+		if (isset($config['aliases']))
+		{
+			// build from old-style "aliases" parameter (with added mapping ability)
+			$dbNameHash = array();
+			foreach ($config['aliases'] as $alias => $dbName)
+			{
+				if (is_int($alias))
+				{
+					$dbNameHash[$dbName] = $dbName;
+				}
+				else
+				{
+					$dbNameHash[$alias] = $dbName;
+				}
+			}
+			$config['db_name_hash'] = $dbNameHash;
+		}
+		else if (!isset($config['db_name_hash']))
+		{
+			throw new Exception('Must specify the "aliases" or the "db_name_hash" parameter in the config.');
+		}
+		
+		self::$databaseNames = $config['db_name_hash'] + self::$databaseNames;
 		self::$configs[] = $config;
 	}
 	
+	/**
+	 * Adds the database object for the specified alias name.
+	 * 
+	 * It's better to add configs b/c then a database object/connection won't be made
+	 * unless one is needed.
+	 *
+	 * @return void
+	 * @see addConfig(), setConfigs()
+	 * @author Anthony Bush
+	 **/
 	public static function addDatabase($alias, $dbObject)
 	{
 		self::$databases[$alias] = $dbObject;
 	}
 	
+	/**
+	 * Get the database object for the specified alias
+	 *
+	 * @return CoughDatabaseInterface|null
+	 **/
 	public static function getDatabase($alias)
 	{
 		if (isset(self::$databases[$alias]))
@@ -153,10 +203,10 @@ class CoughDatabaseFactory
 			// Loop through all config arrays looking for one that is setup for the specified alias
 			foreach (self::$configs as $config)
 			{
-				if (in_array($alias, $config['aliases']))
+				if (isset($config['db_name_hash'][$alias]))
 				{
 					$dbObject = self::constructDatabaseByConfig($config);
-					foreach ($config['aliases'] as $configAlias)
+					foreach ($config['db_name_hash'] as $configAlias => $dbName)
 					{
 						self::addDatabase($configAlias, $dbObject);
 					}
@@ -166,6 +216,22 @@ class CoughDatabaseFactory
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Get the actual database name for the specified alias.
+	 * 
+	 * If no mapping exists, it returns the original alias value.
+	 *
+	 * @return string
+	 **/
+	public static function getDatabaseName($alias)
+	{
+		if (isset(self::$databaseNames[$alias]))
+		{
+			return self::$databaseNames[$alias];
+		}
+		return $alias;
 	}
 	
 	/**
@@ -237,6 +303,7 @@ class CoughDatabaseFactory
 	public static function reset()
 	{
 		self::$databases = array();
+		self::$databaseNames = array();
 		self::$configs = array();
 	}
 }
