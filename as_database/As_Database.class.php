@@ -70,7 +70,9 @@ class As_Database {
 		$this->dbPort = $dbPort;
 
 		$this->initConnection();
-		$this->selectDB($dbName);
+		if ($dbName != '') {
+			$this->selectDB($dbName);
+		}
 	}
 	
 	public function __destruct()
