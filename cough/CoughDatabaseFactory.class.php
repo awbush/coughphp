@@ -5,68 +5,55 @@
  * It should be dynamically initialized, and can hold mixed types of database
  * adapter objects.
  * 
- * EXAMPLE INITIALIZATION:
- * 
- * CoughDatabaseFactory::addDatabase('alias1', CoughPdoDatabase::constructByConfig($config1));
- * CoughDatabaseFactory::addDatabase('alias2', CoughAsDatabase::constructByConfig($config2));
- * 
  * EXAMPLE RETRIEVAL:
  * 
- * $db = CoughDatabaseFactory::getDatabase('alias1');
+ *     <code>
+ *     $db = CoughDatabaseFactory::getDatabase('alias1');
+ *     $dbName = CoughDatabaseFactory::getDatabaseName('alias1');
+ *     </code>
  * 
- * 
- * Alternatively, you can have databases added on the fly as you request them
- * by specifying the configuration for each database:
+ * EXAMPLE INITIALIZATION:
  * 
  * Assuming we have:
  *    
- *    $configs = array(
- *        array(
- *            'aliases' => array('foo'),
- *            'adapter' => 'as',
- *            'driver' => 'mysql',
- *            'db_name' => 'new_user',
- *            'host' => 'localhost',
- *            'user' => 'nobody',
- *            'pass' => '',
- *            'port' => 3307,
- *        ),
- *        array(
- *            'aliases' => array('user'),
- *            'adapter' => 'as',
- *            'driver' => 'mysql',
- *            'db_name' => 'user',
- *            'host' => 'localhost',
- *            'user' => 'nobody',
- *            'pass' => '',
- *            'port' => 3306,
- *        )
- *    );
+ *     <code>
+ *     $configs = array(
+ *         array(
+ *             'db_name_hash' => array('alias1' => 'actual_db_name'),
+ *             'adapter' => 'as',
+ *             'driver' => 'mysql',
+ *             'host' => 'localhost',
+ *             'user' => 'nobody',
+ *             'pass' => '',
+ *             'port' => 3307,
+ *         ),
+ *         array(
+ *             'db_name_hash' => array('my_app' => 'my_app'),
+ *             'adapter' => 'as',
+ *             'driver' => 'mysql',
+ *             'host' => 'localhost',
+ *             'user' => 'nobody',
+ *             'pass' => '',
+ *             'port' => 3306,
+ *         )
+ *     );
+ *     </code>
  *    
  * Option 1: Add one config at a time:
  *    
- *    CoughDatabaseFactory::addConfig($configs[0]);
- *    CoughDatabaseFactory::addConfig($configs[1]);
+ *     <code>
+ *     CoughDatabaseFactory::addConfig($configs[0]);
+ *     CoughDatabaseFactory::addConfig($configs[1]);
+ *     </code>
  *    
  * Option 2: Add all configs at once:
  *    
- *    CoughDatabaseFactory::setConfigs($configs);
+ *     <code>
+ *     CoughDatabaseFactory::setConfigs($configs);
+ *     </code>
  * 
  * The config array supports other parameters as well, but you shouldn't have to
- * use them.  Here are all the options that are available:
- * 
- *     array(
- *         'adapter' => 'as',  # optional, default: as
- *         'adapter_class_prefix' => 'CoughAs',  # optional, default: 'Cough' plus the titlecase of adapter
- *         'adapter_class_path' => '/my/path/',  # optional, default: cough module directory plus "dal" plus adapter
- *         'aliases' => array('another_alias'),
- *         'driver' => 'mysql',
- *         'host' => 'localhost',
- *         'db_name' => 'user',
- *         'user' => 'nobody',
- *         'pass' => '',
- *         'port' => 3306
- *     );
+ * use them.  See {@link $configs} for all available options.
  * 
  * @package dal
  * @author Anthony Bush, Lewis Zhang
@@ -101,18 +88,41 @@ class CoughDatabaseFactory
 	 * 
 	 * Format:
 	 * 
-	 * array(
-	 *     'adapter' => 'as',  # optional, default: as
-	 *     'adapter_class_prefix' => 'CoughAs',  # optional, default: 'Cough' plus the titlecase of adapter
-	 *     'adapter_class_path' => '/my/path/',  # optional, default: cough module directory plus "dal" plus adapter
-	 *     'aliases' => array('another_alias'),
-	 *     'driver' => 'mysql',
-	 *     'host' => 'localhost',
-	 *     'db_name' => 'user',
-	 *     'user' => 'nobody',
-	 *     'pass' => '',
-	 *     'port' => 3306
-	 * );
+	 *     <code>
+	 *     array(
+	 *         # Which database adapter (DAL) to use. optional, default: as
+	 *         'adapter' => 'as',
+	 * 
+	 *         # Adapter class name prefix. optional, default: 'Cough' plus the titlecase of adapter
+	 *         'adapter_class_prefix' => 'CoughAs',
+	 * 
+	 *         # Adapter location. optional, default: cough module directory plus "dal" plus adapter
+	 *         'adapter_class_path' => '/my/path/',
+	 * 
+	 *         # Hash of aliases to actual database names.  Most likely the alias
+	 *         # will be the name of the database that generation took place on and the
+	 *         # actual database name will be the same.  If a different environment
+	 *         # (e.g. production/test/dev) uses a different database name, then just
+	 *         # change the actual database name to that database in that environment's
+	 *         # config file, leaving the alias/key part of the hash alone.
+	 *         # required if old "aliases" param not given.
+	 *         'db_name_hash' => array(
+	 *             'alias1' => 'actual_db_name1',
+	 *             'alias2' => 'actual_db_name2'
+	 *         ),
+	 * 
+	 *         # old way of specifying connection aliases did not include db name
+	 *         # remapping ability. Use "db_name_hash" instead.
+	 *         'aliases' => array('actual_db_name1', 'actual_db_name2'),
+	 * 
+	 *         # the rest of these should be obvious
+	 *         'driver' => 'mysql',
+	 *         'host' => 'localhost',
+	 *         'user' => 'nobody',
+	 *         'pass' => '',
+	 *         'port' => 3306
+	 *     );
+	 *     </code>
 	 * 
 	 * @var array
 	 **/

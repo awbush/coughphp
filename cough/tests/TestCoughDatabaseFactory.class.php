@@ -79,11 +79,10 @@ class TestCoughDatabaseFactory extends UnitTestCase
 		// trying to access a non-existing database object should return null
 		$this->assertNull(CoughDatabaseFactory::getDatabase('missingDbAlias'));
 		
-		// test default adapter = "as"
+		// test default adapter = "as" and old style "aliases" param
 		$testDbConfig = array(
 			'driver' => 'mysql',
 			'host' => 'localhost',
-			'db_name' => 'test_cough_object',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
 			'port' => '3306',
@@ -93,31 +92,42 @@ class TestCoughDatabaseFactory extends UnitTestCase
 		$test1Db = CoughDatabaseFactory::getDatabase('cough_test1');
 		$this->assertIsA($test1Db, 'CoughAsDatabase');
 		
-		// test specifying adapter as "as"
+		// test specifying adapter as "as" and new "db_name_hash" param
 		$testDbConfig = array(
 			'adapter' => 'as',
 			'driver' => 'mysql',
 			'host' => 'localhost',
-			'db_name' => 'test_cough_object',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
 			'port' => '3306',
-			'aliases' => array('cough_test2')
+			'db_name_hash' => array('cough_test2' => 'test_cough_object')
 		);
 		CoughDatabaseFactory::addConfig($testDbConfig);
 		$test2Db = CoughDatabaseFactory::getDatabase('cough_test2');
 		$this->assertIsA($test2Db, 'CoughAsDatabase');
+		
+		// test new style aliases param
+		$testDbConfig = array(
+			'driver' => 'mysql',
+			'host' => 'localhost',
+			'user' => 'cough_test',
+			'pass' => 'cough_test',
+			'port' => '3306',
+			'aliases' => array('cough_test4' => 'test_cough_object')
+		);
+		CoughDatabaseFactory::addConfig($testDbConfig);
+		$test4Db = CoughDatabaseFactory::getDatabase('cough_test4');
+		$this->assertIsA($test4Db, 'CoughAsDatabase');
 		
 		// // test specifying adapter as "pdo"
 		// $testDbConfig = array(
 		// 	'adapter' => 'pdo',
 		// 	'driver' => 'mysql',
 		// 	'host' => 'localhost',
-		// 	'db_name' => 'test_cough_object',
 		// 	'user' => 'cough_test',
 		// 	'pass' => 'cough_test',
 		// 	'port' => '3306',
-		// 	'aliases' => array('cough_test3')
+		// 	'aliases' => array('cough_test3' => 'test_cough_object')
 		// );
 		// CoughDatabaseFactory::addConfig($testDbConfig);
 		// $test3Db = CoughDatabaseFactory::getDatabase('cough_test3');
