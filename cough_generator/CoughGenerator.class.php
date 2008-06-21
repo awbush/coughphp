@@ -534,13 +534,13 @@ echo $objectDefinitionsPhp;
 	
 	public static function getDb() {
 		if (is_null(<?php echo $starterObjectClassName ?>::$db)) {
-			<?php echo $starterObjectClassName ?>::$db = CoughDatabaseFactory::getDatabase('<?php echo $dbName; ?>');
+			<?php echo $starterObjectClassName ?>::$db = CoughDatabaseFactory::getDatabase(<?php echo $starterObjectClassName ?>::$dbName);
 		}
 		return <?php echo $starterObjectClassName ?>::$db;
 	}
 	
 	public static function getDbName() {
-		return <?php echo $starterObjectClassName ?>::$dbName;
+		return CoughDatabaseFactory::getDatabaseName(<?php echo $starterObjectClassName ?>::$dbName);
 	}
 	
 	public static function getTableName() {
