@@ -67,13 +67,13 @@ abstract class Book2library_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(Book2library::$db)) {
-			Book2library::$db = CoughDatabaseFactory::getDatabase('test_cough_object');
+			Book2library::$db = CoughDatabaseFactory::getDatabase(Book2library::$dbName);
 		}
 		return Book2library::$db;
 	}
 	
 	public static function getDbName() {
-		return Book2library::$dbName;
+		return CoughDatabaseFactory::getDatabaseName(Book2library::$dbName);
 	}
 	
 	public static function getTableName() {
