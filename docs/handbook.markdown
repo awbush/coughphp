@@ -176,7 +176,7 @@ Retrieve an author using custom SQL:
 		SELECT
 			*
 		FROM
-			author
+			' . Author::getTableName() . '
 		WHERE
 			first_name = "Anthony"
 			AND last_name = "Bush"
@@ -197,7 +197,7 @@ Best practices note:  Put custom SQL for an object as another `constructBy` stat
 				SELECT
 					*
 				FROM
-					author
+					' . Author::getTableName() . '
 				WHERE
 					first_name = ' . $db->quote($firstName) . '
 					AND last_name = ' . $db->quote($lastName) . '
@@ -306,7 +306,7 @@ The main time doing something like the above would be useful is when pulling dat
 			
 			// Load aliases
 			$db = Alias::getDb();
-			$sql = 'SELECT * FROM alias ORDER BY author_id';
+			$sql = 'SELECT * FROM ' . Alias::getTableName() . ' ORDER BY author_id';
 			$db->selectDb(Alias::getDbName());
 			$result = $db->query($sql);
 			
@@ -348,11 +348,20 @@ Installation
 
 Extract the zip.  In your application, just include the core `load.inc.php` file.  If you want to use the `As_Database` module, then include it as well.  What follows is an example that also configures the database information:
 
+CoughPHP 1.1.3 and later:
+
 	<?php
 	include_once('modules/coughphp-1.1/cough/load.inc.php');
 	include_once('modules/coughphp-1.1/as_database/load.inc.php');
 	CoughDatabaseFactory::addConfig(array(
-		'aliases' => array('main_db'),
+		// db_name_hash is a hash of alias name => actual db name (in the default
+		// case, db_name_used_during_generation => environment_db_name). For example,
+		// if you generate on `*_dev` databases and are setting up your test config,
+		// then the hash might look like this:
+		'db_name_hash' => array(
+			'app_db_dev' => 'app_db_test',
+			'reports_dev' => 'reports_test'
+		),
 		'driver' => 'mysql',
 		'host' => 'localhost',
 		'user' => 'nobody',
@@ -361,9 +370,90 @@ Extract the zip.  In your application, just include the core `load.inc.php` file
 	));
 	?>
 
-See the CoughDatabaseFactory API for more options.
+In CoughPHP versions 1.1.2 and earlier, database names (aka connection aliases) could only be specified using the `aliases` parameter, and database names could not change between environments (e.g. dev, test, production) unless you overrode all the `getDbName()` static methods:
+
+	<?php
+	include_once('modules/coughphp-1.1/cough/load.inc.php');
+	include_once('modules/coughphp-1.1/as_database/load.inc.php');
+	CoughDatabaseFactory::addConfig(array(
+		// aliases should hold all the databases names that the server config should be used for.
+		'aliases' => array('app_db', 'reports'),
+		'driver' => 'mysql',
+		'host' => 'localhost',
+		'user' => 'nobody',
+		'pass' => '',
+		'port' => 3306
+	));
+	?>
+
+See the CoughDatabaseFactory API (phpDoc blocks) for more options.
 
 We recommend using an autoloader of some sort as well.  We've included one that has path caching features so that it only has to scan for a class's location once.  See the Autoloader section for usage info.
+
+### Advanced Database Configurations ###
+
+CoughPHP supports multiple databases, multiple servers, and multiple environments.  Let's look at an example that has both a multi-database and multi-server setup where the database names also change from one environment to another:
+
+* There are three databases: `customer`, `order`, and `product`.
+* There are only two environments, "dev" and "production" (since adding any more is the same as adding the second).
+* Generation takes place on the "dev" server where the database names are as specified above and they all live on one server.
+* The production environment has two database servers, where the database names are randomized. `customer` and `order` live on one production server, `product` lives on the other.
+
+Setup application configuration like so:
+
+	<?php
+	// app_dir/config/application.php
+	// ... setup include path, define constants, include other modules, etc ...
+	require_once('modules/coughphp-1.1/cough/load.inc.php');
+	require_once('modules/coughphp-1.1/as_database/load.inc.php');
+	require_once(dirname(__FILE__) . '/environment.php');
+	?>
+
+Where `config/environment.php` is a symbolic link to `config/environment/dev.php` in the dev environment and `config/environment/production.php` in the production environment.  (There are other ways to do this, this is just one example.)
+
+Then, the dev environment config might look like:
+
+	<?php
+	// app_dir/config/environment/dev.php
+	CoughDatabaseFactory::addConfig(array(
+		'db_name_hash' => array(
+			'customer' => 'customer',
+			'order' => 'order',
+			'product' => 'product'
+		),
+		'driver' => 'mysql',
+		'host' => 'localhost',
+		'user' => 'nobody',
+		'pass' => '',
+	));
+	?>
+
+The production environment config might look like:
+
+	<?php
+	// app_dir/config/environment/production.php
+	CoughDatabaseFactory::addConfig(array(
+		'db_name_hash' => array(
+			'customer' => 'customer_1243841982',
+			'order' => 'order_124775439',
+		),
+		'driver' => 'mysql',
+		'host' => 'production_server1',
+		'user' => 'nobody',
+		'pass' => '',
+	));
+	CoughDatabaseFactory::addConfig(array(
+		'db_name_hash' => array(
+			'product' => 'product_4729203392',
+		),
+		'driver' => 'mysql',
+		'host' => 'production_server2',
+		'user' => 'nobody',
+		'pass' => '',
+	));
+	?>
+
+As you can see, there is plenty of flexibility.
 
 Generating Cough Classes
 ------------------------
@@ -525,5 +615,5 @@ Each of the above methods are slightly different:
 
 ### General Rules ###
 
-* Put all customized model logic in the concrete classes.  Never change any of the generated classes because they will be overridden the next time the generator is run.
+* Put all customized model logic in the concrete classes.  Never change any of the generated classes because they will be overridden the next time the generator is run.  Part of the CoughPHP philosophy is that you can generate over and over thanks to the separation of generated items from human-modified items.
 
