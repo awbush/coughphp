@@ -348,7 +348,7 @@ Installation
 
 Extract the zip.  In your application, just include the core `load.inc.php` file.  If you want to use the `As_Database` module, then include it as well.  What follows is an example that also configures the database information:
 
-CoughPHP 1.1.3 and later:
+CoughPHP 1.2 and later:
 
 	<?php
 	include_once('modules/coughphp-1.1/cough/load.inc.php');
