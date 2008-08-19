@@ -10,6 +10,6 @@ then
 fi
 
 cp -rp "$1" "$2"
-rm -rf "$2/.bzr" "$2/design" "$2/developer_docs" "$2/scripts/make_release" "$2/simpletest"
+rm -rf "$2/.bzr" "$2/design" "$2/developer_docs" "$2/scripts/make_release" "$2/.bzrignore"
 find "$2" -type d \( -name .svn -or -name tests \) -exec rm -rf {} \;
 tar -czf "$2.tar.gz" "$2"
