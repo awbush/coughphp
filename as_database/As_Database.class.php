@@ -29,6 +29,7 @@ class As_Database {
 	protected $dbUser = null;
 	protected $dbPassword = null;
 	protected $dbPort;
+	protected $clientFlags = 0;
 	protected $connection;
 	protected $query;
 	
@@ -63,11 +64,12 @@ class As_Database {
 	 **/
 	protected $queryLog = array();
 	
-	public function __construct($dbName, $dbHost = 'localhost', $dbUser = 'nobody', $dbPassword = '', $dbPort = 3306) {
+	public function __construct($dbName, $dbHost = 'localhost', $dbUser = 'nobody', $dbPassword = '', $dbPort = 3306, $clientFlags = 0) {
 		$this->dbHost = $dbHost;
 		$this->dbUser = $dbUser;
 		$this->dbPassword = $dbPassword;
 		$this->dbPort = $dbPort;
+		$this->clientFlags = $clientFlags;
 
 		$this->initConnection();
 		if ($dbName != '') {
@@ -93,7 +95,7 @@ class As_Database {
 
 	public function initConnection() {
 		$hostAndPort = $this->dbHost . ":" . $this->dbPort;		
-		$this->connection = mysql_connect($hostAndPort, $this->dbUser, $this->dbPassword,TRUE);
+		$this->connection = mysql_connect($hostAndPort, $this->dbUser, $this->dbPassword, true, $this->clientFlags);
 		if (!$this->connection) {
 			$this->generateError(self::ERROR_CONNECT);
 		}
