@@ -76,8 +76,25 @@ class TestCoughDatabaseFactory extends UnitTestCase
 	
 	public function testGetDatabase()
 	{
-		// trying to access a non-existing database object should return null
-		$this->assertNull(CoughDatabaseFactory::getDatabase('missingDbAlias'));
+		// 2008-08-18/AWB: As of CoughPHP 1.3, an exception will be thrown with message
+		// saying to check your config.  It should mention something about
+		// CoughDatabaseFactory::addConfig(), and possibly include a URL for more
+		// documentation.
+		
+		// // trying to access a non-existing database object should return null
+		// $this->assertNull(CoughDatabaseFactory::getDatabase('missingDbAlias'));
+		
+		// trying to access a non-existing database object should throw an exception
+		try
+		{
+			CoughDatabaseFactory::getDatabase('missingDbAlias');
+			$threwException = false;
+		}
+		catch (Exception $e)
+		{
+			$threwException = true;
+		}
+		$this->assertTrue($threwException, 'Should throw an exception when DB alias does not exist.');
 		
 		// test default adapter = "as" and old style "aliases" param
 		$testDbConfig = array(

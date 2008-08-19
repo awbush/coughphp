@@ -225,7 +225,9 @@ class CoughDatabaseFactory
 			}
 		}
 		
-		return null;
+		// As of CoughPHP 1.3 we now throw verbose exception.
+		throw new Exception('The alias "' . $alias . '" does not exist. Make sure your config calls CoughDatabaseFactory::addConfig() or CoughDatabaseFactory::setConfigs().');
+		// return null;
 	}
 	
 	/**
