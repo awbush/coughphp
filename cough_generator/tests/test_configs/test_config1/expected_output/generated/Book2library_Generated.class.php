@@ -98,7 +98,7 @@ abstract class Book2library_Generated extends CoughObject {
 	 * @param mixed $idOrHash - id or hash of [field_name] => [field_value]
 	 * @return mixed - Book2library or null if no record found.
 	 **/
-	public static function constructByKey($idOrHash) {
+	public static function constructByKey($idOrHash, $forPhp5Strict = '') {
 		return CoughObject::constructByKey($idOrHash, 'Book2library');
 	}
 	
@@ -108,7 +108,7 @@ abstract class Book2library_Generated extends CoughObject {
 	 * @param string $sql
 	 * @return mixed - Book2library or null if exactly one record could not be found.
 	 **/
-	public static function constructBySql($sql) {
+	public static function constructBySql($sql, $forPhp5Strict = '') {
 		return CoughObject::constructBySql($sql, 'Book2library');
 	}
 	

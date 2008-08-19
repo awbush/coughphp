@@ -214,7 +214,7 @@ abstract class CoughObject {
 	 * @return mixed - CoughObject or null if no record found.
 	 * @todo PHP 5.3: switch from call_user_func to static::methodName() and remove the $className parameter
 	 **/
-	public static function constructByKey($idOrHash, $className) {
+	public static function constructByKey($idOrHash, $className = '') {
 		if (is_array($idOrHash)) {
 			$fields = $idOrHash;
 		} else {
@@ -247,7 +247,7 @@ abstract class CoughObject {
 	 * @return mixed - CoughObject if exactly one row found, null otherwise.
 	 * @todo PHP 5.3: switch from call_user_func to static::methodName() and remove the $className parameter
 	 **/
-	public static function constructBySql($sql, $className) {
+	public static function constructBySql($sql, $className = '') {
 		if (!empty($sql)) {
 			$db = call_user_func(array($className, 'getDb'));
 			$dbName = call_user_func(array($className, 'getDbName'));
