@@ -99,6 +99,29 @@ class DatabaseSchemaGenerator extends SchemaGenerator {
 							echo "\tScanning table `" . $tableName . "`\n";
 						}
 						$table = $database->loadTable($tableName);
+						
+						$pkOverride = $this->config->getPrimaryKeyOverride($dbName, $tableName);
+						if (!empty($pkOverride))
+						{
+							// Config could be an array or single string, so convert it as needed:
+							if (!is_array($pkOverride))
+							{
+								$pkOverride = array($pkOverride);
+							}
+							
+							// Remove any existing PK
+							foreach ($table->getPrimaryKey() as $column)
+							{
+								$column->setIsPrimaryKey(false);
+							}
+							
+							// Now set the PK override
+							foreach ($pkOverride as $columnName)
+							{
+								$column = $table->getColumn($columnName);
+								$column->setIsPrimaryKey(true);
+							}
+						}
 					} else {
 						if ($this->verbose) {
 							echo "\tSkipping table `" . $tableName . "`\n";

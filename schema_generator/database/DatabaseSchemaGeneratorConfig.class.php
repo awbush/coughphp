@@ -69,6 +69,9 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 			// 				'field_settings' => array(
 			// 					'id_to_table_regex' => '/^(.*)_id$/',
 			// 				),
+			// 				// override what Cough will treat as PK -- useful for getting Cough
+			// 				// to generate VIEWs or any other table that doesn't have a PK on it.
+			// 				'primary_key' => array('column1', 'column2', etc...)
 			// 			),
 			// 		),
 			// 	),
@@ -177,6 +180,10 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 		return false;
 	}
 	
+	public function getPrimaryKeyOverride($dbName, $tableName)
+	{
+		return $this->getConfigValue('primary_key', $dbName, $tableName, CoughConfig::SCOPE_TABLE);
+	}
 	
 }
 
