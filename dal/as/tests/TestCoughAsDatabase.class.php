@@ -23,7 +23,7 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 		$testDbConfig = array(
 			'adapter' => $this->adapterName,
 			'driver' => 'mysql',
-			'host' => '127.0.0.1', // TODO: localhost does not work for me???
+			'host' => 'localhost',
 			'db_name' => 'cough_test',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
