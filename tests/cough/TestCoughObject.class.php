@@ -75,14 +75,14 @@ class TestCoughObject extends UnitTestCase
 	public function includeDependencies()
 	{
 		// include Cough + dependencies; this should be the only include necessary
-		require_once(dirname(dirname(dirname(__FILE__))) . '/load.inc.php');
-		require_once(dirname(dirname(dirname(__FILE__))) . '/as_database/load.inc.php');
+		$coughRoot = dirname(dirname(dirname(__FILE__)));
+		require_once($coughRoot . '/cough/load.inc.php');
+		require_once($coughRoot . '/as_database/load.inc.php');
+		require_once($coughRoot . '/cough_generator/load.inc.php');
 	}
 	
 	public function generateCoughTestClasses()
 	{
-		// include the CoughGenerator
-		require_once(dirname(dirname(dirname(__FILE__))) . '/cough_generator/load.inc.php');
 		ob_start();
 		$facade = new CoughGeneratorFacade();
 		$facade->generate(dirname(__FILE__) . '/config/');

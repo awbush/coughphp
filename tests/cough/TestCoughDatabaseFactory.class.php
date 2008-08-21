@@ -10,8 +10,9 @@ class TestCoughDatabaseFactory extends UnitTestCase
 	
 	public function __construct()
 	{
-		require_once(dirname(dirname(__FILE__)) . '/load.inc.php');
-		require_once(dirname(dirname(dirname(__FILE__))) . '/as_database/load.inc.php');
+		$coughRoot = dirname(dirname(dirname(__FILE__)));
+		require_once($coughRoot . '/cough/load.inc.php');
+		require_once($coughRoot . '/as_database/load.inc.php');
 	}
 	
 	public function setUp()

@@ -38,9 +38,10 @@ class TestCoughGenerator extends UnitTestCase
 	public function __construct()
 	{
 		// include cough generator, core cough, and the as_database DAL.
-		require_once(dirname(dirname(__FILE__)) . '/load.inc.php');
-		require_once(dirname(dirname(dirname(__FILE__))) . '/cough/load.inc.php');
-		require_once(dirname(dirname(dirname(__FILE__))) . '/as_database/load.inc.php');
+		$coughRoot = dirname(dirname(dirname(__FILE__)));
+		require_once($coughRoot . '/cough_generator/load.inc.php');
+		require_once($coughRoot . '/cough/load.inc.php');
+		require_once($coughRoot . '/as_database/load.inc.php');
 		
 		// Setup DB config
 		CoughDatabaseFactory::addConfig(array(

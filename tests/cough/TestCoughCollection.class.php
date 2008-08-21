@@ -8,7 +8,8 @@ class TestCoughCollection extends UnitTestCase
 	
 	public function __construct()
 	{
-		require_once(dirname(dirname(__FILE__)) . '/load.inc.php');
+		$coughRoot = dirname(dirname(dirname(__FILE__)));
+		require_once($coughRoot . '/cough/load.inc.php');
 		require_once(dirname(__FILE__) . '/config/SortableElement.class.php');
 		require_once(dirname(__FILE__) . '/config/SortableCollection.class.php');
 	}

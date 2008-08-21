@@ -1,5 +1,10 @@
 <?php
 
+// 2008-08-20/: I'm moving tests out into single directory, but this test doesn't
+// look runnable at all (probably why test_all doesn't run it).  I'm putting the
+// die() here just to be safe
+die('TODO: UPDATE TESTS IN FILE: ' . __FILE__);
+
 class TestCoughAsDatabaseAdapter extends UnitTestCase
 {
 	//////////////////////////////////////

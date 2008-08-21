@@ -4,8 +4,9 @@ class TestCoughInstancePool extends UnitTestCase
 {
 	public function __construct()
 	{
-		require_once(dirname(dirname(__FILE__)) . '/load.inc.php');
-		require_once(dirname(dirname(__FILE__)) . '/CoughInstancePool.class.php');
+		$coughRoot = dirname(dirname(dirname(__FILE__)));
+		require_once($coughRoot . '/cough/load.inc.php');
+		require_once($coughRoot . '/cough/CoughInstancePool.class.php');
 		require_once(dirname(__FILE__) . '/config/InstancePoolTestObject.class.php');
 		require_once(dirname(__FILE__) . '/config/InstancePoolTestObject2.class.php');
 	}
