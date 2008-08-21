@@ -5,12 +5,12 @@
  * Academic Superstore.
  * 
  * Most notably, all the "doSomething" functions are now "something" and all the
- * backward compatibility cruft for Persistent have ben removed.
+ * backward compatibility cruft for A.S.'s legacy Persistent class have been
+ * removed.
  * 
  * This file is released under the FreeBSD license.
  * 
- * @package dal_as
- * @author Anthony Bush
+ * @package as_database
  **/
 class As_Database {
 	// Error Types

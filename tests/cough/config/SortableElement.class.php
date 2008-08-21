@@ -3,7 +3,7 @@
 /**
  * A test cough object with the basic stuff: PK, fields, and accessors for them.
  *
- * @package cough
+ * @package tests
  * @author Anthony Bush
  **/
 class SortableElement extends CoughObject

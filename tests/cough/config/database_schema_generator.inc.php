@@ -5,7 +5,7 @@
  * You don't have to pass these to the schema generator as it will use
  * reasonable defaults. The are replicated here to make them easy to change.
  *
- * @package schema_generator
+ * @package tests
  * @author Anthony Bush
  **/
 

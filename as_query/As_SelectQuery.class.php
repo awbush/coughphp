@@ -6,14 +6,22 @@
  * Usage of this class in Cough allows for sharing base SQL so that less SQL code
  * is copied and pasted amongst classes.
  * 
- * For example, if there is a Product object which has complicated SELECT SQL that joins into other tables, pulls extra data in the SELECT clause, includes a GROUP BY, and has default WHERE criteria like "is_retired = 0", then by using this you don't have to copy all those common parts into the all the collection static methods.  Instead, they can share the base SQL and just add what they need.  For example, to pull a single product one might do:
+ * For example, if there is a Product object which has complicated SELECT SQL
+ * that joins into other tables, pulls extra data in the SELECT clause, includes
+ * a GROUP BY, and has default WHERE criteria like "is_retired = 0", then by
+ * using this you don't have to copy all those common parts into the all the
+ * collection static methods.  Instead, they can share the base SQL and just add
+ * what they need.  For example, to pull a single product one might do:
  * 
+ *     <code>
  *     $sql = Product::getLoadSql();
  *     $sql->addWhere(array('product_id' => $productId));
  *     echo $sql;
+ *     </code>
  * 
  * Another example might be pulling all products that have the same manufacturer ID:
  * 
+ *     <code>
  *     Product_Collection::getProductsByManufacturer($manufId) {
  *         $sql = Product::getLoadSql();
  *         $sql->addWhere(array('manufacturer_id' => $manufId));
@@ -21,7 +29,9 @@
  *         $collection->loadBySql($sql);
  *         return $collection;
  *     }
- *
+ *     </code>
+ * 
+ * @package as_query
  * @author Anthony Bush
  **/
 class As_SelectQuery extends As_Query

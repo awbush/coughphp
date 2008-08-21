@@ -7,6 +7,7 @@
  * make sure to implement CoughObjectStaticInterface.
  *
  * @author Anthony Bush
+ * @package cough
  **/
 interface CoughObjectStaticInterface
 {

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Database Result class which the query method of {@link As_Database} returns.
+ * Database Result class which the {@link As_Database::query()} returns.
  *
- * @package dal_as
+ * @package as_database
  **/
 class As_DatabaseResult {
 	private $result;

@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * Cough DAL (Database Adapter Layer) for the "as_database" module.
+ *
+ * @package as_database
+ **/
 class CoughAsDatabase extends As_Database implements CoughDatabaseInterface
 {
 	/**

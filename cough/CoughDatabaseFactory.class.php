@@ -55,7 +55,7 @@
  * The config array supports other parameters as well, but you shouldn't have to
  * use them.  See {@link $configs} for all available options.
  * 
- * @package dal
+ * @package cough
  * @author Anthony Bush, Lewis Zhang
  * @see $configs
  **/

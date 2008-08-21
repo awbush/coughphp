@@ -30,7 +30,7 @@
  *                ... folders and files to be compared with generated output.
  *            output/ (all generator configs will be setup to write here, temporarily creating it if necessary)
  * 
- * @package default
+ * @package tests
  * @author Anthony Bush
  **/
 class TestCoughGenerator extends UnitTestCase

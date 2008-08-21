@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Base class used by the insert, update, select classes.
+ *
+ * @package as_query
+ * @author Anthony Bush
+ **/
 class As_Query
 {
 	protected $db = null;
