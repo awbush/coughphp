@@ -12,42 +12,6 @@
  * @package cough
  **/
 abstract class CoughObject {
-
-	/**
-	 * An array of all the columns in the database, including the primary key
-	 * column and name columns.
-	 *
-	 * Format of "field_name" => attributes
-	 *
-	 * @var array
-	 * @see defineFields()
-	 **/
-	protected $fieldDefinitions = array();
-	
-	/**
-	 * An array of derived field definitions
-	 * 
-	 * Format of "derived_field_name" => attributes
-	 *
-	 * @var array
-	 * @see defineDerivedFields()
-	 **/
-	protected $derivedFieldDefinitions = array();
-	
-	/**
-	 * An array of all the objects and their attributes.
-	 *
-	 * The information is used by CoughObject to instantiate and load the
-	 * objects.
-	 *
-	 * Format of [objectName] => [array of attributes]
-	 *
-	 * TODO: Document that array of attributes. For now just look at the
-	 * one of the generated class's defineObjects().
-	 *
-	 * @var array
-	 **/
-	protected $objectDefinitions = array();
 	
 	/**
 	 * An array of all the currently initialized or set fields.
@@ -79,20 +43,20 @@ abstract class CoughObject {
 	protected $derivedFields = array();
 	
 	/**
-	 * An array of all the loaded collections in form [collectionName] => [CoughCollection]
-	 * 
-	 * @var array
-	 * @see getCollection(), loadCollection(), saveLoadedCollections(), isCollectionLoaded()
-	 **/
-	protected $collections = array();
-	
-	/**
 	 * An array of all the loaded objects in form [objectName] => [CoughObject]
 	 * 
 	 * @var array
 	 * @see getObject(), loadObject(), saveLoadedObjects(), isObjectLoaded()
 	 **/
 	protected $objects = array();
+	
+	/**
+	 * An array of all the loaded collections in form [collectionName] => [CoughCollection]
+	 * 
+	 * @var array
+	 * @see getCollection(), loadCollection(), saveLoadedCollections(), isCollectionLoaded()
+	 **/
+	protected $collections = array();
 
 	/**
 	 * Stores whether or not the object has been deleted from the database.
@@ -136,6 +100,42 @@ abstract class CoughObject {
 	 * @see clearValidationErrors()
 	 **/
 	protected $validatedData = false;
+
+	/**
+	 * An array of all the columns in the database, including the primary key
+	 * column and name columns.
+	 *
+	 * Format of "field_name" => attributes
+	 *
+	 * @var array
+	 * @see defineFields()
+	 **/
+	protected $fieldDefinitions = array();
+	
+	/**
+	 * An array of derived field definitions
+	 * 
+	 * Format of "derived_field_name" => attributes
+	 *
+	 * @var array
+	 * @see defineDerivedFields()
+	 **/
+	protected $derivedFieldDefinitions = array();
+	
+	/**
+	 * An array of all the objects and their attributes.
+	 *
+	 * The information is used by CoughObject to instantiate and load the
+	 * objects.
+	 *
+	 * Format of [objectName] => [array of attributes]
+	 *
+	 * TODO: Document that array of attributes. For now just look at the
+	 * one of the generated class's defineObjects().
+	 *
+	 * @var array
+	 **/
+	protected $objectDefinitions = array();
 
 	// ----------------------------------------------------------------------------------------------
 	// CONSTRUCTORS and INITIALIZATION METHODS block BEGINS
