@@ -198,15 +198,22 @@ class CoughDatabaseFactory
 	
 	/**
 	 * Get the database object for the specified alias
-	 *
+	 * 
+	 * @param string $alias
+	 * @param string $dbName optional database name to select before returning the database object.
 	 * @return CoughDatabaseInterface|null
 	 **/
-	public static function getDatabase($alias)
+	public static function getDatabase($alias, $dbName = null)
 	{
 		if (isset(self::$databases[$alias]))
 		{
 			// We already have the database object in memory
-			return self::$databases[$alias];
+			$dbObject = self::$databases[$alias];
+			if (!empty($dbName))
+			{
+				$dbObject->selectDb($dbName);
+			}
+			return $dbObject;
 		}
 		else
 		{
@@ -216,9 +223,13 @@ class CoughDatabaseFactory
 				if (isset($config['db_name_hash'][$alias]))
 				{
 					$dbObject = self::constructDatabaseByConfig($config);
-					foreach ($config['db_name_hash'] as $configAlias => $dbName)
+					foreach ($config['db_name_hash'] as $configAlias => $actualDbName)
 					{
 						self::addDatabase($configAlias, $dbObject);
+					}
+					if (!empty($dbName))
+					{
+						$dbObject->selectDb($dbName);
 					}
 					return $dbObject;
 				}
