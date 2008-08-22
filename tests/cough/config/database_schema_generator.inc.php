@@ -9,40 +9,13 @@
  * @author Anthony Bush
  **/
 
+require(dirname(dirname(dirname(__FILE__))) . '/database_config.inc.php');
 
 $config = array(
-	// REQUIRED CONFIG
-	
-	// All databases will be scanned unless specified in the 'databases' parameter in the OPTIONAL CONFIG SECTION.
-	'dsn' => array(
-		'host' => 'localhost',
-		'user' => 'cough_test',
-		'pass' => 'cough_test',
-		'port' => 3306,
-		'driver' => 'mysql'
-	),
-	
-	// OPTIONAL ADDITIONAL CONFIG
-	
+	'dsn' => $dsn,
 	'database_settings' => array(
-		'include_databases_matching_regex' => '/^(test_cough_object)$/',
+		'include_databases_matching_regex' => '/^(' . $dsn['db_name'] . ')$/',
 	),
-	
-	'table_settings' => array(
-		// This match setting is so the database scanner can resolve relationships better, e.g. know that when it sees "ticket_id" that a "wfl_ticket" table is an acceptable match.
-		'match_table_name_prefixes' => array(), // Example: array('cust_', 'wfl_', 'baof_'),
-		// You can ignore tables all together, too:
-		'exclude_tables_matching_regex' => '/(_bak$)|(^bak_)|(^temp_)/',
-	),
-	
-	'field_settings' => array(
-		// In case of non FK detection, you can have the Database Schema Generator check for ID columns matching this regex.
-		// This is useful, for example, when no FK relationships set up)
-		'id_to_table_regex' => '/^(.*)_id$/',
-		'delete_flag_column' => 'is_retired',
-		'delete_flag_value' => '1',
-	),
-	
 );
 
 ?>

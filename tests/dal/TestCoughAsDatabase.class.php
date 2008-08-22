@@ -1,11 +1,6 @@
 <?php
 
-// 2008-08-20/: I'm moving tests out into single directory, but this test doesn't
-// look runnable at all (probably why test_all doesn't run it).  I'm putting the
-// die() here just to be safe
-die('TODO: UPDATE TESTS IN FILE: ' . __FILE__);
-
-class TestCoughAsDatabaseAdapter extends UnitTestCase
+class TestCoughAsDatabase extends UnitTestCase
 {
 	//////////////////////////////////////
 	// Set Up
@@ -13,45 +8,54 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 	
 	protected $db = null;
 	protected $adapterName = 'as';
-	protected $resultObjectClassName = 'CoughAsDatabaseResultAdapter';
-	protected $coughTestDbResetSql = '';
+	protected $resultObjectClassName = 'CoughAsDatabaseResult';
+	
+	public function __construct()
+	{
+		// include core cough, and the as_database DAL.
+		require_once(dirname(dirname(dirname(__FILE__))) . '/cough/load.inc.php');
+		$this->loadAdapterModule();
+		$this->initDatabase();
+	}
+	
+	public function loadAdapterModule()
+	{
+		require_once(dirname(dirname(dirname(__FILE__))) . '/as_database/load.inc.php');
+	}
+	
+	public function initDatabase()
+	{
+		// setup database
+		require(dirname(dirname(__FILE__)) . '/database_config.inc.php');
+		$testDbConfig = $dsn;
+		$testDbConfig['adapter'] = $this->adapterName;
+		$testDbConfig['aliases'] = array($dsn['db_name']);
+		CoughDatabaseFactory::reset();
+		CoughDatabaseFactory::addConfig($testDbConfig);
+		$this->db = CoughDatabaseFactory::getDatabase($dsn['db_name']);
+	}
+	
+	public function executeSqlFile($sqlFile)
+	{
+		// We have to run this sql dump one query at a time
+		$sqlCommands = explode(';', file_get_contents($sqlFile));
+		
+		// the last element is a blank string, so get rid of it
+		array_pop($sqlCommands);
+
+		foreach ($sqlCommands as $sql) {
+			$this->db->execute($sql);
+		}
+	}
 	
 	/**
-	 * This method is run by simpletest before running all test*() methods.
+	 * This method is run by simpletest before each test*() method.
 	 *
 	 * @return void
 	 **/
 	public function setUp()
 	{
-		require_once(APP_PATH . 'dalal/CoughDatabaseFactory.class.php');
-		
-		$testDbConfig = array(
-			'adapter' => $this->adapterName,
-			'driver' => 'mysql',
-			'host' => 'localhost',
-			'db_name' => 'cough_test',
-			'user' => 'cough_test',
-			'pass' => 'cough_test',
-			'port' => '3306'
-		);
-		
-		CoughDatabaseFactory::addConfig('localtestdb', $testDbConfig);
-		$this->db = CoughDatabaseFactory::getDatabase('localtestdb');
-		
-		// We have to run this sql dump one query at a time
-		$this->coughTestDbResetSql = explode(';', file_get_contents(APP_PATH . 'dalal/drivers/as/tests/cough_test_db_reset.sql'));
-		
-		// the last element is a blank string, so get rid of it
-		array_pop($this->coughTestDbResetSql);
-		
-		$this->resetCoughTestDatabase();
-	}
-	
-	public function resetCoughTestDatabase()
-	{
-		foreach ($this->coughTestDbResetSql as $sql) {
-			$this->db->execute($sql);
-		}
+		$this->executeSqlFile(dirname(__FILE__) . '/db_setup.sql');
 	}
 	
 	//////////////////////////////////////
@@ -59,14 +63,13 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 	//////////////////////////////////////
 	
 	/**
-	 * This method is run by simpletest after running all test*() methods.
+	 * This method is run by simpletest after running each test*() method.
 	 *
 	 * @return void
 	 **/
 	public function tearDown()
 	{
-		$this->resetCoughTestDatabase();
-		CoughDatabaseFactory::reset();
+		$this->executeSqlFile(dirname(__FILE__) . '/db_teardown.sql');
 	}
 
 	//////////////////////////////////////
@@ -75,7 +78,7 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 	
 	public function testQuery()
 	{
-		$result = $this->db->query('SELECT * FROM cough_test.person');
+		$result = $this->db->query('SELECT * FROM person');
 		$this->assertIsA($result, $this->resultObjectClassName);
 		$expectedRows = array(
 			'0' => array(
@@ -102,7 +105,7 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 		$this->assertIdentical($result->getRows(), $expectedRows);
 		
 		// test empty result
-		$result = $this->db->query('SELECT * FROM cough_test.school_type_empty_table');
+		$result = $this->db->query('SELECT * FROM school_type_empty_table');
 		$this->assertIdentical($result->getRows(), array());
 		
 		// test derived field name
@@ -167,8 +170,6 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 		// test delete succeeded
 		$result = $this->db->result('SELECT COUNT(*) FROM person');
 		$this->assertIdentical($result, '0');
-		
-		$this->resetCoughTestDatabase();
 	}
 	
 	public function testEscape()
@@ -190,7 +191,6 @@ class TestCoughAsDatabaseAdapter extends UnitTestCase
 		$sql = 'SELECT person.name FROM person LIMIT 1';
 		$returnedString = $this->db->result($sql);
 		$this->assertEqual($acidString, $returnedString);
-		$this->resetCoughTestDatabase();
 	}
 }
 

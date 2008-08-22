@@ -1,27 +1,12 @@
 <?php
 
+require(dirname(dirname(dirname(dirname(__FILE__)))) . '/database_config.inc.php');
+
 $config = array(
-	// REQUIRED CONFIG
-	
+	'dsn' => $dsn,
 	'database_settings' => array(
-		'include_databases_matching_regex' => '/^(test_cough_object)$/',
+		'include_databases_matching_regex' => '/^(' . $dsn['db_name'] . ')$/',
 	),
-	
-	// All databases will be scanned unless specified in the 'databases' parameter in the OPTIONAL CONFIG SECTION.
-	'dsn' => array(
-		'host' => 'localhost',
-		'user' => 'cough_test',
-		'pass' => 'cough_test',
-		'port' => 3306,
-		'driver' => 'mysql'
-	),
-	
-	// OPTIONAL ADDITIONAL CONFIG
-	
-	'databases' => array(
-		'test_cough_object' => array(),
-	),
-	
 );
 
 ?>

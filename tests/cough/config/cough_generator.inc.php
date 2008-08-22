@@ -6,7 +6,6 @@
  * @version $Id$
  **/
 
-
 $generated = dirname(__FILE__) . '/output/';
 
 $config = array(
@@ -41,24 +40,6 @@ $config = array(
 		'id_regex' => '/^(.*)_id$/',
 		'delete_flag_column' => 'is_retired',
 		'delete_flag_value' => '1',
-	),
-	
-	// We could change any of the above on a per database setting (like the output path)...
-	'databases' => array(
-		'cough_test_fk' => array(
-			'paths' => array(
-				'generated_classes' => $generated . 'cough_test_fk/generated/',
-				'starter_classes' => $generated . 'cough_test_fk/concrete/',
-				'file_suffix' => '.class.php',
-			),
-		),
-		'cough_test' => array(
-			'paths' => array(
-				'generated_classes' => $generated . 'cough_test/generated/',
-				'starter_classes' => $generated . 'cough_test/concrete/',
-				'file_suffix' => '.class.php',
-			),
-		),
 	),
 	
 );

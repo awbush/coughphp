@@ -8,5 +8,7 @@ echo "Testing the cough generator:\n";
 echo shell_exec(escapeshellarg($utest) . ' ' . escapeshellarg($coughRoot) . 'tests/cough_generator/Test*.class.php');
 echo "Testing core cough:\n";
 echo shell_exec(escapeshellarg($utest) . ' ' . escapeshellarg($coughRoot) . 'tests/cough/Test*.class.php');
+echo "Testing DAL (Database Abstraction Layer):\n";
+echo shell_exec(escapeshellarg($utest) . ' ' . escapeshellarg($coughRoot) . 'tests/dal/TestCoughAsDatabase.class.php');
 
 ?>

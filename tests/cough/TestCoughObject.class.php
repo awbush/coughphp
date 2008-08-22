@@ -54,10 +54,9 @@ class TestCoughObject extends UnitTestCase
 		// Use connection information from the generation config (and just add the aliases)
 		include(dirname(__FILE__) . '/config/database_schema_generator.inc.php');
 		
-		$dbName = 'test_cough_object';
+		$dbName = $config['dsn']['db_name'];
 		$testDbConfig = $config['dsn'];
 		$testDbConfig['aliases'] = array($dbName);
-		$testDbConfig['db_name'] = $dbName;
 		
 		CoughDatabaseFactory::addConfig($testDbConfig);
 		$this->db = CoughDatabaseFactory::getDatabase($dbName);

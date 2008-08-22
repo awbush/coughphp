@@ -35,6 +35,8 @@
  **/
 class TestCoughGenerator extends UnitTestCase
 {
+	protected $db = null;
+	
 	public function __construct()
 	{
 		// include cough generator, core cough, and the as_database DAL.
@@ -44,15 +46,13 @@ class TestCoughGenerator extends UnitTestCase
 		require_once($coughRoot . '/as_database/load.inc.php');
 		
 		// Setup DB config
-		CoughDatabaseFactory::addConfig(array(
-			'driver' => 'mysql',
-			'host' => 'localhost',
-			'db_name' => 'test_cough_object',
-			'user' => 'cough_test',
-			'pass' => 'cough_test',
-			'port' => '3306',
-			'aliases' => array('test_cough_object')
-		));
+		require(dirname(dirname(__FILE__)) . '/database_config.inc.php');
+		$coughDbConfig = $dsn;
+		$coughDbConfig['aliases'] = array($dsn['db_name']);
+		CoughDatabaseFactory::addConfig($coughDbConfig);
+		
+		// Cache the db object for rest of tests
+		$this->db = CoughDatabaseFactory::getDatabase($dsn['db_name']);
 	}
 	
 	public function executeSqlFile($sqlFile)
@@ -63,9 +63,8 @@ class TestCoughGenerator extends UnitTestCase
 		// the last element is a blank string, so get rid of it
 		array_pop($sqlCommands);
 
-		$db = CoughDatabaseFactory::getDatabase('test_cough_object');
 		foreach ($sqlCommands as $sql) {
-			$db->query($sql);
+			$this->db->query($sql);
 		}
 	}
 	
