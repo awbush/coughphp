@@ -21,7 +21,16 @@ class As_DatabaseResult {
 	public function getRow() {
 		return mysql_fetch_assoc($this->result);
 	}
-
+	
+	public function getRows() {
+		$rows = array();
+		while ($row = mysql_fetch_assoc($this->result))
+		{
+			$rows[] = $row;
+		}
+		return $rows;
+	}
+	
 	public function getNumRows() {
 		return mysql_num_rows($this->result);
 	}
