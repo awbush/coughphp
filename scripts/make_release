@@ -9,6 +9,13 @@ then
 	exit 1
 fi
 
-cp -rp "$1" "$2"
-rm -rf "$2/.bzr" "$2/design" "$2/doc/developer" "$2/scripts/make_release" "$2/.bzrignore"
+if [ -f "$2" ] || [ -d "$2" ]
+then
+    echo "Destination already exists. Please remove it first."
+	exit 1
+fi
+
+cp -Rp "$1" "$2"
+rm -rf "$2/.bzr" "$2/.shelf" "$2/.bzrignore" "$2/design" "$2/docs/developer" "$2/scripts/make_release"
+find "$2" -name '.DS_Store' -exec rm {} \;
 tar -czf "$2.tar.gz" "$2"
