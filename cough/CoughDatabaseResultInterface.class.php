@@ -2,7 +2,7 @@
 /**
  * Any database result object that Cough uses must implement this interface.
  *
- * @package dal
+ * @package cough
  **/
 interface CoughDatabaseResultInterface
 {

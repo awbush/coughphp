@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Update specific query
+ *
+ * @package as_query
+ * @author Anthony Bush
+ **/
 class As_UpdateQuery extends As_InsertQuery
 {
 	protected $where = array();

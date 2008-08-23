@@ -1,2 +1,0 @@
-CoughPHP 1.2 (2008-06-22)
-http://coughphp.com/docs/changelog

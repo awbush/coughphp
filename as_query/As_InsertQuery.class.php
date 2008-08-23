@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Insert specific query
+ *
+ * @package as_query
+ * @author Anthony Bush
+ **/
 class As_InsertQuery extends As_Query
 {
 	protected $tableName = '';

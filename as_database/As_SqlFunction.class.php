@@ -6,7 +6,7 @@
  * The As_Database::quote() method will not quote these, and instead will
  * rely on the getString() method.
  *
- * @package dal_as
+ * @package as_database
  **/
 class As_SqlFunction {
 	protected $sqlFunction;

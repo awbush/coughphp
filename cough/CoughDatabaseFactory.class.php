@@ -55,7 +55,7 @@
  * The config array supports other parameters as well, but you shouldn't have to
  * use them.  See {@link $configs} for all available options.
  * 
- * @package dal
+ * @package cough
  * @author Anthony Bush, Lewis Zhang
  * @see $configs
  **/
@@ -198,15 +198,22 @@ class CoughDatabaseFactory
 	
 	/**
 	 * Get the database object for the specified alias
-	 *
+	 * 
+	 * @param string $alias
+	 * @param string $dbName optional database name to select before returning the database object.
 	 * @return CoughDatabaseInterface|null
 	 **/
-	public static function getDatabase($alias)
+	public static function getDatabase($alias, $dbName = null)
 	{
 		if (isset(self::$databases[$alias]))
 		{
 			// We already have the database object in memory
-			return self::$databases[$alias];
+			$dbObject = self::$databases[$alias];
+			if (!empty($dbName))
+			{
+				$dbObject->selectDb($dbName);
+			}
+			return $dbObject;
 		}
 		else
 		{
@@ -216,16 +223,22 @@ class CoughDatabaseFactory
 				if (isset($config['db_name_hash'][$alias]))
 				{
 					$dbObject = self::constructDatabaseByConfig($config);
-					foreach ($config['db_name_hash'] as $configAlias => $dbName)
+					foreach ($config['db_name_hash'] as $configAlias => $actualDbName)
 					{
 						self::addDatabase($configAlias, $dbObject);
+					}
+					if (!empty($dbName))
+					{
+						$dbObject->selectDb($dbName);
 					}
 					return $dbObject;
 				}
 			}
 		}
 		
-		return null;
+		// As of CoughPHP 1.3 we now throw verbose exception.
+		throw new Exception('The alias "' . $alias . '" does not exist. Make sure your config calls CoughDatabaseFactory::addConfig() or CoughDatabaseFactory::setConfigs().');
+		// return null;
 	}
 	
 	/**

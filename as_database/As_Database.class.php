@@ -5,12 +5,12 @@
  * Academic Superstore.
  * 
  * Most notably, all the "doSomething" functions are now "something" and all the
- * backward compatibility cruft for Persistent have ben removed.
+ * backward compatibility cruft for A.S.'s legacy Persistent class have been
+ * removed.
  * 
  * This file is released under the FreeBSD license.
  * 
- * @package dal_as
- * @author Anthony Bush
+ * @package as_database
  **/
 class As_Database {
 	// Error Types
@@ -29,6 +29,7 @@ class As_Database {
 	protected $dbUser = null;
 	protected $dbPassword = null;
 	protected $dbPort;
+	protected $clientFlags = 0;
 	protected $connection;
 	protected $query;
 	
@@ -63,11 +64,12 @@ class As_Database {
 	 **/
 	protected $queryLog = array();
 	
-	public function __construct($dbName, $dbHost = 'localhost', $dbUser = 'nobody', $dbPassword = '', $dbPort = 3306) {
+	public function __construct($dbName, $dbHost = 'localhost', $dbUser = 'nobody', $dbPassword = '', $dbPort = 3306, $clientFlags = 0) {
 		$this->dbHost = $dbHost;
 		$this->dbUser = $dbUser;
 		$this->dbPassword = $dbPassword;
 		$this->dbPort = $dbPort;
+		$this->clientFlags = $clientFlags;
 
 		$this->initConnection();
 		if ($dbName != '') {
@@ -93,7 +95,7 @@ class As_Database {
 
 	public function initConnection() {
 		$hostAndPort = $this->dbHost . ":" . $this->dbPort;		
-		$this->connection = mysql_connect($hostAndPort, $this->dbUser, $this->dbPassword,TRUE);
+		$this->connection = mysql_connect($hostAndPort, $this->dbUser, $this->dbPassword, true, $this->clientFlags);
 		if (!$this->connection) {
 			$this->generateError(self::ERROR_CONNECT);
 		}

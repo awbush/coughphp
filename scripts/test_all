@@ -5,8 +5,10 @@ $utest = dirname(__FILE__) . '/utest';
 $coughRoot = dirname(dirname(__FILE__)) . '/';
 
 echo "Testing the cough generator:\n";
-echo shell_exec(escapeshellarg($utest) . ' ' . escapeshellarg($coughRoot) . 'cough_generator/tests/Test*.class.php');
+echo shell_exec(escapeshellarg($utest) . ' ' . escapeshellarg($coughRoot) . 'tests/cough_generator/Test*.class.php');
 echo "Testing core cough:\n";
-echo shell_exec(escapeshellarg($utest) . ' ' . escapeshellarg($coughRoot) . 'cough/tests/Test*.class.php');
+echo shell_exec(escapeshellarg($utest) . ' ' . escapeshellarg($coughRoot) . 'tests/cough/Test*.class.php');
+echo "Testing DAL (Database Abstraction Layer):\n";
+echo shell_exec(escapeshellarg($utest) . ' ' . escapeshellarg($coughRoot) . 'tests/dal/TestCoughAsDatabase.class.php');
 
 ?>

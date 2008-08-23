@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * Cough DAL (Database Adapter Layer) for the "as_database" module.
+ *
+ * @package as_database
+ **/
 class CoughAsDatabase extends As_Database implements CoughDatabaseInterface
 {
 	/**
@@ -37,8 +43,13 @@ class CoughAsDatabase extends As_Database implements CoughDatabaseInterface
 		} else {
 			$port = 3306;
 		}
+		if (isset($dbConfig['client_flags'])) {
+			$clientFlags = $dbConfig['client_flags'];
+		} else {
+			$clientFlags = 0;
+		}
 		
-		return new CoughAsDatabase($database, $host, $username, $password, $port);
+		return new CoughAsDatabase($database, $host, $username, $password, $port, $clientFlags);
 	}
 	
 	public function execute($sql)

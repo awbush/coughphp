@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * THIS FILE IS NOT USED BY COUGH -- CoughDatabaseFactory is used instead.  This
+ * is simply part of the original "as_database" module.
+ * 
  * A simple factory that provides access to an application's database objects.
  * It should be dynamically initialized, and can hold mixed types of database
  * objects (e.g. PEAR::DB, AS Database, DatabaseConnector, Persistent).
@@ -47,7 +50,7 @@
  *    
  *    As_DatabaseFactory::setDatabaseConfigs($dbConfigs);
  * 
- * @package dal_as
+ * @package as_database
  * @author Anthony Bush
  **/
 class As_DatabaseFactory {

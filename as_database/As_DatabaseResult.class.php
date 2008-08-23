@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Database Result class which the query method of {@link As_Database} returns.
+ * Database Result class which the {@link As_Database::query()} returns.
  *
- * @package dal_as
+ * @package as_database
  **/
 class As_DatabaseResult {
 	private $result;
@@ -21,7 +21,16 @@ class As_DatabaseResult {
 	public function getRow() {
 		return mysql_fetch_assoc($this->result);
 	}
-
+	
+	public function getRows() {
+		$rows = array();
+		while ($row = mysql_fetch_assoc($this->result))
+		{
+			$rows[] = $row;
+		}
+		return $rows;
+	}
+	
 	public function getNumRows() {
 		return mysql_num_rows($this->result);
 	}

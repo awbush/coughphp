@@ -565,7 +565,7 @@ echo $objectDefinitionsPhp;
 	 * @param mixed $idOrHash - id or hash of [field_name] => [field_value]
 	 * @return mixed - <?php echo $starterObjectClassName ?> or null if no record found.
 	 **/
-	public static function constructByKey($idOrHash) {
+	public static function constructByKey($idOrHash, $forPhp5Strict = '') {
 		return CoughObject::constructByKey($idOrHash, '<?php echo $starterObjectClassName ?>');
 	}
 	
@@ -575,7 +575,7 @@ echo $objectDefinitionsPhp;
 	 * @param string $sql
 	 * @return mixed - <?php echo $starterObjectClassName ?> or null if exactly one record could not be found.
 	 **/
-	public static function constructBySql($sql) {
+	public static function constructBySql($sql, $forPhp5Strict = '') {
 		return CoughObject::constructBySql($sql, '<?php echo $starterObjectClassName ?>');
 	}
 	
