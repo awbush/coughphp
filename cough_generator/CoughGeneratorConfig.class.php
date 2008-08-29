@@ -317,7 +317,18 @@ class CoughGeneratorConfig extends CoughConfig {
 		}
 	}
 	
+	public function shouldGenerateForTable(SchemaTable $table) {
+		if (!$table->hasPrimaryKey()) {
+			return false;
+		}
+		return true;
+	}
+	
 	public function shouldGenerateHasOneMethods(SchemaRelationship $hasOne) {
+		// Don't generate links to tables we won't generate classes for.
+		if (!$this->shouldGenerateForTable($hasOne->getRefTable())) {
+			return false;
+		}
 		$table = $hasOne->getLocalTable();
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();
@@ -335,6 +346,10 @@ class CoughGeneratorConfig extends CoughConfig {
 	}
 	
 	public function shouldGenerateHasManyMethods(SchemaRelationship $hasMany) {
+		// Don't generate links to tables we won't generate classes for.
+		if (!$this->shouldGenerateForTable($hasMany->getRefTable())) {
+			return false;
+		}
 		$table = $hasMany->getLocalTable();
 		$dbName = $table->getDatabase()->getDatabaseName();
 		$tableName = $table->getTableName();

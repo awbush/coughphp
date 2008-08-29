@@ -116,12 +116,10 @@ class As_Query
 				}
 				else
 				{
-					$equalityOperator = $this->getEqualityOperatorFromValue($value);
-					if (is_object($this->db))
-					{
-						$value = $this->db->quote($value);
+					if (!is_object($this->db)) {
+						throw new Exception('Must construct As_Query with a database object if relying on it to do quoting.');
 					}
-					$newCriteria[] = $key . $equalityOperator . $value;
+					$newCriteria[] = $key . $this->getEqualityOperatorFromValue($value) . $this->db->quote($value);
 				}
 			}
 			return $newCriteria;

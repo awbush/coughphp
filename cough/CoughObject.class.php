@@ -1107,6 +1107,26 @@ abstract class CoughObject {
 	}
 	
 	/**
+	 * Builds a basic SELECT table.* FROM db.table query object (making it easy to
+	 * inject joins, where criteria, order by, group by, etc.)
+	 * 
+	 * @return As_SelectQuery
+	 * @author Anthony Bush
+	 * @since 2008-08-26
+	 * @todo PHP 5.3+: use "static" keyword instead of call_user_func and remove the
+	 * parameter requirement (making sure that if called with it, no warnings/notices
+	 * are generated; i.e. keep backward compatibility)
+	 **/
+	public static function buildSelectQuery($className)
+	{
+		$tableName = call_user_func(array($className, 'getTableName'));
+		$query = new As_SelectQuery(call_user_func(array($className, 'getDb')));
+		$query->setSelect('`' . $tableName . '`.*');
+		$query->setFrom('`' . call_user_func(array($className, 'getDbName')) . '`.`' . $tableName . '`');
+		return $query;
+	}
+	
+	/**
 	 * Returns object to it's own state, except what you want to keep. By
 	 * default it empties everything; overridden version only empties yours.
 	 *
