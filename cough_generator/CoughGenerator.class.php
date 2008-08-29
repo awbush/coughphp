@@ -92,7 +92,7 @@ class CoughGenerator {
 	 * @author Anthony Bush
 	 **/
 	public function generateCoughClassesFromSchemaTable(SchemaTable $table) {
-		if ($table->hasPrimaryKey()) {
+		if ($this->config->shouldGenerateForTable($table)) {
 			$this->generateBaseObject($table);
 			$this->generateStarterObject($table);
 			$this->generateBaseCollection($table);
