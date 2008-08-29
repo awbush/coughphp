@@ -264,7 +264,7 @@ class As_SelectQuery extends As_Query
 	 **/
 	public function getClone()
 	{
-		$sql = new As_SelectQuery();
+		$sql = new As_SelectQuery($this->db);
 		$sql->setSelect($this->getSelect());
 		$sql->setFrom($this->getFrom());
 		$sql->setWhere($this->getWhere());
