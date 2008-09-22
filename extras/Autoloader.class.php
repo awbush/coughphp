@@ -21,6 +21,7 @@ class Autoloader {
 	protected static $cacheFilePath = null;
 	protected static $cachedPaths = null;
 	protected static $excludeFolderNames = '/^CVS|\..*$/'; // CVS directories and directories starting with a dot (.).
+	protected static $hasSaver = false;
 	
 	/**
 	 * Sets the paths to search in when looking for a class.
@@ -94,13 +95,15 @@ class Autoloader {
 			// Cached location is correct
 			include($filePath);
 			return true;
-		}
-		else {
+		} else {
 			// Scan for file
 			foreach (self::$classPaths as $path) {
-				if ( ($filePath = self::searchForClassFile($className, $path)) ) {
+				if ($filePath = self::searchForClassFile($className, $path)) {
 					self::$cachedPaths[$className] = $filePath;
-					self::saveCachedPaths();
+					if (!self::$hasSaver) {
+						register_shutdown_function(array('Autoloader', 'saveCachedPaths'));
+						self::$hasSaver = true;
+					}
 					include($filePath);
 					return true;
 				}
@@ -127,15 +130,17 @@ class Autoloader {
 		}
 	}
 	
-	protected static function saveCachedPaths() {
+	/**
+	 * Write cached paths to disk.
+	 * 
+	 * @return void
+	 **/
+	public static function saveCachedPaths() {
 		if (!file_exists(self::$cacheFilePath) || is_writable(self::$cacheFilePath)) {
 			$fileContents = serialize(self::$cachedPaths);
-			$f = fopen(self::$cacheFilePath, 'w');
-			if ($f === false) {
+			$bytes = file_put_contents(self::$cacheFilePath, $fileContents);
+			if ($bytes === false) {
 				trigger_error('Autoloader could not write the cache file: ' . self::$cacheFilePath, E_USER_ERROR);
-			} else {
-				fwrite($f, $fileContents);
-				fclose($f);
 			}
 		} else {
 			trigger_error('Autoload cache file not writable: ' . self::$cacheFilePath, E_USER_ERROR);
@@ -145,12 +150,12 @@ class Autoloader {
 	protected static function searchForClassFile($className, $directory) {
 		if (is_dir($directory) && is_readable($directory)) {
 			$d = dir($directory);
-			while ( ($f = $d->read()) ) {
+			while ($f = $d->read()) {
 				$subPath = $directory . $f;
 				if (is_dir($subPath)) {
 					// Found a subdirectory
 					if (!preg_match(self::$excludeFolderNames, $f)) {
-						if ( ($filePath = self::searchForClassFile($className, $subPath . '/')) ) {
+						if ($filePath = self::searchForClassFile($className, $subPath . '/')) {
 							return $filePath;
 						}
 					}

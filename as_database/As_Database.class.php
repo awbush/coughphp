@@ -615,6 +615,41 @@ class As_Database {
 		return $time;
 	}
 	
+	/**
+	 * Like the query log, but it rolls up all duplicate queries into only
+	 * one entry in the array. It adds a count value equal to the number of
+	 * times the query was run, and the time value is equal to the total
+	 * time of each query run.
+	 *
+	 * @return hash in format of [sql] => array([time] => float, [count] => integer)
+	 * @author Anthony Bush
+	 * @since 2007-09-07
+	 **/
+	public function getUniqueQueryLog() {
+		$uniqueQueryLog = array();
+		$rawQueryLog = $this->getQueryLog();
+		foreach ($rawQueryLog as $rawQuery) {
+			if (isset($uniqueQueryLog[$rawQuery['sql']])) {
+				$uniqueQueryLog[$rawQuery['sql']]['time'] += $rawQuery['time'];
+				$uniqueQueryLog[$rawQuery['sql']]['count']++;
+				if (!isset($uniqueQueryLog[$rawQuery['sql']]['count_by_database'][$rawQuery['database']]))
+				{
+					$uniqueQueryLog[$rawQuery['sql']]['count_by_database'][$rawQuery['database']] = 1;
+				}
+				else
+				{
+					$uniqueQueryLog[$rawQuery['sql']]['count_by_database'][$rawQuery['database']]++;
+				}
+			} else {
+				$uniqueQueryLog[$rawQuery['sql']] = array();
+				$uniqueQueryLog[$rawQuery['sql']]['time'] = $rawQuery['time'];
+				$uniqueQueryLog[$rawQuery['sql']]['count'] = 1;
+				$uniqueQueryLog[$rawQuery['sql']]['count_by_database'][$rawQuery['database']] = 1;
+			}
+		}
+		return $uniqueQueryLog;
+	}
+	
 }
 
 ?>

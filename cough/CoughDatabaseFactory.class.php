@@ -329,6 +329,30 @@ class CoughDatabaseFactory
 		self::$databaseNames = array();
 		self::$configs = array();
 	}
+	
+	/**
+	 * Same as {@link getDatabases()}, except it rolls up all aliases using the same
+	 * connection into one array entry.
+	 *
+	 * @return array of objects that implement CoughDatabaseInterface
+	 * @author Anthony Bush
+	 * @since 2008-09-09
+	 **/
+	public static function getUniqueDatabases()
+	{
+		$uniqueDbs = array();
+		foreach (self::$configs as $config)
+		{
+			foreach ($config['db_name_hash'] as $alias => $actualDbName)
+			{
+				if (isset(self::$databases[$alias]))
+				{
+					$uniqueDbs[implode(', ', array_keys($config['db_name_hash']))] = self::$databases[$alias];
+				}
+			}
+		}
+		return $uniqueDbs;
+	}
 }
 
 ?>

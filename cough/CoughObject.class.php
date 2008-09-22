@@ -578,7 +578,11 @@ abstract class CoughObject {
 	public function setFieldsIfDifferent($fields) {
 		foreach ($fields as $fieldName => $fieldValue) {
 			if ($fieldValue != $this->getField($fieldName)) {
-				$this->setField($fieldName, $fieldValue);
+				if (isset($this->fieldDefinitions[$fieldName])) {
+					$this->setField($fieldName, $fieldValue);
+				} else if (isset($this->derivedFieldDefinitions[$fieldName])) {
+					$this->setDerivedField($fieldName, $fieldValue);
+				}
 			}
 		}
 	}
@@ -651,9 +655,9 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Returns whether or not there are modified fields.
+	 * Whether or not there is at least one modified field.
 	 *
-	 * @return void
+	 * @return boolean
 	 * @author Anthony Bush
 	 **/
 	public function hasModifiedFields() {
@@ -662,6 +666,24 @@ abstract class CoughObject {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Whether or not the specified field has been modified.
+	 *
+	 * @return boolean
+	 * @author Anthony Bush
+	 * @since 2008-09-03
+	 **/
+	public function isFieldModified($fieldName) {
+		// Implementation note: have to use the slower `array_key_exists` function
+		// instead if `isset` b/c we store the original value which could be null and
+		// causes `isset` to return false.
+		if (array_key_exists($fieldName, $this->modifiedFields))
+		{
+			return true;
+		}
+		return false;
 	}
 
 	/**
