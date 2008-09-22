@@ -5,15 +5,18 @@
  * 
  * Sample Usage:
  * 
+ *     <code>
  *     include_once('coughphp/extras/Autoloader.class.php');
  *     Autoloader::addClassPath('app_path/classes/');
  *     Autoloader::addClassPath('shared_path/classes/');
  *     Autoloader::setCacheFilePath('app_path/tmp/class_path_cache.txt');
  *     Autoloader::excludeFolderNamesMatchingRegex('/^CVS|\..*$/');
  *     spl_autoload_register(array('Autoloader', 'loadClass'));
+ *     </code>
  * 
  * @package default
  * @author Anthony Bush
+ * @version 2008-09-22
  **/
 class Autoloader {
 	protected static $classPaths = array();
@@ -48,7 +51,9 @@ class Autoloader {
 	 * 
 	 * Example:
 	 * 
+	 *     <code>
 	 *     Autoloader::setCacheFilePath('/tmp/class_path_cache.txt');
+	 *     </code>
 	 * 
 	 * @param string $path
 	 * @return void
@@ -74,7 +79,9 @@ class Autoloader {
 	 * 
 	 * Example:
 	 * 
+	 *     <code>
 	 *     Autoloader::excludeFolderNamesMatchingRegex('/^CVS|\..*$/');
+	 *     </code>
 	 * 
 	 * @param string $regex
 	 * @return void
