@@ -18,4 +18,4 @@ fi
 cp -Rp "$1" "$2"
 rm -rf "$2/.bzr" "$2/.shelf" "$2/.bzrignore" "$2/design" "$2/docs/developer" "$2/scripts/make_release"
 find "$2" -name '.DS_Store' -exec rm {} \;
-tar -czf "$2.tar.gz" "$2"
+tar -czf "$2.tgz" "$2"
