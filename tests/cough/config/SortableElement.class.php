@@ -64,7 +64,6 @@ class SortableElement extends CoughObject
 	{
 		return $this->setField('price', $value);
 	}
-	
 }
 
 ?>

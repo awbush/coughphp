@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @todo consider switching to PHPUnit, especially if it has PHP5 strict compatibility.
+ * @todo consider splitting out some of the test methods, and rename them in a
+ * way that indicates requirements rather than what it is doing.  The
+ * TestAutoloader.class.php file is a good example.  Once we do this, we can also
+ * benefit from concepts like Agile Documentation {@link http://www.phpunit.de/manual/3.3/en/other-uses-for-tests.html}
+ **/
 class TestCoughObject extends UnitTestCase
 {
 	protected $db = null; // the database object
@@ -221,9 +228,6 @@ class TestCoughObject extends UnitTestCase
 	
 	public function testRetireObject()
 	{
-		// NOTE this is only valid if the retire conig option is set...
-		// TODO make this config option aware, so skip this test if it is not set
-		
 		$newLibrary = new Library();
 		$newLibrary->setName('James Joyce');
 		$newLibrary->setCreationDatetime(date('Y-m-d H:i:s'));
@@ -233,7 +237,10 @@ class TestCoughObject extends UnitTestCase
 		$sameLibrary->setIsRetired(true);
 		$sameLibrary->save();
 		
-		// not sure if this one should pass... depends on how we are doing retired handling
+		// constructByKey should always return the object, even if we add "retired"
+		// handling. It's mostly meant as a way to keep items from showing up in related
+		// collections, NOT to keep the entitity from being retrieved (just delete it in
+		// that case).
 		$this->assertIsA(Library::constructByKey($newLibrary->getLibraryId()), 'Library');
 	}
 	
