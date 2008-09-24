@@ -329,8 +329,7 @@ abstract class CoughCollection extends ArrayObject {
 	 *     </code>
 	 * 
 	 * @param string $methodName
-	 * @param int $direction SORT_ASC or SORT_DESC (PHP sort order constant)
-	 * @param int $type SORT_REGULAR, SORT_STRING, or SORT_NUMERIC (PHP sort type constant)
+	 * @param mixed $arg,... optionally another method name, or sort options for the previous method name: SORT_ASC, SORT_DESC, SORT_REGULAR, SORT_NUMERIC, SORT_STRING (PHP sort order and sort type constants)
 	 * @return void
 	 * @see http://php.net/array_multisort
 	 * @author Anthony Bush
