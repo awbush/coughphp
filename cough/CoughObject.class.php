@@ -57,16 +57,6 @@ abstract class CoughObject {
 	 * @see getCollection(), loadCollection(), saveLoadedCollections(), isCollectionLoaded()
 	 **/
 	protected $collections = array();
-
-	/**
-	 * Stores whether or not the object has been deleted from the database.
-	 * 
-	 * Save will do nothing if an object has been deleted...
-	 *
-	 * @var boolean
-	 * @see delete(), save()
-	 **/
-	protected $isDeleted = false;
 	
 	/**
 	 * Stores whether or not the object is new (i.e. not in database yet).
@@ -82,6 +72,14 @@ abstract class CoughObject {
 	 * @see save(), isNew(), isInflated()
 	 **/
 	protected $isNew = true;
+	
+	/**
+	 * Whether or not the object should be deleted when {@link save()} is called.
+	 *
+	 * @var boolean
+	 * @see remove()
+	 **/
+	protected $shouldDelete = false;
 	
 	/**
 	 * Stores validation errors set by `validateData` function.
@@ -687,32 +685,30 @@ abstract class CoughObject {
 	}
 
 	/**
-	 * Creates a new entry if needed, otherwise it updates an existing one.
+	 * Deletes, Inserts, or Updates a record as needed.
 	 * During an update, it only updates the modified fields.
 	 * During an insert, it only inserts modified fields (leaving defaults up to
 	 * the database server).
 	 * 
-	 * @return boolean - the result of the create/update.
+	 * @return boolean - the result of the delete/insert/update.
 	 * @author Anthony Bush
 	 **/
 	public function save() {
 		
-		// Don't save if deleted.
-		if ($this->isDeleted()) {
-			return false;
-		}
-		
-		// Check for valid data.
-		if ( ! $this->validateData()) {
-			return false;
-		}
-		
-		// Save self first, in case the PK is needed for remaining saves.
-		if ($this->shouldInsert()) {
-			$result = $this->insert();
+		if ($this->shouldDelete()) {
+			$result = $this->delete();
 		} else {
-			$result = $this->update();
+			if (!$this->validateData()) {
+				return false;
+			}
+			
+			if ($this->shouldInsert()) {
+				$result = $this->insert();
+			} else {
+				$result = $this->update();
+			}
 		}
+		
 		$this->isNew = false;
 
 		$this->saveLoadedCollections();
@@ -720,6 +716,17 @@ abstract class CoughObject {
 		$this->resetModified();
 		
 		return $result;
+	}
+	
+	/**
+	 * Whether or not a save should delete the record.
+	 *
+	 * @return boolean
+	 * @author Anthony Bush
+	 * @since 1.4
+	 **/
+	protected function shouldDelete() {
+		return $this->shouldDelete;
 	}
 
 	/**
@@ -868,14 +875,16 @@ abstract class CoughObject {
 	 *
 	 * @return boolean - whether or not the delete was executed.
 	 * @author Anthony Bush
+	 * @access protected
+	 * @todo change this method to protected in the release following 1.4
 	 **/
 	public function delete() {
+		// return $this->deletionStrategy->delete($this);
 		if ($this->hasKeyId()) {
 			$db = $this->getDb();
 			$db->selectDb($this->getDbName());
 			$query = new As_Query($db);
 			$db->execute('DELETE FROM `' . $this->getTableName() . '` WHERE ' . $query->buildWhereSql($this->getPk()));
-			$this->isDeleted = true;
 			return true;
 		} else {
 			return false;
@@ -883,13 +892,15 @@ abstract class CoughObject {
 	}
 	
 	/**
-	 * Specifies whether or not the object has been deleted from the database.
+	 * Marks the record for deletion.  It won't be deleted until {@link save()} is
+	 * called.
 	 *
-	 * @return boolean
+	 * @return void
 	 * @author Anthony Bush
+	 * @since 1.4
 	 **/
-	public function isDeleted() {
-		return $this->isDeleted;
+	public function remove() {
+		$this->shouldDelete = true;
 	}
 	
 	// ----------------------------------------------------------------------------------------------

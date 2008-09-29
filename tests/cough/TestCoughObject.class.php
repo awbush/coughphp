@@ -244,7 +244,23 @@ class TestCoughObject extends UnitTestCase
 		$this->assertIsA(Library::constructByKey($newLibrary->getLibraryId()), 'Library');
 	}
 	
-	public function testDeleteObject()
+	public function testObjectsCanBeDeletedUsingRemoveAndSave()
+	{
+		$newLibrary = new Library();
+		$newLibrary->setName('James Joyce');
+		$newLibrary->setCreationDatetime(date('Y-m-d H:i:s'));
+		$newLibrary->save();
+		
+		$newLibrary->remove();
+		$newLibrary->save();
+		
+		$this->assertNull(Library::constructByKey($newLibrary->getLibraryId()));
+	}
+	
+	/**
+	 * @todo remove this test case in release following 1.4
+	 **/
+	public function testObjectsCanBeDeletedImmediately()
 	{
 		$newLibrary = new Library();
 		$newLibrary->setName('James Joyce');
