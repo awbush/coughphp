@@ -243,8 +243,35 @@ class CoughGeneratorConfig extends CoughConfig {
 			}
 		}
 		
-		// Use reference table's "entity name".
-		return $this->getEntityName($relationship->getRefTable());
+		// First check if there is more than one link to the reference table. If so, then
+		// we will hit collision of names so we should instead just use the column name
+		// as the entity name.  Otherwise, we can use the table name as the entity name.
+		// This resolves bug: https://bugs.launchpad.net/coughphp/+bug/284702
+		
+		$refTable = $relationship->getRefTable();
+		$numRefTableLinks = 0;
+		foreach ($relationship->getLocalTable()->getHasOneRelationships() as $hasOneRelationship) {
+			if ($hasOneRelationship->getRefTable() === $refTable) {
+				++$numRefTableLinks;
+			}
+		}
+		
+		if ($numRefTableLinks > 1)
+		{
+			// Use column names that make up the local key as the entity name (hopefully only
+			// one column in this case, otherwise the name won't be very meaningful).
+			$entityName = '';
+			foreach ($localKey as $column)
+			{
+				$entityName .= '_' . $column->getColumnName();
+			}
+			return $entityName;
+		}
+		else
+		{
+			// Use reference table's "entity name."
+			return $this->getEntityName($relationship->getRefTable());
+		}
 	}
 	
 	public function getForeignObjectName(SchemaRelationship $relationship) {

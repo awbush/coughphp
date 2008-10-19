@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS `custPc`;
+DROP TABLE IF EXISTS `network`;

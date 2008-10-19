@@ -53,6 +53,9 @@ class TestCoughGenerator extends UnitTestCase
 		
 		// Cache the db object for rest of tests
 		$this->db = CoughDatabaseFactory::getDatabase($dsn['db_name']);
+		
+		// Clean DB before start
+		$this->dropAllTables();
 	}
 	
 	public function executeSqlFile($sqlFile)
@@ -83,6 +86,15 @@ class TestCoughGenerator extends UnitTestCase
 		rmdir($classPath . 'generated');
 		rmdir($classPath . 'concrete');
 		rmdir($classPath);
+	}
+	
+	protected function dropAllTables()
+	{
+		$result = $this->db->query('SHOW TABLES');
+		while ($row = $result->getRow())
+		{
+			$this->db->query('DROP TABLE IF EXISTS `' . $this->db->escape($row['Tables_in_test_cough_object']) . '`');
+		}
 	}
 	
 	public function testConfigs()
@@ -149,6 +161,7 @@ class TestCoughGenerator extends UnitTestCase
 			
 			// 5. Clean up DB
 			$this->executeSqlFile($configPath . 'db_setup/db_teardown.sql');
+			$this->dropAllTables();
 		}
 	}
 	

@@ -1,2 +1,2 @@
-CoughPHP 1.3.2 (2008-09-22)
+CoughPHP 1.3.3 (2008-10-19)
 http://coughphp.com/docs/changelog

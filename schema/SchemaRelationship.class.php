@@ -75,7 +75,7 @@ class SchemaRelationship {
 	
 	public function setLocalKey($localKey) {
 		$this->localKey = $localKey;
-	}	
+	}
 	
 	/**
 	 * Returns false if all keys are NOT NULL, true otherwise.

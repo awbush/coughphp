@@ -97,7 +97,7 @@ class As_Database {
 		$hostAndPort = $this->dbHost . ":" . $this->dbPort;		
 		$this->connection = mysql_connect($hostAndPort, $this->dbUser, $this->dbPassword, true, $this->clientFlags);
 		if (!$this->connection) {
-			$this->generateError(self::ERROR_CONNECT);
+			$this->generateError(self::ERROR_CONNECT, 'Unable to connect to database server ' . $hostAndPort);
 		}
 		$this->dbName = null;
 	}
@@ -139,7 +139,7 @@ class As_Database {
 		$this->query = $sql;
 		
 		$start = microtime(true);
-		$result = @mysql_query($sql,$this->connection);
+		$result = mysql_query($sql, $this->connection);
 		if (!$result) {
 			$this->generateError(self::ERROR_QUERY);
 		}
@@ -158,7 +158,6 @@ class As_Database {
 			}
 			
 			$this->queryLog[] = $newLog;
-			
 		}
 		
 		return $this->getResultObjectFromResource($result);
@@ -546,12 +545,14 @@ class As_Database {
 		$this->inTransaction = false;
 	}
 	
-	protected function generateError($errorType) {
+	protected function generateError($errorType, $sqlError = '') {
 		
-		if ($this->inTransaction) {
-			$sqlError = 'Transaction Failed with mysql_error: ' . mysql_error($this->connection);
-		} else {
-			$sqlError = mysql_error($this->connection);
+		if (empty($sqlError) && $this->connection) {
+			if ($this->inTransaction) {
+				$sqlError = 'Transaction Failed with mysql_error: ' . mysql_error($this->connection);
+			} else {
+				$sqlError = mysql_error($this->connection);
+			}
 		}
 		
 		switch($errorType) {
