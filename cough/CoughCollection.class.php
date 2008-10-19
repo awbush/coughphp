@@ -145,6 +145,28 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
+	 * The first element in the array/collection.
+	 *
+	 * @return CoughObject|null null if collection is empty
+	 * @author Anthony Bush
+	 * @since 2008-10-08
+	 **/
+	public function getFirst() {
+		return $this->getPosition(0);
+	}
+	
+	/**
+	 * The last element in the array/collection.
+	 *
+	 * @return CoughObject|null null if collection is empty
+	 * @author Anthony Bush
+	 * @since 2008-10-08
+	 **/
+	public function getLast() {
+		return $this->getPosition($this->count() - 1);
+	}
+	
+	/**
 	 * Find out whether or not the collection is empty.
 	 *
 	 * @return boolean true if nothing is in the collection, false otherwise.
@@ -172,7 +194,7 @@ abstract class CoughCollection extends ArrayObject {
 		if (is_array($key)) {
 			$key = implode(',', $key);
 		}
-		if (isset($this[$key])) { // don't use offsetExists b/c it doesn't work in PHP <= 5.2.1
+		if (!is_null($key) && isset($this[$key])) { // don't use offsetExists b/c it doesn't work in PHP <= 5.2.1
 			return $this->offsetGet($key);
 		} else {
 			return null;
