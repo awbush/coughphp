@@ -37,6 +37,7 @@
 class As_SelectQuery extends As_Query
 {
 	protected $select = array();
+	protected $selectOptions = array();
 	protected $from = array();
 	protected $where = array();
 	protected $groupBy = array();
@@ -48,6 +49,11 @@ class As_SelectQuery extends As_Query
 	// Getters
 	
 	public function getSelect()
+	{
+		return $this->select;
+	}
+	
+	public function getSelectOptions()
 	{
 		return $this->select;
 	}
@@ -97,6 +103,17 @@ class As_SelectQuery extends As_Query
 	public function addSelect($select)
 	{
 		$this->add($select, $this->select, ",\n\t");
+	}
+	
+	/**
+	 * Add optional select options, e.g. SQL_CALC_FOUND_ROWS, SQL_NO_CACHE
+	 * 
+	 * @param string $selectOption
+	 * @return void
+	 **/
+	public function addSelectOption($selectOption)
+	{
+		$this->selectOptions[$selectOption] = true;
 	}
 	
 	public function setFrom($from)
@@ -166,6 +183,12 @@ class As_SelectQuery extends As_Query
 		{
 			// Add SELECT (required)
 			$sql .= "SELECT \n\t";
+			
+			// Add select options (optional)
+			if (!empty($this->selectOptions)) {
+				$sql .= implode(' ', array_keys($this->selectOptions)) . "\n\t";
+			}
+			
 			if (is_array($this->select))
 			{
 				$sql .= implode(",\n\t", $this->select);
