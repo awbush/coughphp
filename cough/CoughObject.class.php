@@ -462,7 +462,7 @@ abstract class CoughObject {
 		if ($this->isNew()) {
 			$numModified = 0;
 			foreach ($pkFieldNames as $fieldName) {
-				if (isset($this->modifiedFields[$fieldName])) {
+				if ($this->isFieldModified($fieldName)) {
 					++$numModified;
 				}
 			}
@@ -677,11 +677,7 @@ abstract class CoughObject {
 		// Implementation note: have to use the slower `array_key_exists` function
 		// instead if `isset` b/c we store the original value which could be null and
 		// causes `isset` to return false.
-		if (array_key_exists($fieldName, $this->modifiedFields))
-		{
-			return true;
-		}
-		return false;
+		return array_key_exists($fieldName, $this->modifiedFields);
 	}
 
 	/**

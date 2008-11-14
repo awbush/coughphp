@@ -178,6 +178,38 @@ class TestCoughObject extends UnitTestCase
 		$this->assertFalse($newBook3->hasKeyId(), 'New object with PK that defaults to zero and has no auto_increment should not have a key ID');
 	}
 	
+	public function testSetKeyId()
+	{
+		// calling setKeyId should be the same as calling the explicit setters for the columns making up the primary key.
+		$book1 = new Book();
+		$book1->setKeyId(1);
+		$book2 = new Book();
+		$book2->setBookId(1);
+		$this->assertEqual($book1->getFields(), $book2->getFields());
+		
+		// do it again, but this time check the entire object state (this means we can't notify children of the change)
+		$book1 = new Book();
+		$book1->setKeyId(1, false); // false => don't notify children of key change
+		$book2 = new Book();
+		$book2->setBookId(1);
+		$this->assertEqual(serialize($book1), serialize($book2));
+	}
+	
+	public function testHasKeyId()
+	{
+		// after setting a key ID on a new object, it shall still be considered new but shall be aware of it's key ID.
+		$book = new Book();
+		$book->setKeyId(1);
+		$this->assertTrue($book->hasKeyId(), 'New object should be aware of its key when it was explicitly set via setKeyId.');
+		$this->assertTrue($book->isNew(), 'New object should still be new after its key was explicitly set via setKeyId.');
+		
+		// make sure it works when calling the explicit setters for the columns making up the primary key.
+		$book = new Book();
+		$book->setBookId(1);
+		$this->assertTrue($book->hasKeyId(), 'New object should be aware of its key when it was explicitly set via setters.');
+		$this->assertTrue($book->isNew(), 'New object should still be new after its key was explicitly set via setters.');
+	}
+	
 	public function testLoadObject()
 	{
 		$newAuthor = new Author();
