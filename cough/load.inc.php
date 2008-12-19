@@ -51,7 +51,7 @@
  * 
  * 
  * @author Anthony Bush, Tom Warmbrodt, Lewis Zhang
- * @copyright 2005-2008 Academic Superstore. CoughPHP is open source protected by the FreeBSD License.
+ * @copyright 2005-2008 Anthony Bush, Tom Warmbrodt, Lewis Zhang. CoughPHP is open source protected by the FreeBSD License.
  * @package cough
  **/
 
