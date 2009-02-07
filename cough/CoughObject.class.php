@@ -507,6 +507,23 @@ abstract class CoughObject {
 	}
 	
 	/**
+	 * Gets fields by going through their getter methods, so that polymorphism is not
+	 * broken (you can override getFieldName(), and that is the value you'll get).
+	 * 
+	 * @return array $fields - format of [field_name] => [new_value]
+	 * @since 2008-12-18
+	 **/
+	public function getFieldsThroughGetters()
+	{
+		$fields = array();
+		foreach ($this->fieldDefinitions as $fieldName => $fieldAttr) {
+			$getter = 'get' . self::titleCase($fieldName);
+			$fields[$fieldName] = $this->$getter();
+		}
+		return $fields;
+	}
+	
+	/**
 	 * Get all non-primary key related fields and their values.
 	 *
 	 * @return array
@@ -560,6 +577,25 @@ abstract class CoughObject {
 				$this->setField($fieldName, $fieldValue);
 			} else if (isset($this->derivedFieldDefinitions[$fieldName])) {
 				$this->setDerivedField($fieldName, $fieldValue);
+			}
+		}
+	}
+	
+	/**
+	 * Sets fields by going through their setter methods, so that polymorphism is not
+	 * broken (you can override setFieldName($val), and that is the method that will
+	 * be called).
+	 * 
+	 * @param array $fields - format of [field_name] => [new_value]
+	 * @return void
+	 * @since 2008-12-17
+	 **/
+	public function setFieldsThroughSetters($fields)
+	{
+		foreach ($fields as $fieldName => $fieldValue) {
+			if (isset($this->fieldDefinitions[$fieldName])) {
+				$setter = 'set' . self::titleCase($fieldName);
+				$this->$setter($fieldValue);
 			}
 		}
 	}
@@ -1087,6 +1123,7 @@ abstract class CoughObject {
 	 * 
 	 * For example, you might need the following SQL:
 	 * 
+	 *     <code>
 	 *     $sql = '
 	 *     SELECT
 	 *         product.*
@@ -1098,10 +1135,12 @@ abstract class CoughObject {
 	 *         product
 	 *         INNER JOIN manufacturer USING (manufacturer_id)
 	 *     ';
+	 *     </code>
 	 * 
 	 * But, rather than hand coding all the fields (which might change) on the
 	 * manufacturer join, you can use getFieldAliases():
 	 * 
+	 *     <code>
 	 *     $sql = '
 	 *     SELECT
 	 *         product.*
@@ -1110,6 +1149,7 @@ abstract class CoughObject {
 	 *         product
 	 *         INNER JOIN manufacturer USING (manufacturer_id)
 	 *     ';
+	 *     </code>
 	 * 
 	 * @param string $className class to get fields for, e.g. Address
 	 * @param string $objectName object to alias fields to, e.g. BillingAddress_Object

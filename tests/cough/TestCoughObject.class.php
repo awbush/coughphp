@@ -178,6 +178,36 @@ class TestCoughObject extends UnitTestCase
 		$this->assertFalse($newBook3->hasKeyId(), 'New object with PK that defaults to zero and has no auto_increment should not have a key ID');
 	}
 	
+	public function testSetFieldsThroughSetters()
+	{
+		$data = array(
+			'title' => 'Ulysses',
+			'introduction' => '1264 pages of bs by one of the masters.',
+			'creation_datetime' => date('Y-m-d H:i:s'),
+		);
+		$newBook = new Book();
+		$newBook->setFieldsThroughSetters($data);
+		$this->assertTrue($newBook->save());
+	}
+	
+	public function testGetFieldsThroughGetters()
+	{
+		include_once(dirname(__FILE__) . '/config/Book2.class.php');
+		
+		$data = array(
+			'title' => 'Ulysses',
+			'introduction' => '1264 pages of bs by one of the masters.',
+			'creation_datetime' => date('Y-m-d H:i:s'),
+		);
+		
+		$book = new Book2($data);
+		$getterData = $book->getFieldsThroughGetters();
+		
+		$this->assertEqual('Your title is mine now!', $getterData['title']);
+		$this->assertEqual($data['introduction'], $getterData['introduction']);
+		$this->assertEqual($data['creation_datetime'], $getterData['creation_datetime']);
+	}
+	
 	public function testSetKeyId()
 	{
 		// calling setKeyId should be the same as calling the explicit setters for the columns making up the primary key.
