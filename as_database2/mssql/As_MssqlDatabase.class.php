@@ -98,10 +98,11 @@ class As_MssqlDatabase extends As_Database
 		return mssql_rows_affected($this->connection);
 	}
 	
-	// @todo implement getLastInsertId() for MSSQL
 	public function getLastInsertId()
 	{
-		throw new As_DatabaseException('getLastInsertId not implemented');
+		// SCOPE_IDENTITY docs: http://msdn.microsoft.com/en-us/library/ms190315.aspx
+		// IDENT_CURRENT docs: http://msdn.microsoft.com/en-us/library/ms175098.aspx
+		return $this->result('SELECT SCOPE_IDENTITY()');
 	}
 	
 	// @todo implement getNumFoundRows() for MSSQL
