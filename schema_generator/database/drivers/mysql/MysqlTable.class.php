@@ -23,11 +23,22 @@ class MysqlTable extends SchemaTable implements DriverTable {
 		$sql = 'SHOW COLUMNS FROM `' . $this->getTableName() . '`';
 		$result = $this->query($sql);
 		while ($row = mysql_fetch_assoc($result)) {
+			$autoInc = (isset($row['Extra']) && stripos($row['Extra'], 'auto_increment') !== false);
+			$isNullAllowed = (strtolower($row['Null']) == 'yes');
+			
+			// @todo Enable config option for the below or tweak it so older databases
+			// generate same as new ones rather than making new ones behave like old ones...
+			
+			// For true default values, use following line:
+			// $default = $row['Default'];
+			// For compatible default values regardless of MySQL version being used, use following line:
+			$default = ($isNullAllowed || $autoInc || !is_null($row['Default'])) ? $row['Default'] : '';
+			
 			$column = new SchemaColumn();
 			$column->setTable($this);
 			$column->setColumnName($row['Field']);
-			$column->setIsNullAllowed((strtolower($row['Null']) == 'yes'));
-			$column->setDefaultValue($row['Default']); // value from MySQL will be PHP null, false, true, or a string
+			$column->setIsNullAllowed($isNullAllowed);
+			$column->setDefaultValue($default); // value from MySQL will be PHP null, false, true, or a string
 			$column->setIsPrimaryKey(($row['Key'] == 'PRI'));
 			
 			// Set type and size of column
