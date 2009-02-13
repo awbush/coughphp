@@ -105,6 +105,11 @@ class As_SelectQuery extends As_Query
 		$this->add($select, $this->select, ",\n\t");
 	}
 	
+	public function setSelectOptions($selectOptions)
+	{
+		$this->selectOptions = $selectOptions;
+	}
+	
 	/**
 	 * Add optional select options, e.g. SQL_CALC_FOUND_ROWS, SQL_NO_CACHE
 	 * 
@@ -289,6 +294,7 @@ class As_SelectQuery extends As_Query
 	{
 		$sql = new As_SelectQuery($this->db);
 		$sql->setSelect($this->getSelect());
+		$sql->setSelectOptions($this->getSelectOptions());
 		$sql->setFrom($this->getFrom());
 		$sql->setWhere($this->getWhere());
 		$sql->setGroupBy($this->getGroupBy());
