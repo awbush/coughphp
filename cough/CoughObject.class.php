@@ -915,8 +915,11 @@ abstract class CoughObject {
 		if ($this->hasKeyId()) {
 			$db = $this->getDb();
 			$db->selectDb($this->getDbName());
-			$query = new As_Query($db);
-			$db->execute('DELETE FROM `' . $this->getTableName() . '` WHERE ' . $query->buildWhereSql($this->getPk()));
+			
+			$query = $db->getDeleteQuery();
+			$query->setTableName($this->getTableName());
+			$query->setWhere($this->getPk());
+			$query->run();
 			return true;
 		} else {
 			return false;
