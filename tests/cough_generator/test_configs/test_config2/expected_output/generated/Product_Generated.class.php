@@ -198,9 +198,7 @@ abstract class Product_Generated extends CoughObject {
 	public function removeProductOrder($objectOrId) {
 		$removedObject = $this->getProductOrder_Collection()->remove($objectOrId);
 		if (is_object($removedObject)) {
-			$removedObject->setProductCategory("");
-			$removedObject->setProductId("");
-			$removedObject->setProduct_Object(null);
+			$removedObject->remove();
 		}
 		return $removedObject;
 	}

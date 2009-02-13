@@ -276,8 +276,7 @@ abstract class Book_Generated extends CoughObject {
 	public function removeBook2library($objectOrId) {
 		$removedObject = $this->getBook2library_Collection()->remove($objectOrId);
 		if (is_object($removedObject)) {
-			$removedObject->setBookId("");
-			$removedObject->setBook_Object(null);
+			$removedObject->remove();
 		}
 		return $removedObject;
 	}

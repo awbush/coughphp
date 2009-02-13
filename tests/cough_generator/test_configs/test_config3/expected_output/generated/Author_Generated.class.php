@@ -223,8 +223,7 @@ abstract class Author_Generated extends CoughObject {
 	public function removeBook($objectOrId) {
 		$removedObject = $this->getBook_Collection()->remove($objectOrId);
 		if (is_object($removedObject)) {
-			$removedObject->setAuthorId(0);
-			$removedObject->setAuthor_Object(null);
+			$removedObject->remove();
 		}
 		return $removedObject;
 	}
