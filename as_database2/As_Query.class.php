@@ -176,7 +176,7 @@ class As_Query
 	 **/
 	public static function getSelectQuery($db)
 	{
-		return $db->getSelectQuery()
+		return $db->getSelectQuery();
 	}
 	
 	/**
@@ -184,7 +184,7 @@ class As_Query
 	 **/
 	public static function getInsertQuery($db)
 	{
-		return $db->getInsertQuery()
+		return $db->getInsertQuery();
 	}
 	
 	/**
