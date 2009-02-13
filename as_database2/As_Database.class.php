@@ -289,6 +289,17 @@ abstract class As_Database
 	}
 	
 	/**
+	 * Execute a query and return the # of affected rows.
+	 *
+	 * @return int
+	 **/
+	public function execute($sql)
+	{
+		$this->query($sql);
+		return $this->getNumAffectedRows();
+	}
+	
+	/**
 	 * Execute a database query and retrieve the value of the first field in the result
 	 * 
 	 * @param string $sql sql statement to execute

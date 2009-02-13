@@ -61,11 +61,9 @@ require_once('CoughKeyValueIterator.class.php');
 require_once('CoughCollection.class.php');
 require_once('CoughObject.class.php');
 require_once('CoughObjectStaticInterface.class.php');
-require_once('CoughDatabaseInterface.class.php');
-require_once('CoughDatabaseResultInterface.class.php');
 require_once('CoughDatabaseFactory.class.php');
 
 // Load the query dependencies
-require_once(dirname(dirname(__FILE__)) . '/as_query/load.inc.php');
+require_once(dirname(dirname(__FILE__)) . '/as_database2/load.inc.php');
 
 ?>

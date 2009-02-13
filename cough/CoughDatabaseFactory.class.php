@@ -64,7 +64,7 @@ class CoughDatabaseFactory
 	/**
 	 * Format:
 	 * 
-	 * [alias] => [CoughDatabaseInterface]
+	 * [alias] => [As_Database]
 	 * 
 	 * @var array
 	 **/
@@ -201,7 +201,7 @@ class CoughDatabaseFactory
 	 * 
 	 * @param string $alias
 	 * @param string $dbName optional database name to select before returning the database object.
-	 * @return CoughDatabaseInterface|null
+	 * @return As_Database|null
 	 **/
 	public static function getDatabase($alias, $dbName = null)
 	{
@@ -260,37 +260,13 @@ class CoughDatabaseFactory
 	/**
 	 * returns the correct database adapter object
 	 *
-	 * @return CoughDatabaseInterface concrete class implementing CoughDatabaseInterface
+	 * @return As_Database
 	 * @see $configs
 	 * @author Lewis Zhang, Anthony Bush
 	 **/
 	public static function constructDatabaseByConfig($dbConfig)
 	{
-		if (isset($dbConfig['adapter'])) {
-			$adapter = $dbConfig['adapter'];
-		} else {
-			$adapter = 'as';
-		}
-		
-		if (isset($dbConfig['adapter_class_prefix'])) {
-			$classPrefix = $dbConfig['adapter_class_prefix'];
-		} else {
-			$classPrefix = 'Cough' . str_replace(' ', '', ucwords(str_replace('_', ' ', $adapter)));
-		}
-		
-		if (isset($dbConfig['adapter_class_path'])) {
-			$classPath = $dbConfig['adapter_class_path'];
-		} else {
-			$classPath = dirname(dirname(__FILE__)) . '/dal/' . $adapter . '/';
-		}
-		
-		$adapterDatabaseClassName = $classPrefix . 'Database';
-		$adapterDatabaseResultClassName = $classPrefix . 'DatabaseResult';
-		
-		require_once($classPath . $adapterDatabaseClassName . '.class.php');
-		require_once($classPath . $adapterDatabaseResultClassName . '.class.php');
-		
-		return call_user_func(array($adapterDatabaseClassName, 'constructByConfig'), $dbConfig);
+		return call_user_func(array('As_Database', 'constructByConfig'), $dbConfig);
 	}
 	
 	/**
@@ -334,7 +310,7 @@ class CoughDatabaseFactory
 	 * Same as {@link getDatabases()}, except it rolls up all aliases using the same
 	 * connection into one array entry.
 	 *
-	 * @return array of objects that implement CoughDatabaseInterface
+	 * @return array of As_Database objects
 	 * @author Anthony Bush
 	 * @since 2008-09-09
 	 **/

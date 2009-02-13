@@ -19,11 +19,11 @@ abstract class As_DatabaseResult
 		$this->result = $result;
 	}
 	
-	// public function __destruct()
-	// {
-	// 	@$this->freeResult();
-	// }
-
+	public function __destruct()
+	{
+		@$this->freeResult();
+	}
+	
 	public function getRows()
 	{
 		$rows = array();
