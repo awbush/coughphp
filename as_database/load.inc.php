@@ -1,6 +1,3 @@
 <?php
-include_once 'As_Database.class.php';
-include_once 'As_DatabaseFactory.class.php';
-include_once 'As_DatabaseResult.class.php';
-include_once 'As_SqlFunction.class.php';
+// @deprecated use as_database2 instead (auto included by coughphp since 1.4)
 ?>
