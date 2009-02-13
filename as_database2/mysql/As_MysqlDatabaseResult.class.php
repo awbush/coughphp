@@ -17,7 +17,7 @@ class As_MysqlDatabaseResult extends As_DatabaseResult
 		return mysql_result($this->result, $row, $field);
 	}
 	
-	public function freeResult()
+	public function _freeResult()
 	{
 		return mysql_free_result($this->result);
 	}

@@ -10,9 +10,9 @@ abstract class As_DatabaseResult
 	abstract public function getRow();
 	abstract public function getNumRows();
 	abstract public function getResult($row, $field = 0);
-	abstract public function freeResult();
+	abstract public function _freeResult();
 	
-	protected $result;
+	protected $result = null;
 
 	public function __construct($result)
 	{
@@ -21,6 +21,7 @@ abstract class As_DatabaseResult
 	
 	public function __destruct()
 	{
+		// @todo do we need "@" anymore now that freeResult() checks before trying?
 		@$this->freeResult();
 	}
 	
@@ -32,6 +33,17 @@ abstract class As_DatabaseResult
 			$rows[] = $row;
 		}
 		return $rows;
+	}
+	
+	public function freeResult()
+	{
+		if ($this->result)
+		{
+			$freed = $this->_freeResult();
+			$this->result = null;
+			return $freed;
+		}
+		return true;
 	}
 	
 	/**

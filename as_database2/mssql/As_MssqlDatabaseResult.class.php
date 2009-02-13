@@ -17,7 +17,7 @@ class As_MssqlDatabaseResult extends As_DatabaseResult
 		return mssql_result($this->result, $row, $field);
 	}
 	
-	public function freeResult()
+	public function _freeResult()
 	{
 		return mssql_free_result($this->result);
 	}
