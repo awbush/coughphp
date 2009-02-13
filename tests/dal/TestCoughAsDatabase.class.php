@@ -8,7 +8,7 @@ class TestCoughAsDatabase extends UnitTestCase
 	
 	protected $db = null;
 	protected $adapterName = 'as';
-	protected $resultObjectClassName = 'CoughAsDatabaseResult';
+	protected $resultObjectClassName = 'As_DatabaseResult';
 	
 	public function __construct()
 	{

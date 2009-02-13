@@ -108,7 +108,7 @@ class TestCoughDatabaseFactory extends UnitTestCase
 		);
 		CoughDatabaseFactory::addConfig($testDbConfig);
 		$test1Db = CoughDatabaseFactory::getDatabase('cough_test1');
-		$this->assertIsA($test1Db, 'CoughAsDatabase');
+		$this->assertIsA($test1Db, 'As_Database');
 		
 		// test specifying adapter as "as" and new "db_name_hash" param
 		$testDbConfig = array(
@@ -122,7 +122,7 @@ class TestCoughDatabaseFactory extends UnitTestCase
 		);
 		CoughDatabaseFactory::addConfig($testDbConfig);
 		$test2Db = CoughDatabaseFactory::getDatabase('cough_test2');
-		$this->assertIsA($test2Db, 'CoughAsDatabase');
+		$this->assertIsA($test2Db, 'As_Database');
 		
 		// test new style aliases param
 		$testDbConfig = array(
@@ -135,7 +135,7 @@ class TestCoughDatabaseFactory extends UnitTestCase
 		);
 		CoughDatabaseFactory::addConfig($testDbConfig);
 		$test4Db = CoughDatabaseFactory::getDatabase('cough_test4');
-		$this->assertIsA($test4Db, 'CoughAsDatabase');
+		$this->assertIsA($test4Db, 'As_Database');
 		
 		// // test specifying adapter as "pdo"
 		// $testDbConfig = array(

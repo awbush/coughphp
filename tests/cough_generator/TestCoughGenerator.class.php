@@ -93,7 +93,7 @@ class TestCoughGenerator extends UnitTestCase
 		$result = $this->db->query('SHOW TABLES');
 		while ($row = $result->getRow())
 		{
-			$this->db->query('DROP TABLE IF EXISTS `' . $this->db->escape($row['Tables_in_test_cough_object']) . '`');
+			$this->db->query('DROP TABLE IF EXISTS ' . $this->db->backtick($row['Tables_in_test_cough_object']));
 		}
 	}
 	

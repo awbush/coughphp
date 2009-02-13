@@ -656,7 +656,9 @@ class TestCoughObject extends UnitTestCase
 		
 		$db = Author::getDb();
 		$db->startTransaction();
-		$db->delete('author', array(1 => 1));
+		$query = $db->getDeleteQuery();
+		$query->setTableName(Author::getTableName());
+		$query->run();
 		$db->rollback();
 		
 		$authors = new Author_Collection();
