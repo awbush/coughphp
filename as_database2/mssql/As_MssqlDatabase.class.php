@@ -28,6 +28,7 @@ class As_MssqlDatabase extends As_Database
 	 **/
 	public static function constructByConfig($dbConfig)
 	{
+		include_once('As_MssqlSelectQuery.class.php');
 		return new As_MssqlDatabase($dbConfig);
 	}
 	
@@ -140,6 +141,10 @@ class As_MssqlDatabase extends As_Database
 		$this->inTransaction = false;
 	}
 	
+	public function getSelectQuery()
+	{
+		return new As_MssqlSelectQuery($this);
+	}
 }
 
 ?>
