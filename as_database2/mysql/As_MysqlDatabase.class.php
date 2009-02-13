@@ -96,7 +96,7 @@ class As_MysqlDatabase extends As_Database
 	
 	public function backtick($value)
 	{
-		return '`' . $value . '`';
+		return '`' . str_replace('`', '', $value) . '`';
 	}
 	
 	protected function _query($sql)

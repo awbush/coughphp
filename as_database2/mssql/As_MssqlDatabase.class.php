@@ -82,7 +82,7 @@ class As_MssqlDatabase extends As_Database
 	
 	public function backtick($value)
 	{
-		return '[' . $value . ']';
+		return '[' . str_replace(']', '', $value) . ']';
 	}
 	
 	protected function _query($sql)

@@ -285,7 +285,7 @@ abstract class As_Database
 			$observer->notify('query', $this);
 		}
 		
-		return $result;
+		return $this->lastQueryResult;
 	}
 	
 	/**
