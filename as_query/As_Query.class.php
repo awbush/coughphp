@@ -119,7 +119,7 @@ class As_Query
 					if (!is_object($this->db)) {
 						throw new Exception('Must construct As_Query with a database object if relying on it to do quoting.');
 					}
-					$newCriteria[] = $key . $this->getEqualityOperatorFromValue($value) . $this->db->quote($value);
+					$newCriteria[] = $key . $this->db->getEqualityOperator($value) . $this->db->quote($value);
 				}
 			}
 			return $newCriteria;
@@ -150,7 +150,7 @@ class As_Query
 		
 		$clauseSql = '';
 		foreach ($where as $fieldName => $fieldValue) {
-			$clauseSql .= $fieldName . $this->getEqualityOperatorFromValue($fieldValue) . $this->db->quote($fieldValue) . ' AND ';
+			$clauseSql .= $fieldName . $this->db->getEqualityOperator($fieldValue) . $this->db->quote($fieldValue) . ' AND ';
 		}
 		$clauseSql = substr_replace($clauseSql, '', -5);
 		
@@ -162,35 +162,37 @@ class As_Query
 	 *
 	 * @return string
 	 * @author Lewis Zhang
+	 * @deprecated in coughphp-1.4, use `$db->getEqualityOperator($value)` instead.
 	 **/
 	public function getEqualityOperatorFromValue($fieldValue)
 	{
-		if ($fieldValue === null) {
-			return ' IS ';
-		}
-		else {
-			return ' = ';
-		}
+		return $this->db->getEqualityOperator($fieldValue);
 	}
 	
 	// Factory methods
 	
+	/**
+	 * @deprecated in coughphp-1.4, use `$db->getSelectQuery()` instead.
+	 **/
 	public static function getSelectQuery($db)
 	{
-		// We could check if the db type is MS SQL and return a different object that supports TOP instead of LIMIT, e.g.
-		return new As_SelectQuery($db);
+		return $db->getSelectQuery()
 	}
 	
+	/**
+	 * @deprecated in coughphp-1.4, use `$db->getInsertQuery()` instead.
+	 **/
 	public static function getInsertQuery($db)
 	{
-		// We could check if the db type is MS SQL and return a different object that supports TOP instead of LIMIT, e.g.
-		return new As_InsertQuery($db);
+		return $db->getInsertQuery()
 	}
 	
+	/**
+	 * @deprecated in coughphp-1.4, use `$db->getUpdateQuery()` instead.
+	 **/
 	public static function getUpdateQuery($db)
 	{
-		// We could check if the db type is MS SQL and return a different object that supports TOP instead of LIMIT, e.g.
-		return new As_UpdateQuery($db);
+		return $db->getUpdateQuery();
 	}
 }
 
