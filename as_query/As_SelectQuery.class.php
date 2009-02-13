@@ -187,10 +187,11 @@ class As_SelectQuery extends As_Query
 		if (!empty($this->select) && !empty($this->from))
 		{
 			// Add SELECT (required)
-			$sql .= "SELECT \n\t";
+			$sql .= "SELECT\n\t";
 			
 			// Add select options (optional)
-			if (!empty($this->selectOptions)) {
+			if (!empty($this->selectOptions))
+			{
 				$sql .= implode(' ', array_keys($this->selectOptions)) . "\n\t";
 			}
 			
@@ -231,7 +232,7 @@ class As_SelectQuery extends As_Query
 			// Add GROUP BY (optional)
 			if (!empty($this->groupBy))
 			{
-				$sql .= "\nGROUP BY \n\t";
+				$sql .= "\nGROUP BY\n\t";
 				if (is_array($this->groupBy))
 				{
 					$sql .= implode(",\n\t", $this->groupBy);
