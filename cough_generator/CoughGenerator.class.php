@@ -448,10 +448,7 @@ foreach ($hasMany->getRefKey() as $key => $column) {
 	public function remove<?php echo $refObjectTitleCase ?>($objectOrId) {
 		$removedObject = $this->get<?php echo $localCollectionName ?>()->remove($objectOrId);
 		if (is_object($removedObject)) {
-<?php foreach ($hasMany->getRefKey() as $key => $column): ?>
-			$removedObject->set<?php echo $this->config->getTitleCase($column->getColumnName()) ?>(<?php echo $this->getDefaultValueStringForColumn($column) ?>);
-<?php endforeach; ?>
-			$removedObject->set<?php echo $refObjectName ?>(null);
+			$removedObject->remove();
 		}
 		return $removedObject;
 	}

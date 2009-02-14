@@ -507,14 +507,9 @@ class TestCoughObject extends UnitTestCase
 		$heinlein->removeBook($stranger->getBookId());
 		$this->assertTrue($heinlein->getBook_Collection()->isEmpty());
 		
-		$this->assertIdentical($stranger->getAuthorId(), 0);
-		$this->assertEqual($stranger->getAuthorId(), 0);
-		
 		$heinlein->save();
 		$sameHeinlein = Author::constructByKey($heinlein->getAuthorId());
 		$this->assertTrue($sameHeinlein->getBook_Collection()->isEmpty());
-		
-		// TODO make sure that book id is unset now after database save
 	}
 	
 	public function testAnonymousSave()
