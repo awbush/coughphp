@@ -90,6 +90,9 @@ class As_DatabaseFactory {
 	
 	/**
 	 * Sets the database config for the specified database object name.
+	 * 
+	 * This and {@link setDatabaseConfigs()} are the preferred ways of initializing
+	 * the As_DatabaseFactory because DB connections are made only when needed.
 	 *
 	 * @return void
 	 * @see $dbConfigs
@@ -103,50 +106,31 @@ class As_DatabaseFactory {
 		self::$databases[$dbName] = $dbObject;
 	}
 	
+	/**
+	 * Retrieve DB object from memory (connecting to it on-demand), and select
+	 * optional DB name.
+	 * 
+	 * @param string $dbAliasName alias of the object to retrieve
+	 * @param string|null $dbName optional database name
+	 * @return As_Database
+	 * @throws As_DatabaseException
+	 * @author Anthony Bush
+	 **/
 	public static function getDatabase($dbAliasName, $dbName = null) {
 		if (isset(self::$databases[$dbAliasName])) {
-			
-			// We already have the database object in memory
 			$dbObject = self::$databases[$dbAliasName];
-			if (!is_null($dbName)) {
-				$dbObject->selectDB($dbName);
-			}
-			return $dbObject;
-			
 		} else {
-			
-			// The database object is not already in memory, attempt to add it.
 			if (isset(self::$dbConfigs[$dbAliasName])) {
-				
-				// Use the config to construct and add the database:
-				$config =& self::$dbConfigs[$dbAliasName];
-				// The port option isn't currectly required to be set
-				if (isset($config['port'])) {
-					self::addDatabase($dbAliasName, new As_Database($config['db_name'], $config['host'], $config['user'], $config['pass'], $config['port']));
-				} else {
-					self::addDatabase($dbAliasName, new As_Database($config['db_name'], $config['host'], $config['user'], $config['pass']));
-				}
-				
+				self::addDatabase($dbAliasName, As_Database::constructByConfig(self::$dbConfigs[$dbAliasName]));
+				$dbObject = self::$databases[$dbAliasName];
 			} else {
-				
-				// No configuration information... we should throw error here instead of relaying on As_Database class default host/user/pass values.
-				if (is_null($dbName)) {
-					$newDbName = $dbAliasName;
-				} else {
-					$newDbName = $dbName;
-				}
-				// No config? Try creating using generate host/user/pass
-				self::addDatabase($dbAliasName, new As_Database($newDbName));
-				
+				throw new As_DatabaseException('No As_DatabaseFactory config has been set for alias "' . $dbAliasName . '"');
 			}
-			
-			// We have the database object in memory now.
-			$dbObject = self::$databases[$dbAliasName];
-			if (!is_null($dbName)) {
-				$dbObject->selectDB($dbName);
-			}
-			return $dbObject;
 		}
+		if (!is_null($dbName)) {
+			$dbObject->selectDB($dbName);
+		}
+		return $dbObject;
 	}
 }
 
