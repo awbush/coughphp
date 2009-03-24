@@ -911,19 +911,24 @@ abstract class CoughObject {
 	 * @todo change this method to protected in the release following 1.4
 	 **/
 	public function delete() {
-		// return $this->deletionStrategy->delete($this);
-		if ($this->hasKeyId()) {
-			$db = $this->getDb();
-			$db->selectDb($this->getDbName());
-			
-			$query = $db->getDeleteQuery();
-			$query->setTableName($this->getTableName());
-			$query->setWhere($this->getPk());
-			$query->run();
-			return true;
-		} else {
-			return false;
-		}
+		// toggle off FIRST to avoid infinite recursion in case the deletion strategy
+		// needs to call save(). We toggle it back to true if the delete fails.
+		$this->shouldDelete = false;
+		$deleteSuccess = (bool)$this->getDeletionStrategy()->delete($this);
+		$this->shouldDelete = !$deleteSuccess;
+		return $deleteSuccess;
+	}
+	
+	/**
+	 * Returns the deletion strategy for the class; must override below.
+	 *
+	 * @return CoughDeletionStrategy
+	 * @author Anthony Bush
+	 * @since 1.4
+	 **/
+	public function getDeletionStrategy() {
+		// @todo 1.4: change this to CoughConfigException -- check with Johannes / https://blueprints.launchpad.net/coughphp/+spec/use-custom-exceptions
+		throw new Exception('Can not delete: must specify deletion strategy.');
 	}
 	
 	/**
