@@ -310,7 +310,7 @@ abstract class As_Database
 	{
 		$result = $this->query($sql);
 		if ($result->getNumRows()) {
-			return $result->result(0);
+			return $result->getResult(0);
 		} else {
 			return false;
 		}

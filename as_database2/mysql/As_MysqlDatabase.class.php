@@ -128,7 +128,7 @@ class As_MysqlDatabase extends As_Database
 	 **/
 	public function getNumFoundRows()
 	{
-		return $this->result('SELECT FOUND_ROWS()');
+		return $this->getResult('SELECT FOUND_ROWS()');
 	}
 	
 	public function getError()

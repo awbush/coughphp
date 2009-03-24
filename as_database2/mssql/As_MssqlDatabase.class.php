@@ -103,7 +103,7 @@ class As_MssqlDatabase extends As_Database
 	{
 		// SCOPE_IDENTITY docs: http://msdn.microsoft.com/en-us/library/ms190315.aspx
 		// IDENT_CURRENT docs: http://msdn.microsoft.com/en-us/library/ms175098.aspx
-		return $this->result('SELECT SCOPE_IDENTITY()');
+		return $this->getResult('SELECT SCOPE_IDENTITY()');
 	}
 	
 	// @todo implement getNumFoundRows() for MSSQL

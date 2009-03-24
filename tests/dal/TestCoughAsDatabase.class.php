@@ -20,7 +20,7 @@ class TestCoughAsDatabase extends UnitTestCase
 	
 	public function loadAdapterModule()
 	{
-		require_once(dirname(dirname(dirname(__FILE__))) . '/as_database/load.inc.php');
+		require_once(dirname(dirname(dirname(__FILE__))) . '/as_database2/load.inc.php');
 	}
 	
 	public function initDatabase()
@@ -143,7 +143,7 @@ class TestCoughAsDatabase extends UnitTestCase
 		$this->assertEqual($venkmanPersonId, 12);
 		
 		// test insert succeeded
-		$result = $this->db->result('SELECT person.name FROM person WHERE person.person_id = 12');
+		$result = $this->db->getResult('SELECT person.name FROM person WHERE person.person_id = 12');
 		$this->assertIdentical($result, 'Venkman');
 		
 		// test execute update
@@ -168,28 +168,26 @@ class TestCoughAsDatabase extends UnitTestCase
 		$this->assertIdentical($numAffected, 4);
 		
 		// test delete succeeded
-		$result = $this->db->result('SELECT COUNT(*) FROM person');
+		$result = $this->db->getResult('SELECT COUNT(*) FROM person');
 		$this->assertIdentical($result, '0');
-	}
-	
-	public function testEscape()
-	{
-		$acidString = "'''\"";
-		$escapedString = $this->db->escape($acidString);
-		$expectedString = "\\'\\'\\'\\\"";
-		$this->assertEqual($escapedString, $expectedString);
 	}
 	
 	public function testQuote()
 	{
-		// this string fails due to our use of magic quotes
-		//$acidString = "!@#^%&!@^%#!*@&#!()))()!(  .   . . ..\\\"  \\'   // /./ x?? ddfsdfdsf je;;ee  //.. ,, SELECT * FROM person balhhh )";
-		$acidString = "!@#^%&!@^%#!*@&#!()))()!(  .   . . ..   // /./ x?? ddfsdfdsf je;;ee  //.. ,, SELECT * FROM person balhhh )";
+		// Test handling of magic_quotes_gpc (lack thereof), and escaping of characters
+		$acidString = "\000\n\r\032!@#^%&!@^%#!*@&#!()))()!(  .   . . ..\\\\.\\\"  \\'   // /./ x?? ddfsdfdsf je;;ee  //.. ,, SELECT * FROM person balhhh )";
 		$quotedString = $this->db->quote($acidString);
 		$sql = 'UPDATE person SET person.name = ' . $quotedString;
 		$this->db->execute($sql);
-		$sql = 'SELECT person.name FROM person LIMIT 1';
-		$returnedString = $this->db->result($sql);
+		
+		// Not all DB layers support LIMIT
+		// $sql = 'SELECT person.name FROM person LIMIT 1';
+		$sql = $this->db->getSelectQuery();
+		$sql->setSelect('person.name');
+		$sql->setFrom('person');
+		$sql->setLimit(1);
+		
+		$returnedString = $this->db->getResult($sql);
 		$this->assertEqual($acidString, $returnedString);
 	}
 }

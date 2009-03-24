@@ -28,7 +28,7 @@ abstract class As_DatabaseResult
 	public function getRows()
 	{
 		$rows = array();
-		while ($row = $this->getRows())
+		while ($row = $this->getRow())
 		{
 			$rows[] = $row;
 		}
