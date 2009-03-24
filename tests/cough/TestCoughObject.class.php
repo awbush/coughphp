@@ -83,7 +83,6 @@ class TestCoughObject extends UnitTestCase
 		// include Cough + dependencies; this should be the only include necessary
 		$coughRoot = dirname(dirname(dirname(__FILE__)));
 		require_once($coughRoot . '/cough/load.inc.php');
-		require_once($coughRoot . '/as_database/load.inc.php');
 		require_once($coughRoot . '/cough_generator/load.inc.php');
 	}
 	

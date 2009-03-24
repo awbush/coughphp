@@ -43,7 +43,6 @@ class TestCoughGenerator extends UnitTestCase
 		$coughRoot = dirname(dirname(dirname(__FILE__)));
 		require_once($coughRoot . '/cough_generator/load.inc.php');
 		require_once($coughRoot . '/cough/load.inc.php');
-		require_once($coughRoot . '/as_database/load.inc.php');
 		
 		// Setup DB config
 		require(dirname(dirname(__FILE__)) . '/database_config.inc.php');
