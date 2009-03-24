@@ -78,19 +78,6 @@ class As_MysqlDatabase extends As_Database
 			return $value->__toString();
 		}
 		
-		// @todo verify this shouldn't be somewhere else, e.g. you don't need to do this
-		// when quoting values pulled from DB, e.g. I bet we could show that clone of
-		// something that has quotes fails.  This code should really only be executed if
-		// data is comming directly from GPC data. Removing it wouldn't harm security,
-		// but would cause extra escaped quotes, etc. Probably this will need to be a
-		// runtime settable option, enabled by default, and then you need only disable it
-		// when you either do this yourself, turn off get_magic_quotes_gpc, or when you
-		// know data isn't coming from GPC. Recommend static method on As_Database as
-		// this should be global config and not DB engine specific.
-		if (get_magic_quotes_gpc()) {
-			$value = stripslashes($value);
-		}
-		
 		return '"' . mysql_real_escape_string($value, $this->connection) . '"';
 	}
 	

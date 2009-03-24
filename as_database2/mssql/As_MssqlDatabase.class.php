@@ -76,8 +76,7 @@ class As_MssqlDatabase extends As_Database
 			return $value->__toString();
 		}
 		
-		// @todo verify this for correctness. it doesn't do gpc check like MySQL version and instead strips slashes always...
-		return "'" . stripslashes(str_replace("'", "''", $value)) . "'";
+		return "'" . str_replace("'", "''", $value) . "'";
 	}
 	
 	public function backtick($value)
