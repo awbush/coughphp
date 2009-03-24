@@ -125,6 +125,10 @@ abstract class Network_Generated extends CoughObject {
 		return new Network($hash);
 	}
 	
+	public function getDeletionStrategy() {
+		return CoughDeletionStrategy::constructByType('Delete');
+	}
+	
 	public function notifyChildrenOfKeyChange(array $key) {
 		foreach ($this->getCustPc_Collection_ByNetworkId() as $custPc) {
 			$custPc->setNetworkId($key['id']);

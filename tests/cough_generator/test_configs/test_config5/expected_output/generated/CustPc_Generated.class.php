@@ -150,6 +150,10 @@ abstract class CustPc_Generated extends CoughObject {
 		return new CustPc($hash);
 	}
 	
+	public function getDeletionStrategy() {
+		return CoughDeletionStrategy::constructByType('Delete');
+	}
+	
 	public static function getLoadSql() {
 		$tableName = CustPc::getTableName();
 		return '

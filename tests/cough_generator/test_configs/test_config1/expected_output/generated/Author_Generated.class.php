@@ -113,6 +113,10 @@ abstract class Author_Generated extends CoughObject {
 		return new Author($hash);
 	}
 	
+	public function getDeletionStrategy() {
+		return CoughDeletionStrategy::constructByType('Delete');
+	}
+	
 	public function notifyChildrenOfKeyChange(array $key) {
 		foreach ($this->getBook_Collection() as $book) {
 			$book->setAuthorId($key['author_id']);

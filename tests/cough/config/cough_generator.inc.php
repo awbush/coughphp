@@ -42,6 +42,7 @@ $config = array(
 		'delete_flag_value' => '1',
 	),
 	
+	'deletion_strategy' => 'Delete',
 );
 
 ?>

@@ -19,6 +19,7 @@ $config = array(
 	),
 	
 	'load_sql_inner_joins' => 'enabled',
+	'deletion_strategy' => 'Delete',
 	
 	'class_names' => array(
 		'prefix' => '',

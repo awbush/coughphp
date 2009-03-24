@@ -89,6 +89,10 @@ abstract class Customer_Generated extends CoughObject {
 		return new Customer($hash);
 	}
 	
+	public function getDeletionStrategy() {
+		return CoughDeletionStrategy::constructByType('Delete');
+	}
+	
 	public function notifyChildrenOfKeyChange(array $key) {
 		foreach ($this->getProductOrder_Collection() as $productOrder) {
 			$productOrder->setCustomerId($key['id']);

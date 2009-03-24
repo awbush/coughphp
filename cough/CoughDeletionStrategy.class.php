@@ -10,6 +10,9 @@ abstract class CoughDeletionStrategy
 	 * return CoughDeletionStrategy::constructByType('Delete')->delete($this);
 	 * </code>
 	 * 
+	 * The above is generated for you when we set the deletion_strategy config
+	 * setting in cough_generator.inc.php
+	 * 
 	 * @return CoughDeletionStrategy
 	 * @author Anthony Bush
 	 * @since 1.4

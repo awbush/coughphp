@@ -126,6 +126,10 @@ abstract class Book2library_Generated extends CoughObject {
 		return new Book2library($hash);
 	}
 	
+	public function getDeletionStrategy() {
+		return CoughDeletionStrategy::constructByType('Delete');
+	}
+	
 	public static function getLoadSql() {
 		$tableName = Book2library::getTableName();
 		return '

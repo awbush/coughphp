@@ -18,6 +18,8 @@ $config = array(
 		'file_suffix' => '.class.php',
 	),
 	
+	'deletion_strategy' => 'Delete',
+	
 	'class_names' => array(
 		'prefix' => '',
 		'strip_table_name_prefixes' => array(),

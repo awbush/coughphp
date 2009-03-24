@@ -34,6 +34,7 @@ class CoughGeneratorConfig extends CoughConfig {
 			'load_sql_inner_joins' => 'disabled', // valid options: enabled, disabled
 			'generate_has_one_methods' => 'all', // valid options: all, none, or array of databases to generate join methods for.
 			'generate_has_many_methods' => 'all', // valid options: all, none, or array of databases to generate join methods for.
+			'deletion_strategy' => '', // valid options: Delete, Retire
 			'class_names' => array(
 				// You can add prefixes to class names that are generated
 				'prefix' => '',
@@ -77,6 +78,22 @@ class CoughGeneratorConfig extends CoughConfig {
 			// 	),
 			// ),
 		);
+	}
+	
+	/**
+	 * Add logic to mergeIntoConfig() to do quick validation of deletion_strategy setting.
+	 *
+	 * @return void
+	 * @throws Exception
+	 * @todo throw CoughConfigException instead of generic exception
+	 * @author Anthony Bush
+	 * @since 1.4
+	 **/
+	protected function mergeIntoConfig($config) {
+		parent::mergeIntoConfig($config);
+		if ($this->config['deletion_strategy'] == '') {
+			throw new Exception('Can not generate: must specify the deletion_strategy config setting (Delete|Retire|Custom).');
+		}
 	}
 	
 	// public function getTableConfigValue($configKey, SchemaTable $table) {
@@ -314,6 +331,19 @@ class CoughGeneratorConfig extends CoughConfig {
 		// Add the remote field name to the base name
 		$value = $baseName . '_By' . $this->getTitleCase($refKey[0]->getColumnName());
 		return $value;
+	}
+	
+	/**
+	 * Returns the deletion_strategy value.
+	 *
+	 * @return string
+	 * @author Anthony Bush
+	 * @since 1.4
+	 **/
+	public function getDeletionStrategy(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		return $this->getConfigValue('deletion_strategy', $dbName, $tableName);
 	}
 	
 	/**

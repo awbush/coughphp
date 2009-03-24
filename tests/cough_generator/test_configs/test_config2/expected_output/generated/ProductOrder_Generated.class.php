@@ -114,6 +114,10 @@ abstract class ProductOrder_Generated extends CoughObject {
 		return new ProductOrder($hash);
 	}
 	
+	public function getDeletionStrategy() {
+		return CoughDeletionStrategy::constructByType('Delete');
+	}
+	
 	public static function getLoadSql() {
 		$tableName = ProductOrder::getTableName();
 		return '

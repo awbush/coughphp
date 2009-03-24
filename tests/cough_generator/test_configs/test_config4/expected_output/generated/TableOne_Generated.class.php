@@ -95,6 +95,10 @@ abstract class TableOne_Generated extends CoughObject {
 		return new TableOne($hash);
 	}
 	
+	public function getDeletionStrategy() {
+		return CoughDeletionStrategy::constructByType('Delete');
+	}
+	
 	public static function getLoadSql() {
 		$tableName = TableOne::getTableName();
 		return '

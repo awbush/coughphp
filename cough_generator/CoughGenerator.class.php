@@ -458,6 +458,16 @@ foreach ($hasMany->getRefKey() as $key => $column) {
 		}
 		$oneToManyMethods = ob_get_clean();
 		
+		// Generate the `getDeletionStrategy()` method if it will be non-empty.
+		$strategyType = $this->config->getDeletionStrategy($table);
+		$deletionStrategyPhp = '';
+		if ($strategyType != '' && $strategyType != 'Custom')
+		{
+			$deletionStrategyPhp = "\t" . 'public function getDeletionStrategy() {'
+			                     . "\n\t\treturn CoughDeletionStrategy::constructByType('" . $strategyType . "');"
+			                     . "\n\t}\n\t\n";
+		}
+		
 		// Generate the `notifyChildrenOfKeyChange()` method if it will be non-empty.
 		if (count($notifyCollections) > 0) {
 			$notifyChildrenOfKeyChangePhp = "\t" . 'public function notifyChildrenOfKeyChange(array $key) {'
@@ -591,6 +601,7 @@ echo $objectDefinitionsPhp;
 	}
 	
 <?php
+echo $deletionStrategyPhp;
 echo $notifyChildrenOfKeyChangePhp;
 echo $getLoadSqlWithoutWherePhp;
 echo "\t" . '// Generated attribute accessors (getters and setters)' . "\n\t\n";

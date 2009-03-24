@@ -19,6 +19,7 @@ $config = array(
 	'load_sql_inner_joins' => 'disabled', // valid options: enabled, disabled
 	'generate_has_one_methods' => 'all', // valid options: all, none, or array of databases to generate join methods for.
 	'generate_has_many_methods' => 'all', // valid options: all, none, or array of databases to generate join methods for.
+	'deletion_strategy' => 'Delete', // valid options: Delete, Retire
 	
 	'class_names' => array(
 		// You can add prefixes to class names that are generated

@@ -113,6 +113,10 @@ abstract class Library_Generated extends CoughObject {
 		return new Library($hash);
 	}
 	
+	public function getDeletionStrategy() {
+		return CoughDeletionStrategy::constructByType('Delete');
+	}
+	
 	public function notifyChildrenOfKeyChange(array $key) {
 		foreach ($this->getBook2library_Collection() as $book2library) {
 			$book2library->setLibraryId($key['library_id']);

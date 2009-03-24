@@ -101,6 +101,10 @@ abstract class Product_Generated extends CoughObject {
 		return new Product($hash);
 	}
 	
+	public function getDeletionStrategy() {
+		return CoughDeletionStrategy::constructByType('Delete');
+	}
+	
 	public function notifyChildrenOfKeyChange(array $key) {
 		foreach ($this->getProductOrder_Collection() as $productOrder) {
 			$productOrder->setProductCategory($key['category']);
