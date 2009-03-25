@@ -117,7 +117,7 @@ class As_Query
 				else
 				{
 					if (!is_object($this->db)) {
-						throw new Exception('Must construct As_Query with a database object if relying on it to do quoting.');
+						throw new As_DatabaseException('Must construct As_Query with a database object if relying on it to do quoting.');
 					}
 					$newCriteria[] = $key . $this->db->getEqualityOperator($value) . $this->db->quote($value);
 				}
@@ -145,7 +145,7 @@ class As_Query
 		}
 		
 		if (!is_object($this->db)) {
-			throw new Exception('Must construct As_Query with a database object if building WHERE SQL.');
+			throw new As_DatabaseException('Must construct As_Query with a database object if building WHERE SQL.');
 		}
 		
 		$clauseSql = '';

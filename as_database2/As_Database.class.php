@@ -13,7 +13,7 @@ abstract class As_Database
 	 * Connects to server specified via DSN information.
 	 * 
 	 * @return void
-	 * @throws As_DatabaseException
+	 * @throws As_DatabaseConnectException
 	 **/
 	abstract protected function connect();
 	
@@ -265,7 +265,7 @@ abstract class As_Database
 	 * 
 	 * @param string $sql
 	 * @return As_DatabaseResult
-	 * @throws As_DatabaseException
+	 * @throws As_DatabaseQueryException
 	 **/
 	public function query($sql)
 	{
@@ -277,7 +277,7 @@ abstract class As_Database
 		
 		if (!$this->lastQueryResult)
 		{
-			throw new As_DatabaseException('Query error: ' . $this->getError() . ' -- QUERY: ' . $this->lastQuery);
+			throw new As_DatabaseQueryException($this->getError(), $this->lastQuery);
 		}
 		
 		foreach ($this->observers as $observer)

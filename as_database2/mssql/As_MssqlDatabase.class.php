@@ -39,7 +39,7 @@ class As_MssqlDatabase extends As_Database
 		// instead. Also might try playing with `print_r(error_get_last());`
 		$this->connection = mssql_connect($hostAndPort, $this->dsn['user'], $this->dsn['pass'], true);
 		if (!$this->connection) {
-			throw new As_DatabaseException('Unable to connect to mssql database server ' . $hostAndPort . ': ' . mssql_get_last_message());
+			throw new As_DatabaseConnectException("mssql", $this->dsn["host"], $this->dsn["port"], $this->dsn["user"], mssql_get_last_message());
 		}
 		
 		// select default DB if provided
