@@ -10,7 +10,10 @@ class As_DatabaseConnectException extends As_DatabaseException
    public function __construct($driver, $host, $port, $user, $error = NULL) 
    {
        parent::__construct('Unable to connect to ' . $driver . ' database server ' . $host . ':' . $port . ' as ' . $user . (isset($error) ? ': ' . $error : ''));
-       $this->hostAndPort = $hostAndPort;
+       $this->host = $host;
+       $this->port = $port;
+       $this->user = $user;
+       $this->error = $error;
        $this->driver = $driver;
    }
 
