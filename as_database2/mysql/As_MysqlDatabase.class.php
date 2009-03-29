@@ -41,7 +41,7 @@ class As_MysqlDatabase extends As_Database
 		// instead. Also might try playing with `print_r(error_get_last());`
 		$this->connection = mysql_connect($hostAndPort, $this->dsn['user'], $this->dsn['pass'], true, $this->dsn['client_flags']);
 		if (!$this->connection) {
-			throw new As_DatabaseException('Unable to connect to mysql database server ' . $hostAndPort);
+			throw new As_DatabaseConnectException('mysql', $this->dsn["host"], $this->dsn["port"], $this->dsn["user"]);
 		}
 		
 		// select default DB if provided

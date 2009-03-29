@@ -174,7 +174,7 @@ class CoughDatabaseFactory
 		}
 		else if (!isset($config['db_name_hash']))
 		{
-			throw new Exception('Must specify the "aliases" or the "db_name_hash" parameter in the config.');
+			throw new CoughException('Must specify the "aliases" or the "db_name_hash" parameter in the config.');
 		}
 		
 		self::$databaseNames = $config['db_name_hash'] + self::$databaseNames;
@@ -237,7 +237,7 @@ class CoughDatabaseFactory
 		}
 		
 		// As of CoughPHP 1.3 we now throw verbose exception.
-		throw new Exception('The alias "' . $alias . '" does not exist. Make sure your config calls CoughDatabaseFactory::addConfig() or CoughDatabaseFactory::setConfigs().');
+		throw new CoughException('The alias "' . $alias . '" does not exist. Make sure your config calls CoughDatabaseFactory::addConfig() or CoughDatabaseFactory::setConfigs().');
 		// return null;
 	}
 	

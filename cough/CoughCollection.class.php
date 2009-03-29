@@ -362,7 +362,7 @@ abstract class CoughCollection extends ArrayObject {
 		
 		if (empty($multisortArgs))
 		{
-			throw new Exception('missing parameter in sortByMethods');
+			throw new CoughException('missing parameter in sortByMethods');
 		}
 		
 		// Build multisortArgs with references to the key value pair arrays to do the sorting on.
