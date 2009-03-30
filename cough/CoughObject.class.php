@@ -907,8 +907,6 @@ abstract class CoughObject {
 	 *
 	 * @return boolean - whether or not the delete was executed.
 	 * @author Anthony Bush
-	 * @access protected
-	 * @todo change this method to protected in the release following 1.4
 	 **/
 	public function delete() {
 		// toggle off FIRST to avoid infinite recursion in case the deletion strategy
@@ -923,12 +921,12 @@ abstract class CoughObject {
 	 * Returns the deletion strategy for the class; must override below.
 	 *
 	 * @return CoughDeletionStrategy
+	 * @throws CoughException
 	 * @author Anthony Bush
 	 * @since 1.4
 	 **/
 	public function getDeletionStrategy() {
-		// @todo 1.4: change this to CoughConfigException -- check with Johannes / https://blueprints.launchpad.net/coughphp/+spec/use-custom-exceptions
-		throw new Exception('Can not delete: must specify deletion strategy.');
+		throw new CoughException('Can not delete: must specify deletion strategy.');
 	}
 	
 	/**

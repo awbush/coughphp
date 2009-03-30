@@ -135,7 +135,7 @@ class As_Query
 	 *
 	 * @return string
 	 * @author Lewis Zhang, Anthony Bush
-	 * @throws Exception
+	 * @throws As_DatabaseException
 	 **/
 	public function buildWhereSql($where)
 	{
