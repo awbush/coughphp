@@ -79,11 +79,12 @@ class DatabaseSchemaGenerator extends SchemaGenerator {
 		$dsn = $this->config->getDsn();
 		
 		// Load the driver-specific classes
-		$driver = ucfirst(strtolower($dsn['driver']));
-		$this->loadDrivers(dirname(__FILE__) . '/drivers/mysql/', $driver);
+		$driver = strtolower($dsn['driver']);
+		$classPrefix = ucfirst($driver);
+		$this->loadDrivers(dirname(__FILE__) . '/drivers/' . $driver . '/', $classPrefix);
 		
 		// Construct the server/schema class and start loading databases according to the configuration options.
-		$serverClass = $driver . 'Server';
+		$serverClass = $classPrefix . 'Server';
 		$server = new $serverClass($dsn);
 		
 		$dbNames = $server->getAvailableDatabaseNames();
