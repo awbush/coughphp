@@ -263,8 +263,8 @@ abstract class CoughCollection extends ArrayObject {
 	protected function removeByKey($key) {
 		if (isset($this[$key])) {
 			$objectToRemove = $this->offsetGet($key);
-			$this->offsetUnset($key);
 			$this->removedElements[] = $objectToRemove;
+			$this->offsetUnset($key);
 			return $objectToRemove;
 		}
 		return false;
@@ -279,8 +279,8 @@ abstract class CoughCollection extends ArrayObject {
 	protected function removeByReference($objectToRemove) {
 		foreach ($this as $key => $element) {
 			if ($element == $objectToRemove) {
-				$this->offsetUnset($key);
 				$this->removedElements[] = $objectToRemove;
+				$this->offsetUnset($key);
 				return $objectToRemove;
 			}
 		}

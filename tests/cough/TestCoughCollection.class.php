@@ -316,6 +316,23 @@ class TestCoughCollection extends UnitTestCase
 		$this->assertIdentical(empty($collection), empty($iterator));
 	}
 	
+	public function testCanRemoveItemsFromCollectionWhileLooping()
+	{
+		$collection = $this->buildSortableCollection();
+		$initialCount = count($collection);
+		
+		$this->assertTrue($initialCount > 1, 'This test needs a collection size greater than one.');
+		
+		foreach ($collection as $element)
+		{
+			$collection->remove($element);
+			// $collection->offsetUnset($element->getKeyId());
+			// unset($collection[$element->getKeyId()]);
+		}
+		
+		$this->assertTrue(count($collection) == 0);
+	}
+	
 }
 
 ?>
