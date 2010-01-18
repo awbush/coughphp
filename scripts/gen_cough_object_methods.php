@@ -102,8 +102,8 @@ $entityTitleName = As_String::titleCase($entityName);
 			#WHERE
 			#...
 			#LIMIT 1
-        ';
-        
+		';
+		
 		$this->set<?php echo $entityTitleName ?>_Object(<?php echo $className ?>::constructBySql($sql));
 	}
 	
