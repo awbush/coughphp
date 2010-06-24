@@ -98,7 +98,7 @@ class As_MysqliDatabase extends As_Database
 		if (!$result) {
 			return $result;
 		}
-		return new As_MysqlDatabaseResult($result);
+		return new As_MysqliDatabaseResult($result);
 	}
 	
 	public function queryPreparedStmt($sql, $parameters, $types = 's') {
