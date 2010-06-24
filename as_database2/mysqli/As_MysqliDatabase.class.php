@@ -105,8 +105,12 @@ class As_MysqliDatabase extends As_Database
 		
 		$this->query = $sql;
 		$this->parameters = $parameters;
-		$stmt = mysqli_prepare($this->connection, $sql);
-
+		$stmt = mysqli_stmt_init($this->connection);
+		$result = mysqli_stmt_prepare($stmt, $sql);
+		if ($result === false)
+		{
+			throw new Exception(mysqli_stmt_error($stmt));
+		}
 		$params = array($stmt, $types);
 		foreach ($parameters as $parameter)
 		{
