@@ -226,6 +226,7 @@ class CoughGenerator {
 	protected function generateBaseObject($table) {
 		
 		$dbName = $table->getDatabase()->getDatabaseName();
+		$dbAlias = $table->getDatabase()->getDatabaseAlias();
 		$tableName = $table->getTableName();
 		
 		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
@@ -515,6 +516,8 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 	
 	protected static $db = null;
 	protected static $dbName = '<?php echo $dbName; ?>';
+	protected static $dbAlias = '<?php echo $dbAlias; ?>';
+	
 	protected static $tableName = '<?php echo $tableName; ?>';
 	protected static $pkFieldNames = array('<?php echo implode("','", array_keys($table->getPrimaryKey())) ?>');
 	
@@ -541,13 +544,13 @@ echo $objectDefinitionsPhp;
 	
 	public static function getDb() {
 		if (is_null(<?php echo $starterObjectClassName ?>::$db)) {
-			<?php echo $starterObjectClassName ?>::$db = CoughDatabaseFactory::getDatabase(<?php echo $starterObjectClassName ?>::$dbName);
+			<?php echo $starterObjectClassName ?>::$db = CoughDatabaseFactory::getDatabase(<?php echo $starterObjectClassName ?>::$dbAlias);
 		}
 		return <?php echo $starterObjectClassName ?>::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(<?php echo $starterObjectClassName ?>::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(<?php echo $starterObjectClassName ?>::$dbAlias);
 	}
 	
 	public static function getTableName() {
@@ -635,6 +638,7 @@ echo $oneToManyMethods;
 	protected function generateBaseCollection($table) {
 		
 		$dbName = $table->getDatabase()->getDatabaseName();
+		$dbAlias = $table->getDatabase()->getDatabaseAlias();
 		$tableName = $table->getTableName();
 		
 		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
@@ -656,7 +660,7 @@ echo $oneToManyMethods;
  * <?php echo implode("\n * ", $phpdocTags) . "\n"; ?>
  **/
 abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extensionClassName ?> {
-	protected $dbAlias = '<?php echo $dbName ?>';
+	protected $dbAlias = '<?php echo $dbAlias ?>';
 	protected $dbName = '<?php echo $dbName ?>';
 	protected $elementClassName = '<?php echo $starterObjectClassName ?>';
 }
@@ -683,6 +687,7 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 	protected function generateStarterObject($table) {
 		
 		$dbName = $table->getDatabase()->getDatabaseName();
+		$dbAlias = $table->getDatabase()->getDatabaseAlias();		
 		$tableName = $table->getTableName();
 		
 		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
@@ -713,6 +718,7 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 		$class->setIsCollectionClass(false);
 		$class->setClassName($starterObjectClassName);
 		$class->setDatabaseName($dbName);
+		$class->setDatabaseAlias($dbAlias);
 		$class->setTableName($tableName);
 		$this->addGeneratedClass($class);
 	}

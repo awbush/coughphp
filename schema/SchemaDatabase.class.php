@@ -10,6 +10,7 @@ class SchemaDatabase {
 	
 	protected $server = null; // reference to parent object
 	protected $databaseName = null;
+	protected $databaseAlias = null;
 	protected $tables = array();
 	
 	// Getters
@@ -23,6 +24,13 @@ class SchemaDatabase {
 	}
 	
 	public function getDatabaseName() {
+		return $this->databaseName;
+	}
+	
+	public function getDatabaseAlias() {
+		if (!is_null($this->databaseAlias)) {
+			return $this->databaseAlias;
+		}
 		return $this->databaseName;
 	}
 	
@@ -47,6 +55,11 @@ class SchemaDatabase {
 	public function setDatabaseName($databaseName) {
 		$this->databaseName = $databaseName;
 	}
+
+	public function setDatabaseAlias($databaseAlias) {
+		$this->databaseAlias = $databaseAlias;
+	}
+
 	
 	public function addTable($table) {
 		$this->tables[$table->getTableName()] = $table;

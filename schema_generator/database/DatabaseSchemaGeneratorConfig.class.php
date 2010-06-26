@@ -56,6 +56,8 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 			
 			'acceptable_join_databases' => 'all',
 
+			'database_name_aliases' => array(),
+
 			// Now, we can override the global config on a per database level.
 			// 'databases' => array(
 			// 	'customer' => array(
@@ -183,6 +185,16 @@ class DatabaseSchemaGeneratorConfig extends CoughConfig {
 	public function getPrimaryKeyOverride($dbName, $tableName)
 	{
 		return $this->getConfigValue('primary_key', $dbName, $tableName, CoughConfig::SCOPE_TABLE);
+	}
+	
+	public function getDatabaseAlias($dbName)
+	{
+		$aliases = $this->getConfigValue('database_name_aliases');
+		if (isset($aliases[$dbName]))
+		{
+			return $aliases[$dbName];
+		}
+		return $dbName;
 	}
 	
 }

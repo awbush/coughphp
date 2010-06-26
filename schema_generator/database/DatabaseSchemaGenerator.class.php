@@ -94,6 +94,10 @@ class DatabaseSchemaGenerator extends SchemaGenerator {
 					echo 'Scanning database `' . $dbName . "`\n";
 				}
 				$database = $server->loadDatabase($dbName);
+				if ($this->config->getDatabaseAlias($dbName) != $dbName)
+				{
+					$database->setDatabaseAlias($this->config->getDatabaseAlias($dbName));
+				}
 				foreach ($database->getAvailableTableNames() as $tableName) {
 					if ($this->config->shouldProcessTable($dbName, $tableName)) {
 						if ($this->verbose) {
