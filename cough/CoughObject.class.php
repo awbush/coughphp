@@ -291,6 +291,21 @@ abstract class CoughObject {
 	}
 	
 	/**
+	 * Serialize only the standard cough fields
+	 * 
+	 * Usage:
+	 *     Invoked automatically by serialize($object)
+	 *
+	 * @return array
+	 * @author Richard Pistole
+	 **/
+	public function __sleep() 
+	{
+		return array('fields', 'derivedFields', 'objects', 'collections', 'isNew', 'isDeleted', 'fieldDefinitions', 'objectDefinitions', 'derivedFieldDefinitions');
+	}
+	
+	
+	/**
 	 * This will compare two CoughObjects and return true if they are of the
 	 * same type and have the same field values (excluding the primary key).
 	 * 
