@@ -101,7 +101,7 @@ class As_MysqliDatabase extends As_Database
 		return new As_MysqliDatabaseResult($result);
 	}
 	
-	public function queryPreparedStmt($sql, $parameters, $types = 's') {
+	public function queryPreparedStmt($sql, $parameters, $types = '') {
 		
 		$this->query = $sql;
 		$this->parameters = $parameters;
@@ -111,13 +111,19 @@ class As_MysqliDatabase extends As_Database
 		{
 			throw new Exception(mysqli_stmt_error($stmt));
 		}
-		$params = array($stmt, $types);
-		foreach ($parameters as $parameter)
+		if ($types == '')
 		{
-			$params[] = &$parameter;
+			foreach ($parameters as $parameter)
+			{
+				$types .= 's';
+			}
 		}
-		
-		call_user_func_array('mysqli_stmt_bind_param', $params); 
+		$params = array($types);
+		foreach ($parameters as $key => $parameter)
+		{
+			$params[] = &$parameters[$key];
+		}
+		call_user_func_array(array($stmt, 'bind_param'), $params); 
 		$result = mysqli_stmt_execute($stmt);
 		
 		if (!$result) {
@@ -187,6 +193,3 @@ class As_MysqliDatabase extends As_Database
 }
 
 ?>
-
-	
-
