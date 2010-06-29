@@ -155,6 +155,10 @@ abstract class As_Database
 	protected $lastQueryTime = null;
 	protected $lastQuery = null;
 	protected $lastQueryResult = null;
+	protected $lastParams = null;
+	protected $lastTypes = null;
+	
+	
 	
 	/**
 	 * returns the correct database abstraction object
@@ -183,7 +187,6 @@ abstract class As_Database
 		} else {
 			$driver = 'mysql';
 		}
-		
 		$className = 'As_' . ucfirst($driver) . 'Database';
 		$classPath = dirname(__FILE__) . '/' . $driver . '/';
 		
@@ -270,9 +273,36 @@ abstract class As_Database
 	public function query($sql)
 	{
 		$this->lastQuery = (string)$sql;
+		$this->lastParams = null;
+		$this->lastTypes = null;
+
 		
 		$start = microtime(true);
 		$this->lastQueryResult = $this->_query($this->lastQuery);
+		$this->lastQueryTime = microtime(true) - $start;
+
+		
+		if (!$this->lastQueryResult)
+		{
+			throw new As_DatabaseQueryException($this->getError(), $this->lastQuery);
+		}
+		
+		foreach ($this->observers as $observer)
+		{
+			$observer->notify('query', $this);
+		}
+		
+		return $this->lastQueryResult;
+	}
+	
+	public function queryPreparedStmt($sql, $params, $types = '')
+	{
+		$this->lastQuery = (string)$sql;
+		$this->lastParams = $params;
+		$this->lastTypes = $types;
+		
+		$start = microtime(true);
+		$this->lastQueryResult = $this->_queryPreparedStmt($this->lastQuery, $this->lastParams, $this->lastTypes);
 		$this->lastQueryTime = microtime(true) - $start;
 		
 		if (!$this->lastQueryResult)
@@ -287,6 +317,7 @@ abstract class As_Database
 		
 		return $this->lastQueryResult;
 	}
+	
 	
 	/**
 	 * Execute a query and return the # of affected rows.
@@ -383,6 +414,18 @@ abstract class As_Database
 		return false;
 	}
 	
+	/**
+	 *
+	 * Gets the observers for this object
+	 *
+	 * @return mixed array of observers that are interested in this object
+	 **/
+	
+	public function getObservers()
+	{
+		return $this->observers;
+	}
+	
 	public function getLastQueryTime()
 	{
 		return $this->lastQueryTime;
@@ -397,6 +440,18 @@ abstract class As_Database
 	{
 		return $this->lastQueryResult;
 	}
+
+	public function getLastParams()
+	{
+		return $this->lastParams;
+	}
+	
+	public function getLastTypes()
+	{
+		return $this->lastTypes;
+	}
+	
+	
 }
 
 ?>

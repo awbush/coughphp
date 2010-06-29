@@ -101,7 +101,7 @@ class As_MysqliDatabase extends As_Database
 		return new As_MysqliDatabaseResult($result);
 	}
 	
-	public function queryPreparedStmt($sql, $parameters, $types = '') {
+	public function _queryPreparedStmt($sql, $parameters, $types = '') {
 		
 		$this->query = $sql;
 		$this->parameters = $parameters;

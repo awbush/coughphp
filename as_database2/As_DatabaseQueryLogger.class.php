@@ -18,7 +18,10 @@ class As_DatabaseQueryLogger
 			$newLog = array(
 				'database' => $db->getDbName(),
 				'sql'      => $db->getLastQuery(),
+				'params'   => $db->getLastParams(),
+				'types'    => $db->getLastTypes(),
 				'time'     => $db->getLastQueryTime(),
+				
 			);
 			
 			if ($this->logBacktraces)
