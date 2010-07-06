@@ -307,7 +307,7 @@ abstract class As_Database
 		
 		if (!$this->lastQueryResult)
 		{
-			throw new As_DatabaseQueryException($this->getError(), $this->lastQuery);
+			throw new As_DatabaseQueryException($this->getError(), $this->lastQuery, $this->lastParams, $this->lastTypes);
 		}
 		
 		foreach ($this->observers as $observer)

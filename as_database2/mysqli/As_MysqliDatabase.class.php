@@ -12,6 +12,8 @@ class As_MysqliDatabase extends As_Database
 	
 	protected $parameters = '';
 	
+	protected $lastError = '';
+	
 	/**
 	 * Construct new Mysql database object and connect to specified DSN, format of:
 	 * 
@@ -96,7 +98,12 @@ class As_MysqliDatabase extends As_Database
 	{
 		$result = mysqli_query($this->connection, $sql);
 		if (!$result) {
+			$this->lastError = mysqli_error($this->connection);
 			return $result;
+		}
+		else
+		{
+			$this->lastError = '';
 		}
 		return new As_MysqliDatabaseResult($result);
 	}
@@ -109,8 +116,14 @@ class As_MysqliDatabase extends As_Database
 		$result = mysqli_stmt_prepare($stmt, $sql);
 		if ($result === false)
 		{
-			throw new Exception(mysqli_stmt_error($stmt));
+			$this->lastError = mysqli_stmt_error($stmt);
+			return $result;
 		}
+		else
+		{
+			$this->lastError = '';
+		}
+		
 		if ($types == '')
 		{
 			foreach ($parameters as $parameter)
@@ -127,9 +140,13 @@ class As_MysqliDatabase extends As_Database
 		$result = mysqli_stmt_execute($stmt);
 		
 		if (!$result) {
+			$this->lastError = mysqli_stmt_error($stmt);
 			return $result;
 		}
-		
+		else
+		{
+			$this->lastError = '';
+		}
 		return new As_MysqliDatabaseResult($stmt);
 	
 	}
@@ -163,9 +180,9 @@ class As_MysqliDatabase extends As_Database
 	{
 		if ($this->connection) {
 			if ($this->inTransaction) {
-				return 'Transaction Failed with mysql_error: ' . mysqli_error($this->connection);
+				return 'Transaction Failed with mysql_error: ' . $this->lastError;
 			} else {
-				return mysqli_error($this->connection);
+				return $this->lastError;
 			}
 		}
 	}
