@@ -263,6 +263,39 @@ abstract class CoughObject {
 	}
 	
 	/**
+	 * Constructs a new object from custom SQL and parameters.
+	 *
+	 * @author Richard Pistole
+	 * @since 2010-06-24
+	 * @param string $sql sql statement with parameters in it
+	 * @param mixed $parameters parameters to bind into the statement
+	 * @param string $types optional type string for parameters
+	 * @return mixed - CoughObject if exactly one row found, null otherwise.
+	 * @todo PHP 5.3: switch from call_user_func to static::methodName() and remove the $className parameter
+	 **/
+	
+	public static function constructByPreparedStmt($sql, $parameters, $types = '', $className = '') {
+		if ($className == '')
+		{
+			throw new Exception('constructByPreparedStmt must either have className passed in, or be called by subclass');
+		}
+		if (!empty($sql)) {
+			$db = call_user_func(array($className, 'getDb'));
+			$dbName = call_user_func(array($className, 'getDbName'));
+			$db->selectDb($dbName);
+			$result = $db->queryPreparedStmt($sql, $parameters, $types);
+			if ($result->getNumRows() == 1) {
+				return call_user_func(array($className, 'constructByFields'), $result->getRow());
+			} else {
+				// load failed because the unique dataset couldn't be selected
+			}
+		} else {
+			// load failed because no SQL was given
+		}
+		return null;
+	}
+	
+	/**
 	 * Clone only the non-primary key fields.
 	 * 
 	 * Usage:

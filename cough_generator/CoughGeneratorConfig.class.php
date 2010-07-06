@@ -374,6 +374,17 @@ class CoughGeneratorConfig extends CoughConfig {
 		}
 	}
 	
+	public function shouldGeneratePreparedStmtMethods(SchemaTable $table) {
+		$dbName = $table->getDatabase()->getDatabaseName();
+		$tableName = $table->getTableName();
+		$option = $this->getConfigValue('generate_prepared_stmt_methods', $dbName, $tableName);
+		if ($option == 'enabled') {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public function shouldGenerateForTable(SchemaTable $table) {
 		if (!$table->hasPrimaryKey()) {
 			return false;

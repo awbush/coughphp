@@ -229,10 +229,11 @@ class CoughGenerator {
 		$dbAlias = $table->getDatabase()->getDatabaseAlias();
 		$tableName = $table->getTableName();
 		
-		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
-		$starterCollectionClassName = $this->config->getStarterCollectionClassName($table);
-		$baseObjectClassName        = $this->config->getBaseObjectClassName($table);
-		$baseCollectionClassName    = $this->config->getBaseCollectionClassName($table);
+		$starterObjectClassName     		= $this->config->getStarterObjectClassName($table);
+		$starterCollectionClassName 		= $this->config->getStarterCollectionClassName($table);
+		$baseObjectClassName        		= $this->config->getBaseObjectClassName($table);
+		$baseCollectionClassName    		= $this->config->getBaseCollectionClassName($table);
+		$shouldGeneratePreparedStmtMethods 	= $this->config->shouldGeneratePreparedStmtMethods($table);
 		
 		$phpdocTags = $this->generatePhpdocTags($table);
 		$phpdocTags[] = '@see ' . $starterObjectClassName . ', CoughObject';
@@ -589,6 +590,24 @@ echo $objectDefinitionsPhp;
 		return CoughObject::constructBySql($sql, '<?php echo $starterObjectClassName ?>');
 	}
 	
+<?php
+	if ($shouldGeneratePreparedStmtMethods)
+	{
+?>
+	/**
+	 * Constructs a new <?php echo $starterObjectClassName ?> object from custom SQL and parameters
+	 * 
+	 * @param string $sql
+	 * @param mixed $parameters parameters to bind into the statement
+	 * @param string $types optional type string for parameters	
+	 * @return mixed - <?php echo $starterObjectClassName ?> or null if exactly one record could not be found.
+	 **/
+	public static function constructByPreparedStmt($sql, $parameters, $types = '', $forPhp5Strict = '') {
+		return CoughObject::constructByPreparedStmt($sql, $parameters, $types, '<?php echo $starterObjectClassName ?>');
+	}
+<?php
+	}
+?>
 	/**
 	 * Constructs a new <?php echo $starterObjectClassName ?> object after
 	 * checking the fields array to make sure the appropriate subclass is

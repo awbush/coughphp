@@ -95,6 +95,29 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
+	 * Loads the collection using the provided SQL and parameters for binding
+	 *
+	 * @author Richard Pistole
+	 * @since 2010-06-24
+	 * @param string $sql sql statement with parameters in it
+	 * @param mixed $parameters parameters to bind into the statement
+	 * @param string $types optional type string for parameters
+	 * @return void
+	 **/
+	public function loadByPreparedStmt($sql, $parameters, $types = '') {
+		$elementClassName = $this->elementClassName;
+		$db = $this->getDb();
+		$db->selectDb(call_user_func(array($elementClassName, 'getDbName')));
+		$result = $db->queryPreparedStmt($sql, $parameters, $types);
+		if ($result->getNumRows() > 0) {
+			while ($row = $result->getRow()) {
+				$this->add(call_user_func(array($elementClassName, 'constructByFields'), $row));
+			}
+		}
+	}
+	
+	
+	/**
 	 * Run save on each collected (or removed) element.
 	 * 
 	 * @return void
