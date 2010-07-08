@@ -32,6 +32,7 @@ class CoughGeneratorConfig extends CoughConfig {
 				'file_suffix' => '.class.php',
 			),
 			'load_sql_inner_joins' => 'disabled', // valid options: enabled, disabled
+			'generate_prepared_stmt_methods' => 'disabled', // valid options: enabled, disabled
 			'generate_has_one_methods' => 'all', // valid options: all, none, or array of databases to generate join methods for.
 			'generate_has_many_methods' => 'all', // valid options: all, none, or array of databases to generate join methods for.
 			'deletion_strategy' => '', // valid options: Delete, Retire
