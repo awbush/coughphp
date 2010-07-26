@@ -39,6 +39,11 @@ class As_DatabaseQueryLogger
 		}
 	}
 	
+	public function setLogBacktraces($logBacktraces)
+	{
+		$this->logBacktraces = $logBacktraces;
+	}
+	
 	public function getQueryLog()
 	{
 		return $this->queryLog;

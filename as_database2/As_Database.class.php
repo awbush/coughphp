@@ -301,6 +301,11 @@ abstract class As_Database
 		$this->lastParams = $params;
 		$this->lastTypes = $types;
 		
+		if (count($params) == 0)
+		{
+			return $this->query($sql);
+		}
+		
 		$start = microtime(true);
 		$this->lastQueryResult = $this->_queryPreparedStmt($this->lastQuery, $this->lastParams, $this->lastTypes);
 		$this->lastQueryTime = microtime(true) - $start;
