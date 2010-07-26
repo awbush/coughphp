@@ -12,13 +12,17 @@ class As_MysqlStmtDatabaseResult extends As_DatabaseResult
 		$meta = mysqli_stmt_result_metadata($stmt);
 		$params = array($stmt);
 		$this->row = array();
-	    while ($field = $meta->fetch_field())
-	    {
-			$this->row[$field->name] = null;
-	        $params[] = &$this->row[$field->name];
-	    }
-		call_user_func_array('mysqli_stmt_bind_result', $params);
-		mysqli_stmt_store_result($stmt);
+		if ($meta)
+		{
+		    while ($field = $meta->fetch_field())
+		    {
+				$this->row[$field->name] = null;
+		        $params[] = &$this->row[$field->name];
+		    }
+			call_user_func_array('mysqli_stmt_bind_result', $params);
+			mysqli_stmt_store_result($stmt);
+		
+		}
 	}
 
 
