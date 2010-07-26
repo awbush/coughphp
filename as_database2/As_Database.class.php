@@ -158,6 +158,17 @@ abstract class As_Database
 	protected $lastParams = null;
 	protected $lastTypes = null;
 	
+	/**
+	 * Perform any necessary bookkeeping after unserialization
+	 *
+	 * Reestablish the db connection after we are unserialized
+	 * 
+	 */
+	public function __wakeup()
+    {
+		$this->connection = null;
+		$this->connect();
+	}
 	
 	
 	/**
