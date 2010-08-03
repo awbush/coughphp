@@ -26,24 +26,17 @@ class As_DatabaseQueryLogger
 			
 			if ($this->logBacktraces)
 			{
-			
-				$newLog['backtrace'] = $this->getBacktrace();
+				// @todo improve option this with other tracing options, e.g.
+				// (string)new Exception()
+				// debug_backtrace(false); // since 5.2.5
+				// debug_backtrace(); // could go through and remove any 'object' elements ourselves
+				ob_start();
+				debug_print_backtrace();
+				$newLog['backtrace'] = ob_get_clean();
 			}
 			
 			$this->queryLog[] = $newLog;
 		}
-	}
-	
-	protected function getBacktrace()
-	{
-		// @todo improve option this with other tracing options, e.g.
-		// (string)new Exception()
-		// debug_backtrace(false); // since 5.2.5
-		// debug_backtrace(); // could go through and remove any 'object' elements ourselves
-		ob_start();
-		debug_print_backtrace();
-		$backtrace = ob_get_clean();
-		return $backtrace;
 	}
 	
 	public function setLogBacktraces($logBacktraces)
