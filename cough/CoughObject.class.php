@@ -598,6 +598,18 @@ abstract class CoughObject {
 			return null;
 		}
 	}
+	/**
+	 * Returns whether or not this object has a field with the requested name.
+	 *
+	 * @author Richard Pistole
+	 * @since 2010-07-12
+	 * @param string $fieldName
+	 * @return bool true if field exists
+	 **/
+	protected function hasField($fieldName)
+	{
+		return isset($this->fieldDefinitions[$fieldName]);
+	}
 	
 	/**
 	 * Sets the current value of $fieldName to $value.
