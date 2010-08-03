@@ -9,6 +9,8 @@ abstract class Product_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'product';
 	protected static $pkFieldNames = array('category','id');
 	
@@ -42,13 +44,13 @@ abstract class Product_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(Product::$db)) {
-			Product::$db = CoughDatabaseFactory::getDatabase(Product::$dbName);
+			Product::$db = CoughDatabaseFactory::getDatabase(Product::$dbAlias);
 		}
 		return Product::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(Product::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(Product::$dbAlias);
 	}
 	
 	public static function getTableName() {

@@ -58,7 +58,7 @@ class As_MysqlStmtDatabaseResult extends As_DatabaseResult
 	
 	public function getResult($row, $field = 0) 
 	{
-		mysqli_stmt_data_seek($this->result, $row);
+		mysqli_stmt_data_seek($this->stmt, $row);
 		$this->stmt->fetch();
 		if (!is_numeric($field))
 		{

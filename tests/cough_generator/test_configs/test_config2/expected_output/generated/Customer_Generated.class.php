@@ -9,6 +9,8 @@ abstract class Customer_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'customer';
 	protected static $pkFieldNames = array('id');
 	
@@ -30,13 +32,13 @@ abstract class Customer_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(Customer::$db)) {
-			Customer::$db = CoughDatabaseFactory::getDatabase(Customer::$dbName);
+			Customer::$db = CoughDatabaseFactory::getDatabase(Customer::$dbAlias);
 		}
 		return Customer::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(Customer::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(Customer::$dbAlias);
 	}
 	
 	public static function getTableName() {

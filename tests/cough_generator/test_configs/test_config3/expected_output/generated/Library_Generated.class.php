@@ -9,6 +9,8 @@ abstract class Library_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'library';
 	protected static $pkFieldNames = array('library_id');
 	
@@ -54,13 +56,13 @@ abstract class Library_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(Library::$db)) {
-			Library::$db = CoughDatabaseFactory::getDatabase(Library::$dbName);
+			Library::$db = CoughDatabaseFactory::getDatabase(Library::$dbAlias);
 		}
 		return Library::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(Library::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(Library::$dbAlias);
 	}
 	
 	public static function getTableName() {

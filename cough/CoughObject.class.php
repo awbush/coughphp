@@ -334,7 +334,7 @@ abstract class CoughObject {
 	 **/
 	public function __sleep() 
 	{
-		return array('fields', 'derivedFields', 'objects', 'collections', 'isNew', 'isDeleted', 'fieldDefinitions', 'objectDefinitions', 'derivedFieldDefinitions');
+		return array('fields', 'derivedFields', 'objects', 'collections', 'isNew', 'fieldDefinitions', 'objectDefinitions', 'derivedFieldDefinitions');
 	}
 	
 	

@@ -9,6 +9,8 @@ abstract class TableOne_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'table_one';
 	protected static $pkFieldNames = array('table_one_id');
 	
@@ -36,13 +38,13 @@ abstract class TableOne_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(TableOne::$db)) {
-			TableOne::$db = CoughDatabaseFactory::getDatabase(TableOne::$dbName);
+			TableOne::$db = CoughDatabaseFactory::getDatabase(TableOne::$dbAlias);
 		}
 		return TableOne::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(TableOne::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(TableOne::$dbAlias);
 	}
 	
 	public static function getTableName() {

@@ -52,7 +52,7 @@ class TestCoughGenerator extends UnitTestCase
 		
 		// Cache the db object for rest of tests
 		$this->db = CoughDatabaseFactory::getDatabase($dsn['db_name']);
-		
+		$this->db->selectDb($dsn['db_name']);
 		// Clean DB before start
 		$this->dropAllTables();
 	}

@@ -190,6 +190,69 @@ class TestCoughAsDatabase extends UnitTestCase
 		$returnedString = $this->db->getResult($sql);
 		$this->assertEqual($acidString, $returnedString);
 	}
+	
+	public function testPreparedStmt()
+	{
+		if (!$this->db->canQueryPreparedStmt())
+		{
+			// can't do this test
+			return;
+		}
+		// test getLastInsertId before we have done any inserts
+		// NOTE: PDO returns string "0" and As_Database returns integer 0... I would prefer the return value to be 
+		// null, but perhaps this is not a meaningful issue
+		//$this->assertNull($this->db->getLastInsertId()); // currently fails
+		$this->assertEqual($this->db->getLastInsertId(), 0);
+		
+		// test execute insert
+		$params = array('Venkman', 0,3);
+		$this->db->queryPreparedStmt("INSERT person VALUES ('', ?, ?, ?)", $params);
+		$numAffected = $this->db->getNumAffectedRows();
+		$this->assertIdentical($numAffected, 1);
+		
+		// test getLastInsertId
+		// NOTE: PDO returns string 12, but As_Database returns integer 12... this may or may not be a discrepancy that
+		// needs to be resolved
+		$venkmanPersonId = $this->db->getLastInsertId();
+		//$this->assertIdentical($venkmanPersonId, 12); // currently fails
+		$this->assertEqual($venkmanPersonId, 12);
+		
+		// test insert succeeded
+		$params = array(12);
+		$result = $this->db->queryPreparedStmt('SELECT person.name FROM person WHERE person.person_id = ?', $params);
+		$this->assertIdentical($result->getResult(0), 'Venkman');
+		
+		// test execute update
+		$params = array(2);
+		$this->db->queryPreparedStmt('UPDATE person SET political_party_id = 4 WHERE political_party_id = ?', $params);
+		$numAffected = $this->db->getNumAffectedRows();
+		$this->assertIdentical($numAffected, 2);
+		
+		// test update succeeded
+		$params = array(4);
+		$result = $this->db->queryPreparedStmt('SELECT name FROM person WHERE political_party_id = ?', $params);
+		$expectedRows = array(
+			'0' => array(
+				'name' => 'Anthony'
+			),
+			
+			'1' => array(
+				'name' => 'Lewis'
+			)
+		);
+		$this->assertIdentical($result->getRows(), $expectedRows);
+		
+		// test execute delete
+		$params = array(0);
+		$this->db->queryPreparedStmt('DELETE FROM person WHERE is_retired = ?', $params);
+		$numAffected = $this->db->getNumAffectedRows();
+		$this->assertIdentical($numAffected, 4);
+		
+		// test delete succeeded
+		$result = $this->db->getResult('SELECT COUNT(*) FROM person');
+		$this->assertIdentical($result, '0');
+	}
+	
 }
 
 ?>

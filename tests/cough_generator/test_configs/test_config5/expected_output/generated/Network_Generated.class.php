@@ -9,6 +9,8 @@ abstract class Network_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'network';
 	protected static $pkFieldNames = array('id');
 	
@@ -66,13 +68,13 @@ abstract class Network_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(Network::$db)) {
-			Network::$db = CoughDatabaseFactory::getDatabase(Network::$dbName);
+			Network::$db = CoughDatabaseFactory::getDatabase(Network::$dbAlias);
 		}
 		return Network::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(Network::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(Network::$dbAlias);
 	}
 	
 	public static function getTableName() {

@@ -206,6 +206,12 @@ class As_MysqliDatabase extends As_Database
 		$this->query('SET AUTOCOMMIT = 1');
 		$this->inTransaction = false;
 	}
+
+	public function canQueryPreparedStmt()
+	{
+		return true;
+	}
+	
 	
 }
 

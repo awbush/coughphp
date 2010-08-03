@@ -9,6 +9,8 @@ abstract class Book2library_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'book2library';
 	protected static $pkFieldNames = array('book2library_id');
 	
@@ -67,13 +69,13 @@ abstract class Book2library_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(Book2library::$db)) {
-			Book2library::$db = CoughDatabaseFactory::getDatabase(Book2library::$dbName);
+			Book2library::$db = CoughDatabaseFactory::getDatabase(Book2library::$dbAlias);
 		}
 		return Book2library::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(Book2library::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(Book2library::$dbAlias);
 	}
 	
 	public static function getTableName() {

@@ -334,6 +334,10 @@ abstract class As_Database
 		return $this->lastQueryResult;
 	}
 	
+	public function canQueryPreparedStmt()
+	{
+		return false;
+	}
 	
 	/**
 	 * Execute a query and return the # of affected rows.
