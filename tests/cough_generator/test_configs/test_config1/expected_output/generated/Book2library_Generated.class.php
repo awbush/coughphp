@@ -23,36 +23,42 @@ abstract class Book2library_Generated extends CoughObject {
 		'is_retired' => 0,
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'book2library_id' => array(
 			'db_column_name' => 'book2library_id',
 			'is_null_allowed' => false,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'book_id' => array(
 			'db_column_name' => 'book_id',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'library_id' => array(
 			'db_column_name' => 'library_id',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'last_modified_datetime' => array(
 			'db_column_name' => 'last_modified_datetime',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'timestamp'
 		),
 		'creation_datetime' => array(
 			'db_column_name' => 'creation_datetime',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'datetime'
 		),
 		'is_retired' => array(
 			'db_column_name' => 'is_retired',
 			'is_null_allowed' => false,
-			'default_value' => 0
+			'default_value' => 0,
+			'type' => 'tinyint'
 		),
 	);
 	
@@ -84,6 +90,10 @@ abstract class Book2library_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return Book2library::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return Book2library::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

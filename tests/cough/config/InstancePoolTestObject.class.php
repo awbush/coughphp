@@ -4,7 +4,7 @@ class InstancePoolTestObject extends CoughObject
 {
 	protected static $pkFieldNames = array('element_id');
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'element_id' => array(),
 		'manufacturer_name' => array(),
 		'product_name' => array(),
@@ -14,6 +14,11 @@ class InstancePoolTestObject extends CoughObject
 	public static function getPkFieldNames()
 	{
 		return self::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions()
+	{
+		return self::$fieldDefinitions;
 	}
 	
 	// Just FYI, the generator would probably write methods like this

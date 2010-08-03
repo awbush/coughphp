@@ -528,12 +528,13 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 <?php endforeach; ?>
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 <?php foreach ($table->getColumns() as $columnName => $column): ?>
 		'<?php echo $columnName ?>' => array(
 			'db_column_name' => '<?php echo $columnName ?>',
 			'is_null_allowed' => <?php echo $this->getStringFromPhpValue($column->isNullAllowed()) ?>,
-			'default_value' => <?php echo $this->getDefaultValueStringForColumn($column) . "\n" ?>
+			'default_value' => <?php echo $this->getDefaultValueStringForColumn($column) ?>,
+			'type' => '<?php echo $this->getTypeName($column) ?>'
 		),
 <?php endforeach; ?>
 	);
@@ -560,6 +561,10 @@ echo $objectDefinitionsPhp;
 	
 	public static function getPkFieldNames() {
 		return <?php echo $starterObjectClassName ?>::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return <?php echo $starterObjectClassName ?>::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods
@@ -851,8 +856,9 @@ class <?php echo $starterCollectionClassName ?> extends <?php echo $baseCollecti
 		}
 	}
 	
-	
-	
+	private function getTypeName(SchemaColumn $column) {
+		return $column->getType();
+	}	
 	
 	##################
 	# ERROR HANDLING #

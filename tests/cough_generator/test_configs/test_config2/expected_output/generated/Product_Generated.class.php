@@ -20,21 +20,24 @@ abstract class Product_Generated extends CoughObject {
 		'price' => null,
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'category' => array(
 			'db_column_name' => 'category',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'id' => array(
 			'db_column_name' => 'id',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'price' => array(
 			'db_column_name' => 'price',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'decimal'
 		),
 	);
 	
@@ -59,6 +62,10 @@ abstract class Product_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return Product::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return Product::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

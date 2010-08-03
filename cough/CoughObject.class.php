@@ -108,7 +108,7 @@ abstract class CoughObject {
 	 * @var array
 	 * @see defineFields()
 	 **/
-	protected $fieldDefinitions = array();
+	protected static $fieldDefinitions = array();
 	
 	/**
 	 * An array of derived field definitions
@@ -334,7 +334,7 @@ abstract class CoughObject {
 	 **/
 	public function __sleep() 
 	{
-		return array('fields', 'derivedFields', 'objects', 'collections', 'isNew', 'fieldDefinitions', 'objectDefinitions', 'derivedFieldDefinitions');
+		return array('fields', 'derivedFields', 'objects', 'collections', 'isNew', 'objectDefinitions', 'derivedFieldDefinitions');
 	}
 	
 	
@@ -564,7 +564,7 @@ abstract class CoughObject {
 	public function getFieldsThroughGetters()
 	{
 		$fields = array();
-		foreach ($this->fieldDefinitions as $fieldName => $fieldAttr) {
+		foreach ($this->getFieldDefinitions() as $fieldName => $fieldAttr) {
 			$getter = 'get' . self::titleCase($fieldName);
 			$fields[$fieldName] = $this->$getter();
 		}
@@ -598,6 +598,7 @@ abstract class CoughObject {
 			return null;
 		}
 	}
+
 	/**
 	 * Returns whether or not this object has a field with the requested name.
 	 *
@@ -608,7 +609,8 @@ abstract class CoughObject {
 	 **/
 	protected function hasField($fieldName)
 	{
-		return isset($this->fieldDefinitions[$fieldName]);
+		$fieldDefinitions = $this->getFieldDefinitions();
+		return isset($fieldDefinitions[$fieldName]);
 	}
 	
 	/**
@@ -633,7 +635,7 @@ abstract class CoughObject {
 	 **/
 	public function setFields($fields) {
 		foreach ($fields as $fieldName => $fieldValue) {
-			if (isset($this->fieldDefinitions[$fieldName])) {
+			if ($this->hasField($fieldName)) {
 				$this->setField($fieldName, $fieldValue);
 			} else if (isset($this->derivedFieldDefinitions[$fieldName])) {
 				$this->setDerivedField($fieldName, $fieldValue);
@@ -653,7 +655,7 @@ abstract class CoughObject {
 	public function setFieldsThroughSetters($fields)
 	{
 		foreach ($fields as $fieldName => $fieldValue) {
-			if (isset($this->fieldDefinitions[$fieldName])) {
+			if ($this->hasField($fieldName)) {
 				$setter = 'set' . self::titleCase($fieldName);
 				$this->$setter($fieldValue);
 			}
@@ -672,7 +674,7 @@ abstract class CoughObject {
 	public function setFieldsIfDifferent($fields) {
 		foreach ($fields as $fieldName => $fieldValue) {
 			if ($fieldValue != $this->getField($fieldName)) {
-				if (isset($this->fieldDefinitions[$fieldName])) {
+				if ($this->hasField($fieldName)) {
 					$this->setField($fieldName, $fieldValue);
 				} else if (isset($this->derivedFieldDefinitions[$fieldName])) {
 					$this->setDerivedField($fieldName, $fieldValue);
@@ -1290,7 +1292,7 @@ abstract class CoughObject {
 					if (is_array($fieldValue)) {
 						// field is data for a related object
 						$this->inflateObject($fieldName, $fieldValue, $fieldsOrId);
-					} else if (isset($this->fieldDefinitions[$fieldName])) {
+					} else if ($this->hasField($fieldName)) {
 						// field is part of this object's fields
 						$this->fields[$fieldName] = $fieldValue;
 					} else if (isset($this->derivedFieldDefinitions[$fieldName])) {

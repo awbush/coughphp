@@ -24,41 +24,48 @@ abstract class Book_Generated extends CoughObject {
 		'is_retired' => 0,
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'book_id' => array(
 			'db_column_name' => 'book_id',
 			'is_null_allowed' => false,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'title' => array(
 			'db_column_name' => 'title',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'varchar'
 		),
 		'author_id' => array(
 			'db_column_name' => 'author_id',
 			'is_null_allowed' => false,
-			'default_value' => 0
+			'default_value' => 0,
+			'type' => 'int'
 		),
 		'introduction' => array(
 			'db_column_name' => 'introduction',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'text'
 		),
 		'last_modified_datetime' => array(
 			'db_column_name' => 'last_modified_datetime',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'timestamp'
 		),
 		'creation_datetime' => array(
 			'db_column_name' => 'creation_datetime',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'datetime'
 		),
 		'is_retired' => array(
 			'db_column_name' => 'is_retired',
 			'is_null_allowed' => false,
-			'default_value' => 0
+			'default_value' => 0,
+			'type' => 'tinyint'
 		),
 	);
 	
@@ -87,6 +94,10 @@ abstract class Book_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return Book::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return Book::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

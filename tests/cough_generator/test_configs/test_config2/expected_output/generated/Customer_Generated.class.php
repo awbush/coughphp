@@ -18,11 +18,12 @@ abstract class Customer_Generated extends CoughObject {
 		'id' => "",
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'id' => array(
 			'db_column_name' => 'id',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 	);
 	
@@ -47,6 +48,10 @@ abstract class Customer_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return Customer::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return Customer::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

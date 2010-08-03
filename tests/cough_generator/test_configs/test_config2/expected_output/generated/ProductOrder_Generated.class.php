@@ -21,26 +21,30 @@ abstract class ProductOrder_Generated extends CoughObject {
 		'customer_id' => "",
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'no' => array(
 			'db_column_name' => 'no',
 			'is_null_allowed' => false,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'product_category' => array(
 			'db_column_name' => 'product_category',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'product_id' => array(
 			'db_column_name' => 'product_id',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'customer_id' => array(
 			'db_column_name' => 'customer_id',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 	);
 	
@@ -72,6 +76,10 @@ abstract class ProductOrder_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return ProductOrder::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return ProductOrder::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

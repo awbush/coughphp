@@ -22,31 +22,36 @@ abstract class Library_Generated extends CoughObject {
 		'is_retired' => 0,
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'library_id' => array(
 			'db_column_name' => 'library_id',
 			'is_null_allowed' => false,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'name' => array(
 			'db_column_name' => 'name',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'varchar'
 		),
 		'last_modified_datetime' => array(
 			'db_column_name' => 'last_modified_datetime',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'timestamp'
 		),
 		'creation_datetime' => array(
 			'db_column_name' => 'creation_datetime',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'datetime'
 		),
 		'is_retired' => array(
 			'db_column_name' => 'is_retired',
 			'is_null_allowed' => false,
-			'default_value' => 0
+			'default_value' => 0,
+			'type' => 'tinyint'
 		),
 	);
 	
@@ -71,6 +76,10 @@ abstract class Library_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return Library::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return Library::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods
