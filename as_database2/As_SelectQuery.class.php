@@ -45,6 +45,8 @@ class As_SelectQuery extends As_Query
 	protected $orderBy = array();
 	protected $limit = '';
 	protected $offset = '';
+	protected $forUpdate = false;
+	
 	
 	// Getters
 	
@@ -92,6 +94,22 @@ class As_SelectQuery extends As_Query
 	{
 		return $this->offset;
 	}
+	
+	
+	/**
+	 * Lock the table when selecting from it so other queries can't.
+	 * 
+	 * @param bool $forUpdate whether or not to append "FOR UPDATE" to query
+	 * @return void
+	 * @author Anthony Bush
+	 * @since 2010-08-10
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/innodb-locking-reads.html
+	 **/
+	public function setForUpdate($forUpdate)
+	{
+		$this->forUpdate = $forUpdate;
+	}
+	
 	
 	// Setters
 	
@@ -280,6 +298,12 @@ class As_SelectQuery extends As_Query
 					$sql .= ' OFFSET ' . $this->offset;
 				}
 			}
+
+			if ($this->forUpdate)
+			{
+				$sql .= "\nFOR UPDATE";
+			}
+			
 		}
 		return $sql;
 	}

@@ -396,6 +396,24 @@ abstract class CoughObject {
 	}
 	
 	/**
+	 * Sets the object's primary key to the passed value without triggering modified fields
+	 *
+	 * 
+	 * @param int $newKeyId
+	 * @return void
+	 * @author Anthony Bush, Richard Pistole
+	 * @since 2010-08-13
+	 **/
+	protected function initKey($newKeyId)
+	{
+		foreach ($this->getPkFieldNames() as $fieldName) {
+			$key[$fieldName] = $newKeyId;
+		}
+		$this->notifyChildrenOfKeyChange($key);
+		$this->inflate($newKeyId);
+	}
+	
+	/**
 	 * This method's job is to notify related collections (if any) of the key change.
 	 * 
 	 * For example, if the schema is "order has many order lines" then on the
@@ -890,7 +908,7 @@ abstract class CoughObject {
 		$numAffectedRows = $db->execute($query->getString());
 		if ($numAffectedRows > 0) {
 			if (!$this->hasKeyId()) {
-				$this->setKeyId($db->getLastInsertId());
+				$this->initKey($db->getLastInsertId());
 			}
 			return true;
 		} else {

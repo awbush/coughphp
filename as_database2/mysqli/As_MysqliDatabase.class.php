@@ -189,24 +189,22 @@ class As_MysqliDatabase extends As_Database
 	
 	public function startTransaction()
 	{
-		$this->query('SET AUTOCOMMIT = 0');
+		$this->query('START TRANSACTION');
 		$this->inTransaction = true;
 	}
 	
 	public function commit()
 	{
 		$this->query('COMMIT');
-		$this->query('SET AUTOCOMMIT = 1');
 		$this->inTransaction = false;
 	}
 	
 	public function rollback()
 	{
 		$this->query('ROLLBACK');
-		$this->query('SET AUTOCOMMIT = 1');
 		$this->inTransaction = false;
 	}
-
+	
 	public function canQueryPreparedStmt()
 	{
 		return true;
