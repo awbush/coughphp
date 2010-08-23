@@ -380,14 +380,19 @@ abstract class CoughCollection extends ArrayObject {
 	 * @author Anthony Bush
 	 **/
 	public function sortByMethods() {
-		$multisortArgs = func_get_args();
+		$args = func_get_args();
 		$keyValueArrays = array();
+		$multisortArgs = array();
+		foreach ($args as $key => $val)
+		{
+			$multisortArgs[$key] = &$args[$key];
+		}
 		
 		if (empty($multisortArgs))
 		{
 			throw new CoughException('missing parameter in sortByMethods');
 		}
-		
+
 		// Build multisortArgs with references to the key value pair arrays to do the sorting on.
 		foreach ($multisortArgs as $argIndex => $arg) {
 			if (!is_int($arg)) {
@@ -400,7 +405,6 @@ abstract class CoughCollection extends ArrayObject {
 				$multisortArgs[$argIndex] = &$keyValueArrays[$argIndex];
 			}
 		}
-		
 		// Sort
 		$success = call_user_func_array('array_multisort', $multisortArgs);
 		

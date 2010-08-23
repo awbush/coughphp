@@ -1,6 +1,6 @@
 <?php
 
-require(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/database_config.inc.php');
+require(dirname(dirname(dirname(dirname(__FILE__)))) . '/database_config.inc.php');
 
 $config = array(
 	'dsn' => $dsn,
