@@ -230,7 +230,7 @@ abstract class CoughObject {
 				$sql->addWhere($fields);
 				$sql = $sql->getString();
 			} else {
-				$query = new As_Query($db);
+				$query = $db->getSelectQuery();
 				$sql .= ' WHERE ' . $query->buildWhereSql($fields);
 			}
 			return call_user_func(array($className, 'constructBySql'), $sql);

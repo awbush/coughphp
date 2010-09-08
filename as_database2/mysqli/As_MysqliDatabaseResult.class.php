@@ -13,7 +13,7 @@ class As_MysqliDatabaseResult extends As_DatabaseResult {
 	private $obj;
 	private $freed = false;
 
-	public function __construct($result) {
+	public function __construct(&$result) {
 		if ($result instanceof MySQLi_STMT)
 		{
 			$this->obj = new As_MysqlStmtDatabaseResult($result);

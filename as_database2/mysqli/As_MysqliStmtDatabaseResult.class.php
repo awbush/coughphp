@@ -6,9 +6,10 @@ class As_MysqlStmtDatabaseResult extends As_DatabaseResult
 	private $params = false;
 	private $row = false;
 
-	public function __construct($stmt)
+	public function __construct(&$stmt)
 	{
 		$this->stmt = $stmt;
+
 		$meta = mysqli_stmt_result_metadata($stmt);
 		$params = array($stmt);
 		$this->row = array();
@@ -19,9 +20,9 @@ class As_MysqlStmtDatabaseResult extends As_DatabaseResult
 				$this->row[$field->name] = null;
 		        $params[] = &$this->row[$field->name];
 		    }
-			call_user_func_array('mysqli_stmt_bind_result', $params);
 			mysqli_stmt_store_result($stmt);
-		
+			call_user_func_array('mysqli_stmt_bind_result', $params);
+			
 		}
 	}
 

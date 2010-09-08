@@ -93,6 +93,30 @@ abstract class CoughCollection extends ArrayObject {
 			}
 		}
 	}
+
+	
+	/**
+	 * Loads the collection using the provided hash
+	 *
+	 * @author Richard Pistole
+	 * @since 2010-09-08
+	 * @param array $fields hash of [field_name] => [field_value]
+	 * @return void
+	 **/
+	public function loadByHash($fields) {
+		if (!empty($fields)) {
+			$db = $this->getDb();
+			$sql = $this->getLoadSql();
+			if (is_object($sql)) {
+				$sql->addWhere($fields);
+				$sql = $sql->getString();
+			} else {
+				$query =  $db->getSelectQuery();
+				$sql .= ' WHERE ' . $query->buildWhereSql($fields);
+			}
+			$this->loadBySql($sql);
+		}
+	}
 	
 	/**
 	 * Loads the collection using the provided SQL and parameters for binding
