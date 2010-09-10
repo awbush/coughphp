@@ -582,7 +582,7 @@ echo $objectDefinitionsPhp;
 	 * @return mixed - <?php echo $starterObjectClassName ?> or null if no record found.
 	 **/
 	public static function constructByKey($idOrHash, $forPhp5Strict = '') {
-		return CoughObject::constructByKey($idOrHash, '<?php echo $starterObjectClassName ?>');
+		return <?php echo $extensionClassName ?>::constructByKey($idOrHash, '<?php echo $starterObjectClassName ?>');
 	}
 	
 	/**
@@ -592,7 +592,7 @@ echo $objectDefinitionsPhp;
 	 * @return mixed - <?php echo $starterObjectClassName ?> or null if exactly one record could not be found.
 	 **/
 	public static function constructBySql($sql, $forPhp5Strict = '') {
-		return CoughObject::constructBySql($sql, '<?php echo $starterObjectClassName ?>');
+		return <?php echo $extensionClassName ?>::constructBySql($sql, '<?php echo $starterObjectClassName ?>');
 	}
 	
 <?php
@@ -608,7 +608,7 @@ echo $objectDefinitionsPhp;
 	 * @return mixed - <?php echo $starterObjectClassName ?> or null if exactly one record could not be found.
 	 **/
 	public static function constructByPreparedStmt($sql, $parameters, $types = '', $forPhp5Strict = '') {
-		return CoughObject::constructByPreparedStmt($sql, $parameters, $types, '<?php echo $starterObjectClassName ?>');
+		return <?php echo $extensionClassName ?>::constructByPreparedStmt($sql, $parameters, $types, '<?php echo $starterObjectClassName ?>');
 	}
 <?php
 	}
