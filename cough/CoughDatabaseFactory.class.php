@@ -306,6 +306,58 @@ class CoughDatabaseFactory
 		self::$configs = array();
 	}
 	
+	
+	/**
+	 * Save the factory's config for later restore.
+	 * 
+	 * Example:
+	 * 
+	 *     <code>
+	 *     $dbFactoryMemento = CoughDatabaseFactory::saveToMemento();
+	 *     // ...
+	 *     CoughDatabaseFactory::restoreFromMemento($dbFactoryMemento);
+	 *     </code>
+	 * 
+	 * @return array memento for giving to restoreFromMemento() at a later time.
+	 * @see restoreFromMemento()
+	 * @author Anthony Bush
+	 * @since 2009-11-30
+	 **/
+	public static function saveToMemento()
+	{
+		return array(
+			'databases' => self::$databases,
+			'databaseNames' => self::$databaseNames,
+			'configs' => self::$configs,
+		);
+	}
+	
+	/**
+	 * Restore factory's config from a memento.
+	 * 
+	 * @param array $memento
+	 * @return void
+	 * @throws CoughException
+	 * @see saveToMemento()
+	 * @author Anthony Bush
+	 * @since 2009-11-30
+	 **/
+	public static function restoreFromMemento($memento)
+	{
+		if (
+			!is_array($memento)
+			|| !isset($memento['databases'])
+			|| !isset($memento['databaseNames'])
+			|| !isset($memento['configs'])
+		) {
+			throw new CoughException('Invalid memento given');
+		}
+		
+		self::$databases = $memento['databases'];
+		self::$databaseNames = $memento['databaseNames'];
+		self::$configs = $memento['configs'];
+	}
+	
 	/**
 	 * Same as {@link getDatabases()}, except it rolls up all aliases using the same
 	 * connection into one array entry.
@@ -324,6 +376,7 @@ class CoughDatabaseFactory
 				if (isset(self::$databases[$alias]))
 				{
 					$uniqueDbs[implode(', ', array_keys($config['db_name_hash']))] = self::$databases[$alias];
+					break;
 				}
 			}
 		}

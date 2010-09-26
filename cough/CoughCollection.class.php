@@ -97,10 +97,11 @@ abstract class CoughCollection extends ArrayObject {
 	/**
 	 * Run save on each collected (or removed) element.
 	 * 
-	 * @return void
+	 * @return bool true if and only if all saved elements returned true
 	 * @author Anthony Bush
 	 **/
 	public function save() {
+		$success = true;
 		$temporaryKeys = array();
 		
 		// Save all elements and keep track of temporary keys so that we can update them.
@@ -108,7 +109,9 @@ abstract class CoughCollection extends ArrayObject {
 			if (!$element->hasKeyId()) {
 				$temporaryKeys[$key] = $element;
 			}
-			$element->save();
+			if (!$element->save()) {
+				$success = false;
+			}
 		}
 		
 		// Update the temporary keys
@@ -119,9 +122,13 @@ abstract class CoughCollection extends ArrayObject {
 		
 		// Save all the removed items
 		foreach ($this->removedElements as $element) {
-			$element->save();
+			if (!$element->save()) {
+				$success = false;
+			}
 		}
 		$this->removedElements = array();
+		
+		return $success;
 	}
 	
 	/**
@@ -163,6 +170,9 @@ abstract class CoughCollection extends ArrayObject {
 	 * @since 2008-10-08
 	 **/
 	public function getLast() {
+		if ($this->count() == 0) {
+			return null;
+		}
 		return $this->getPosition($this->count() - 1);
 	}
 	
@@ -182,6 +192,25 @@ abstract class CoughCollection extends ArrayObject {
 	
 	/**
 	 * Returns the element at the given key.
+	 *
+	 * @param mixed $objectOrId
+	 * @return mixed the CoughObject if found, null if not.
+	 * @author Anthony Bush
+	 **/
+	public function get($objectOrId) {
+		if (is_object($objectOrId)) {
+			if ($objectOrId->hasKeyId()) {
+				return $this->getByKey($objectOrId->getKeyId());
+			} else {
+				return $this->getByReference($objectOrId);
+			}
+		} else {
+			return $this->getByKey($objectOrId);
+		}
+	}
+	
+	/**
+	 * Returns the element at the given key.
 	 * 
 	 * @param mixed $key the result from the element's {@link CoughObject::getKeyId()}
 	 * method (which always returns a flattened string/integer) or the result from
@@ -190,7 +219,7 @@ abstract class CoughCollection extends ArrayObject {
 	 * @return mixed the CoughObject if found, null if not.
 	 * @author Anthony Bush
 	 **/
-	public function get($key) {
+	protected function getByKey($key) {
 		if (is_array($key)) {
 			$key = implode(',', $key);
 		}
@@ -202,18 +231,34 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
+	 * Returns an element by reference
+	 *
+	 * @return mixed the CoughObject if found, null if not.
+	 * @author Anthony Bush
+	 **/
+	protected function getByReference($objectToGet) {
+		foreach ($this as $key => $element) {
+			if ($element == $objectToGet) {
+				return $objectToGet;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Adds a single element (even if it doesn't have a key ID yet).
 	 * 
 	 * @param CoughObject $object
-	 * @return void
+	 * @return mixed CoughObject that was added
 	 * @author Anthony Bush
 	 **/
 	public function add(CoughObject $object) {
 		if ($object->hasKeyId()) {
 			$this->offsetSet($object->getKeyId(), $object);
 		} else {
-			$this->offsetSet(CoughCollection::getTemporaryKey(), $object);
+			$this->offsetSet(spl_object_hash($object), $object);
 		}
+		return $object;
 	}
 	
 	/**
@@ -261,7 +306,7 @@ abstract class CoughCollection extends ArrayObject {
 	 * @author Anthony Bush
 	 **/
 	protected function removeByKey($key) {
-		if (isset($this[$key])) {
+		if (!is_null($key) && isset($this[$key])) {
 			$objectToRemove = $this->offsetGet($key);
 			$this->removedElements[] = $objectToRemove;
 			$this->offsetUnset($key);

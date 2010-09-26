@@ -273,21 +273,18 @@ abstract class CoughObject {
 	 * @author Lewis Zhang
 	 **/
 	public function __clone() {
-		// Reset all attributes of the cloned object, except any non-primary key field.
+		// Save the data we care about
+		$data = $this->getFieldsWithoutPk();
+		
+		// Reset all attributes of the cloned object (yes, undo everything PHP did)
 		$className = get_class($this);
 		$freshObject = new $className();
 		foreach ($freshObject as $key => $value) {
-			if ($key != 'fields') {
-				$this->$key = $value;
-			}
+			$this->$key = $value;
 		}
 		
 		// Mark all fields as having been modified (except key ID) so that a call to save() will complete the clone.
-		$this->setKeyId(null, false);
-		$this->resetModified();
-		foreach (array_keys($this->getFieldsWithoutPk()) as $fieldName) {
-			$this->setModifiedField($fieldName);
-		}
+		$this->setFields($data);
 	}
 	
 	/**
@@ -676,7 +673,9 @@ abstract class CoughObject {
 	 * @return void
 	 **/
 	protected function setModifiedField($fieldName) {
-		$this->modifiedFields[$fieldName] = $this->getField($fieldName);
+		if (!array_key_exists($fieldName, $this->modifiedFields)) {
+			$this->modifiedFields[$fieldName] = $this->getField($fieldName);
+		}
 	}
 
 	/**
@@ -715,6 +714,43 @@ abstract class CoughObject {
 		// causes `isset` to return false.
 		return array_key_exists($fieldName, $this->modifiedFields);
 	}
+	
+	/**
+	 * Return the old value for a given field.  (If the field is unmodified, it's the same as getField.)
+	 * 
+	 * @return mixed - the old value of the specified field
+	 * @author Anthony Bush
+	 * @since 2010-06-01
+	 **/
+	public function getOldFieldValue($fieldName) {
+		if ($this->isFieldModified($fieldName)) {
+			return $this->modifiedFields[$fieldName];
+		}
+		return $this->getField($fieldName);
+	}
+	
+	/**
+	 * Whether or not the specified field is different.
+	 * 
+	 * This is in contrast to {@link isFieldModified()} which returns true even if a
+	 * field was set to the same value it was before.
+	 * 
+	 * Note the behavior of PHP's lose typing: '1' !== 1, so that will be considered
+	 * "different."  Reason for this behavior: INTs, FLOATs, etc. given from the
+	 * database are always strings in PHP and POST data is also always strings, so
+	 * the only time you'll get a false positive "different" field is if the data was
+	 * type casted to a non-string type before setting.  This seems like the best way
+	 * to do this as we *certainly* don't want the opposite to happen, e.g. a change
+	 * from 0 to NULL to go un-noticed!  The only way to get best of both worlds is
+	 * advanced type checking, which isn't PHP's style.
+	 * 
+	 * @return boolean
+	 * @author Anthony Bush
+	 * @since 2010-06-01
+	 **/
+	public function isFieldDifferent($fieldName) {
+		return $this->isFieldModified($fieldName) && $this->modifiedFields[$fieldName] !== $this->getField($fieldName);
+	}
 
 	/**
 	 * Deletes, Inserts, or Updates a record as needed.
@@ -741,11 +777,10 @@ abstract class CoughObject {
 			}
 		}
 		
-		$this->isNew = false;
-
-		$this->saveLoadedCollections();
-		
-		$this->resetModified();
+		if ($result) {
+			$this->saveLoadedCollections();
+			$this->resetModified();
+		}
 		
 		return $result;
 	}
@@ -830,6 +865,7 @@ abstract class CoughObject {
 			if (!$this->hasKeyId()) {
 				$this->setKeyId($db->getLastInsertId());
 			}
+			$this->isNew = false;
 			return true;
 		} else {
 			return false;
