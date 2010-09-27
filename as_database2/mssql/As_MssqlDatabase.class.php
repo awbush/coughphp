@@ -28,7 +28,6 @@ class As_MssqlDatabase extends As_Database
 	 **/
 	public static function constructByConfig($dbConfig)
 	{
-		include_once('As_MssqlSelectQuery.class.php');
 		return new As_MssqlDatabase($dbConfig);
 	}
 	
@@ -87,7 +86,8 @@ class As_MssqlDatabase extends As_Database
 	protected function _query($sql)
 	{
 		$result = mssql_query($sql, $this->connection);
-		if (!$result) {
+		if (!$result || $result === true)
+		{
 			return $result;
 		}
 		return new As_MssqlDatabaseResult($result);
@@ -124,24 +124,32 @@ class As_MssqlDatabase extends As_Database
 	
 	public function startTransaction()
 	{
-		$this->query('BEGIN TRANSACTION');
-		$this->inTransaction = true;
+		if ($this->transactionCount == 0) {
+			$this->query('BEGIN TRANSACTION');
+		}
+		++$this->transactionCount;
 	}
 	
 	public function commit()
 	{
-		$this->query('COMMIT');
-		$this->inTransaction = false;
+		if ($this->transactionCount > 0) {
+			--$this->transactionCount;
+		}
+		// Multiple calls to commit shall run the commit query each time (as was done before).
+		if ($this->transactionCount == 0) {
+			$this->query('COMMIT');
+		}
 	}
 	
 	public function rollback()
 	{
 		$this->query('ROLLBACK');
-		$this->inTransaction = false;
+		$this->transactionCount = 0;
 	}
 	
 	public function getSelectQuery()
 	{
+		include_once('As_MssqlSelectQuery.class.php');
 		return new As_MssqlSelectQuery($this);
 	}
 }

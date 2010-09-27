@@ -21,8 +21,7 @@ abstract class As_DatabaseResult
 	
 	public function __destruct()
 	{
-		// @todo do we need "@" anymore now that freeResult() checks before trying?
-		@$this->freeResult();
+		$this->freeResult();
 	}
 	
 	public function getRows()

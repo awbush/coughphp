@@ -19,17 +19,17 @@ class As_DatabaseQueryLogger
 				'database' => $db->getDbName(),
 				'sql'      => $db->getLastQuery(),
 				'time'     => $db->getLastQueryTime(),
+				'num_rows' => $db->getLastQueryNumRows(),
 			);
 			
 			if ($this->logBacktraces)
 			{
-				// @todo improve option this with other tracing options, e.g.
-				// (string)new Exception()
-				// debug_backtrace(false); // since 5.2.5
-				// debug_backtrace(); // could go through and remove any 'object' elements ourselves
-				ob_start();
-				debug_print_backtrace();
-				$newLog['backtrace'] = ob_get_clean();
+				// Too much memory usage, mostly we just want files and line numbers anyway:
+				// ob_start();
+				// debug_print_backtrace();
+				// $newLog['backtrace'] = ob_get_clean();
+				$e = new Exception();
+				$newLog['backtrace'] = $e->getTraceAsString();
 			}
 			
 			$this->queryLog[] = $newLog;
@@ -62,7 +62,7 @@ class As_DatabaseQueryLogger
 	 * times the query was run, and the time value is equal to the total
 	 * time of each query run.
 	 *
-	 * @return hash in format of [sql] => array([time] => float, [count] => integer)
+	 * @return hash in format of [sql] => array([time] => float, [num_rows] => integer, [count] => integer, [backtrace] => array of backtraces as strings)
 	 * @author Anthony Bush
 	 * @since 2007-09-07
 	 **/
@@ -75,6 +75,7 @@ class As_DatabaseQueryLogger
 			if (isset($uniqueQueryLog[$rawQuery['sql']]))
 			{
 				$uniqueQueryLog[$rawQuery['sql']]['time'] += $rawQuery['time'];
+				$uniqueQueryLog[$rawQuery['sql']]['num_rows'] .= ',' . $rawQuery['num_rows'];
 				$uniqueQueryLog[$rawQuery['sql']]['count']++;
 				if (!isset($uniqueQueryLog[$rawQuery['sql']]['count_by_database'][$rawQuery['database']]))
 				{
@@ -89,8 +90,17 @@ class As_DatabaseQueryLogger
 			{
 				$uniqueQueryLog[$rawQuery['sql']] = array();
 				$uniqueQueryLog[$rawQuery['sql']]['time'] = $rawQuery['time'];
+				$uniqueQueryLog[$rawQuery['sql']]['num_rows'] = $rawQuery['num_rows'];
 				$uniqueQueryLog[$rawQuery['sql']]['count'] = 1;
 				$uniqueQueryLog[$rawQuery['sql']]['count_by_database'][$rawQuery['database']] = 1;
+			}
+			if (isset($rawQuery['backtrace']))
+			{
+				if (!isset($uniqueQueryLog[$rawQuery['sql']]['backtrace']))
+				{
+					$uniqueQueryLog[$rawQuery['sql']]['backtrace'] = array();
+				}
+				$uniqueQueryLog[$rawQuery['sql']]['backtrace'][] = $rawQuery['backtrace'];
 			}
 		}
 		return $uniqueQueryLog;

@@ -89,7 +89,8 @@ class As_MysqlDatabase extends As_Database
 	protected function _query($sql)
 	{
 		$result = mysql_query($sql, $this->connection);
-		if (!$result) {
+		if (!$result || $result === true)
+		{
 			return $result;
 		}
 		return new As_MysqlDatabaseResult($result);
@@ -121,7 +122,7 @@ class As_MysqlDatabase extends As_Database
 	public function getError()
 	{
 		if ($this->connection) {
-			if ($this->inTransaction) {
+			if ($this->isInTransaction()) {
 				return 'Transaction Failed with mysql_error: ' . mysql_error($this->connection);
 			} else {
 				return mysql_error($this->connection);
@@ -131,22 +132,27 @@ class As_MysqlDatabase extends As_Database
 	
 	public function startTransaction()
 	{
-		$this->query('SET AUTOCOMMIT = 0');
-		$this->inTransaction = true;
+		if ($this->transactionCount == 0) {
+			$this->query('START TRANSACTION');
+		}
+		++$this->transactionCount;
 	}
 	
 	public function commit()
 	{
-		$this->query('COMMIT');
-		$this->query('SET AUTOCOMMIT = 1');
-		$this->inTransaction = false;
+		if ($this->transactionCount > 0) {
+			--$this->transactionCount;
+		}
+		// Multiple calls to commit shall run the commit query each time (as was done before).
+		if ($this->transactionCount == 0) {
+			$this->query('COMMIT');
+		}
 	}
 	
 	public function rollback()
 	{
 		$this->query('ROLLBACK');
-		$this->query('SET AUTOCOMMIT = 1');
-		$this->inTransaction = false;
+		$this->transactionCount = 0;
 	}
 	
 }

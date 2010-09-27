@@ -71,14 +71,14 @@ abstract class As_Database
 	abstract public function getNumAffectedRows();
 	
 	/**
-	 * ID generated for an AUTO_INCREMENT column by the previous INSERT query.
+	 * Number of found rows from the last run query.
 	 *
 	 * @return int
 	 **/
 	abstract public function getNumFoundRows();
 	
 	/**
-	 * Number of found rows from the last run query.
+	 * ID generated for an AUTO_INCREMENT column by the previous INSERT query.
 	 * 
 	 * @return int
 	 **/
@@ -102,7 +102,7 @@ abstract class As_Database
 	 *     </code>
 	 *
 	 * @return void
-	 * @see commit(), rollback(), $inTransaction
+	 * @see commit(), rollback(), isInTransaction()
 	 **/
 	abstract public function startTransaction();
 	
@@ -110,7 +110,7 @@ abstract class As_Database
 	 * Commit a transaction.
 	 *
 	 * @return void
-	 * @see startTransaction(), rollback(), $inTransaction
+	 * @see startTransaction(), rollback(), isInTransaction()
 	 **/
 	abstract public function commit();
 	
@@ -118,7 +118,7 @@ abstract class As_Database
 	 * Rollback a non-committed transaction.
 	 *
 	 * @return void
-	 * @see startTransaction(), commit(), $inTransaction
+	 * @see startTransaction(), commit(), isInTransaction()
 	 **/
 	abstract public function rollback();
 	
@@ -137,12 +137,12 @@ abstract class As_Database
 	protected $dbName = null;
 	
 	/**
-	 * Whether or not we are currently in a transaction.
+	 * Whether or not we are currently in a transaction, and the depth.
 	 *
 	 * @var boolean
 	 * @see startTransaction(), commit(), rollback()
 	 **/
-	protected $inTransaction = false;
+	protected $transactionCount = 0;
 	
 	/**
 	 * An array of observers
@@ -206,7 +206,7 @@ abstract class As_Database
 	 **/
 	public function __destruct()
 	{
-		if ($this->inTransaction) {
+		if ($this->isInTransaction()) {
 			$this->rollback();
 		}
 		$this->disconnect();
@@ -229,7 +229,7 @@ abstract class As_Database
 	 **/
 	public function isInTransaction()
 	{
-		return $this->inTransaction;
+		return $this->transactionCount > 0;
 	}
 	
 	/**
@@ -396,6 +396,20 @@ abstract class As_Database
 	public function getLastQueryResult()
 	{
 		return $this->lastQueryResult;
+	}
+	
+	public function getLastQueryNumRows()
+	{
+		$result = $this->getLastQueryResult();
+		if ($result === true)
+		{
+			return $this->getNumAffectedRows();
+		}
+		else if (is_object($result))
+		{
+			return $result->getNumRows();
+		}
+		return 0;
 	}
 }
 
