@@ -36,10 +36,9 @@ class As_MysqlDatabase extends As_Database
 	
 	protected function connect()
 	{
-		$hostAndPort = $this->dsn['host'] . ':' . $this->dsn['port'];		
 		// @todo consider using @ (do some testing) and pass error messages to exception
 		// instead. Also might try playing with `print_r(error_get_last());`
-		$this->connection = mysql_connect($hostAndPort, $this->dsn['user'], $this->dsn['pass'], true, $this->dsn['client_flags']);
+		$this->connection = mysql_connect($this->hostAndPort, $this->dsn['user'], $this->dsn['pass'], true, $this->dsn['client_flags']);
 		if (!$this->connection) {
 			throw new As_DatabaseConnectException('mysql', $this->dsn["host"], $this->dsn["port"], $this->dsn["user"]);
 		}

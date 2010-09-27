@@ -129,6 +129,14 @@ class CoughDatabaseFactory
 	protected static $configs = array();
 	
 	/**
+	 * An array of observers
+	 *
+	 * @var array
+	 * @see addObserver()
+	 **/
+	protected static $observers = array();
+	
+	/**
 	 * Sets all the database configs at once.
 	 *
 	 * @return void
@@ -223,6 +231,10 @@ class CoughDatabaseFactory
 				if (isset($config['db_name_hash'][$alias]))
 				{
 					$dbObject = self::constructDatabaseByConfig($config);
+					foreach (self::$observers as $observer)
+					{
+						$dbObject->addObserver($observer);
+					}
 					foreach ($config['db_name_hash'] as $configAlias => $actualDbName)
 					{
 						self::addDatabase($configAlias, $dbObject);
@@ -294,6 +306,50 @@ class CoughDatabaseFactory
 	}
 	
 	/**
+	 * Add observer to all existing and future DB connections.
+	 * 
+	 * This factory version of addObserver() solves two problems:
+	 * 
+	 * 1. A DB connection isn't required to enable observation.
+	 * 2. All DB connections (pulled via factory) are observed.
+	 * 
+	 * @param mixed $observer any object with a notify($eventType, $db) method.
+	 * @return void
+	 **/
+	public static function addObserver($observer)
+	{
+		self::$observers[] = $observer;
+		foreach (self::getUniqueDatabases() as $db)
+		{
+			$db->addObserver($observer);
+		}
+	}
+	
+	/**
+	 * Remove observer from all existing DB connections.
+	 * 
+	 * @param mixed $observer
+	 * @return bool whether observer was found and removed or not.
+	 **/
+	public static function removeObserver($observerToRemove)
+	{
+		foreach (self::getUniqueDatabases() as $db)
+		{
+			$db->removeObserver($observerToRemove);
+		}
+		
+		foreach (self::$observers as $key => $observer)
+		{
+			if ($observer === $observerToRemove)
+			{
+				unset(self::$observers[$key]);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Restore CoughDatabaseFactory to its initial state (no configs, no database
 	 * objects).
 	 *
@@ -304,8 +360,8 @@ class CoughDatabaseFactory
 		self::$databases = array();
 		self::$databaseNames = array();
 		self::$configs = array();
+		self::$observers = array();
 	}
-	
 	
 	/**
 	 * Save the factory's config for later restore.
@@ -329,6 +385,7 @@ class CoughDatabaseFactory
 			'databases' => self::$databases,
 			'databaseNames' => self::$databaseNames,
 			'configs' => self::$configs,
+			'observers' => self::$observers,
 		);
 	}
 	
@@ -349,6 +406,7 @@ class CoughDatabaseFactory
 			|| !isset($memento['databases'])
 			|| !isset($memento['databaseNames'])
 			|| !isset($memento['configs'])
+			|| !isset($memento['observers'])
 		) {
 			throw new CoughException('Invalid memento given');
 		}

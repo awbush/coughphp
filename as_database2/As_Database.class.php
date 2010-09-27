@@ -130,6 +130,13 @@ abstract class As_Database
 	protected $connection = null;
 	
 	/**
+	 * Host/port of current connection
+	 *
+	 * @var string|null
+	 **/
+	protected $hostAndPort = null;
+	
+	/**
 	 * Name of currently selected database
 	 *
 	 * @var string|null
@@ -196,6 +203,7 @@ abstract class As_Database
 	public function __construct(array $dsn = array())
 	{
 		$this->dsn = $dsn + $this->dsn;
+		$this->hostAndPort = $this->dsn['host'] . ':' . $this->dsn['port'];
 		$this->connect();
 	}
 	
@@ -252,12 +260,21 @@ abstract class As_Database
 	/**
 	 * Currently selected database name
 	 *
-	 * @return void
-	 * @author Anthony Bush
+	 * @return string
 	 **/
 	public function getDbName()
 	{
 		return $this->dbName;
+	}
+	
+	/**
+	 * Host/port of current connection
+	 *
+	 * @return string
+	 **/
+	public function getHostAndPort()
+	{
+		return $this->hostAndPort;
 	}
 	
 	/**

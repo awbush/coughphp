@@ -16,6 +16,7 @@ class As_DatabaseQueryLogger
 		if ($eventType == 'query')
 		{
 			$newLog = array(
+				'server'   => $db->getHostAndPort(),
 				'database' => $db->getDbName(),
 				'sql'      => $db->getLastQuery(),
 				'time'     => $db->getLastQueryTime(),

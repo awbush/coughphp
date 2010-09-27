@@ -33,10 +33,9 @@ class As_MssqlDatabase extends As_Database
 	
 	protected function connect()
 	{
-		$hostAndPort = $this->dsn['host'] . ':' . $this->dsn['port'];		
 		// @todo consider using @ (do some testing) and pass error messages to exception
 		// instead. Also might try playing with `print_r(error_get_last());`
-		$this->connection = mssql_connect($hostAndPort, $this->dsn['user'], $this->dsn['pass'], true);
+		$this->connection = mssql_connect($this->hostAndPort, $this->dsn['user'], $this->dsn['pass'], true);
 		if (!$this->connection) {
 			throw new As_DatabaseConnectException("mssql", $this->dsn["host"], $this->dsn["port"], $this->dsn["user"], mssql_get_last_message());
 		}
