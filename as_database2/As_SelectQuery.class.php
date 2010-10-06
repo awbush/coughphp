@@ -55,7 +55,7 @@ class As_SelectQuery extends As_Query
 	
 	public function getSelectOptions()
 	{
-		return $this->select;
+		return $this->selectOptions;
 	}
 	
 	public function getFrom()
