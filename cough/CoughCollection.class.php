@@ -117,6 +117,40 @@ abstract class CoughCollection extends ArrayObject {
 			$this->loadBySql($sql);
 		}
 	}
+
+	/**
+	 * Loads the collection with objects with the given array of IDs
+	 *
+	 * @author Richard Pistole
+	 * @since 2010-10-06
+	 * @param array $ids array of values for PK
+	 * @return void
+	 **/
+	public function loadByIds($ids) {
+		
+		$elementClassName = $this->elementClassName;
+		$pkFields = call_user_func(array($elementClassName, 'getPkFieldNames'));
+		$tableName = call_user_func(array($elementClassName, 'getTableName'));
+		if (count($pkFields) != 1)
+		{
+			throw new CoughException('Unable to load by ids without one and only one primary key');
+		}
+		if (!empty($ids)) {
+			$db = $this->getDb();
+			$sql = $this->getLoadSql();
+			$quotedIds = array_map(array($db, 'quote'), $ids);
+			$where = $db->backtick($tableName) . '.' . $db->backtick($pkFields[0]) . ' IN (' . implode(',', $quotedIds) . ')';
+			if (is_object($sql)) {
+				$sql->addWhere($where);
+				$sql = $sql->getString();
+			} else {
+				$sql .= ' WHERE ' . $where;
+			}
+			$this->loadBySql($sql);
+		}
+	}
+
+
 	
 	/**
 	 * Loads the collection using the provided SQL and parameters for binding
