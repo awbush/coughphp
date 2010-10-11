@@ -124,22 +124,31 @@ abstract class CoughCollection extends ArrayObject {
 	 * @author Richard Pistole
 	 * @since 2010-10-06
 	 * @param array $ids array of values for PK
+	 * @param string $fieldName, override for PK field name
 	 * @return void
 	 **/
-	public function loadByIds($ids) {
-		
+	public function loadByIds($ids, $fieldName = null) {
+		$db = $this->getDb();
 		$elementClassName = $this->elementClassName;
 		$pkFields = call_user_func(array($elementClassName, 'getPkFieldNames'));
-		$tableName = call_user_func(array($elementClassName, 'getTableName'));
-		if (count($pkFields) != 1)
+		if (is_null($fieldName) && count($pkFields) != 1)
 		{
-			throw new CoughException('Unable to load by ids without one and only one primary key');
+			throw new CoughException('Unable to load by ids without one and only one primary key or explicit field name');
 		}
+		if (is_null($fieldName))
+		{
+			$fieldName = $pkFields[0];
+		}
+		else
+		{
+			// Is this necessary? backtick strips the end backtick character.
+			$fieldName = trim($db->quote($fieldName), '"\'');
+		}
+		$tableName = call_user_func(array($elementClassName, 'getTableName'));
 		if (!empty($ids)) {
-			$db = $this->getDb();
 			$sql = $this->getLoadSql();
 			$quotedIds = array_map(array($db, 'quote'), $ids);
-			$where = $db->backtick($tableName) . '.' . $db->backtick($pkFields[0]) . ' IN (' . implode(',', $quotedIds) . ')';
+			$where = $db->backtick($tableName) . '.' . $db->backtick($fieldName) . ' IN (' . implode(',', $quotedIds) . ')';
 			if (is_object($sql)) {
 				$sql->addWhere($where);
 				$sql = $sql->getString();
