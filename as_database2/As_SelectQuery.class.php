@@ -36,6 +36,8 @@
  **/
 class As_SelectQuery extends As_Query
 {
+	protected static $alwaysUseSelectOptions = null;
+	
 	protected $select = array();
 	protected $selectOptions = array();
 	protected $from = array();
@@ -95,6 +97,12 @@ class As_SelectQuery extends As_Query
 		return $this->offset;
 	}
 	
+	public static function getAlwaysUseSelectOptions()
+	{
+		return self::$alwaysUseSelectOptions;
+	}
+	
+	
 	
 	/**
 	 * Lock the table when selecting from it so other queries can't.
@@ -138,6 +146,24 @@ class As_SelectQuery extends As_Query
 	{
 		$this->selectOptions[$selectOption] = true;
 	}
+	
+	/**
+	 * Add optional select options that you want to use for all instance of this class, e.g. SQL_CALC_FOUND_ROWS, SQL_NO_CACHE
+	 *
+	 * useful for developers to do As_SelectQuery::addAlwaysUseSelectOption('SQL_NO_CACHE'); to better identify slow queries
+	 * 
+	 * @param string $selectOption
+	 * @return void
+	 **/	
+	public static function addAlwaysUseSelectOption($selectOption)
+	{
+		if (is_null(self::$alwaysUseSelectOptions))
+		{
+			self::$alwaysUseSelectOptions = array();
+		}
+		self::$alwaysUseSelectOptions[$selectOption] = true;	
+	}
+	
 	
 	public function setFrom($from)
 	{
@@ -208,10 +234,15 @@ class As_SelectQuery extends As_Query
 			$sql .= "SELECT\n\t";
 			
 			// Add select options (optional)
-			if (!empty($this->selectOptions))
-			{
+			if (!empty($this->selectOptions)) {
 				$sql .= implode(' ', array_keys($this->selectOptions)) . "\n\t";
 			}
+			
+			// Add select options (optional)
+			if (is_array(self::$alwaysUseSelectOptions) && !empty(self::$alwaysUseSelectOptions)) {
+				$sql .= implode(' ', array_keys(self::$alwaysUseSelectOptions)) . "\n\t";
+			}
+			
 			
 			if (is_array($this->select))
 			{
