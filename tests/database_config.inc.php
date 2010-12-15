@@ -8,16 +8,22 @@
  * <code>
  * CREATE DATABASE test_cough_object;
  * GRANT USAGE ON `test_cough_object`.* TO `cough_test`@`localhost` IDENTIFIED BY 'cough_test';
+ * CREATE DATABASE reports;
+ * GRANT USAGE ON `reports`.* TO `cough_test`@`localhost` IDENTIFIED BY 'cough_test';
+ * CREATE DATABASE actual_db_name;
+ * GRANT USAGE ON `actual_db_name`.* TO `cough_test`@`localhost` IDENTIFIED BY 'cough_test';
+ * CREATE DATABASE testConfigAlias;
+ * GRANT USAGE ON `testConfigAlias`.* TO `cough_test`@`localhost` IDENTIFIED BY 'cough_test';
  * FLUSH PRIVILEGES;
  * </code>
  * 
  * @var array
  **/
 $dsn = array(
-	'host' => 'localhost',
+	'host' => '',
 	'user' => 'cough_test',
 	'pass' => 'cough_test',
-	'port' => 3306,
+	'port' => ':/tmp/mysql.sock',
 	'driver' => 'mysql',
 	'db_name' => 'test_cough_object',
 );

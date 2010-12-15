@@ -1,6 +1,5 @@
 <?php
-
-class TestCoughDatabaseFactory extends UnitTestCase
+class CoughDatabaseFactoryTest extends PHPUnit_Framework_TestCase
 {
 	protected $configs = array();
 	
@@ -8,7 +7,7 @@ class TestCoughDatabaseFactory extends UnitTestCase
 	// Set Up
 	//////////////////////////////////////
 	
-	public function __construct()
+	public static function setUpBeforeClass()
 	{
 		$coughRoot = dirname(dirname(dirname(__FILE__)));
 		require_once($coughRoot . '/cough/load.inc.php');
@@ -16,18 +15,22 @@ class TestCoughDatabaseFactory extends UnitTestCase
 	
 	public function setUp()
 	{
+		include(dirname(dirname(__FILE__)) . '/database_config.inc.php');
+		
 		CoughDatabaseFactory::reset();
 		$this->configs = array(
 			'config1' => array(
-				'host' => 'localhost',
-				'user' => 'nobody',
-				'port'	=> '3306',
+				'host' => $dsn['host'],
+				'user' => $dsn['user'],
+				'pass' => $dsn['pass'],
+				'port'	=> $dsn['port'],
 				'aliases' => array('testConfigAlias', 'reporting_server' => 'reports')
 			),
 			'config2' => array(
-				'host' => 'localhost',
-				'user' => 'nobody',
-				'port'	=> '3307',
+				'host' => $dsn['host'],
+				'user' => $dsn['user'],
+				'pass' => $dsn['pass'],
+				'port'	=> $dsn['port'],
 				'db_name_hash' => array('db_alias' => 'actual_db_name', 'write_server' => 'reports')
 			)
 		);
@@ -40,17 +43,17 @@ class TestCoughDatabaseFactory extends UnitTestCase
 	public function assertGetDatabaseNameWorks()
 	{
 		// An alias specified without the hash should have alias *and* database name equal to each other.
-		$this->assertIdentical(CoughDatabaseFactory::getDatabaseName('testConfigAlias'), 'testConfigAlias');
+		$this->assertSame(CoughDatabaseFactory::getDatabaseName('testConfigAlias'), 'testConfigAlias');
 		
 		// Specifying an alias with a hash allows access to the value stored therein.
-		$this->assertIdentical(CoughDatabaseFactory::getDatabaseName('reporting_server'), 'reports');
+		$this->assertSame(CoughDatabaseFactory::getDatabaseName('reporting_server'), 'reports');
 		
 		// Trying to access a database name that doesn't have a mapping should return the original value.
-		$this->assertIdentical(CoughDatabaseFactory::getDatabaseName('reports'), 'reports');
+		$this->assertSame(CoughDatabaseFactory::getDatabaseName('reports'), 'reports');
 		
 		// Specifying the db_name_hash allows a more direct way of configuring the aliases and database name mappings
-		$this->assertIdentical(CoughDatabaseFactory::getDatabaseName('db_alias'), 'actual_db_name');
-		$this->assertIdentical(CoughDatabaseFactory::getDatabaseName('write_server'), 'reports');
+		$this->assertSame(CoughDatabaseFactory::getDatabaseName('db_alias'), 'actual_db_name');
+		$this->assertSame(CoughDatabaseFactory::getDatabaseName('write_server'), 'reports');
 	}
 	
 	public function testAddConfig()
@@ -99,61 +102,60 @@ class TestCoughDatabaseFactory extends UnitTestCase
 		// test default adapter = "as" and old style "aliases" param
 		$testDbConfig = array(
 			'driver' => 'mysql',
-			'host' => 'localhost',
+			'host' => '',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
-			'port' => '3306',
+			'port' => ':/opt/local/var/run/mysql5/mysql.sock',
 			'aliases' => array('cough_test1')
 		);
 		CoughDatabaseFactory::addConfig($testDbConfig);
 		$test1Db = CoughDatabaseFactory::getDatabase('cough_test1');
-		$this->assertIsA($test1Db, 'As_Database');
+		$this->assertInstanceOf('As_Database', $test1Db);
 		
 		// test specifying adapter as "as" and new "db_name_hash" param
 		$testDbConfig = array(
 			'adapter' => 'as',
 			'driver' => 'mysql',
-			'host' => 'localhost',
+			'host' => '',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
-			'port' => '3306',
+			'port' => ':/opt/local/var/run/mysql5/mysql.sock',
 			'db_name_hash' => array('cough_test2' => 'test_cough_object')
 		);
 		CoughDatabaseFactory::addConfig($testDbConfig);
 		$test2Db = CoughDatabaseFactory::getDatabase('cough_test2');
-		$this->assertIsA($test2Db, 'As_Database');
+		$this->assertInstanceOf('As_Database', $test2Db);
 		
 		// test new style aliases param
 		$testDbConfig = array(
 			'driver' => 'mysql',
-			'host' => 'localhost',
+			'host' => '',
 			'user' => 'cough_test',
 			'pass' => 'cough_test',
-			'port' => '3306',
+			'port' => ':/opt/local/var/run/mysql5/mysql.sock',
 			'aliases' => array('cough_test4' => 'test_cough_object')
 		);
 		CoughDatabaseFactory::addConfig($testDbConfig);
 		$test4Db = CoughDatabaseFactory::getDatabase('cough_test4');
-		$this->assertIsA($test4Db, 'As_Database');
+		$this->assertInstanceOf('As_Database', $test4Db);
 		
 		// // test specifying adapter as "pdo"
 		// $testDbConfig = array(
 		// 	'adapter' => 'pdo',
 		// 	'driver' => 'mysql',
-		// 	'host' => 'localhost',
+		// 	'host' => '',
 		// 	'user' => 'cough_test',
 		// 	'pass' => 'cough_test',
-		// 	'port' => '3306',
+		// 	'port' => ':/opt/local/var/run/mysql5/mysql.sock',
 		// 	'aliases' => array('cough_test3' => 'test_cough_object')
 		// );
 		// CoughDatabaseFactory::addConfig($testDbConfig);
 		// $test3Db = CoughDatabaseFactory::getDatabase('cough_test3');
-		// $this->assertIsA($test3Db, 'CoughPdoDatabaseAdapter');
+		// $this->assertInstanceOf('CoughPdoDatabaseAdapter', $test3Db);
 		
 		// test getting the same database object back
 		$test1DbReference = CoughDatabaseFactory::getDatabase('cough_test1');
-		$this->assertReference($test1Db, $test1DbReference);
-		$this->assertIdentical($test1Db, $test1DbReference);
+		$this->assertSame($test1Db, $test1DbReference);
 		$this->assertFalse($test2Db === $test1DbReference);
 		// $this->assertFalse($test3Db === $test1DbReference);
 	}

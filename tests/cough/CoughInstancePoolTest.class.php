@@ -1,8 +1,7 @@
 <?php
-
-class TestCoughInstancePool extends UnitTestCase
+class CoughInstancePoolTest extends PHPUnit_Framework_TestCase
 {
-	public function __construct()
+	public static function setUpBeforeClass()
 	{
 		$coughRoot = dirname(dirname(dirname(__FILE__)));
 		require_once($coughRoot . '/cough/load.inc.php');
@@ -31,7 +30,7 @@ class TestCoughInstancePool extends UnitTestCase
 		$this->assertTrue(CoughInstancePool::get('InstancePoolTestObject', $obj->getKeyId()) instanceof InstancePoolTestObject);
 		
 		// the item should be a reference to the same thing we gave it
-		$this->assertIdentical($obj, CoughInstancePool::get('InstancePoolTestObject', $obj->getKeyId()));
+		$this->assertSame($obj, CoughInstancePool::get('InstancePoolTestObject', $obj->getKeyId()));
 		
 		// the item should be removeable by passing the object and key
 		CoughInstancePool::remove($obj, $obj->getKeyId());
@@ -72,18 +71,18 @@ class TestCoughInstancePool extends UnitTestCase
 		CoughInstancePool::add($objB2, $objB2->getKeyId());
 
 		// check they all come back good
-		$this->assertIdentical($objA1, CoughInstancePool::get(get_class($objA1), $objA1->getKeyId()));
-		$this->assertIdentical($objA2, CoughInstancePool::get(get_class($objA2), $objA2->getKeyId()));
-		$this->assertIdentical($objB1, CoughInstancePool::get(get_class($objB1), $objB1->getKeyId()));
-		$this->assertIdentical($objB2, CoughInstancePool::get(get_class($objB2), $objB2->getKeyId()));
+		$this->assertSame($objA1, CoughInstancePool::get(get_class($objA1), $objA1->getKeyId()));
+		$this->assertSame($objA2, CoughInstancePool::get(get_class($objA2), $objA2->getKeyId()));
+		$this->assertSame($objB1, CoughInstancePool::get(get_class($objB1), $objB1->getKeyId()));
+		$this->assertSame($objB2, CoughInstancePool::get(get_class($objB2), $objB2->getKeyId()));
 
 		// remove two at random and check that they are gone and the others are still good
 		CoughInstancePool::remove(get_class($objB1), $objB1->getKeyId());
 		CoughInstancePool::remove(get_class($objA2), $objA2->getKeyId());
 		$this->assertNull(CoughInstancePool::get(get_class($objB1), $objB1->getKeyId()));
 		$this->assertNull(CoughInstancePool::get(get_class($objA2), $objA2->getKeyId()));
-		$this->assertIdentical($objA1, CoughInstancePool::get(get_class($objA1), $objA1->getKeyId()));
-		$this->assertIdentical($objB2, CoughInstancePool::get(get_class($objB2), $objB2->getKeyId()));
+		$this->assertSame($objA1, CoughInstancePool::get(get_class($objA1), $objA1->getKeyId()));
+		$this->assertSame($objB2, CoughInstancePool::get(get_class($objB2), $objB2->getKeyId()));
 	}
 }
 

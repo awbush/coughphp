@@ -1,12 +1,11 @@
 <?php
-
-class TestCoughCollection extends UnitTestCase
+class CoughCollectionTest extends PHPUnit_Framework_TestCase
 {
 	//////////////////////////////////////
 	// Set Up
 	//////////////////////////////////////
 	
-	public function __construct()
+	public static function setUpBeforeClass()
 	{
 		$coughRoot = dirname(dirname(dirname(__FILE__)));
 		require_once($coughRoot . '/cough/load.inc.php');
@@ -89,9 +88,9 @@ class TestCoughCollection extends UnitTestCase
 		$sortMe1->add(new SortableElement($sortableData[0]));
 		$sortMe1->add(new SortableElement($sortableData[1]));
 		$sortMe1->add(new SortableElement($sortableData[2]));
-		$this->assertEqual($sortedCollectionIds, $sortMe1->getArrayKeys());
+		$this->assertEquals($sortedCollectionIds, $sortMe1->getArrayKeys());
 		$sortMe1->sortByMethod('getManufacturerName');
-		$this->assertEqual($sortedCollectionIds, $sortMe1->getArrayKeys());
+		$this->assertEquals($sortedCollectionIds, $sortMe1->getArrayKeys());
 		unset($sortMe1);
 		
 		// Create another sorted copy and sort it using another method
@@ -100,7 +99,7 @@ class TestCoughCollection extends UnitTestCase
 		$sortMe2->add(new SortableElement($sortableData[1]));
 		$sortMe2->add(new SortableElement($sortableData[2]));
 		$sortMe2->sortByMethod('getProductName');
-		$this->assertEqual($sortedCollectionIds, $sortMe2->getArrayKeys());
+		$this->assertEquals($sortedCollectionIds, $sortMe2->getArrayKeys());
 		unset($sortMe2);
 		
 		// Create another sorted copy and sort it using another method
@@ -109,7 +108,7 @@ class TestCoughCollection extends UnitTestCase
 		$sortMe3->add(new SortableElement($sortableData[1]));
 		$sortMe3->add(new SortableElement($sortableData[2]));
 		$sortMe3->sortByMethod('getPrice');
-		$this->assertEqual($sortedCollectionIds, $sortMe3->getArrayKeys());
+		$this->assertEquals($sortedCollectionIds, $sortMe3->getArrayKeys());
 		unset($sortMe3);
 		
 		///////////////////////////////////////////
@@ -121,9 +120,9 @@ class TestCoughCollection extends UnitTestCase
 		$sortMe4->add(new SortableElement($sortableData[1]));
 		$sortMe4->add(new SortableElement($sortableData[2]));
 		$sortMe4->add(new SortableElement($sortableData[0]));
-		$this->assertNotEqual($sortedCollectionIds, $sortMe4->getArrayKeys());
+		$this->assertNotEquals($sortedCollectionIds, $sortMe4->getArrayKeys());
 		$sortMe4->sortByMethod('getManufacturerName');
-		$this->assertEqual($sortedCollectionIds, $sortMe4->getArrayKeys());
+		$this->assertEquals($sortedCollectionIds, $sortMe4->getArrayKeys());
 		unset($sortMe4);
 		
 		// Create another unsorted copy and sort it using another method
@@ -131,9 +130,9 @@ class TestCoughCollection extends UnitTestCase
 		$sortMe5->add(new SortableElement($sortableData[1]));
 		$sortMe5->add(new SortableElement($sortableData[2]));
 		$sortMe5->add(new SortableElement($sortableData[0]));
-		$this->assertNotEqual($sortedCollectionIds, $sortMe5->getArrayKeys());
+		$this->assertNotEquals($sortedCollectionIds, $sortMe5->getArrayKeys());
 		$sortMe5->sortByMethod('getProductName');
-		$this->assertEqual($sortedCollectionIds, $sortMe5->getArrayKeys());
+		$this->assertEquals($sortedCollectionIds, $sortMe5->getArrayKeys());
 		unset($sortMe5);
 		
 		// Create another unsorted copy and sort it using another method
@@ -141,9 +140,9 @@ class TestCoughCollection extends UnitTestCase
 		$sortMe6->add(new SortableElement($sortableData[1]));
 		$sortMe6->add(new SortableElement($sortableData[2]));
 		$sortMe6->add(new SortableElement($sortableData[0]));
-		$this->assertNotEqual($sortedCollectionIds, $sortMe6->getArrayKeys());
+		$this->assertNotEquals($sortedCollectionIds, $sortMe6->getArrayKeys());
 		$sortMe6->sortByMethod('getProductName');
-		$this->assertEqual($sortedCollectionIds, $sortMe6->getArrayKeys());
+		$this->assertEquals($sortedCollectionIds, $sortMe6->getArrayKeys());
 		unset($sortMe6);
 		
 	}
@@ -153,37 +152,37 @@ class TestCoughCollection extends UnitTestCase
 		$collection = $this->buildSortableCollection();
 		
 		$collection->sortByMethods('getManufacturerName');
-		$this->assertEqual(array(1,4,2,3), $collection->getArrayKeys());
+		$this->assertEquals(array(1,4,2,3), $collection->getArrayKeys());
 		
 		$collection->sortByMethods('getManufacturerName', SORT_DESC);
-		$this->assertEqual(array(3,2,4,1), $collection->getArrayKeys());
+		$this->assertEquals(array(3,2,4,1), $collection->getArrayKeys());
 		
 		$collection->sortByMethods('getManufacturerName', 'getProductName');
-		$this->assertEqual(array(1,4,2,3), $collection->getArrayKeys());
+		$this->assertEquals(array(1,4,2,3), $collection->getArrayKeys());
 		
 		$collection->sortByMethods('getManufacturerName', 'getProductName', SORT_DESC);
-		$this->assertEqual(array(1,2,4,3), $collection->getArrayKeys());
+		$this->assertEquals(array(1,2,4,3), $collection->getArrayKeys());
 		
 		$collection->sortByMethods('getManufacturerName', SORT_DESC, 'getProductName', SORT_DESC);
-		$this->assertEqual(array(3,2,4,1), $collection->getArrayKeys());
+		$this->assertEquals(array(3,2,4,1), $collection->getArrayKeys());
 		
 		$collection->sortByMethods('getProductName', 'getManufacturerName');
-		$this->assertEqual(array(1,4,2,3), $collection->getArrayKeys());
+		$this->assertEquals(array(1,4,2,3), $collection->getArrayKeys());
 		
 		$collection->sortByMethods('getProductName', 'getManufacturerName', SORT_DESC);
-		$this->assertEqual(array(4,1,2,3), $collection->getArrayKeys());
+		$this->assertEquals(array(4,1,2,3), $collection->getArrayKeys());
 		
 		$collection->sortByMethods('getProductName', SORT_DESC, 'getManufacturerName', SORT_DESC);
-		$this->assertEqual(array(3,2,4,1), $collection->getArrayKeys());
+		$this->assertEquals(array(3,2,4,1), $collection->getArrayKeys());
 		
 		$collection->sortByMethods('getPrice');
-		$this->assertEqual(array(1,2,3,4), $collection->getArrayKeys());
+		$this->assertEquals(array(1,2,3,4), $collection->getArrayKeys());
 		
 		$collection->sortByMethods('getPrice', SORT_DESC);
-		$this->assertEqual(array(4,3,2,1), $collection->getArrayKeys());
+		$this->assertEquals(array(4,3,2,1), $collection->getArrayKeys());
 		
 		$collection->sortByMethods('getPrice', SORT_ASC, 'getProductName', SORT_DESC, 'getManufacturerName');
-		$this->assertEqual(array(1,2,3,4), $collection->getArrayKeys());
+		$this->assertEquals(array(1,2,3,4), $collection->getArrayKeys());
 		
 		
 		// test sort empty collection
@@ -251,7 +250,7 @@ class TestCoughCollection extends UnitTestCase
 		foreach ($keyPermutations as $keyPermutation)
 		{
 			$collection->sortByKeys($keyPermutation);
-			$this->assertEqual($keyPermutation, $collection->getArrayKeys());
+			$this->assertEquals($keyPermutation, $collection->getArrayKeys());
 		}
 	}
 	
@@ -275,15 +274,15 @@ class TestCoughCollection extends UnitTestCase
 			$iteratorData[$keyId] = $productName;
 		}
 		
-		$this->assertIdentical($manualData, $iteratorData);
+		$this->assertSame($manualData, $iteratorData);
 		
 		// count should work
-		$this->assertIdentical(count($manualData), count($iterator));
-		$this->assertIdentical(count($collection), count($iterator));
+		$this->assertSame(count($manualData), count($iterator));
+		$this->assertSame(count($collection), count($iterator));
 		
 		// empty should work
-		$this->assertIdentical(empty($manualData), empty($iterator));
-		$this->assertIdentical(empty($collection), empty($iterator));
+		$this->assertSame(empty($manualData), empty($iterator));
+		$this->assertSame(empty($collection), empty($iterator));
 	}
 	
 	public function testGetKeyValueIteratorWithCustomKeyId()
@@ -305,15 +304,15 @@ class TestCoughCollection extends UnitTestCase
 			$iteratorData[$keyId] = $productName;
 		}
 		
-		$this->assertIdentical($manualData, $iteratorData);
+		$this->assertSame($manualData, $iteratorData);
 		
 		// count should work
-		$this->assertIdentical(count($manualData), count($iterator));
-		$this->assertIdentical(count($collection), count($iterator));
+		$this->assertSame(count($manualData), count($iterator));
+		$this->assertSame(count($collection), count($iterator));
 		
 		// empty should work
-		$this->assertIdentical(empty($manualData), empty($iterator));
-		$this->assertIdentical(empty($collection), empty($iterator));
+		$this->assertSame(empty($manualData), empty($iterator));
+		$this->assertSame(empty($collection), empty($iterator));
 	}
 	
 	public function testCanRemoveItemsFromCollectionWhileLooping()
