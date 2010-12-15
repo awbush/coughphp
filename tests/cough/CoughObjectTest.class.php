@@ -1,16 +1,14 @@
 <?php
-
 /**
- * @todo consider switching to PHPUnit, especially if it has PHP5 strict compatibility.
  * @todo consider splitting out some of the test methods, and rename them in a
  * way that indicates requirements rather than what it is doing.  The
- * TestAutoloader.class.php file is a good example.  Once we do this, we can also
+ * AutoloaderTest.class.php file is a good example.  Once we do this, we can also
  * benefit from concepts like Agile Documentation {@link http://www.phpunit.de/manual/3.3/en/other-uses-for-tests.html}
  **/
-class TestCoughObject extends UnitTestCase
+class CoughObjectTest extends PHPUnit_Framework_TestCase
 {
-	protected $db = null; // the database object
-	protected $coughTestDbResetSql = '';
+	protected static $db = null; // the database object
+	protected static $coughTestDbResetSql = '';
 	
 	//////////////////////////////////////
 	// Set Up
@@ -19,23 +17,23 @@ class TestCoughObject extends UnitTestCase
 	/**
 	 * Some things we only need to setup once (like generate all the code from the DB)
 	 **/
-	public function __construct()
+	public static function setUpBeforeClass()
 	{
 		error_reporting(E_ALL);
-		$this->includeDependencies();
-		$this->setUpDatabase();
-		$this->loadSetupSql();
-		$this->resetCoughTestDatabase();
-		$this->generateCoughTestClasses();
-		$this->includeCoughTestClasses();
+		self::includeDependencies();
+		self::setUpDatabase();
+		self::loadSetupSql();
+		self::resetCoughTestDatabase();
+		self::generateCoughTestClasses();
+		self::includeCoughTestClasses();
 	}
 	
 	/**
 	 * Some things we only need to teardown once (like delete all the generated code)
 	 **/
-	public function __destruct()
+	public static function tearDownAfterClass()
 	{
-		$this->removeGeneratedFiles();
+		self::removeGeneratedFiles();
 	}
 	
 	/**
@@ -45,18 +43,18 @@ class TestCoughObject extends UnitTestCase
 	 **/
 	public function setUp()
 	{
-		$this->resetCoughTestDatabase();
+		self::resetCoughTestDatabase();
 	}
 	
-	public function resetCoughTestDatabase()
+	public static function resetCoughTestDatabase()
 	{
-		foreach ($this->coughTestDbResetSql as $sql)
+		foreach (self::$coughTestDbResetSql as $sql)
 		{
-			$this->db->query($sql);
+			self::$db->query($sql);
 		}
 	}
 	
-	public function setUpDatabase()
+	public static function setUpDatabase()
 	{
 		// Use connection information from the generation config (and just add the aliases)
 		include(dirname(__FILE__) . '/config/database_schema_generator.inc.php');
@@ -66,19 +64,19 @@ class TestCoughObject extends UnitTestCase
 		$testDbConfig['aliases'] = array($dbName);
 		
 		CoughDatabaseFactory::addConfig($testDbConfig);
-		$this->db = CoughDatabaseFactory::getDatabase($dbName);
+		self::$db = CoughDatabaseFactory::getDatabase($dbName);
 	}
 	
-	public function loadSetupSql()
+	public static function loadSetupSql()
 	{
 		// We have to run this sql dump one query at a time
-		$this->coughTestDbResetSql = explode(';', file_get_contents(dirname(__FILE__) . '/config/db_setup.sql'));
+		self::$coughTestDbResetSql = explode(';', file_get_contents(dirname(__FILE__) . '/config/db_setup.sql'));
 		
 		// the last element is a blank string, so get rid of it
-		array_pop($this->coughTestDbResetSql);
+		array_pop(self::$coughTestDbResetSql);
 	}
 	
-	public function includeDependencies()
+	public static function includeDependencies()
 	{
 		// include Cough + dependencies; this should be the only include necessary
 		$coughRoot = dirname(dirname(dirname(__FILE__)));
@@ -86,7 +84,7 @@ class TestCoughObject extends UnitTestCase
 		require_once($coughRoot . '/cough_generator/load.inc.php');
 	}
 	
-	public function generateCoughTestClasses()
+	public static function generateCoughTestClasses()
 	{
 		ob_start();
 		$facade = new CoughGeneratorFacade();
@@ -94,7 +92,7 @@ class TestCoughObject extends UnitTestCase
 		ob_end_clean();
 	}
 	
-	public function includeCoughTestClasses()
+	public static function includeCoughTestClasses()
 	{
 		$classPath = dirname(__FILE__) . '/config/output/';
 		// include Cough generated classes
@@ -128,7 +126,7 @@ class TestCoughObject extends UnitTestCase
 		
 		foreach ($sqlCommands as $sql)
 		{
-			$this->db->query($sql);
+			self::$db->query($sql);
 		}
 	}
 	
@@ -164,7 +162,7 @@ class TestCoughObject extends UnitTestCase
 		$newBook->setCreationDatetime(date('Y-m-d H:i:s'));
 		$newBook->save();
 		
-		$this->assertIdentical($newBook->getBookId(), 1);
+		$this->assertSame($newBook->getBookId(), 1);
 		
 		// test the most basic case (insert with no values)
 		$newBook2 = new Book();
@@ -202,9 +200,9 @@ class TestCoughObject extends UnitTestCase
 		$book = new Book2($data);
 		$getterData = $book->getFieldsThroughGetters();
 		
-		$this->assertEqual('Your title is mine now!', $getterData['title']);
-		$this->assertEqual($data['introduction'], $getterData['introduction']);
-		$this->assertEqual($data['creation_datetime'], $getterData['creation_datetime']);
+		$this->assertEquals('Your title is mine now!', $getterData['title']);
+		$this->assertEquals($data['introduction'], $getterData['introduction']);
+		$this->assertEquals($data['creation_datetime'], $getterData['creation_datetime']);
 	}
 	
 	public function testSetKeyId()
@@ -214,14 +212,14 @@ class TestCoughObject extends UnitTestCase
 		$book1->setKeyId(1);
 		$book2 = new Book();
 		$book2->setBookId(1);
-		$this->assertEqual($book1->getFields(), $book2->getFields());
+		$this->assertEquals($book1->getFields(), $book2->getFields());
 		
 		// do it again, but this time check the entire object state (this means we can't notify children of the change)
 		$book1 = new Book();
 		$book1->setKeyId(1, false); // false => don't notify children of key change
 		$book2 = new Book();
 		$book2->setBookId(1);
-		$this->assertEqual(serialize($book1), serialize($book2));
+		$this->assertEquals(serialize($book1), serialize($book2));
 	}
 	
 	public function testHasKeyId()
@@ -256,17 +254,17 @@ class TestCoughObject extends UnitTestCase
 		$sameBook = Book::constructByKey($newBook->getBookId());
 		
 		// this one fails; see ticket #27, http://trac.coughphp.com/ticket/27
-		//$this->assertIdentical($newBook->getBookId(), $sameBook->getBookId());
-		$this->assertEqual($newBook->getBookId(), $sameBook->getBookId());
+		//$this->assertSame($newBook->getBookId(), $sameBook->getBookId());
+		$this->assertEquals($newBook->getBookId(), $sameBook->getBookId());
 		
-		$this->assertIdentical($newBook->getTitle(), $sameBook->getTitle());
+		$this->assertSame($newBook->getTitle(), $sameBook->getTitle());
 		
 		// again, this is broke; see ticket #27
-		//$this->assertIdentical($newBook->getAuthorId(), $sameBook->getAuthorId());
-		$this->assertEqual($newBook->getAuthorId(), $sameBook->getAuthorId());
+		//$this->assertSame($newBook->getAuthorId(), $sameBook->getAuthorId());
+		$this->assertEquals($newBook->getAuthorId(), $sameBook->getAuthorId());
 		
-		$this->assertIdentical($newBook->getIntroduction(), $sameBook->getIntroduction());
-		$this->assertIdentical($newBook->getCreationDatetime(), $sameBook->getCreationDatetime());
+		$this->assertSame($newBook->getIntroduction(), $sameBook->getIntroduction());
+		$this->assertSame($newBook->getCreationDatetime(), $sameBook->getCreationDatetime());
 	}
 	
 	public function testUpdateObject()
@@ -278,13 +276,13 @@ class TestCoughObject extends UnitTestCase
 		
 		$newAuthor->setName('Mark Twain');
 		
-		$this->assertIdentical($newAuthor->getName(), 'Mark Twain');
+		$this->assertSame($newAuthor->getName(), 'Mark Twain');
 		
 		$newAuthor->save();
 		
 		$sameAuthor = Author::constructByKey($newAuthor->getAuthorId());
 		
-		$this->assertIdentical($sameAuthor->getName(), 'Mark Twain');
+		$this->assertSame($sameAuthor->getName(), 'Mark Twain');
 	}
 	
 	public function testRetireObject()
@@ -302,7 +300,7 @@ class TestCoughObject extends UnitTestCase
 		// handling. It's mostly meant as a way to keep items from showing up in related
 		// collections, NOT to keep the entitity from being retrieved (just delete it in
 		// that case).
-		$this->assertIsA(Library::constructByKey($newLibrary->getLibraryId()), 'Library');
+		$this->assertInstanceOf('Library', Library::constructByKey($newLibrary->getLibraryId()));
 	}
 	
 	public function testObjectsCanBeDeletedUsingRemoveAndSave()
@@ -348,11 +346,11 @@ class TestCoughObject extends UnitTestCase
 		
 		$ulysses->setAuthor_Object($joyce);
 		
-		$this->assertReference($ulysses->getAuthor_Object(), $joyce);
+		$this->assertSame($ulysses->getAuthor_Object(), $joyce);
 		
 		$ulysses->save();
 		
-		// $this->assertNotEqual($ulysses->getAuthorId(), $joyce->getAuthorId());
+		// $this->assertNotEquals($ulysses->getAuthorId(), $joyce->getAuthorId());
 		
 		// case 2: author object saved, book is saved
 		$twain = new Author();
@@ -368,11 +366,11 @@ class TestCoughObject extends UnitTestCase
 		
 		$huckFinn->setAuthor_Object($twain);
 		
-		$this->assertReference($huckFinn->getAuthor_Object(), $twain);
+		$this->assertSame($huckFinn->getAuthor_Object(), $twain);
 		
 		$huckFinn->save();
 		
-		$this->assertNotEqual($huckFinn->getAuthorId(), $twain->getAuthorId());
+		$this->assertNotEquals($huckFinn->getAuthorId(), $twain->getAuthorId());
 		
 		// case 3: author object is anonymous, book is anonymous
 		$murakami = new Author();
@@ -386,11 +384,11 @@ class TestCoughObject extends UnitTestCase
 		
 		$windup->setAuthor_Object($murakami);
 		
-		$this->assertReference($windup->getAuthor_Object(), $murakami);
+		$this->assertSame($windup->getAuthor_Object(), $murakami);
 		
 		$windup->save();
 		
-		// $this->assertNotEqual($windup->getAuthorId(), $murakami->getAuthorId());
+		// $this->assertNotEquals($windup->getAuthorId(), $murakami->getAuthorId());
 		
 		// case 4: author object is saved, book is anonymous
 		$heinlein = new Author();
@@ -405,11 +403,11 @@ class TestCoughObject extends UnitTestCase
 		
 		$stranger->setAuthor_Object($heinlein);
 		
-		$this->assertReference($stranger->getAuthor_Object(), $heinlein);
+		$this->assertSame($stranger->getAuthor_Object(), $heinlein);
 		
 		$stranger->save();
 		
-		$this->assertNotEqual($stranger->getAuthorId(), $heinlein->getAuthorId());
+		$this->assertNotEquals($stranger->getAuthorId(), $heinlein->getAuthorId());
 	}
 	
 	public function testAddAndRemoveObject()
@@ -427,12 +425,12 @@ class TestCoughObject extends UnitTestCase
 		
 		$joyce->addBook($ulysses);
 		$booksByJoyce = $joyce->getBook_Collection();
-		$this->assertReference($booksByJoyce[$ulysses->getBookId()], $ulysses);
+		$this->assertSame($booksByJoyce[$ulysses->getBookId()], $ulysses);
 		
 		$joyce->save();
 		
-		$this->assertEqual($ulysses->getAuthorId(), $joyce->getAuthorId());
-		$this->assertIdentical($ulysses->getAuthor_Object(), $joyce);
+		$this->assertEquals($ulysses->getAuthorId(), $joyce->getAuthorId());
+		$this->assertSame($ulysses->getAuthor_Object(), $joyce);
 		
 		// case 2: author object saved, book is saved
 		$twain = new Author();
@@ -448,12 +446,12 @@ class TestCoughObject extends UnitTestCase
 		
 		$twain->addBook($huckFinn);
 		$booksByTwain = $twain->getBook_Collection();
-		$this->assertReference($booksByTwain[$huckFinn->getBookId()], $huckFinn);
+		$this->assertSame($booksByTwain[$huckFinn->getBookId()], $huckFinn);
 		
 		$twain->save();
 		
-		$this->assertEqual($huckFinn->getAuthorId(), $twain->getAuthorId());
-		$this->assertIdentical($huckFinn->getAuthor_Object(), $twain);
+		$this->assertEquals($huckFinn->getAuthorId(), $twain->getAuthorId());
+		$this->assertSame($huckFinn->getAuthor_Object(), $twain);
 		
 		// case 3: author object anonymous, book is anonymous
 		$murakami = new Author();
@@ -467,19 +465,19 @@ class TestCoughObject extends UnitTestCase
 		
 		$murakami->addBook($windup);
 		$booksByMurakami = $murakami->getBook_Collection();
-		$this->assertReference($booksByMurakami->getPosition(0), $windup);
+		$this->assertSame($booksByMurakami->getPosition(0), $windup);
 		
 		$murakami->save();
 		
-		$this->assertEqual($windup->getAuthorId(), $murakami->getAuthorId());
-		$this->assertIdentical($windup->getAuthor_Object(), $murakami);
+		$this->assertEquals($windup->getAuthorId(), $murakami->getAuthorId());
+		$this->assertSame($windup->getAuthor_Object(), $murakami);
 		
 		$this->resetCoughTestDatabase();
 		
 		$twain->save();
 		
-		$this->assertEqual($huckFinn->getAuthorId(), $twain->getAuthorId());
-		$this->assertIdentical($huckFinn->getAuthor_Object(), $twain);
+		$this->assertEquals($huckFinn->getAuthorId(), $twain->getAuthorId());
+		$this->assertSame($huckFinn->getAuthor_Object(), $twain);
 		
 		// case 4: author object is saved, book is anonymous
 		$heinlein = new Author();
@@ -494,12 +492,12 @@ class TestCoughObject extends UnitTestCase
 		
 		$heinlein->addBook($stranger);
 		$booksByHeinlein = $heinlein->getBook_Collection();
-		$this->assertReference($booksByHeinlein->getPosition(0), $stranger);
+		$this->assertSame($booksByHeinlein->getPosition(0), $stranger);
 		
 		$heinlein->save();
 		
-		$this->assertEqual($stranger->getAuthorId(), $heinlein->getAuthorId());
-		$this->assertIdentical($stranger->getAuthor_Object(), $heinlein);
+		$this->assertEquals($stranger->getAuthorId(), $heinlein->getAuthorId());
+		$this->assertSame($stranger->getAuthor_Object(), $heinlein);
 		
 		// test remove object
 		
@@ -524,29 +522,29 @@ class TestCoughObject extends UnitTestCase
 		$author->addBook($book);
 		$author->addBook($book2);
 		
-		$this->assertEqual(count($author->getBook_Collection()), 2);
+		$this->assertEquals(count($author->getBook_Collection()), 2);
 		
 		// $book2library = new Book2library();
 		// $book2library->setLibrary_Object($library);
 		// $book->addBook2library($book2library);
 		// $book2->addBook2library($book2library);
 		
-		// $this->db->getDb()->startLoggingQueries();
+		// self::$db->getDb()->startLoggingQueries();
 		
 		$author->save();
 		
 		// $this->dump($author->getBook_Collection());
-		// print_r($this->db->getDb()->getQueryLog());
+		// print_r(self::$db->getDb()->getQueryLog());
 		
 		$this->assertNotNull($author->getAuthorId());
 		
 		$this->assertNotNull($book->getBookId());
 		$this->assertNotNull($book->getAuthorId());
-		$this->assertIdentical($book->getAuthorId(), $author->getAuthorId());
+		$this->assertSame($book->getAuthorId(), $author->getAuthorId());
 		
 		$this->assertNotNull($book2->getBookId());
 		$this->assertNotNull($book2->getAuthorId());
-		$this->assertIdentical($book2->getAuthorId(), $author->getAuthorId());
+		$this->assertSame($book2->getAuthorId(), $author->getAuthorId());
 	}
 	
 	public function testManyToMany()
@@ -600,7 +598,7 @@ class TestCoughObject extends UnitTestCase
 		$sameLibrary = Library::constructByKey($library->getLibraryId());
 		$bookJoinsInTravis = $sameLibrary->getBook2library_Collection();
 		// $this->dump($bookJoinsInTravis);
-		$this->assertEqual(count($bookJoinsInTravis), 2);
+		$this->assertEquals(count($bookJoinsInTravis), 2);
 		
 		// This test is similar to the 4 that are commented out below, but this shows what is different
 		// AND it ignores the creation_datetime and last_modified_datetime differences b/c they are
@@ -623,23 +621,23 @@ class TestCoughObject extends UnitTestCase
 		
 		// these fail because the $book and $book2 don't have some default values set after save like creation_datetime
 		// (which is intentional; call load() after save if you want to get the updated data.)
-		// $this->assertIdentical($bookJoinsInTravis->getPosition(0)->getBook_Object(), $book);
-		// $this->assertIdentical($bookJoinsInTravis->getPosition(1)->getBook_Object(), $book2);
+		// $this->assertSame($bookJoinsInTravis->getPosition(0)->getBook_Object(), $book);
+		// $this->assertSame($bookJoinsInTravis->getPosition(1)->getBook_Object(), $book2);
 
-		$this->assertEqual($bookJoinsInTravis->getPosition(0)->getBook_Object()->getBookId(), $book->getBookId());
-		$this->assertEqual($bookJoinsInTravis->getPosition(1)->getBook_Object()->getBookId(), $book2->getBookId());
+		$this->assertEquals($bookJoinsInTravis->getPosition(0)->getBook_Object()->getBookId(), $book->getBookId());
+		$this->assertEquals($bookJoinsInTravis->getPosition(1)->getBook_Object()->getBookId(), $book2->getBookId());
 		
 		$sameLibrary2 = Library::constructByKey($library2->getLibraryId());
 		$bookJoinsInLbj = $sameLibrary2->getBook2library_Collection();
-		$this->assertEqual(count($bookJoinsInLbj), 2);
+		$this->assertEquals(count($bookJoinsInLbj), 2);
 		
 		// these fail because the $book and $book2 don't have some default values set after save like creation_datetime
 		// (which is intentional; call load() after save if you want to get the updated data.)
-		// $this->assertIdentical($bookJoinsInLbj->getPosition(0)->getBook_Object(), $book);
-		// $this->assertIdentical($bookJoinsInLbj->getPosition(1)->getBook_Object(), $book2);
+		// $this->assertSame($bookJoinsInLbj->getPosition(0)->getBook_Object(), $book);
+		// $this->assertSame($bookJoinsInLbj->getPosition(1)->getBook_Object(), $book2);
 
-		$this->assertEqual($bookJoinsInLbj->getPosition(0)->getBook_Object()->getBookId(), $book->getBookId());
-		$this->assertEqual($bookJoinsInLbj->getPosition(1)->getBook_Object()->getBookId(), $book2->getBookId());
+		$this->assertEquals($bookJoinsInLbj->getPosition(0)->getBook_Object()->getBookId(), $book->getBookId());
+		$this->assertEquals($bookJoinsInLbj->getPosition(1)->getBook_Object()->getBookId(), $book2->getBookId());
 	}
 	
 	public function testTransactions()
@@ -658,7 +656,7 @@ class TestCoughObject extends UnitTestCase
 		$authors = new Author_Collection();
 		$authors->load();
 		
-		$this->assertEqual(count($authors), 1);
+		$this->assertEquals(count($authors), 1);
 	}
 	
 	public function getFieldMismatches($object1, $object2)

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This unit test's goal is to take three pieces of information (db_setup,
  * generator_config, and expected_output) and ensure that the given db_setup and
@@ -33,11 +32,11 @@
  * @package tests
  * @author Anthony Bush
  **/
-class TestCoughGenerator extends UnitTestCase
+class CoughGeneratorTest extends PHPUnit_Framework_TestCase
 {
-	protected $db = null;
+	protected static $db = null;
 	
-	public function __construct()
+	public static function setUpBeforeClass()
 	{
 		// include cough generator, core cough, and the as_database DAL.
 		$coughRoot = dirname(dirname(dirname(__FILE__)));
@@ -51,10 +50,10 @@ class TestCoughGenerator extends UnitTestCase
 		CoughDatabaseFactory::addConfig($coughDbConfig);
 		
 		// Cache the db object for rest of tests
-		$this->db = CoughDatabaseFactory::getDatabase($dsn['db_name']);
-		
+		self::$db = CoughDatabaseFactory::getDatabase($dsn['db_name']);
+		self::$db->selectDb($dsn['db_name']);
 		// Clean DB before start
-		$this->dropAllTables();
+		self::dropAllTables();
 	}
 	
 	public function executeSqlFile($sqlFile)
@@ -66,7 +65,7 @@ class TestCoughGenerator extends UnitTestCase
 		array_pop($sqlCommands);
 
 		foreach ($sqlCommands as $sql) {
-			$this->db->query($sql);
+			self::$db->query($sql);
 		}
 	}
 	
@@ -87,12 +86,12 @@ class TestCoughGenerator extends UnitTestCase
 		rmdir($classPath);
 	}
 	
-	protected function dropAllTables()
+	protected static function dropAllTables()
 	{
-		$result = $this->db->query('SHOW TABLES');
+		$result = self::$db->query('SHOW TABLES');
 		while ($row = $result->getRow())
 		{
-			$this->db->query('DROP TABLE IF EXISTS ' . $this->db->backtick($row['Tables_in_test_cough_object']));
+			self::$db->query('DROP TABLE IF EXISTS ' . self::$db->backtick($row['Tables_in_test_cough_object']));
 		}
 	}
 	

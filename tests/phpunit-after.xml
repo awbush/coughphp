@@ -1,0 +1,8 @@
+<phpunit>
+	<testsuites>
+		<testsuite name="Autoloader Cache File Test Suite">
+			<directory>autoloader/*Test.class.php files</directory>
+			<file>autoloader/AutoloaderCacheFileTest.class.php</file>
+		</testsuite>
+	</testsuites>
+</phpunit>

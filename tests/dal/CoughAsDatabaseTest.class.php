@@ -1,38 +1,37 @@
 <?php
-
-class TestCoughAsDatabase extends UnitTestCase
+class CoughAsDatabaseTest extends PHPUnit_Framework_TestCase
 {
 	//////////////////////////////////////
 	// Set Up
 	//////////////////////////////////////
 	
-	protected $db = null;
-	protected $adapterName = 'as';
-	protected $resultObjectClassName = 'As_DatabaseResult';
+	protected static $db = null;
+	protected static $adapterName = 'as';
+	protected static $resultObjectClassName = 'As_DatabaseResult';
 	
-	public function __construct()
+	public static function setUpBeforeClass()
 	{
 		// include core cough, and the as_database DAL.
 		require_once(dirname(dirname(dirname(__FILE__))) . '/cough/load.inc.php');
-		$this->loadAdapterModule();
-		$this->initDatabase();
+		self::loadAdapterModule();
+		self::initDatabase();
 	}
 	
-	public function loadAdapterModule()
+	public static function loadAdapterModule()
 	{
 		require_once(dirname(dirname(dirname(__FILE__))) . '/as_database2/load.inc.php');
 	}
 	
-	public function initDatabase()
+	public static function initDatabase()
 	{
 		// setup database
 		require(dirname(dirname(__FILE__)) . '/database_config.inc.php');
 		$testDbConfig = $dsn;
-		$testDbConfig['adapter'] = $this->adapterName;
+		$testDbConfig['adapter'] = self::$adapterName;
 		$testDbConfig['aliases'] = array($dsn['db_name']);
 		CoughDatabaseFactory::reset();
 		CoughDatabaseFactory::addConfig($testDbConfig);
-		$this->db = CoughDatabaseFactory::getDatabase($dsn['db_name']);
+		self::$db = CoughDatabaseFactory::getDatabase($dsn['db_name']);
 	}
 	
 	public function executeSqlFile($sqlFile)
@@ -44,7 +43,7 @@ class TestCoughAsDatabase extends UnitTestCase
 		array_pop($sqlCommands);
 
 		foreach ($sqlCommands as $sql) {
-			$this->db->execute($sql);
+			self::$db->execute($sql);
 		}
 	}
 	
@@ -78,8 +77,8 @@ class TestCoughAsDatabase extends UnitTestCase
 	
 	public function testQuery()
 	{
-		$result = $this->db->query('SELECT * FROM person');
-		$this->assertIsA($result, $this->resultObjectClassName);
+		$result = self::$db->query('SELECT * FROM person');
+		$this->assertInstanceOf(self::$resultObjectClassName, $result);
 		$expectedRows = array(
 			'0' => array(
 				'person_id' => '1',
@@ -102,25 +101,25 @@ class TestCoughAsDatabase extends UnitTestCase
 				'political_party_id' => '99'
 			)
 		);
-		$this->assertIdentical($result->getRows(), $expectedRows);
+		$this->assertSame($result->getRows(), $expectedRows);
 		
 		// test empty result
-		$result = $this->db->query('SELECT * FROM school_type_empty_table');
-		$this->assertIdentical($result->getRows(), array());
+		$result = self::$db->query('SELECT * FROM school_type_empty_table');
+		$this->assertSame($result->getRows(), array());
 		
 		// test derived field name
-		$result = $this->db->query('SELECT 3306 AS `port`');
+		$result = self::$db->query('SELECT 3306 AS `port`');
 		$expectedRows = array(array(
 			'port' => '3306'	
 		));
-		$this->assertIdentical($result->getRows(), $expectedRows);
+		$this->assertSame($result->getRows(), $expectedRows);
 		
 		// test select mysql function
-		$result = $this->db->query('SELECT COUNT(*) FROM person');
+		$result = self::$db->query('SELECT COUNT(*) FROM person');
 		$expectedRows = array(array(
 			'COUNT(*)' => '3'
 		));
-		$this->assertIdentical($result->getRows(), $expectedRows);
+		$this->assertSame($result->getRows(), $expectedRows);
 	}
 	
 	public function testExecute()
@@ -128,30 +127,30 @@ class TestCoughAsDatabase extends UnitTestCase
 		// test getLastInsertId before we have done any inserts
 		// NOTE: PDO returns string "0" and As_Database returns integer 0... I would prefer the return value to be 
 		// null, but perhaps this is not a meaningful issue
-		//$this->assertNull($this->db->getLastInsertId()); // currently fails
-		$this->assertEqual($this->db->getLastInsertId(), 0);
+		//$this->assertNull(self::$db->getLastInsertId()); // currently fails
+		$this->assertEquals(self::$db->getLastInsertId(), 0);
 		
 		// test execute insert
-		$numAffected = $this->db->execute("INSERT person VALUES ('', 'Venkman', 0, 3)");
-		$this->assertIdentical($numAffected, 1);
+		$numAffected = self::$db->execute("INSERT person VALUES ('', 'Venkman', 0, 3)");
+		$this->assertSame($numAffected, 1);
 		
 		// test getLastInsertId
 		// NOTE: PDO returns string 12, but As_Database returns integer 12... this may or may not be a discrepancy that
 		// needs to be resolved
-		$venkmanPersonId = $this->db->getLastInsertId();
-		//$this->assertIdentical($venkmanPersonId, 12); // currently fails
-		$this->assertEqual($venkmanPersonId, 12);
+		$venkmanPersonId = self::$db->getLastInsertId();
+		//$this->assertSame($venkmanPersonId, 12); // currently fails
+		$this->assertEquals($venkmanPersonId, 12);
 		
 		// test insert succeeded
-		$result = $this->db->getResult('SELECT person.name FROM person WHERE person.person_id = 12');
-		$this->assertIdentical($result, 'Venkman');
+		$result = self::$db->getResult('SELECT person.name FROM person WHERE person.person_id = 12');
+		$this->assertSame($result, 'Venkman');
 		
 		// test execute update
-		$numAffected = $this->db->execute('UPDATE person SET political_party_id = 4 WHERE political_party_id = 2');
-		$this->assertIdentical($numAffected, 2);
+		$numAffected = self::$db->execute('UPDATE person SET political_party_id = 4 WHERE political_party_id = 2');
+		$this->assertSame($numAffected, 2);
 		
 		// test update succeeded
-		$result = $this->db->query('SELECT name FROM person WHERE political_party_id = 4');
+		$result = self::$db->query('SELECT name FROM person WHERE political_party_id = 4');
 		$expectedRows = array(
 			'0' => array(
 				'name' => 'Anthony'
@@ -161,34 +160,34 @@ class TestCoughAsDatabase extends UnitTestCase
 				'name' => 'Lewis'
 			)
 		);
-		$this->assertIdentical($result->getRows(), $expectedRows);
+		$this->assertSame($result->getRows(), $expectedRows);
 		
 		// test execute delete
-		$numAffected = $this->db->execute('DELETE FROM person WHERE is_retired = 0');
-		$this->assertIdentical($numAffected, 4);
+		$numAffected = self::$db->execute('DELETE FROM person WHERE is_retired = 0');
+		$this->assertSame($numAffected, 4);
 		
 		// test delete succeeded
-		$result = $this->db->getResult('SELECT COUNT(*) FROM person');
-		$this->assertIdentical($result, '0');
+		$result = self::$db->getResult('SELECT COUNT(*) FROM person');
+		$this->assertSame($result, '0');
 	}
 	
 	public function testQuote()
 	{
 		// Test handling of magic_quotes_gpc (lack thereof), and escaping of characters
 		$acidString = "\000\n\r\032!@#^%&!@^%#!*@&#!()))()!(  .   . . ..\\\\.\\\"  \\'   // /./ x?? ddfsdfdsf je;;ee  //.. ,, SELECT * FROM person balhhh )";
-		$quotedString = $this->db->quote($acidString);
+		$quotedString = self::$db->quote($acidString);
 		$sql = 'UPDATE person SET person.name = ' . $quotedString;
-		$this->db->execute($sql);
+		self::$db->execute($sql);
 		
 		// Not all DB layers support LIMIT
 		// $sql = 'SELECT person.name FROM person LIMIT 1';
-		$sql = $this->db->getSelectQuery();
+		$sql = self::$db->getSelectQuery();
 		$sql->setSelect('person.name');
 		$sql->setFrom('person');
 		$sql->setLimit(1);
 		
-		$returnedString = $this->db->getResult($sql);
-		$this->assertEqual($acidString, $returnedString);
+		$returnedString = self::$db->getResult($sql);
+		$this->assertEquals($acidString, $returnedString);
 	}
 }
 

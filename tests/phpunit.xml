@@ -1,0 +1,23 @@
+<phpunit>
+	<testsuites>
+		<testsuite name="CoughPHP Test Suite">
+			<directory>cough/*Test.class.php files</directory>
+			<file>cough/CoughCollectionTest.class.php</file>
+			<file>cough/CoughDatabaseFactoryTest.class.php</file>
+			<file>cough/CoughInstancePoolTest.class.php</file>
+			<file>cough/CoughObjectTest.class.php</file>
+		</testsuite>
+		<testsuite name="CoughPHP Generator Test Suite">
+			<directory>cough_generator/*Test.class.php files</directory>
+			<file>cough_generator/CoughGeneratorTest.class.php</file>
+		</testsuite>
+		<testsuite name="CoughPHP DAL Test Suite">
+			<directory>dal/*Test.class.php files</directory>
+			<file>dal/CoughAsDatabaseTest.class.php</file>
+		</testsuite>
+		<testsuite name="Autoloader Test Suite">
+			<directory>autoloader/*Test.class.php files</directory>
+			<file>autoloader/AutoloaderTest.class.php</file>
+		</testsuite>
+	</testsuites>
+</phpunit>
