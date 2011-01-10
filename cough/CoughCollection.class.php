@@ -423,7 +423,7 @@ abstract class CoughCollection extends ArrayObject {
 			}
 		}
 		
-		foreach ($multisortArgs as $argIndex => $arg) {
+		foreach ($multisortArgs as $argIndex => &$arg) {
 			if (is_int($arg)) {
 				$multisortArgs[$argIndex] = &$arg;
 			}
