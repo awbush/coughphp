@@ -9,6 +9,8 @@ abstract class Product_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'product';
 	protected static $pkFieldNames = array('category','id');
 	
@@ -18,21 +20,24 @@ abstract class Product_Generated extends CoughObject {
 		'price' => null,
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'category' => array(
 			'db_column_name' => 'category',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'id' => array(
 			'db_column_name' => 'id',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'price' => array(
 			'db_column_name' => 'price',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'decimal'
 		),
 	);
 	
@@ -42,13 +47,13 @@ abstract class Product_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(Product::$db)) {
-			Product::$db = CoughDatabaseFactory::getDatabase(Product::$dbName);
+			Product::$db = CoughDatabaseFactory::getDatabase(Product::$dbAlias);
 		}
 		return Product::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(Product::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(Product::$dbAlias);
 	}
 	
 	public static function getTableName() {
@@ -57,6 +62,10 @@ abstract class Product_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return Product::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return Product::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

@@ -9,6 +9,8 @@ abstract class Network_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'network';
 	protected static $pkFieldNames = array('id');
 	
@@ -22,41 +24,48 @@ abstract class Network_Generated extends CoughObject {
 		'isp' => "sumnet",
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'id' => array(
 			'db_column_name' => 'id',
 			'is_null_allowed' => false,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'interfaceId' => array(
 			'db_column_name' => 'interfaceId',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'ipAdresa' => array(
 			'db_column_name' => 'ipAdresa',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'varchar'
 		),
 		'maska' => array(
 			'db_column_name' => 'maska',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'ipRouter' => array(
 			'db_column_name' => 'ipRouter',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'varchar'
 		),
 		'verejna' => array(
 			'db_column_name' => 'verejna',
 			'is_null_allowed' => false,
-			'default_value' => 0
+			'default_value' => 0,
+			'type' => 'int'
 		),
 		'isp' => array(
 			'db_column_name' => 'isp',
 			'is_null_allowed' => false,
-			'default_value' => "sumnet"
+			'default_value' => "sumnet",
+			'type' => 'enum'
 		),
 	);
 	
@@ -66,13 +75,13 @@ abstract class Network_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(Network::$db)) {
-			Network::$db = CoughDatabaseFactory::getDatabase(Network::$dbName);
+			Network::$db = CoughDatabaseFactory::getDatabase(Network::$dbAlias);
 		}
 		return Network::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(Network::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(Network::$dbAlias);
 	}
 	
 	public static function getTableName() {
@@ -81,6 +90,10 @@ abstract class Network_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return Network::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return Network::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

@@ -220,6 +220,34 @@ class CoughObjectTest extends PHPUnit_Framework_TestCase
 		$book2 = new Book();
 		$book2->setBookId(1);
 		$this->assertEquals(serialize($book1), serialize($book2));
+		
+		// test notifyChildrenOfKeyChange through setKeyId
+		$twain = new Author();
+		$twain->setName('Mark Twain');
+		
+		$huckFinn = new Book();
+		$huckFinn->setTitle('Huckleberry Finn');
+		$twain->addBook($huckFinn);
+		
+		$tomSawyer = new Book();
+		$tomSawyer->setTitle('Tom Sawyer');
+		$twain->addBook($tomSawyer);
+		
+		$this->assertEmpty($twain->getKeyId());
+		$twain->setKeyId(1);
+		
+		$this->assertSame($twain->getKeyId(), 1);
+		$this->assertSame($twain->getKeyId(), $huckFinn->getAuthor_Object()->getKeyId());
+		$this->assertSame($twain->getKeyId(), $tomSawyer->getAuthor_Object()->getKeyId());
+		
+		// test set multiple field key id
+		$person = new Person();
+		$this->assertSame($person->getKeyId(), ',');
+		$person->setKeyId(array(
+			'first_name' => 'Anthony',
+			'last_name' => 'Bush',
+		));
+		$this->assertSame('Anthony,Bush', $person->getKeyId());
 	}
 	
 	public function testHasKeyId()
@@ -235,6 +263,52 @@ class CoughObjectTest extends PHPUnit_Framework_TestCase
 		$book->setBookId(1);
 		$this->assertTrue($book->hasKeyId(), 'New object should be aware of its key when it was explicitly set via setters.');
 		$this->assertTrue($book->isNew(), 'New object should still be new after its key was explicitly set via setters.');
+		
+		// test a model with no PK
+		include_once(dirname(__FILE__) . '/config/NoPkBook.class.php');
+		$noPkBook = new NoPkBook();
+		$this->assertFalse($noPkBook->hasKeyId());
+	}
+	
+	public function testDerivedFields()
+	{
+		include_once(dirname(__FILE__) . '/config/DerivedFieldBook.class.php');
+		$book = new DerivedFieldBook();
+		$book->setTitle('Finnegans Wake');
+		$book->setRating(2);
+		$this->assertSame($book->getDerivedField('rating'), 2);
+		
+		$book = new DerivedFieldBook();
+		$book->setFields(array(
+			'title' => 'Finnegans Wake',
+			'rating' => 3,
+		));
+		$this->assertSame($book->getDerivedField('rating'), 3);
+		
+		$book = new DerivedFieldBook();
+		$this->assertNull($book->getDerivedField('rating'));
+		
+		$book = new DerivedFieldBook();
+		$this->assertNull($book->getDerivedField('nonexistant_derived_field'));
+	}
+	
+	public function testSetFieldsIfDifferent()
+	{
+		$book = new DerivedFieldBook();
+		$book->setTitle('Huckleberry Finn');
+		$book->setAuthorId(1);
+		$book->setRating(1);
+		
+		$book->setFieldsIfDifferent(array(
+			'title' => 'Ulysses',
+			'rating' => 3,
+			'is_retired' => true,
+		));
+		
+		$this->assertSame($book->getTitle(), 'Ulysses');
+		$this->assertSame($book->getAuthorId(), 1);
+		$this->assertSame($book->getDerivedField('rating'), 3);
+		$this->assertSame($book->getIsRetired(), true);
 	}
 	
 	public function testLoadObject()
@@ -253,18 +327,101 @@ class CoughObjectTest extends PHPUnit_Framework_TestCase
 		
 		$sameBook = Book::constructByKey($newBook->getBookId());
 		
-		// this one fails; see ticket #27, http://trac.coughphp.com/ticket/27
+		// this one fails
 		//$this->assertSame($newBook->getBookId(), $sameBook->getBookId());
 		$this->assertEquals($newBook->getBookId(), $sameBook->getBookId());
 		
 		$this->assertSame($newBook->getTitle(), $sameBook->getTitle());
 		
-		// again, this is broke; see ticket #27
+		// again, this is broke
 		//$this->assertSame($newBook->getAuthorId(), $sameBook->getAuthorId());
 		$this->assertEquals($newBook->getAuthorId(), $sameBook->getAuthorId());
 		
 		$this->assertSame($newBook->getIntroduction(), $sameBook->getIntroduction());
 		$this->assertSame($newBook->getCreationDatetime(), $sameBook->getCreationDatetime());
+		
+		$this->assertNull(Book::constructByKey('NONEXISTANT ID'));
+		$this->assertNull(Book::constructByKey(''));
+		
+		// test constructByKey with a model that has no PK
+		include_once(dirname(__FILE__) . '/config/NoPkBook.class.php');
+		$this->assertNull(NoPkBook::constructByKey(''));
+	}
+	
+	public function testConstructByKeyWithSqlObject()
+	{
+		$ulysses = new Book();
+		$ulysses->setTitle('Ulysses');
+		$ulysses->setIntroduction('1264 pages of bs by one of the masters.');
+		$ulysses->setCreationDatetime(date('Y-m-d H:i:s'));
+		$ulysses->save();
+		
+		include_once(dirname(__FILE__) . '/config/SqlObjectBook.class.php');
+		$book = SqlObjectBook::constructByKey(array(
+			'title' => 'Ulysses',
+		));
+		$this->assertEquals($ulysses->getKeyId(), $book->getKeyId());
+	}
+	
+	public function testIsEqualTo()
+	{
+		$book1 = new Book();
+		$book1->setTitle('Huckleberry Finn');
+		
+		$book2 = new Book();
+		$book2->setTitle('Huckleberry Finn');
+		
+		$book3 = new Book();
+		$book3->setTitle('Ulysses');
+		
+		$this->assertTrue($book1->isEqualTo($book2));
+		$this->assertFalse($book1->isEqualTo($book3));
+	}
+	
+	public function testConstructByPreparedStmt()
+	{
+		$joyce = new Author();
+		$joyce->setName('James Joyce');
+		$joyce->setCreationDatetime(date('Y-m-d H:i:s'));
+		$joyce->save();
+		
+		$author = Author::constructByPreparedStmt('SELECT * FROM author WHERE name = ? AND is_retired = ?', array('James Joyce', false));
+		$this->assertEquals($joyce->getAuthorId(), $author->getAuthorId());
+		
+		$author = Author::constructByPreparedStmt('SELECT * FROM author WHERE name = ? AND is_retired = ?', array('James Joyce', '0'), 'si');
+		$this->assertEquals($joyce->getAuthorId(), $author->getAuthorId());
+		
+		$author2 = Author::constructByPreparedStmt('SELECT * FROM author WHERE name = ? AND is_retired = ?', array('James Joyce', '1'), 'si');
+		$this->assertNull($author2);
+		
+		$author3 = Author::constructByPreparedStmt('', array('James Joyce', '1'), 'si');
+		$this->assertNull($author3);
+	}
+	
+	public function testClone()
+	{
+		$joyce = new Author();
+		$joyce->setName('James Joyce');
+		$joyce->setCreationDatetime(date('Y-m-d H:i:s'));
+		$joyce->save();
+		
+		$joyceClone = clone $joyce;
+		$this->assertSame($joyce->getFieldsWithoutPk(), $joyceClone->getFieldsWithoutPk());
+		$this->assertNull($joyceClone->getAuthorId());
+	}
+	
+	public function testConstructByPreparedStmtWithNoClassName()
+	{
+		try
+		{
+			CoughObject::constructByPreparedStmt('SELECT * FROM author WHERE name = ?', array('James Joyce'));
+		}
+		catch (Exception $e)
+		{
+			$this->assertSame($e->getMessage(), 'constructByPreparedStmt must either have className passed in, or be called by subclass');
+			return;
+		}
+		$this->fail('An expected exception was not raised.');
 	}
 	
 	public function testUpdateObject()
@@ -679,6 +836,62 @@ class CoughObjectTest extends PHPUnit_Framework_TestCase
 		}
 		return $mismatches;
 	}
+	
+	public function testModifiedFields()
+	{
+		$author = new Author();
+		$author->setName('David Foster Wallace');
+		$this->assertTrue($author->hasModifiedFields());
+		$author->save();
+		$this->assertFalse($author->hasModifiedFields());
+		$author->setName('Dave');
+		$this->assertTrue($author->isFieldModified('name'));
+		$this->assertFalse($author->isFieldModified('author_id'));
+		$this->assertSame($author->getOldFieldValue('name'), 'David Foster Wallace');
+		$this->assertSame($author->getOldFieldValue('author_id'), $author->getAuthorId());
+		$this->assertTrue($author->hasModifiedFields());
+	}
+	
+	public function testIsFieldDifferent()
+	{
+		$author = new Author();
+		$author->setName('Gore Vidal');
+		$author->save();
+		$this->assertFalse($author->hasModifiedFields());
+		$author->setName('Gore Vidal');
+		$this->assertTrue($author->hasModifiedFields());
+		$this->assertFalse($author->isFieldDifferent('name'));
+		$author->setName('Al Gore');
+		$this->assertTrue($author->hasModifiedFields());
+		$this->assertTrue($author->isFieldDifferent('name'));
+	}
+	
+	public function testSaveLoadedObjects()
+	{
+		$author = new Author();
+		$author->setName('Cormac McCarthy');
+		
+		$book = new Book();
+		$book->setTitle('The Road');
+		$book->setAuthor_Object($author);
+		
+		$book->saveLoadedObjects();
+		$this->assertTrue($author->hasKeyId());
+	}
+	
+	public function testValidation()
+	{
+		$author = new Author();
+		$fields = array('name' => 'Bret Easton Ellis');
+		$this->assertTrue($author->validateData($fields));
+		$author->invalidateField('name', "Name can't be empty");
+		$this->assertFalse($author->isDataValid());
+		$this->assertFalse($author->isFieldValid('name'));
+		$this->assertTrue($author->isFieldValid('author_id'));
+		$this->assertSame($author->getValidationErrors(), array('name' => "Name can't be empty"));
+		$author->clearValidationErrors();
+		$this->assertTrue($author->isDataValid());
+		$this->assertSame($author->getValidationErrors(), array());
+		$this->assertTrue($author->isFieldValid('name'));
+	}
 }
-
-?>

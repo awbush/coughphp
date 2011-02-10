@@ -9,6 +9,8 @@ abstract class ProductOrder_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'product_order';
 	protected static $pkFieldNames = array('no');
 	
@@ -19,26 +21,30 @@ abstract class ProductOrder_Generated extends CoughObject {
 		'customer_id' => "",
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'no' => array(
 			'db_column_name' => 'no',
 			'is_null_allowed' => false,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'product_category' => array(
 			'db_column_name' => 'product_category',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'product_id' => array(
 			'db_column_name' => 'product_id',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 		'customer_id' => array(
 			'db_column_name' => 'customer_id',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'int'
 		),
 	);
 	
@@ -55,13 +61,13 @@ abstract class ProductOrder_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(ProductOrder::$db)) {
-			ProductOrder::$db = CoughDatabaseFactory::getDatabase(ProductOrder::$dbName);
+			ProductOrder::$db = CoughDatabaseFactory::getDatabase(ProductOrder::$dbAlias);
 		}
 		return ProductOrder::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(ProductOrder::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(ProductOrder::$dbAlias);
 	}
 	
 	public static function getTableName() {
@@ -70,6 +76,10 @@ abstract class ProductOrder_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return ProductOrder::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return ProductOrder::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

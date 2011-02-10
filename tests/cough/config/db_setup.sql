@@ -46,3 +46,11 @@ CREATE TABLE `table_without_auto_increment` (
   `id` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;
+
+DROP TABLE IF EXISTS `person`;
+CREATE TABLE `person` (
+  `first_name` varchar(255) NOT NULL default '',
+  `last_name` varchar(255) NOT NULL default '',
+  `is_retired` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`first_name`, `last_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;

@@ -9,6 +9,8 @@ abstract class TableOne_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'table_one';
 	protected static $pkFieldNames = array('table_one_id');
 	
@@ -17,16 +19,18 @@ abstract class TableOne_Generated extends CoughObject {
 		'name' => "",
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'table_one_id' => array(
 			'db_column_name' => 'table_one_id',
 			'is_null_allowed' => false,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'name' => array(
 			'db_column_name' => 'name',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'varchar'
 		),
 	);
 	
@@ -36,13 +40,13 @@ abstract class TableOne_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(TableOne::$db)) {
-			TableOne::$db = CoughDatabaseFactory::getDatabase(TableOne::$dbName);
+			TableOne::$db = CoughDatabaseFactory::getDatabase(TableOne::$dbAlias);
 		}
 		return TableOne::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(TableOne::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(TableOne::$dbAlias);
 	}
 	
 	public static function getTableName() {
@@ -51,6 +55,10 @@ abstract class TableOne_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return TableOne::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return TableOne::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

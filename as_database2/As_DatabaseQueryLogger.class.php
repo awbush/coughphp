@@ -19,6 +19,8 @@ class As_DatabaseQueryLogger
 				'server'   => $db->getHostAndPort(),
 				'database' => $db->getDbName(),
 				'sql'      => $db->getLastQuery(),
+				'params'   => $db->getLastParams(),
+				'types'    => $db->getLastTypes(),
 				'time'     => $db->getLastQueryTime(),
 				'num_rows' => $db->getLastQueryNumRows(),
 			);
@@ -35,6 +37,11 @@ class As_DatabaseQueryLogger
 			
 			$this->queryLog[] = $newLog;
 		}
+	}
+	
+	public function setLogBacktraces($logBacktraces)
+	{
+		$this->logBacktraces = $logBacktraces;
 	}
 	
 	public function getQueryLog()

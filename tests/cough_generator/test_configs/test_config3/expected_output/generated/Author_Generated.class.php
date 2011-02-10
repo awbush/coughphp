@@ -9,6 +9,8 @@ abstract class Author_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'author';
 	protected static $pkFieldNames = array('author_id');
 	
@@ -20,31 +22,36 @@ abstract class Author_Generated extends CoughObject {
 		'is_retired' => 0,
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'author_id' => array(
 			'db_column_name' => 'author_id',
 			'is_null_allowed' => false,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'name' => array(
 			'db_column_name' => 'name',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'varchar'
 		),
 		'last_modified_datetime' => array(
 			'db_column_name' => 'last_modified_datetime',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'timestamp'
 		),
 		'creation_datetime' => array(
 			'db_column_name' => 'creation_datetime',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'datetime'
 		),
 		'is_retired' => array(
 			'db_column_name' => 'is_retired',
 			'is_null_allowed' => false,
-			'default_value' => 0
+			'default_value' => 0,
+			'type' => 'tinyint'
 		),
 	);
 	
@@ -54,13 +61,13 @@ abstract class Author_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(Author::$db)) {
-			Author::$db = CoughDatabaseFactory::getDatabase(Author::$dbName);
+			Author::$db = CoughDatabaseFactory::getDatabase(Author::$dbAlias);
 		}
 		return Author::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(Author::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(Author::$dbAlias);
 	}
 	
 	public static function getTableName() {
@@ -69,6 +76,10 @@ abstract class Author_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return Author::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return Author::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

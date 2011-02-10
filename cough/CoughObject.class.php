@@ -108,7 +108,7 @@ abstract class CoughObject {
 	 * @var array
 	 * @see defineFields()
 	 **/
-	protected $fieldDefinitions = array();
+	protected static $fieldDefinitions = array();
 	
 	/**
 	 * An array of derived field definitions
@@ -230,7 +230,7 @@ abstract class CoughObject {
 				$sql->addWhere($fields);
 				$sql = $sql->getString();
 			} else {
-				$query = new As_Query($db);
+				$query = $db->getSelectQuery();
 				$sql .= ' WHERE ' . $query->buildWhereSql($fields);
 			}
 			return call_user_func(array($className, 'constructBySql'), $sql);
@@ -251,6 +251,39 @@ abstract class CoughObject {
 			$dbName = call_user_func(array($className, 'getDbName'));
 			$db->selectDb($dbName);
 			$result = $db->query($sql);
+			if ($result->getNumRows() == 1) {
+				return call_user_func(array($className, 'constructByFields'), $result->getRow());
+			} else {
+				// load failed because the unique dataset couldn't be selected
+			}
+		} else {
+			// load failed because no SQL was given
+		}
+		return null;
+	}
+	
+	/**
+	 * Constructs a new object from custom SQL and parameters.
+	 *
+	 * @author Richard Pistole
+	 * @since 2010-06-24
+	 * @param string $sql sql statement with parameters in it
+	 * @param mixed $parameters parameters to bind into the statement
+	 * @param string $types optional type string for parameters
+	 * @return mixed - CoughObject if exactly one row found, null otherwise.
+	 * @todo PHP 5.3: switch from call_user_func to static::methodName() and remove the $className parameter
+	 **/
+	
+	public static function constructByPreparedStmt($sql, $parameters, $types = '', $className = '') {
+		if ($className == '')
+		{
+			throw new Exception('constructByPreparedStmt must either have className passed in, or be called by subclass');
+		}
+		if (!empty($sql)) {
+			$db = call_user_func(array($className, 'getDb'));
+			$dbName = call_user_func(array($className, 'getDbName'));
+			$db->selectDb($dbName);
+			$result = $db->queryPreparedStmt($sql, $parameters, $types);
 			if ($result->getNumRows() == 1) {
 				return call_user_func(array($className, 'constructByFields'), $result->getRow());
 			} else {
@@ -286,6 +319,21 @@ abstract class CoughObject {
 		// Mark all fields as having been modified (except key ID) so that a call to save() will complete the clone.
 		$this->setFields($data);
 	}
+	
+	/**
+	 * Serialize only the standard cough fields
+	 * 
+	 * Usage:
+	 *     Invoked automatically by serialize($object)
+	 *
+	 * @return array
+	 * @author Richard Pistole
+	 **/
+	public function __sleep() 
+	{
+		return array('fields', 'derivedFields', 'objects', 'collections', 'isNew', 'objectDefinitions', 'derivedFieldDefinitions');
+	}
+	
 	
 	/**
 	 * This will compare two CoughObjects and return true if they are of the
@@ -342,6 +390,24 @@ abstract class CoughObject {
 			$this->notifyChildrenOfKeyChange($key);
 		}
 		$this->setFields($key);
+	}
+	
+	/**
+	 * Sets the object's primary key to the passed value without triggering modified fields
+	 *
+	 * 
+	 * @param int $newKeyId
+	 * @return void
+	 * @author Anthony Bush, Richard Pistole
+	 * @since 2010-08-13
+	 **/
+	protected function initKey($newKeyId)
+	{
+		foreach ($this->getPkFieldNames() as $fieldName) {
+			$key[$fieldName] = $newKeyId;
+		}
+		$this->notifyChildrenOfKeyChange($key);
+		$this->inflate($newKeyId);
 	}
 	
 	/**
@@ -513,7 +579,7 @@ abstract class CoughObject {
 	public function getFieldsThroughGetters()
 	{
 		$fields = array();
-		foreach ($this->fieldDefinitions as $fieldName => $fieldAttr) {
+		foreach ($this->getFieldDefinitions() as $fieldName => $fieldAttr) {
 			$getter = 'get' . self::titleCase($fieldName);
 			$fields[$fieldName] = $this->$getter();
 		}
@@ -547,6 +613,20 @@ abstract class CoughObject {
 			return null;
 		}
 	}
+
+	/**
+	 * Returns whether or not this object has a field with the requested name.
+	 *
+	 * @author Richard Pistole
+	 * @since 2010-07-12
+	 * @param string $fieldName
+	 * @return bool true if field exists
+	 **/
+	protected function hasField($fieldName)
+	{
+		$fieldDefinitions = $this->getFieldDefinitions();
+		return isset($fieldDefinitions[$fieldName]);
+	}
 	
 	/**
 	 * Sets the current value of $fieldName to $value.
@@ -570,7 +650,7 @@ abstract class CoughObject {
 	 **/
 	public function setFields($fields) {
 		foreach ($fields as $fieldName => $fieldValue) {
-			if (isset($this->fieldDefinitions[$fieldName])) {
+			if ($this->hasField($fieldName)) {
 				$this->setField($fieldName, $fieldValue);
 			} else if (isset($this->derivedFieldDefinitions[$fieldName])) {
 				$this->setDerivedField($fieldName, $fieldValue);
@@ -590,7 +670,7 @@ abstract class CoughObject {
 	public function setFieldsThroughSetters($fields)
 	{
 		foreach ($fields as $fieldName => $fieldValue) {
-			if (isset($this->fieldDefinitions[$fieldName])) {
+			if ($this->hasField($fieldName)) {
 				$setter = 'set' . self::titleCase($fieldName);
 				$this->$setter($fieldValue);
 			}
@@ -609,7 +689,7 @@ abstract class CoughObject {
 	public function setFieldsIfDifferent($fields) {
 		foreach ($fields as $fieldName => $fieldValue) {
 			if ($fieldValue != $this->getField($fieldName)) {
-				if (isset($this->fieldDefinitions[$fieldName])) {
+				if ($this->hasField($fieldName)) {
 					$this->setField($fieldName, $fieldValue);
 				} else if (isset($this->derivedFieldDefinitions[$fieldName])) {
 					$this->setDerivedField($fieldName, $fieldValue);
@@ -863,7 +943,7 @@ abstract class CoughObject {
 		$numAffectedRows = $db->execute($query->getString());
 		if ($numAffectedRows > 0) {
 			if (!$this->hasKeyId()) {
-				$this->setKeyId($db->getLastInsertId());
+				$this->initKey($db->getLastInsertId());
 			}
 			$this->isNew = false;
 			return true;
@@ -1266,7 +1346,7 @@ abstract class CoughObject {
 					if (is_array($fieldValue)) {
 						// field is data for a related object
 						$this->inflateObject($fieldName, $fieldValue, $fieldsOrId);
-					} else if (isset($this->fieldDefinitions[$fieldName])) {
+					} else if ($this->hasField($fieldName)) {
 						// field is part of this object's fields
 						$this->fields[$fieldName] = $fieldValue;
 					} else if (isset($this->derivedFieldDefinitions[$fieldName])) {

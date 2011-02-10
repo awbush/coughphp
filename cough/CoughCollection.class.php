@@ -93,6 +93,96 @@ abstract class CoughCollection extends ArrayObject {
 			}
 		}
 	}
+
+	
+	/**
+	 * Loads the collection using the provided hash
+	 *
+	 * @author Richard Pistole
+	 * @since 2010-09-08
+	 * @param array $fields hash of [field_name] => [field_value]
+	 * @return void
+	 **/
+	public function loadByHash($fields) {
+		if (!empty($fields)) {
+			$db = $this->getDb();
+			$sql = $this->getLoadSql();
+			if (is_object($sql)) {
+				$sql->addWhere($fields);
+				$sql = $sql->getString();
+			} else {
+				$query =  $db->getSelectQuery();
+				$sql .= ' WHERE ' . $query->buildWhereSql($fields);
+			}
+			$this->loadBySql($sql);
+		}
+	}
+
+	/**
+	 * Loads the collection with objects with the given array of IDs
+	 *
+	 * @author Richard Pistole
+	 * @since 2010-10-06
+	 * @param array $ids array of values for PK
+	 * @param string $fieldName, override for PK field name
+	 * @return void
+	 **/
+	public function loadByIds($ids, $fieldName = null) {
+		$db = $this->getDb();
+		$elementClassName = $this->elementClassName;
+		$pkFields = call_user_func(array($elementClassName, 'getPkFieldNames'));
+		if (is_null($fieldName) && count($pkFields) != 1)
+		{
+			throw new CoughException('Unable to load by ids without one and only one primary key or explicit field name');
+		}
+		if (is_null($fieldName))
+		{
+			$fieldName = $pkFields[0];
+		}
+		else
+		{
+			// Is this necessary? backtick strips the end backtick character.
+			$fieldName = trim($db->quote($fieldName), '"\'');
+		}
+		$tableName = call_user_func(array($elementClassName, 'getTableName'));
+		if (!empty($ids)) {
+			$sql = $this->getLoadSql();
+			$quotedIds = array_map(array($db, 'quote'), $ids);
+			$where = $db->backtick($tableName) . '.' . $db->backtick($fieldName) . ' IN (' . implode(',', $quotedIds) . ')';
+			if (is_object($sql)) {
+				$sql->addWhere($where);
+				$sql = $sql->getString();
+			} else {
+				$sql .= ' WHERE ' . $where;
+			}
+			$this->loadBySql($sql);
+		}
+	}
+
+
+	
+	/**
+	 * Loads the collection using the provided SQL and parameters for binding
+	 *
+	 * @author Richard Pistole
+	 * @since 2010-06-24
+	 * @param string $sql sql statement with parameters in it
+	 * @param mixed $parameters parameters to bind into the statement
+	 * @param string $types optional type string for parameters
+	 * @return void
+	 **/
+	public function loadByPreparedStmt($sql, $parameters, $types = '') {
+		$elementClassName = $this->elementClassName;
+		$db = $this->getDb();
+		$db->selectDb(call_user_func(array($elementClassName, 'getDbName')));
+		$result = $db->queryPreparedStmt($sql, $parameters, $types);
+		if ($result->getNumRows() > 0) {
+			while ($row = $result->getRow()) {
+				$this->add(call_user_func(array($elementClassName, 'constructByFields'), $row));
+			}
+		}
+	}
+	
 	
 	/**
 	 * Run save on each collected (or removed) element.
@@ -262,19 +352,6 @@ abstract class CoughCollection extends ArrayObject {
 	}
 	
 	/**
-	 * Returns a temporary key for adding an object that does not have a key ID
-	 * yet.
-	 *
-	 * @return string
-	 * @author Anthony Bush
-	 **/
-	protected static function getTemporaryKey() {
-		static $count = 0;
-		++$count;
-		return 'NULL_KEY_' . $count;
-	}
-	
-	/**
 	 * Removes a single element given either an ID or the object itself.
 	 * 
 	 * @param CoughObject|int|string $objectOrId object or ID to remove (ID must be result from $object->getKeyId()).
@@ -370,14 +447,10 @@ abstract class CoughCollection extends ArrayObject {
 		foreach ($this as $key => $element) {
 			$sortMe[$key] = $element->$methodName();
 		}
-		switch ($direction) {
-			case SORT_DESC:
-				arsort($sortMe);
-			break;
-			case SORT_ASC:
-			default:
-				asort($sortMe);
-			break;
+		if ($direction == SORT_DESC) {
+			arsort($sortMe);
+		} else {
+			asort($sortMe);
 		}
 		$this->sortByKeys(array_keys($sortMe));
 	}
@@ -402,14 +475,19 @@ abstract class CoughCollection extends ArrayObject {
 	 * @author Anthony Bush
 	 **/
 	public function sortByMethods() {
-		$multisortArgs = func_get_args();
+		$args = func_get_args();
 		$keyValueArrays = array();
+		$multisortArgs = array();
+		foreach ($args as $key => $val)
+		{
+			$multisortArgs[$key] = &$args[$key];
+		}
 		
 		if (empty($multisortArgs))
 		{
 			throw new CoughException('missing parameter in sortByMethods');
 		}
-		
+
 		// Build multisortArgs with references to the key value pair arrays to do the sorting on.
 		foreach ($multisortArgs as $argIndex => $arg) {
 			if (!is_int($arg)) {

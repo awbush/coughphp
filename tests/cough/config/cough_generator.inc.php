@@ -13,7 +13,7 @@ $config = array(
 	'phpDoc' => array(
 		'author' => 'CoughGenerator',
 		'package' => 'shared',
-		'copyright' => 'Academic Superstore',
+		'copyright' => 'CoughPHP',
 	),
 	
 	'paths' => array(
@@ -21,6 +21,9 @@ $config = array(
 		'starter_classes' => $generated . 'concrete/',
 		'file_suffix' => '.class.php',
 	),
+	
+	// Generate prepared stmt methods
+	'generate_prepared_stmt_methods' => 'enabled',
 	
 	'class_names' => array(
 		// You can add prefixes to class names that are generated

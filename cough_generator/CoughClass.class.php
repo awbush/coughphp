@@ -13,6 +13,7 @@ class CoughClass {
 	protected $isStarterClass = false;
 	protected $isCollectionClass = false;
 	protected $databaseName = null;
+	protected $databaseAlias = null;
 	protected $tableName = null;
 	
 	public function __construct($className = null, $contents = null, $isStarterClass = false, $isCollectionClass = false) {
@@ -41,6 +42,10 @@ class CoughClass {
 	public function setDatabaseName($databaseName) {
 		$this->databaseName = $databaseName;
 	}
+
+	public function setDatabaseAlias($databaseAlias) {
+		$this->databaseAlias = $databaseAlias;
+	}
 	
 	public function setTableName($tableName) {
 		$this->tableName = $tableName;
@@ -65,6 +70,11 @@ class CoughClass {
 	public function getDatabaseName() {
 		return $this->databaseName;
 	}
+
+	public function getDatabaseAlias() {
+		return $this->databaseAlias;
+	}
+
 	
 	public function getTableName() {
 		return $this->tableName;

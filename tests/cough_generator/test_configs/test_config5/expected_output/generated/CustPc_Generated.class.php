@@ -9,6 +9,8 @@ abstract class CustPc_Generated extends CoughObject {
 	
 	protected static $db = null;
 	protected static $dbName = 'test_cough_object';
+	protected static $dbAlias = 'test_cough_object';
+	
 	protected static $tableName = 'custPc';
 	protected static $pkFieldNames = array('id');
 	
@@ -25,56 +27,66 @@ abstract class CustPc_Generated extends CoughObject {
 		'up' => null,
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 		'id' => array(
 			'db_column_name' => 'id',
 			'is_null_allowed' => false,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'customerId' => array(
 			'db_column_name' => 'customerId',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'popis' => array(
 			'db_column_name' => 'popis',
 			'is_null_allowed' => false,
-			'default_value' => ""
+			'default_value' => "",
+			'type' => 'varchar'
 		),
 		'macAdresa' => array(
 			'db_column_name' => 'macAdresa',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'varchar'
 		),
 		'networkId' => array(
 			'db_column_name' => 'networkId',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'ipAdresa' => array(
 			'db_column_name' => 'ipAdresa',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'varchar'
 		),
 		'networkIdVerejna' => array(
 			'db_column_name' => 'networkIdVerejna',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'ipAdresaVerejna' => array(
 			'db_column_name' => 'ipAdresaVerejna',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'varchar'
 		),
 		'down' => array(
 			'db_column_name' => 'down',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 		'up' => array(
 			'db_column_name' => 'up',
 			'is_null_allowed' => true,
-			'default_value' => null
+			'default_value' => null,
+			'type' => 'int'
 		),
 	);
 	
@@ -91,13 +103,13 @@ abstract class CustPc_Generated extends CoughObject {
 	
 	public static function getDb() {
 		if (is_null(CustPc::$db)) {
-			CustPc::$db = CoughDatabaseFactory::getDatabase(CustPc::$dbName);
+			CustPc::$db = CoughDatabaseFactory::getDatabase(CustPc::$dbAlias);
 		}
 		return CustPc::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(CustPc::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(CustPc::$dbAlias);
 	}
 	
 	public static function getTableName() {
@@ -106,6 +118,10 @@ abstract class CustPc_Generated extends CoughObject {
 	
 	public static function getPkFieldNames() {
 		return CustPc::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return CustPc::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods

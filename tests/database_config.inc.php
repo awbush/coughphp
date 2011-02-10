@@ -20,12 +20,21 @@
  * @var array
  **/
 $dsn = array(
-	'host' => '',
+	'host' => 'localhost',
 	'user' => 'cough_test',
 	'pass' => 'cough_test',
-	'port' => ':/tmp/mysql.sock',
-	'driver' => 'mysql',
+	'port' => null,
+	'socket' => '/tmp/mysql.sock',
+	'driver' => 'mysqli',
 	'db_name' => 'test_cough_object',
 );
+// $dsn = array(
+// 	'host' => 'localhost',
+// 	'user' => 'cough_test',
+// 	'pass' => 'cough_test',
+// 	'port' => ':/tmp/mysql.sock',
+// 	'driver' => 'mysql',
+// 	'db_name' => 'test_cough_object',
+// );
 
 ?>

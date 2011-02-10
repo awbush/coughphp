@@ -226,12 +226,14 @@ class CoughGenerator {
 	protected function generateBaseObject($table) {
 		
 		$dbName = $table->getDatabase()->getDatabaseName();
+		$dbAlias = $table->getDatabase()->getDatabaseAlias();
 		$tableName = $table->getTableName();
 		
-		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
-		$starterCollectionClassName = $this->config->getStarterCollectionClassName($table);
-		$baseObjectClassName        = $this->config->getBaseObjectClassName($table);
-		$baseCollectionClassName    = $this->config->getBaseCollectionClassName($table);
+		$starterObjectClassName     		= $this->config->getStarterObjectClassName($table);
+		$starterCollectionClassName 		= $this->config->getStarterCollectionClassName($table);
+		$baseObjectClassName        		= $this->config->getBaseObjectClassName($table);
+		$baseCollectionClassName    		= $this->config->getBaseCollectionClassName($table);
+		$shouldGeneratePreparedStmtMethods 	= $this->config->shouldGeneratePreparedStmtMethods($table);
 		
 		$phpdocTags = $this->generatePhpdocTags($table);
 		$phpdocTags[] = '@see ' . $starterObjectClassName . ', CoughObject';
@@ -515,6 +517,8 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 	
 	protected static $db = null;
 	protected static $dbName = '<?php echo $dbName; ?>';
+	protected static $dbAlias = '<?php echo $dbAlias; ?>';
+	
 	protected static $tableName = '<?php echo $tableName; ?>';
 	protected static $pkFieldNames = array('<?php echo implode("','", array_keys($table->getPrimaryKey())) ?>');
 	
@@ -524,12 +528,13 @@ abstract class <?php echo $baseObjectClassName ?> extends <?php echo $extensionC
 <?php endforeach; ?>
 	);
 	
-	protected $fieldDefinitions = array(
+	protected static $fieldDefinitions = array(
 <?php foreach ($table->getColumns() as $columnName => $column): ?>
 		'<?php echo $columnName ?>' => array(
 			'db_column_name' => '<?php echo $columnName ?>',
 			'is_null_allowed' => <?php echo $this->getStringFromPhpValue($column->isNullAllowed()) ?>,
-			'default_value' => <?php echo $this->getDefaultValueStringForColumn($column) . "\n" ?>
+			'default_value' => <?php echo $this->getDefaultValueStringForColumn($column) ?>,
+			'type' => '<?php echo $this->getTypeName($column) ?>'
 		),
 <?php endforeach; ?>
 	);
@@ -541,13 +546,13 @@ echo $objectDefinitionsPhp;
 	
 	public static function getDb() {
 		if (is_null(<?php echo $starterObjectClassName ?>::$db)) {
-			<?php echo $starterObjectClassName ?>::$db = CoughDatabaseFactory::getDatabase(<?php echo $starterObjectClassName ?>::$dbName);
+			<?php echo $starterObjectClassName ?>::$db = CoughDatabaseFactory::getDatabase(<?php echo $starterObjectClassName ?>::$dbAlias);
 		}
 		return <?php echo $starterObjectClassName ?>::$db;
 	}
 	
 	public static function getDbName() {
-		return CoughDatabaseFactory::getDatabaseName(<?php echo $starterObjectClassName ?>::$dbName);
+		return CoughDatabaseFactory::getDatabaseName(<?php echo $starterObjectClassName ?>::$dbAlias);
 	}
 	
 	public static function getTableName() {
@@ -556,6 +561,10 @@ echo $objectDefinitionsPhp;
 	
 	public static function getPkFieldNames() {
 		return <?php echo $starterObjectClassName ?>::$pkFieldNames;
+	}
+	
+	protected static function getFieldDefinitions() {
+		return <?php echo $starterObjectClassName ?>::$fieldDefinitions;
 	}
 	
 	// Static Construction (factory) Methods
@@ -573,7 +582,7 @@ echo $objectDefinitionsPhp;
 	 * @return mixed - <?php echo $starterObjectClassName ?> or null if no record found.
 	 **/
 	public static function constructByKey($idOrHash, $forPhp5Strict = '') {
-		return CoughObject::constructByKey($idOrHash, '<?php echo $starterObjectClassName ?>');
+		return <?php echo $extensionClassName ?>::constructByKey($idOrHash, '<?php echo $starterObjectClassName ?>');
 	}
 	
 	/**
@@ -583,9 +592,27 @@ echo $objectDefinitionsPhp;
 	 * @return mixed - <?php echo $starterObjectClassName ?> or null if exactly one record could not be found.
 	 **/
 	public static function constructBySql($sql, $forPhp5Strict = '') {
-		return CoughObject::constructBySql($sql, '<?php echo $starterObjectClassName ?>');
+		return <?php echo $extensionClassName ?>::constructBySql($sql, '<?php echo $starterObjectClassName ?>');
 	}
 	
+<?php
+	if ($shouldGeneratePreparedStmtMethods)
+	{
+?>
+	/**
+	 * Constructs a new <?php echo $starterObjectClassName ?> object from custom SQL and parameters
+	 * 
+	 * @param string $sql
+	 * @param mixed $parameters parameters to bind into the statement
+	 * @param string $types optional type string for parameters	
+	 * @return mixed - <?php echo $starterObjectClassName ?> or null if exactly one record could not be found.
+	 **/
+	public static function constructByPreparedStmt($sql, $parameters, $types = '', $forPhp5Strict = '') {
+		return <?php echo $extensionClassName ?>::constructByPreparedStmt($sql, $parameters, $types, '<?php echo $starterObjectClassName ?>');
+	}
+<?php
+	}
+?>
 	/**
 	 * Constructs a new <?php echo $starterObjectClassName ?> object after
 	 * checking the fields array to make sure the appropriate subclass is
@@ -635,6 +662,7 @@ echo $oneToManyMethods;
 	protected function generateBaseCollection($table) {
 		
 		$dbName = $table->getDatabase()->getDatabaseName();
+		$dbAlias = $table->getDatabase()->getDatabaseAlias();
 		$tableName = $table->getTableName();
 		
 		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
@@ -656,7 +684,7 @@ echo $oneToManyMethods;
  * <?php echo implode("\n * ", $phpdocTags) . "\n"; ?>
  **/
 abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extensionClassName ?> {
-	protected $dbAlias = '<?php echo $dbName ?>';
+	protected $dbAlias = '<?php echo $dbAlias ?>';
 	protected $dbName = '<?php echo $dbName ?>';
 	protected $elementClassName = '<?php echo $starterObjectClassName ?>';
 }
@@ -683,6 +711,7 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 	protected function generateStarterObject($table) {
 		
 		$dbName = $table->getDatabase()->getDatabaseName();
+		$dbAlias = $table->getDatabase()->getDatabaseAlias();		
 		$tableName = $table->getTableName();
 		
 		$starterObjectClassName     = $this->config->getStarterObjectClassName($table);
@@ -713,6 +742,7 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 		$class->setIsCollectionClass(false);
 		$class->setClassName($starterObjectClassName);
 		$class->setDatabaseName($dbName);
+		$class->setDatabaseAlias($dbAlias);
 		$class->setTableName($tableName);
 		$this->addGeneratedClass($class);
 	}
@@ -826,8 +856,9 @@ class <?php echo $starterCollectionClassName ?> extends <?php echo $baseCollecti
 		}
 	}
 	
-	
-	
+	private function getTypeName(SchemaColumn $column) {
+		return $column->getType();
+	}	
 	
 	##################
 	# ERROR HANDLING #
