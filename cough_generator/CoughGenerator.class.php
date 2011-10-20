@@ -640,7 +640,7 @@ echo $oneToManyMethods;
 ?>
 }
 <?php
-		echo("\n?>");
+		echo("\n?>\n");
 		
 		// Add the class
 		$class = new CoughClass();
@@ -689,7 +689,7 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 	protected $elementClassName = '<?php echo $starterObjectClassName ?>';
 }
 <?php
-		echo("\n?>");
+		echo("\n?>\n");
 		
 		// Add the class
 		$class = new CoughClass();
@@ -733,7 +733,7 @@ abstract class <?php echo $baseCollectionClassName ?> extends <?php echo $extens
 class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassName ?> implements CoughObjectStaticInterface {
 }
 <?php
-		echo("\n?>");
+		echo("\n?>\n");
 		
 		// Add the class
 		$class = new CoughClass();
@@ -777,7 +777,7 @@ class <?php echo $starterObjectClassName ?> extends <?php echo $baseObjectClassN
 class <?php echo $starterCollectionClassName ?> extends <?php echo $baseCollectionClassName ?> {
 }
 <?php
-		echo("\n?>");
+		echo("\n?>\n");
 		
 		// Add the class
 		$class = new CoughClass();
