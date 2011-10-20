@@ -548,6 +548,7 @@ echo $objectDefinitionsPhp;
 		if (is_null(<?php echo $starterObjectClassName ?>::$db)) {
 			<?php echo $starterObjectClassName ?>::$db = CoughDatabaseFactory::getDatabase(<?php echo $starterObjectClassName ?>::$dbAlias);
 		}
+		<?php echo $starterObjectClassName ?>::$db->selectDb(<?php echo $starterObjectClassName; ?>::getDbName());
 		return <?php echo $starterObjectClassName ?>::$db;
 	}
 	

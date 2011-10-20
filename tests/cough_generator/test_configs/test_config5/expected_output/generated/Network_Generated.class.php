@@ -77,6 +77,7 @@ abstract class Network_Generated extends CoughObject {
 		if (is_null(Network::$db)) {
 			Network::$db = CoughDatabaseFactory::getDatabase(Network::$dbAlias);
 		}
+		Network::$db->selectDb(Network::getDbName());
 		return Network::$db;
 	}
 	

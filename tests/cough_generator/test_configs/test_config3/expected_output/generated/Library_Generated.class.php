@@ -63,6 +63,7 @@ abstract class Library_Generated extends CoughObject {
 		if (is_null(Library::$db)) {
 			Library::$db = CoughDatabaseFactory::getDatabase(Library::$dbAlias);
 		}
+		Library::$db->selectDb(Library::getDbName());
 		return Library::$db;
 	}
 	

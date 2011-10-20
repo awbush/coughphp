@@ -42,6 +42,7 @@ abstract class TableOne_Generated extends CoughObject {
 		if (is_null(TableOne::$db)) {
 			TableOne::$db = CoughDatabaseFactory::getDatabase(TableOne::$dbAlias);
 		}
+		TableOne::$db->selectDb(TableOne::getDbName());
 		return TableOne::$db;
 	}
 	

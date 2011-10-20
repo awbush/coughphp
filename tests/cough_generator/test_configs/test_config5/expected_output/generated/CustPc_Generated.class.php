@@ -105,6 +105,7 @@ abstract class CustPc_Generated extends CoughObject {
 		if (is_null(CustPc::$db)) {
 			CustPc::$db = CoughDatabaseFactory::getDatabase(CustPc::$dbAlias);
 		}
+		CustPc::$db->selectDb(CustPc::getDbName());
 		return CustPc::$db;
 	}
 	

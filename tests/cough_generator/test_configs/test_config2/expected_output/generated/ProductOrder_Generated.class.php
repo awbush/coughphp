@@ -63,6 +63,7 @@ abstract class ProductOrder_Generated extends CoughObject {
 		if (is_null(ProductOrder::$db)) {
 			ProductOrder::$db = CoughDatabaseFactory::getDatabase(ProductOrder::$dbAlias);
 		}
+		ProductOrder::$db->selectDb(ProductOrder::getDbName());
 		return ProductOrder::$db;
 	}
 	

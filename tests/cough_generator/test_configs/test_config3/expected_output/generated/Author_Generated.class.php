@@ -63,6 +63,7 @@ abstract class Author_Generated extends CoughObject {
 		if (is_null(Author::$db)) {
 			Author::$db = CoughDatabaseFactory::getDatabase(Author::$dbAlias);
 		}
+		Author::$db->selectDb(Author::getDbName());
 		return Author::$db;
 	}
 	

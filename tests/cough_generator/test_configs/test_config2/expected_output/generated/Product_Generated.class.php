@@ -49,6 +49,7 @@ abstract class Product_Generated extends CoughObject {
 		if (is_null(Product::$db)) {
 			Product::$db = CoughDatabaseFactory::getDatabase(Product::$dbAlias);
 		}
+		Product::$db->selectDb(Product::getDbName());
 		return Product::$db;
 	}
 	

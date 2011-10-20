@@ -35,6 +35,7 @@ abstract class Customer_Generated extends CoughObject {
 		if (is_null(Customer::$db)) {
 			Customer::$db = CoughDatabaseFactory::getDatabase(Customer::$dbAlias);
 		}
+		Customer::$db->selectDb(Customer::getDbName());
 		return Customer::$db;
 	}
 	
