@@ -18,12 +18,10 @@ include:
   - _*
 
 exclude:
-  - _config.yml
+  # Can't exclude _config.yml or _posts.
   - _data
-  - _drafts
   - _includes
   - _layouts
-  - _posts
   - CNAME
   - Gemfile
   - Gemfile.lock
