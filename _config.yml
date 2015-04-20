@@ -12,16 +12,18 @@ defaults:
     values:
       layout: "posts"
 
-# Files built by phpDocumentor that Jekyll fails to transfer because some of
-# the files start with an underscore. Also see the peculiar .gitignore.
-keep_files:
-  - docs/1.3/api
-  - docs/1.3.2/api
-  - docs/1.3.3/api
-  - docs/1.3.4/api
-  - docs/1.3.5/api
+# Include files that start with an underscore (e.g. built by phpDocumentor),
+# then exclude Jekyll files explicitly later.
+include:
+  - _*
 
 exclude:
+  - _config.yml
+  - _data
+  - _drafts
+  - _includes
+  - _layouts
+  - _posts
   - CNAME
   - Gemfile
   - Gemfile.lock
