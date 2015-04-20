@@ -1,0 +1,894 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class CoughCollection</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class CoughCollection</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-consts">Constants</a>
+						
+			</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">CoughCollection collects CoughObjects.</p>
+	<ul class="tags">
+				<li><span class="field">abstract:</span> </li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_cough---CoughCollection.class.php.html">/cough/CoughCollection.class.php</a> (line <span class="field">8</span>)
+		</p>
+		
+				
+		<pre>ArrayObject
+   |
+   --CoughCollection</pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+															<a href="#sec-consts">Constants</a>
+							
+					</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$elementClassName" title="details" class="var-name">$elementClassName</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$removedElements" title="details" class="var-name">$removedElements</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-consts">Constants</a>
+							
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																												<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#getTemporaryKey" title="details" class="method-name">getTemporaryKey</a>
+										()
+									</div>
+																																																																																								
+												<div class="method-definition">
+											<span class="method-result">CoughCollection</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#add" title="details" class="method-name">add</a>
+											(<span class="var-type"><a href="../cough/CoughObject.html">CoughObject</a></span>&nbsp;<span class="var-name">$object</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#get" title="details" class="method-name">get</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$key</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">CoughAbstractDatabaseAdapter</span>
+										<a href="#getDb" title="details" class="method-name">getDb</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../cough/CoughIterator.html">CoughIterator</a></span>
+										<a href="#getIterator" title="details" class="method-name">getIterator</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../cough/CoughKeyValueIterator.html">CoughKeyValueIterator</a></span>
+										<a href="#getKeyValueIterator" title="details" class="method-name">getKeyValueIterator</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$key</span> = <span class="var-default">'getKeyId'</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#getLoadSql" title="details" class="method-name">getLoadSql</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#getPosition" title="details" class="method-name">getPosition</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$n</span>)
+									</div>
+																								<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isEmpty" title="details" class="method-name">isEmpty</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#load" title="details" class="method-name">load</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#loadBySql" title="details" class="method-name">loadBySql</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$sql</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#remove" title="details" class="method-name">remove</a>
+											(<span class="var-type"><a href="../cough/CoughObject.html">CoughObject</a>|int|string</span>&nbsp;<span class="var-name">$objectOrId</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#removeByKey" title="details" class="method-name">removeByKey</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$key</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#removeByReference" title="details" class="method-name">removeByReference</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$objectToRemove</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#save" title="details" class="method-name">save</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#sortByKeys" title="details" class="method-name">sortByKeys</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$keys</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#sortByMethod" title="details" class="method-name">sortByMethod</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$methodName</span>, [<span class="var-type">int</span>&nbsp;<span class="var-name">$direction</span> = <span class="var-default">SORT_ASC</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#sortByMethods" title="details" class="method-name">sortByMethods</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$methodName</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$direction</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$type</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-consts">Constants</a>
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$elementClassName" id="$elementClassName"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$elementClassName</span>
+						(line <span class="line-number">18</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The name of the element class that will be used when adding new  elements to the collection</p>
+<p class="description"><p>Override this in sub class.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$removedElements" id="$removedElements"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$removedElements</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">25</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Holds all the (unsaved) removed elements</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> of CoughObjects</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																			<a href="#sec-consts">Constants</a>
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodgetTemporaryKey" id="getTemporaryKey"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getTemporaryKey</span> (line <span class="line-number">204</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a temporary key for adding an object that does not have a key ID  yet.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getTemporaryKey
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">27</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">CoughCollection</span>
+		<span class="method-name">
+			__construct
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt>ArrayObject::constructor __construct ( $array )</dt>
+					</dl>
+			
+	</div>
+<a name="methodadd" id="add"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">add</span> (line <span class="line-number">189</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a single element (even if it doesn't have a key ID yet).</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			add
+		</span>
+					(<span class="var-type"><a href="../cough/CoughObject.html">CoughObject</a></span>&nbsp;<span class="var-name">$object</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../cough/CoughObject.html">CoughObject</a></span>
+				<span class="var-name">$object</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodget" id="get"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">get</span> (line <span class="line-number">171</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the element at the given key.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> the CoughObject if found, null if not.</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			get
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$key</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$key</span><span class="var-description">: the result from the element's <a href="../cough/CoughObject.html#methodgetKeyId">CoughObject::getKeyId()</a>  method (which always returns a flattened string/integer) or the result from  the element's <a href="../cough/CoughObject.html#methodgetPk">CoughObject::getPk()</a> method (which always returns the  array form of the key).</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetDb" id="getDb"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDb</span> (line <span class="line-number">54</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a reference to the database object to use for queries.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">CoughAbstractDatabaseAdapter</span>
+		<span class="method-name">
+			getDb
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetIterator" id="getIterator"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getIterator</span> (line <span class="line-number">36</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a new iterator for the collection.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../cough/CoughIterator.html">CoughIterator</a></span>
+		<span class="method-name">
+			getIterator
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt>ArrayObject::getIterator (  )</dt>
+					</dl>
+			
+	</div>
+<a name="methodgetKeyValueIterator" id="getKeyValueIterator"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getKeyValueIterator</span> (line <span class="line-number">45</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a new key-value iterator for the collection.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../cough/CoughKeyValueIterator.html">CoughKeyValueIterator</a></span>
+		<span class="method-name">
+			getKeyValueIterator
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$key</span> = <span class="var-default">'getKeyId'</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$value</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$key</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetLoadSql" id="getLoadSql"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getLoadSql</span> (line <span class="line-number">67</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the base SQL to use for the collection.</p>
+<p class="description"><p>Defaults to just calling the object's <a href="../cough/CoughCollection.html#methodgetLoadSql">getLoadSql()</a> static method.</p><p>Override in sub class to use different SQL.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> return value of CoughObject::getLoadSql()</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getLoadSql
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetPosition" id="getPosition"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getPosition</span> (line <span class="line-number">136</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get the $n-th position in the array, regardless of key indices.</p>
+<p class="description"><p>$n = 0 gets first element, $n = (count - 1) gets last element.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> nth element in array.</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getPosition
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$n</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$n</span><span class="var-description">: which element to get (in range 0 to count - 1).</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodisEmpty" id="isEmpty"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">isEmpty</span> (line <span class="line-number">153</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Find out whether or not the collection is empty.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> true if nothing is in the collection, false otherwise.</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isEmpty
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodload" id="load"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">load</span> (line <span class="line-number">76</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Loads the collection using the SQL provided by getLoadSql()</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			load
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodloadBySql" id="loadBySql"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">loadBySql</span> (line <span class="line-number">85</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Loads the collection using the provided SQL</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			loadBySql
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sql</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sql</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodremove" id="remove"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">remove</span> (line <span class="line-number">217</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes a single element given either an ID or the object itself.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> CoughObject that was removed, or false if no element could be found/removed.</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			remove
+		</span>
+					(<span class="var-type"><a href="../cough/CoughObject.html">CoughObject</a>|int|string</span>&nbsp;<span class="var-name">$objectOrId</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../cough/CoughObject.html">CoughObject</a>|int|string</span>
+				<span class="var-name">$objectOrId</span><span class="var-description">: object or ID to remove (ID must be result from $object-&gt;getKeyId()).</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodremoveByKey" id="removeByKey"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">removeByKey</span> (line <span class="line-number">241</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes a single element from the collection by key.</p>
+<p class="description"><p>Due to a bug in PHP 5.2.1 and earlier, we do not use offsetExists()...  This has the drawback of not working when a value exists, but is null,  but if that ever happens behavior is UNDEFINED anyway (i.e. how do you have  a null element in a CoughCollection? It makes no sense.)  See http://bugs.php.net/bug.php?id=40872 for more details.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> CoughObject that was removed, or false if no element could be found/removed.</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			removeByKey
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$key</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$key</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodremoveByReference" id="removeByReference"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">removeByReference</span> (line <span class="line-number">257</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes a single element from the collection by comparing references.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> CoughObject that was removed, or false if no element could be found/removed.</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			removeByReference
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$objectToRemove</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$objectToRemove</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsave" id="save"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">save</span> (line <span class="line-number">103</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Run save on each collected (or removed) element.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			save
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsortByKeys" id="sortByKeys"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">sortByKeys</span> (line <span class="line-number">276</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sort the collection from an array of keys (where the keys are in the  desired order).</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			sortByKeys
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$keys</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$keys</span><span class="var-description">: ordered key IDs for the elements in the collection.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsortByMethod" id="sortByMethod"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">sortByMethod</span> (line <span class="line-number">301</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sort the collection from the return value of the specified method name of the  collected objects.</p>
+<p class="description"><p>Examples:</p><p><div class="src-code"><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$collection</span><span class="src-sym">-&gt;</span><a href="../cough/CoughCollection.html#methodsortByMethod">sortByMethod</a><span class="src-sym">(</span><span class="src-str">'getProductName'</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$collection</span><span class="src-sym">-&gt;</span><a href="../cough/CoughCollection.html#methodsortByMethod">sortByMethod</a><span class="src-sym">(</span><span class="src-str">'getProductName'</span><span class="src-sym">,&nbsp;</span><span class="src-id">SORT_ASC</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$collection</span><span class="src-sym">-&gt;</span><a href="../cough/CoughCollection.html#methodsortByMethod">sortByMethod</a><span class="src-sym">(</span><span class="src-str">'getProductName'</span><span class="src-sym">,&nbsp;</span><span class="src-id">SORT_DESC</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+</ol></div></p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			sortByMethod
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$methodName</span>, [<span class="var-type">int</span>&nbsp;<span class="var-name">$direction</span> = <span class="var-default">SORT_ASC</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$methodName</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$direction</span><span class="var-description">: SORT_ASC or SORT_DESC (PHP sort order constant)</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsortByMethods" id="sortByMethods"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">sortByMethods</span> (line <span class="line-number">338</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sort the collection from the return value of the specified method names of the  collected objects.</p>
+<p class="description"><p>Examples:</p><p><div class="src-code"><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$collection</span><span class="src-sym">-&gt;</span><a href="../cough/CoughCollection.html#methodsortByMethods">sortByMethods</a><span class="src-sym">(</span><span class="src-str">'getManufacturerName'</span><span class="src-sym">,&nbsp;</span><span class="src-str">'getProductName'</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$collection</span><span class="src-sym">-&gt;</span><a href="../cough/CoughCollection.html#methodsortByMethods">sortByMethods</a><span class="src-sym">(</span><span class="src-str">'getManufacturerName'</span><span class="src-sym">,&nbsp;</span><span class="src-id">SORT_DESC</span><span class="src-sym">,&nbsp;</span><span class="src-str">'getProductName'</span><span class="src-sym">,&nbsp;</span><span class="src-id">SORT_DESC</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$collection</span><span class="src-sym">-&gt;</span><a href="../cough/CoughCollection.html#methodsortByMethods">sortByMethods</a><span class="src-sym">(</span><span class="src-str">'getManufacturerName'</span><span class="src-sym">,&nbsp;</span><span class="src-id">SORT_DESC</span><span class="src-sym">,&nbsp;</span><span class="src-str">'getProductName'</span><span class="src-sym">,&nbsp;</span><span class="src-id">SORT_ASC</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$collection</span><span class="src-sym">-&gt;</span><a href="../cough/CoughCollection.html#methodsortByMethods">sortByMethods</a><span class="src-sym">(</span><span class="src-str">'getManufacturerName'</span><span class="src-sym">,&nbsp;</span><span class="src-id">SORT_DESC</span><span class="src-sym">,&nbsp;</span><span class="src-id">SORT_STRING</span><span class="src-sym">,&nbsp;</span><span class="src-str">'getProductName'</span><span class="src-sym">,&nbsp;</span><span class="src-id">SORT_STRING</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+</ol></div></p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">see:</span> <a href="http://php.net/array_multisort">http://php.net/array_multisort</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			sortByMethods
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$methodName</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$direction</span>, <span class="var-type">int</span>&nbsp;<span class="var-name">$type</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$methodName</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$direction</span><span class="var-description">: SORT_ASC or SORT_DESC (PHP sort order constant)</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$type</span><span class="var-description">: SORT_REGULAR, SORT_STRING, or SORT_NUMERIC (PHP sort type constant)</span>			</li>
+				</ul>
+		
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname">ArrayObject (Internal Class)</span></p>
+					<blockquote>
+													<span class="method-name">constructor __construct ( $array )</span><br>
+													<span class="method-name">append ( $value )</span><br>
+													<span class="method-name">asort (  )</span><br>
+													<span class="method-name">count (  )</span><br>
+													<span class="method-name">exchangeArray ( $array )</span><br>
+													<span class="method-name">getArrayCopy (  )</span><br>
+													<span class="method-name">getFlags (  )</span><br>
+													<span class="method-name">getIterator (  )</span><br>
+													<span class="method-name">getIteratorClass (  )</span><br>
+													<span class="method-name">ksort (  )</span><br>
+													<span class="method-name">natcasesort (  )</span><br>
+													<span class="method-name">natsort (  )</span><br>
+													<span class="method-name">offsetExists ( $index )</span><br>
+													<span class="method-name">offsetGet ( $index )</span><br>
+													<span class="method-name">offsetSet ( $index, $newval )</span><br>
+													<span class="method-name">offsetUnset ( $index )</span><br>
+													<span class="method-name">setFlags ( $flags )</span><br>
+													<span class="method-name">setIteratorClass ( $iteratorClass )</span><br>
+													<span class="method-name">uasort ( $cmp_function )</span><br>
+													<span class="method-name">uksort ( $cmp_function )</span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Constants</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname">ArrayObject (Internal Class)</span></p>
+					<blockquote>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name">ARRAY_AS_PROPS = 2</span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name">STD_PROP_LIST = 1</span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 22 Aug 2008 22:27:23 -0500 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.0</a>
+	</p>
+	</div></body>
+</html>

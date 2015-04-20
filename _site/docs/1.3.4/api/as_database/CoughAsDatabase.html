@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class CoughAsDatabase</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class CoughAsDatabase</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-vars">Vars</a>
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-consts">Constants</a>
+						
+			</div>
+	<div class="info-box-body">
+                <p class="implements">
+            Implements interfaces:
+            <ul>
+                <li><a href="../cough/CoughDatabaseInterface.html">CoughDatabaseInterface</a></li>            </ul>
+        </p>
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Cough DAL (Database Adapter Layer) for the &quot;as_database&quot; module.</p>
+		<p class="notes">
+			Located in <a class="field" href="_dal---as---CoughAsDatabase.class.php.html">/dal/as/CoughAsDatabase.class.php</a> (line <span class="field">8</span>)
+		</p>
+		
+				
+		<pre><a href="../as_database/As_Database.html">As_Database</a>
+   |
+   --CoughAsDatabase</pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-consts">Constants</a>
+							
+															<a href="#sec-vars">Vars</a>
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+												<div class="method-definition">
+					static 						<span class="method-result"><a href="../as_database/CoughAsDatabase.html">CoughAsDatabase</a></span>
+										<a href="#constructByConfig" title="details" class="method-name">constructByConfig</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$dbConfig</span>)
+									</div>
+																																
+																				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#execute" title="details" class="method-name">execute</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$sql</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getLastInsertId" title="details" class="method-name">getLastInsertId</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getResultObjectFromResource" title="details" class="method-name">getResultObjectFromResource</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$resource</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-consts">Constants</a>
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../as_database/As_Database.html">As_Database</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$clientFlags">As_Database::$clientFlags</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$connection">As_Database::$connection</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$dbHost">As_Database::$dbHost</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$dbName">As_Database::$dbName</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$dbPassword">As_Database::$dbPassword</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$dbPort">As_Database::$dbPort</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$dbUser">As_Database::$dbUser</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$inTransaction">As_Database::$inTransaction</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$logBacktraces">As_Database::$logBacktraces</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$logQueries">As_Database::$logQueries</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$query">As_Database::$query</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../as_database/As_Database.html#var$queryLog">As_Database::$queryLog</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-vars">Vars</a>
+																			<a href="#sec-consts">Constants</a>
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodconstructByConfig" id="constructByConfig"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method constructByConfig</span> (line <span class="line-number">16</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">creates a new As_Database connection from a DSN</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Lewis Zhang</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result"><a href="../as_database/CoughAsDatabase.html">CoughAsDatabase</a></span>
+		<span class="method-name">
+			constructByConfig
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$dbConfig</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbConfig</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+<a name="methodexecute" id="execute"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">execute</span> (line <span class="line-number">55</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			execute
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sql</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sql</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetLastInsertId" id="getLastInsertId"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getLastInsertId</span> (line <span class="line-number">67</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getLastInsertId
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetResultObjectFromResource" id="getResultObjectFromResource"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getResultObjectFromResource</span> (line <span class="line-number">62</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getResultObjectFromResource
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$resource</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$resource</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../as_database/As_Database.html#methodgetResultObjectFromResource">As_Database::getResultObjectFromResource()</a></dt>
+					</dl>
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../as_database/As_Database.html">As_Database</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../as_database/As_Database.html#method__construct">As_Database::__construct()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodclearQueryLog">As_Database::clearQueryLog()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodcommit">As_Database::commit()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methoddelete">As_Database::delete()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodescape">As_Database::escape()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgenerateError">As_Database::generateError()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgenerateSet">As_Database::generateSet()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgenerateWhere">As_Database::generateWhere()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetAffectedRows">As_Database::getAffectedRows()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetError">As_Database::getError()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetFoundRows">As_Database::getFoundRows()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetInsertID">As_Database::getInsertID()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetQuery">As_Database::getQuery()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetQueryLog">As_Database::getQueryLog()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetQueryLogTime">As_Database::getQueryLogTime()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetResultObjectFromResource">As_Database::getResultObjectFromResource()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetSecondsBehindMaster">As_Database::getSecondsBehindMaster()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetTestForMatch">As_Database::getTestForMatch()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetTestForNonMatch">As_Database::getTestForNonMatch()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodgetUniqueQueryLog">As_Database::getUniqueQueryLog()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodinitConnection">As_Database::initConnection()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodinsert">As_Database::insert()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodinsertMultiple">As_Database::insertMultiple()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodinsertOnDupUpdate">As_Database::insertOnDupUpdate()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodinsertOrCancel">As_Database::insertOrCancel()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodinsertOrUpdate">As_Database::insertOrUpdate()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodisInTransaction">As_Database::isInTransaction()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodquery">As_Database::query()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodquote">As_Database::quote()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodreplace">As_Database::replace()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodreplaceMultiple">As_Database::replaceMultiple()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodresult">As_Database::result()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodrollback">As_Database::rollback()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodselect">As_Database::select()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodselectDB">As_Database::selectDB()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodstartLoggingQueries">As_Database::startLoggingQueries()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodstartTransaction">As_Database::startTransaction()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodstopLoggingQueries">As_Database::stopLoggingQueries()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#methodupdate">As_Database::update()</a></span><br>
+													<span class="method-name"><a href="../as_database/As_Database.html#method__destruct">As_Database::__destruct()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-vars">Vars</a>
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Constants</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../as_database/As_Database.html">As_Database</a></span></p>
+					<blockquote>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../as_database/As_Database.html#constERROR_CONNECT">As_Database::ERROR_CONNECT</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../as_database/As_Database.html#constERROR_DB_SELECT">As_Database::ERROR_DB_SELECT</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../as_database/As_Database.html#constERROR_INSERT">As_Database::ERROR_INSERT</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../as_database/As_Database.html#constERROR_QUERY">As_Database::ERROR_QUERY</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../as_database/As_Database.html#constERROR_UPDATE">As_Database::ERROR_UPDATE</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../as_database/As_Database.html#constINSERT">As_Database::INSERT</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../as_database/As_Database.html#constUPDATE">As_Database::UPDATE</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Wed, 12 Nov 2008 21:56:13 -0600 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.0</a>
+	</p>
+	</div></body>
+</html>

@@ -1,0 +1,1080 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class CoughGeneratorConfig</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class CoughGeneratorConfig</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-vars">Vars</a>
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-consts">Constants</a>
+						
+			</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Config class for CoughGenerator.</p>
+<p class="description"><p>It abstracts the implementation of configuration specification, as well  as makes it easy for the CoughGenerator to perform different actions  based on the user's configuration.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_cough_generator---CoughGeneratorConfig.class.php.html">/cough_generator/CoughGeneratorConfig.class.php</a> (line <span class="field">13</span>)
+		</p>
+		
+				
+		<pre><a href="../cough_generator/CoughConfig.html">CoughConfig</a>
+   |
+   --CoughGeneratorConfig</pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-consts">Constants</a>
+							
+															<a href="#sec-vars">Vars</a>
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+												<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#constructFromFile" title="details" class="method-name">constructFromFile</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$filePath</span>)
+									</div>
+																																																																																																																																																																																																																								
+																				<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#convertIdToEntityName" title="details" class="method-name">convertIdToEntityName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$id</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getBaseCollectionClassName" title="details" class="method-name">getBaseCollectionClassName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getBaseObjectClassName" title="details" class="method-name">getBaseObjectClassName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getCamelCase" title="details" class="method-name">getCamelCase</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getClassFileName" title="details" class="method-name">getClassFileName</a>
+											(<span class="var-type"><a href="../cough_generator/CoughClass.html">CoughClass</a></span>&nbsp;<span class="var-name">$class</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getClassFilePath" title="details" class="method-name">getClassFilePath</a>
+											(<span class="var-type"><a href="../cough_generator/CoughClass.html">CoughClass</a></span>&nbsp;<span class="var-name">$class</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getClassName" title="details" class="method-name">getClassName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getCollectionExtensionClassName" title="details" class="method-name">getCollectionExtensionClassName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getEntityName" title="details" class="method-name">getEntityName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getForeignCollectionName" title="details" class="method-name">getForeignCollectionName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$relationship</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$relationships</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getForeignObjectName" title="details" class="method-name">getForeignObjectName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$relationship</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getForeignTableAliasName" title="details" class="method-name">getForeignTableAliasName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$relationship</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getIdRegex" title="details" class="method-name">getIdRegex</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getObjectExtensionClassName" title="details" class="method-name">getObjectExtensionClassName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getPhpdocAuthor" title="details" class="method-name">getPhpdocAuthor</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getPhpdocCopyright" title="details" class="method-name">getPhpdocCopyright</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getPhpdocPackage" title="details" class="method-name">getPhpdocPackage</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getStarterCollectionClassName" title="details" class="method-name">getStarterCollectionClassName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getStarterObjectClassName" title="details" class="method-name">getStarterObjectClassName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getTableNameWithoutPrefix" title="details" class="method-name">getTableNameWithoutPrefix</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$prefixes</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getTitleCase" title="details" class="method-name">getTitleCase</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#initConfig" title="details" class="method-name">initConfig</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#shouldGenerateForTable" title="details" class="method-name">shouldGenerateForTable</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#shouldGenerateHasManyMethods" title="details" class="method-name">shouldGenerateHasManyMethods</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$hasMany</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#shouldGenerateHasOneMethods" title="details" class="method-name">shouldGenerateHasOneMethods</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$hasOne</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#shouldGenerateLoadSqlInnerJoins" title="details" class="method-name">shouldGenerateLoadSqlInnerJoins</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-consts">Constants</a>
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../cough_generator/CoughConfig.html">CoughConfig</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../cough_generator/CoughConfig.html#var$config">CoughConfig::$config</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-vars">Vars</a>
+																			<a href="#sec-consts">Constants</a>
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodconstructFromFile" id="constructFromFile"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method constructFromFile</span> (line <span class="line-number">15</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			constructFromFile
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$filePath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$filePath</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+<a name="methodconvertIdToEntityName" id="convertIdToEntityName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">convertIdToEntityName</span> (line <span class="line-number">194</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Converts an id field into an object name (in most cases this simply  involves stripping off an &quot;_id&quot; suffix).</p>
+<p class="description"><p>Example input -&gt; output might be &quot;billing_addres_id&quot; -&gt; &quot;billing_address&quot;</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - string on successful conversion, false on failure</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			convertIdToEntityName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$id</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$id</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetBaseCollectionClassName" id="getBaseCollectionClassName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getBaseCollectionClassName</span> (line <span class="line-number">147</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getBaseCollectionClassName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetBaseObjectClassName" id="getBaseObjectClassName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getBaseObjectClassName</span> (line <span class="line-number">139</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getBaseObjectClassName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetCamelCase" id="getCamelCase"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getCamelCase</span> (line <span class="line-number">427</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">getCamelCase takes the given string and returns it in camelCase format,  with underscores removed.</p>
+<p class="description"><p>Example input: db_column_name  Example output: dbColumnName</p><p>See: http://en.wikipedia.org/wiki/CamelCase</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> the camelCased version of the given string</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getCamelCase
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: the string to convert to camel case, usually containing underscores</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetClassFileName" id="getClassFileName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getClassFileName</span> (line <span class="line-number">117</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getClassFileName
+		</span>
+					(<span class="var-type"><a href="../cough_generator/CoughClass.html">CoughClass</a></span>&nbsp;<span class="var-name">$class</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../cough_generator/CoughClass.html">CoughClass</a></span>
+				<span class="var-name">$class</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetClassFilePath" id="getClassFilePath"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getClassFilePath</span> (line <span class="line-number">109</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getClassFilePath
+		</span>
+					(<span class="var-type"><a href="../cough_generator/CoughClass.html">CoughClass</a></span>&nbsp;<span class="var-name">$class</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../cough_generator/CoughClass.html">CoughClass</a></span>
+				<span class="var-name">$class</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetClassName" id="getClassName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getClassName</span> (line <span class="line-number">86</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getClassName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetCollectionExtensionClassName" id="getCollectionExtensionClassName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getCollectionExtensionClassName</span> (line <span class="line-number">179</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getCollectionExtensionClassName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetEntityName" id="getEntityName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getEntityName</span> (line <span class="line-number">218</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Given a table object, it gets the &quot;entity name&quot;, currently just strips  any prefixes specified in the config from the table name, otherwise just  returns the table name.</p>
+<p class="description"><p>e.g. &quot;cust_address&quot; will get entity name &quot;address&quot; if  strip_table_name_prefixes has 'cust_' in it.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getEntityName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetForeignCollectionName" id="getForeignCollectionName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getForeignCollectionName</span> (line <span class="line-number">282</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getForeignCollectionName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$relationship</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$relationships</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$relationship</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$relationships</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetForeignObjectName" id="getForeignObjectName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getForeignObjectName</span> (line <span class="line-number">277</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getForeignObjectName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$relationship</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaRelationship.html">SchemaRelationship</a></span>
+				<span class="var-name">$relationship</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetForeignTableAliasName" id="getForeignTableAliasName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getForeignTableAliasName</span> (line <span class="line-number">233</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getForeignTableAliasName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$relationship</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaRelationship.html">SchemaRelationship</a></span>
+				<span class="var-name">$relationship</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetIdRegex" id="getIdRegex"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getIdRegex</span> (line <span class="line-number">326</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns an array of regexes to match against in order to determine if a  field should be considered an ID field, in order of precedence.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getIdRegex
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetObjectExtensionClassName" id="getObjectExtensionClassName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getObjectExtensionClassName</span> (line <span class="line-number">173</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getObjectExtensionClassName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetPhpdocAuthor" id="getPhpdocAuthor"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getPhpdocAuthor</span> (line <span class="line-number">155</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getPhpdocAuthor
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetPhpdocCopyright" id="getPhpdocCopyright"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getPhpdocCopyright</span> (line <span class="line-number">167</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getPhpdocCopyright
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetPhpdocPackage" id="getPhpdocPackage"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getPhpdocPackage</span> (line <span class="line-number">161</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getPhpdocPackage
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetStarterCollectionClassName" id="getStarterCollectionClassName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getStarterCollectionClassName</span> (line <span class="line-number">131</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getStarterCollectionClassName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetStarterObjectClassName" id="getStarterObjectClassName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getStarterObjectClassName</span> (line <span class="line-number">123</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getStarterObjectClassName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetTableNameWithoutPrefix" id="getTableNameWithoutPrefix"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTableNameWithoutPrefix</span> (line <span class="line-number">98</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getTableNameWithoutPrefix
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$prefixes</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$prefixes</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetTitleCase" id="getTitleCase"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTitleCase</span> (line <span class="line-number">407</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">getTitleCase() takes the given string and returns it in TitleCase format  (sometimes called UpperCamelCase), with underscores removed.</p>
+<p class="description"><p>Example input: db_column_name  Example output: DbColumnName</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> the TitleCased version of the given string</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getTitleCase
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: the string to convert to title case, usually containing underscores</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodinitConfig" id="initConfig"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">initConfig</span> (line <span class="line-number">20</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			initConfig
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../cough_generator/CoughConfig.html#methodinitConfig">CoughConfig::initConfig()</a></dt>
+						<dd>Initializes config to the defaults</dd>
+					</dl>
+			
+	</div>
+<a name="methodshouldGenerateForTable" id="shouldGenerateForTable"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">shouldGenerateForTable</span> (line <span class="line-number">347</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			shouldGenerateForTable
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodshouldGenerateHasManyMethods" id="shouldGenerateHasManyMethods"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">shouldGenerateHasManyMethods</span> (line <span class="line-number">375</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			shouldGenerateHasManyMethods
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$hasMany</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaRelationship.html">SchemaRelationship</a></span>
+				<span class="var-name">$hasMany</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodshouldGenerateHasOneMethods" id="shouldGenerateHasOneMethods"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">shouldGenerateHasOneMethods</span> (line <span class="line-number">354</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			shouldGenerateHasOneMethods
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$hasOne</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaRelationship.html">SchemaRelationship</a></span>
+				<span class="var-name">$hasOne</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodshouldGenerateLoadSqlInnerJoins" id="shouldGenerateLoadSqlInnerJoins"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">shouldGenerateLoadSqlInnerJoins</span> (line <span class="line-number">336</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			shouldGenerateLoadSqlInnerJoins
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../cough_generator/CoughConfig.html">CoughConfig</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../cough_generator/CoughConfig.html#method__construct">CoughConfig::__construct()</a></span><br>
+													<span class="method-name"><a href="../cough_generator/CoughConfig.html#methodgetArrayValueFromMultiKey">CoughConfig::getArrayValueFromMultiKey()</a></span><br>
+													<span class="method-name"><a href="../cough_generator/CoughConfig.html#methodgetConfigValue">CoughConfig::getConfigValue()</a></span><br>
+													<span class="method-name"><a href="../cough_generator/CoughConfig.html#methodinitConfig">CoughConfig::initConfig()</a></span><br>
+													<span class="method-name"><a href="../cough_generator/CoughConfig.html#methodmergeIntoConfig">CoughConfig::mergeIntoConfig()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-vars">Vars</a>
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Constants</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../cough_generator/CoughConfig.html">CoughConfig</a></span></p>
+					<blockquote>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../cough_generator/CoughConfig.html#constSCOPE_DATABASE">CoughConfig::SCOPE_DATABASE</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../cough_generator/CoughConfig.html#constSCOPE_GLOBAL">CoughConfig::SCOPE_GLOBAL</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../cough_generator/CoughConfig.html#constSCOPE_TABLE">CoughConfig::SCOPE_TABLE</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Wed, 12 Nov 2008 21:56:16 -0600 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.0</a>
+	</p>
+	</div></body>
+</html>

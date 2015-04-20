@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class MysqlServer</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class MysqlServer</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+                <p class="implements">
+            Implements interfaces:
+            <ul>
+                <li><a href="../schema_generator/DriverServer.html">DriverServer</a></li>            </ul>
+        </p>
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Implements the interface for Server Driver, which:</p>
+<p class="description"><p>Given connection credentials, it gives read-only access to seeing what  databases, tables, and columns are available.</p><p>Example usage:</p><p>$server = new MysqlServer();      $server-&gt;loadDatabases();      print_r($server-&gt;getDatabases());</p><p>Example usage to get just one database:</p><p>$server = new MysqlServer();      $server-&gt;loadDatabase('db_name');      print_r($dba-&gt;getDatabase('db_name'));</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_schema_generator---database---drivers---mysql---MysqlServer.class.php.html">/schema_generator/database/drivers/mysql/MysqlServer.class.php</a> (line <span class="field">24</span>)
+		</p>
+		
+				
+		<pre><a href="../schema/Schema.html">Schema</a>
+   |
+   --MysqlServer</pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$connected" title="details" class="var-name">$connected</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$dbLink" title="details" class="var-name">$dbLink</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																												
+												<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$dsn</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__destruct" title="details" class="method-name">__destruct</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getAvailableDatabaseNames" title="details" class="method-name">getAvailableDatabaseNames</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../schema_generator/DriverDatabase.html">DriverDatabase</a></span>
+										<a href="#loadDatabase" title="details" class="method-name">loadDatabase</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$dbName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#loadDatabases" title="details" class="method-name">loadDatabases</a>
+										()
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$connected" id="$connected"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$connected</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">27</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$dbLink" id="$dbLink"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$dbLink</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">26</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+							<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../schema/Schema.html">Schema</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../schema/Schema.html#var$databases">Schema::$databases</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">46</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Construct with a DSN, an array containing host, user, pass, and port (optional).</p>
+<p class="description"><p>For example:</p><p>$dsn = array(          'host' =&gt; '127.0.0.1',          'user' =&gt; 'nobody',          'pass' =&gt; '',          'port' =&gt; 3306      );</p><p>$server = new MysqlServer($dsn);</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$dsn</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dsn</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__destruct" id="__destruct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Destructor __destruct</span> (line <span class="line-number">78</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__destruct
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetAvailableDatabaseNames" id="getAvailableDatabaseNames"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getAvailableDatabaseNames</span> (line <span class="line-number">119</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get a list of available database names.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> of strings</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getAvailableDatabaseNames
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../schema_generator/DriverServer.html#methodgetAvailableDatabaseNames">DriverServer::getAvailableDatabaseNames()</a></dt>
+						<dd>Get a list of available database names.</dd>
+					</dl>
+			
+	</div>
+<a name="methodloadDatabase" id="loadDatabase"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">loadDatabase</span> (line <span class="line-number">108</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Load a specific database schema into memory.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../schema_generator/DriverDatabase.html">DriverDatabase</a></span>
+		<span class="method-name">
+			loadDatabase
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$dbName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$dbName</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../schema_generator/DriverServer.html#methodloadDatabase">DriverServer::loadDatabase()</a></dt>
+						<dd>Load a specific database schema into memory.</dd>
+					</dl>
+			
+	</div>
+<a name="methodloadDatabases" id="loadDatabases"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">loadDatabases</span> (line <span class="line-number">92</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Load all database schemas for the currently connected server into memory.</p>
+<p class="description"><p>(will only load databases that the user/pass has privileges to see)</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			loadDatabases
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../schema_generator/DriverServer.html#methodloadDatabases">DriverServer::loadDatabases()</a></dt>
+						<dd>Load all database schemas for the currently connected server into memory.</dd>
+					</dl>
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../schema/Schema.html">Schema</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../schema/Schema.html#methodaddDatabase">Schema::addDatabase()</a></span><br>
+													<span class="method-name"><a href="../schema/Schema.html#methodgetDatabase">Schema::getDatabase()</a></span><br>
+													<span class="method-name"><a href="../schema/Schema.html#methodgetDatabases">Schema::getDatabases()</a></span><br>
+													<span class="method-name"><a href="../schema/Schema.html#methodgetNumberOfHasManyRelationships">Schema::getNumberOfHasManyRelationships()</a></span><br>
+													<span class="method-name"><a href="../schema/Schema.html#methodgetNumberOfHasOneRelationships">Schema::getNumberOfHasOneRelationships()</a></span><br>
+													<span class="method-name"><a href="../schema/Schema.html#methodlinkRelationships">Schema::linkRelationships()</a></span><br>
+													<span class="method-name"><a href="../schema/Schema.html#methodoutputRelationshipCounts">Schema::outputRelationshipCounts()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Sun, 19 Oct 2008 11:56:37 -0500 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.0</a>
+	</p>
+	</div></body>
+</html>

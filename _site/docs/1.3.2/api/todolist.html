@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Todo List</title>
+			<link rel="stylesheet" href="media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+						<div align="center"><h1>Todo List</h1></div>
+<h2>cough</h2>
+<h3><a href="cough/CoughObject.html#methodbuildSelectQuery">CoughObject::buildSelectQuery()</a></h3>
+<ul>
+    <li>PHP 5.3+: use &quot;static&quot; keyword instead of call_user_func and remove the  parameter requirement (making sure that if called with it, no warnings/notices  are generated; i.e. keep backward compatibility)</li>
+</ul>
+<h3><a href="cough/CoughObject.html#methodconstructByKey">CoughObject::constructByKey()</a></h3>
+<ul>
+    <li>PHP 5.3: switch from call_user_func to static::methodName() and remove the $className parameter</li>
+</ul>
+<h3><a href="cough/CoughObject.html#methodconstructBySql">CoughObject::constructBySql()</a></h3>
+<ul>
+    <li>PHP 5.3: switch from call_user_func to static::methodName() and remove the $className parameter</li>
+</ul>
+<h3><a href="cough/CoughObject.html#methoddeflate">CoughObject::deflate()</a></h3>
+<ul>
+    <li>Tom: Why this function? (provide good example so it can be added to documentation)</li>
+</ul>
+<h3><a href="cough/CoughObject.html#methodhasKeyId">CoughObject::hasKeyId()</a></h3>
+<ul>
+    <li>If NULL is a valid value for a PK, this function needs an update.</li>
+</ul>
+<h2>schema</h2>
+<h3><a href="schema/SchemaRelationship.html">SchemaRelationship</a></h3>
+<ul>
+    <li>2007-10-24/AWB: consider deprecating the &quot;ObjectName&quot; stuff as it doesn't get set at the schema level, but instead at the generation level (e.g. a config function might take one of the objects and return the &quot;ObjectName&quot; but it is not pre-filled here)</li>
+</ul>
+<h2>schema_generator</h2>
+<h3><a href="schema_generator/XmlSchemaGenerator.html#methodloadSchema">XmlSchemaGenerator::loadSchema()</a></h3>
+<ul>
+    <li>open an XML file and generate schema in memory</li>
+</ul>
+<h3><a href="schema_generator/XmlSchemaGenerator.html">XmlSchemaGenerator</a></h3>
+<ul>
+    <li>Write this class...</li>
+</ul>
+	<p class="notes" id="credit">
+		Documentation generated on Tue, 23 Sep 2008 22:48:27 -0500 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.0</a>
+	</p>
+	</body>
+</html>

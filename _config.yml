@@ -1,0 +1,29 @@
+highlighter: pygments
+google_analytics_id: UA-5966233-1
+baseurl: ''
+permalink: /blog/:year/:month/:day/:title
+defaults:
+  - scope:
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      type: "posts"
+    values:
+      layout: "posts"
+
+# Files built by phpDocumentor that Jekyll fails to transfer because some of
+# the files start with an underscore. Also see the peculiar .gitignore.
+keep_files:
+  - docs/1.3/api
+  - docs/1.3.2/api
+  - docs/1.3.3/api
+  - docs/1.3.4/api
+  - docs/1.3.5/api
+
+exclude:
+  - CNAME
+  - Gemfile
+  - Gemfile.lock
+  - Rakefile
+  - readme.md

@@ -1,0 +1,8 @@
+_site/*
+!_site/docs/
+_site/docs/*
+!_site/docs/1.3/
+!_site/docs/1.3.2/
+!_site/docs/1.3.3/
+!_site/docs/1.3.4/
+!_site/docs/1.3.5/

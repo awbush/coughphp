@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class CoughGeneratorFacade</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class CoughGeneratorFacade</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The CoughGeneratorFacade class provides a simple interface to the process of  generating a schema from a database, manipulating it and converting FKs to  relationships, and passing that info to the CoughGenerator which generates the  classes.</p>
+<p class="description"><p>CoughGeneratorFacade will provide at least an easy way to:</p><p>1) Given a config name, generate the files.      2) Given a config name, provide information about what would be generated         (e.g. added, removed, and modified files).</p><p>Facade design pattern: &quot;create a simplified interface of an existing interface to ease usage for common tasks&quot;</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_cough_generator---CoughGeneratorFacade.class.php.html">/cough_generator/CoughGeneratorFacade.class.php</a> (line <span class="field">20</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																								<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$verbose" title="details" class="var-name">$verbose</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																												
+												<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#disableVerbose" title="details" class="method-name">disableVerbose</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#enableVerbose" title="details" class="method-name">enableVerbose</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#generate" title="details" class="method-name">generate</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$configNameOrPath</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#generateFromConfigPath" title="details" class="method-name">generateFromConfigPath</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$configPath</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getConfigPath" title="details" class="method-name">getConfigPath</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$configNameOrPath</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#showStatus" title="details" class="method-name">showStatus</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$configNameOrPath</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#showStatusFromConfigPath" title="details" class="method-name">showStatusFromConfigPath</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$configPath</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$verbose" id="$verbose"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$verbose</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">27</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Whether or not to echo what's happening to the screen.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="methoddisableVerbose" id="disableVerbose"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">disableVerbose</span> (line <span class="line-number">45</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Disable verbose mode</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough_generator/CoughGeneratorFacade.html#var$verbose">CoughGeneratorFacade::$verbose</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			disableVerbose
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodenableVerbose" id="enableVerbose"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">enableVerbose</span> (line <span class="line-number">35</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Enable verbose mode</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough_generator/CoughGeneratorFacade.html#var$verbose">CoughGeneratorFacade::$verbose</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			enableVerbose
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgenerate" id="generate"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">generate</span> (line <span class="line-number">49</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			generate
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$configNameOrPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$configNameOrPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgenerateFromConfigPath" id="generateFromConfigPath"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">generateFromConfigPath</span> (line <span class="line-number">65</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			generateFromConfigPath
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$configPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$configPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetConfigPath" id="getConfigPath"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getConfigPath</span> (line <span class="line-number">57</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getConfigPath
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$configNameOrPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$configNameOrPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodshowStatus" id="showStatus"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">showStatus</span> (line <span class="line-number">53</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			showStatus
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$configNameOrPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$configNameOrPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodshowStatusFromConfigPath" id="showStatusFromConfigPath"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">showStatusFromConfigPath</span> (line <span class="line-number">150</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			showStatusFromConfigPath
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$configPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$configPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Tue, 23 Sep 2008 22:48:23 -0500 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.0</a>
+	</p>
+	</div></body>
+</html>

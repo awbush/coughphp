@@ -1,0 +1,2310 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class CoughObject</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class CoughObject</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">CoughObject is the foundation for which all other &quot;Model&quot; / &quot;ORM&quot; classes  extend.  There will usually be one class extending CoughObject for each table  in the database that an ORM is needed for.</p>
+<p class="description"><p>It might be wise to add your own AppModel / AppCoughObject class that extends  CoughObject and have all your classes extend that one; this way you can add  custom functionality to Cough without modifying the Cough source.</p></p>
+	<ul class="tags">
+				<li><span class="field">abstract:</span> </li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_cough---CoughObject.class.php.html">/cough/CoughObject.class.php</a> (line <span class="field">14</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																																																																																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$collections" title="details" class="var-name">$collections</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$derivedFieldDefinitions" title="details" class="var-name">$derivedFieldDefinitions</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$derivedFields" title="details" class="var-name">$derivedFields</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$fieldDefinitions" title="details" class="var-name">$fieldDefinitions</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$fields" title="details" class="var-name">$fields</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$isDeleted" title="details" class="var-name">$isDeleted</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$isNew" title="details" class="var-name">$isNew</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$modifiedFields" title="details" class="var-name">$modifiedFields</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$objectDefinitions" title="details" class="var-name">$objectDefinitions</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$objects" title="details" class="var-name">$objects</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$validatedData" title="details" class="var-name">$validatedData</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$validationErrors" title="details" class="var-name">$validationErrors</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																												<div class="method-definition">
+					static 						<span class="method-result">mixed</span>
+										<a href="#constructByKey" title="details" class="method-name">constructByKey</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$idOrHash</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$className</span> = <span class="var-default">''</span>])
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">mixed</span>
+										<a href="#constructBySql" title="details" class="method-name">constructBySql</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$sql</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$className</span> = <span class="var-default">''</span>])
+									</div>
+																																																																																								<div class="method-definition">
+					static 						<span class="method-result">array</span>
+										<a href="#getFieldAliases" title="details" class="method-name">getFieldAliases</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$className</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$objectName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$tableName</span> = <span class="var-default">''</span>])
+									</div>
+																																																<div class="method-definition">
+					static 						<span class="method-result">array</span>
+										<a href="#getKeysWithPrefix" title="details" class="method-name">getKeysWithPrefix</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">&$arr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$prefix</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$arr</span>)
+									</div>
+																																																																																																																																																																																																																																																								<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#splitArrayWithPrefix" title="details" class="method-name">splitArrayWithPrefix</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">&$arr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$prefix</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$arr</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#titleCase" title="details" class="method-name">titleCase</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$underscoredString</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#underscore" title="details" class="method-name">underscore</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$camelCasedString</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#unsetKeysWithPrefix" title="details" class="method-name">unsetKeysWithPrefix</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">&$arr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$prefix</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$arr</span>)
+									</div>
+																																
+												<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type">$fieldsOrID</span>&nbsp;<span class="var-name">$fieldsOrID</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$relatedEntities</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#clearValidationErrors" title="details" class="method-name">clearValidationErrors</a>
+										()
+									</div>
+																																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#defineDerivedFields" title="details" class="method-name">defineDerivedFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#defineFields" title="details" class="method-name">defineFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#defineObjects" title="details" class="method-name">defineObjects</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#deflate" title="details" class="method-name">deflate</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#delete" title="details" class="method-name">delete</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doValidateData" title="details" class="method-name">doValidateData</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">&$data</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#finishConstruction" title="details" class="method-name">finishConstruction</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#getDerivedField" title="details" class="method-name">getDerivedField</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#getField" title="details" class="method-name">getField</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$fieldName</span>)
+									</div>
+																								<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getFields" title="details" class="method-name">getFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getFieldsWithoutPk" title="details" class="method-name">getFieldsWithoutPk</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">associative</span>
+										<a href="#getInsertFields" title="details" class="method-name">getInsertFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#getKeyId" title="details" class="method-name">getKeyId</a>
+										()
+									</div>
+																								<div class="method-definition">
+											<span class="method-result">associative</span>
+										<a href="#getModifiedFields" title="details" class="method-name">getModifiedFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getPk" title="details" class="method-name">getPk</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">associative</span>
+										<a href="#getUpdateFields" title="details" class="method-name">getUpdateFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getValidationErrors" title="details" class="method-name">getValidationErrors</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#hasKeyId" title="details" class="method-name">hasKeyId</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#hasModifiedFields" title="details" class="method-name">hasModifiedFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#inflate" title="details" class="method-name">inflate</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$fieldsOrId</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$relatedEntities</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#inflateObject" title="details" class="method-name">inflateObject</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$objectName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$objectData</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$additionalData</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#initializeDefinitions" title="details" class="method-name">initializeDefinitions</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#insert" title="details" class="method-name">insert</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#invalidateField" title="details" class="method-name">invalidateField</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$msg</span> = <span class="var-default">''</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isDataValid" title="details" class="method-name">isDataValid</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isDeleted" title="details" class="method-name">isDeleted</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isEqualTo" title="details" class="method-name">isEqualTo</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$coughObject</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isFieldValid" title="details" class="method-name">isFieldValid</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isInflated" title="details" class="method-name">isInflated</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isNew" title="details" class="method-name">isNew</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#notifyChildrenOfKeyChange" title="details" class="method-name">notifyChildrenOfKeyChange</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$pk</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#resetModified" title="details" class="method-name">resetModified</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#save" title="details" class="method-name">save</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#saveLoadedCollections" title="details" class="method-name">saveLoadedCollections</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#saveLoadedObjects" title="details" class="method-name">saveLoadedObjects</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setDerivedField" title="details" class="method-name">setDerivedField</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$fieldValue</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setField" title="details" class="method-name">setField</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setFields" title="details" class="method-name">setFields</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$fields</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setFieldsIfDifferent" title="details" class="method-name">setFieldsIfDifferent</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$fields</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setKeyId" title="details" class="method-name">setKeyId</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$id</span>, [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$notifyChildren</span> = <span class="var-default">true</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setModifiedField" title="details" class="method-name">setModifiedField</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#shouldInsert" title="details" class="method-name">shouldInsert</a>
+										()
+									</div>
+																																																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#update" title="details" class="method-name">update</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#validateData" title="details" class="method-name">validateData</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">&$data</span> = <span class="var-default">null</span>], <span class="var-type">array</span>&nbsp;<span class="var-name">$data</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__clone" title="details" class="method-name">__clone</a>
+										()
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$collections" id="$collections"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$collections</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">59</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of all the loaded collections in form [collectionName] =&gt; [CoughCollection]</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> getCollection(), loadCollection(), <a href="../cough/CoughObject.html#methodsaveLoadedCollections">CoughObject::saveLoadedCollections()</a>, isCollectionLoaded()</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$derivedFieldDefinitions" id="$derivedFieldDefinitions"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$derivedFieldDefinitions</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">123</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of derived field definitions</p>
+<p class="description"><p>Format of &quot;derived_field_name&quot; =&gt; attributes</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methoddefineDerivedFields">CoughObject::defineDerivedFields()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$derivedFields" id="$derivedFields"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$derivedFields</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">43</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of derived fields (read-only, as in not saved back to the  database).</p>
+<p class="description"><p>Format of &quot;derived_field_name&quot; =&gt; value</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodgetDerivedField">CoughObject::getDerivedField()</a>, <a href="../cough/CoughObject.html#methodsetDerivedField">CoughObject::setDerivedField()</a>, <a href="../cough/CoughObject.html#methoddefineDerivedFields">CoughObject::defineDerivedFields()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$fieldDefinitions" id="$fieldDefinitions"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$fieldDefinitions</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">113</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of all the columns in the database, including the primary key  column and name columns.</p>
+<p class="description"><p>Format of &quot;field_name&quot; =&gt; attributes</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methoddefineFields">CoughObject::defineFields()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$fields" id="$fields"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$fields</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">24</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of all the currently initialized or set fields.</p>
+<p class="description"><p>Format of &quot;field_name&quot; =&gt; value</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodgetField">CoughObject::getField()</a>, <a href="../cough/CoughObject.html#methodgetFields">CoughObject::getFields()</a>, <a href="../cough/CoughObject.html#methodgetFieldsWithoutPk">CoughObject::getFieldsWithoutPk()</a>, <a href="../cough/CoughObject.html#methodsetField">CoughObject::setField()</a>, <a href="../cough/CoughObject.html#methodsetFields">CoughObject::setFields()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$isDeleted" id="$isDeleted"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$isDeleted</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">69</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Stores whether or not the object has been deleted from the database.</p>
+<p class="description"><p>Save will do nothing if an object has been deleted...</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methoddelete">CoughObject::delete()</a>, <a href="../cough/CoughObject.html#methodsave">CoughObject::save()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$isNew" id="$isNew"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$isNew</span>
+			 = <span class="var-default"> true</span>			(line <span class="line-number">84</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Stores whether or not the object is new (i.e. not in database yet).</p>
+<p class="description"><p>Save will perform an INSERT if $isNew is true, otherwise it will perform  an UPDATE as long as hasKeyId() also returns true.</p><p>Note that isNew() = !isInflated(). That is, any time an object is  inflated, it is considered to be synced with the database, and therefore  not new.</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodsave">CoughObject::save()</a>, <a href="../cough/CoughObject.html#methodisNew">CoughObject::isNew()</a>, <a href="../cough/CoughObject.html#methodisInflated">CoughObject::isInflated()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$modifiedFields" id="$modifiedFields"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$modifiedFields</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">32</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of fields that have been modified.</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodgetModifiedFields">CoughObject::getModifiedFields()</a>, <a href="../cough/CoughObject.html#methodsetModifiedField">CoughObject::setModifiedField()</a>, <a href="../cough/CoughObject.html#methodresetModified">CoughObject::resetModified()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$objectDefinitions" id="$objectDefinitions"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$objectDefinitions</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">138</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of all the objects and their attributes.</p>
+<p class="description"><p>The information is used by CoughObject to instantiate and load the  objects.</p><p>Format of [objectName] =&gt; [array of attributes]</p><p>TODO: Document that array of attributes. For now just look at the  one of the generated class's defineObjects().</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$objects" id="$objects"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$objects</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">51</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of all the loaded objects in form [objectName] =&gt; [CoughObject]</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> getObject(), loadObject(), <a href="../cough/CoughObject.html#methodsaveLoadedObjects">CoughObject::saveLoadedObjects()</a>, isObjectLoaded()</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$validatedData" id="$validatedData"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$validatedData</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">102</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Keep track of whether or not data has been validated.</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodclearValidationErrors">CoughObject::clearValidationErrors()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$validationErrors" id="$validationErrors"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$validationErrors</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">94</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Stores validation errors set by `validateData` function.</p>
+<p class="description"><p>Format of &quot;field_name&quot; =&gt; &quot;Error Text&quot;</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodclearValidationErrors">CoughObject::clearValidationErrors()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodconstructByKey" id="constructByKey"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method constructByKey</span> (line <span class="line-number">217</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructs a new object from a single id (for single key PKs) or a hash of  [field_name] =&gt; [field_value].</p>
+<p class="description"><p>The key is used to pull data from the database, and, if no data is found,  null is returned. You can use this function with any unique keys or the  primary key as long as a hash is used. If the primary key is a single  field, you may pass its value in directly without using a hash.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - CoughObject or null if no record found.</li>
+				<li><span class="field">todo:</span> PHP 5.3: switch from call_user_func to static::methodName() and remove the $className parameter</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			constructByKey
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$idOrHash</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$className</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$idOrHash</span><span class="var-description">: - id or hash of [field_name] =&gt; [field_value]</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$className</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodconstructBySql" id="constructBySql"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method constructBySql</span> (line <span class="line-number">250</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructs a new object from custom SQL.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - CoughObject if exactly one row found, null otherwise.</li>
+				<li><span class="field">todo:</span> PHP 5.3: switch from call_user_func to static::methodName() and remove the $className parameter</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			constructBySql
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$sql</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$className</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$sql</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$className</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetFieldAliases" id="getFieldAliases"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getFieldAliases</span> (line <span class="line-number">1092</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Helper method for generating SELECT criteria for other join tables.</p>
+<p class="description"><p>For example, you might need the following SQL:</p><p>$sql = '      SELECT          product.*          , `manufacturer`.`manufacturer_id` AS `Manufacturer_Object.manufacturer_id`          , `manufacturer`.`name` AS `Manufacturer_Object.name`          , `manufacturer`.`description` AS `Manufacturer_Object.description`          , `manufacturer`.`url` AS `Manufacturer_Object.url`      FROM          product          INNER JOIN manufacturer USING (manufacturer_id)      ';</p><p>But, rather than hand coding all the fields (which might change) on the  manufacturer join, you can use getFieldAliases():</p><p>$sql = '      SELECT          product.*          , ' . implode(&quot;\n\t, &quot;, CoughObject::getFieldAliases('con_Manufacturer', 'Manufacturer_Object')) . '      FROM          product          INNER JOIN manufacturer USING (manufacturer_id)      ';</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> of field Aliases</li>
+				<li><span class="field">author:</span> Anthony Bush, Richard Pistole</li>
+				<li><span class="field">since:</span> 2008-02-21</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getFieldAliases
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$className</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$objectName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$tableName</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$className</span><span class="var-description">: class to get fields for, e.g. Address</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$objectName</span><span class="var-description">: object to alias fields to, e.g. BillingAddress_Object</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$tableName</span><span class="var-description">: optional table name; use if aliasing the table name (e.g. address to billing_address)</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetKeysWithPrefix" id="getKeysWithPrefix"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getKeysWithPrefix</span> (line <span class="line-number">1013</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a sub array of the given array containing all elements that have keys  starting with the specified prefix.  The resulting array's keys have the  prefix removed.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush, Richard Pistole</li>
+				<li><span class="field">since:</span> 2008-02-20</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getKeysWithPrefix
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">&$arr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$prefix</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$arr</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$arr</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$prefix</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$arr</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsplitArrayWithPrefix" id="splitArrayWithPrefix"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method splitArrayWithPrefix</span> (line <span class="line-number">1041</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a sub array of the given array containing all elements that have keys  starting with the specified prefix.  The resulting array's keys have the  prefix removed.</p>
+<p class="description"><p>The array passed by reference has all the items that were added to the  returned array removed.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush, Richard Pistole</li>
+				<li><span class="field">since:</span> 2008-02-20</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			splitArrayWithPrefix
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">&$arr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$prefix</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$arr</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$arr</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$prefix</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$arr</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtitleCase" id="titleCase"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method titleCase</span> (line <span class="line-number">974</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			titleCase
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$underscoredString</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$underscoredString</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodunderscore" id="underscore"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method underscore</span> (line <span class="line-number">978</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			underscore
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$camelCasedString</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$camelCasedString</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodunsetKeysWithPrefix" id="unsetKeysWithPrefix"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method unsetKeysWithPrefix</span> (line <span class="line-number">991</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Unsets all keys on the given array that start with the specified prefix.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush, Richard Pistole</li>
+				<li><span class="field">since:</span> 2008-02-20</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			unsetKeysWithPrefix
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">&$arr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$prefix</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$arr</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$arr</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$prefix</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$arr</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">150</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Construct an empty CoughObject or an object with pre-initialized data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type">$fieldsOrID</span>&nbsp;<span class="var-name">$fieldsOrID</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$relatedEntities</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$fieldsOrID</span>
+				<span class="var-name">$fieldsOrID</span><span class="var-description">: - initializes the object with the fields or id (does not query the database)</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$relatedEntities</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodclearValidationErrors" id="clearValidationErrors"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">clearValidationErrors</span> (line <span class="line-number">969</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Clear validation status.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			clearValidationErrors
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methoddefineDerivedFields" id="defineDerivedFields"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">defineDerivedFields</span> (line <span class="line-number">187</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Override in sub-class to define derived fields the object may possess.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			defineDerivedFields
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methoddefineFields" id="defineFields"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">defineFields</span> (line <span class="line-number">180</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Override in sub-class to define fields the object possesses, including  $pkFieldNames.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			defineFields
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methoddefineObjects" id="defineObjects"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">defineObjects</span> (line <span class="line-number">194</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Override in sub-class to define objects the object possesses.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			defineObjects
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methoddeflate" id="deflate"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">deflate</span> (line <span class="line-number">1116</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns object to it's own state, except what you want to keep. By  default it empties everything; overridden version only empties yours.</p>
+	<ul class="tags">
+				<li><span class="field">todo:</span> Tom: Why this function? (provide good example so it can be added to documentation)</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			deflate
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methoddelete" id="delete"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">delete</span> (line <span class="line-number">850</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Deletes the record from the database, if hasKeyId returns true.</p>
+<p class="description"><p>Override this for special delete functionality. For example, if an object  should never be deleted, but instead just retired, then override this  to look like:</p><p>$this-&gt;setIsRetired(true);      $this-&gt;save();</p><p>Then just make sure the load queries include is_retired = 0 in the WHERE  clause so that the item is not pulled from the database (i.e. it appears  deleted, but the data is still there for historical reference/backup.)</p><p>Usually, the coder will be the only one to call delete, but Cough will  call it on join objects when removing objects in a many-to-many  collection.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - whether or not the delete was executed.</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			delete
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methoddoValidateData" id="doValidateData"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">doValidateData</span> (line <span class="line-number">907</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Do the actual data validation. Override in sub classes.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodvalidateData">CoughObject::validateData()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doValidateData
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">&$data</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$data</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfinishConstruction" id="finishConstruction"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">finishConstruction</span> (line <span class="line-number">202</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Called at the end of __construct(). Override for special construction  behavior that is dependent on the object's state.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			finishConstruction
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetDerivedField" id="getDerivedField"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDerivedField</span> (line <span class="line-number">608</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the specified derived field name.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - the value of the specified field</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodsetDerivedField">CoughObject::setDerivedField()</a>, getLoadSql()</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getDerivedField
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$fieldName</span><span class="var-description">: - the derived field name to retrieve</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetField" id="getField"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getField</span> (line <span class="line-number">531</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the current value of the requested field name.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getField
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$fieldName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fieldName</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetFields" id="getFields"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getFields</span> (line <span class="line-number">507</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the object's fields as an array of [key] =&gt; [value] pairs.</p>
+<p class="description"><p>Only the fields that directly correspond to columns in the database are  returned. This means no:</p><p><ul><li>derived fields</li><li>join fields</li><li>objects for one-to-one or one-to-many relationships</li></ul>  It's useful if you need to pass on just the data of the object but not  the object itself, either for displaying in an HTML form, storing in  the session for later retrieval, etc.</p><p>For example, you can store the raw data in a session and reconstruct the  object with it later, so you don't waste space in the session, and you  don't have to re-pull the data from the database:</p><p>// E.g. save user data when they log in.      $_SESSION['User'] = $user-&gt;getFields();</p><p>// Then reconstruct the object later:      $user = new User($_SESSION['User']);</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getFields
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetFieldsWithoutPk" id="getFieldsWithoutPk"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getFieldsWithoutPk</span> (line <span class="line-number">518</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get all non-primary key related fields and their values.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">since:</span> 2007-07-06</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getFieldsWithoutPk
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetInsertFields" id="getInsertFields"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getInsertFields</span> (line <span class="line-number">786</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the fields that should be used for inserting. This logic is  separate from the insert method to make it easy to override the  behavior.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> array [field_name] =&gt; [field_value]</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">associative</span>
+		<span class="method-name">
+			getInsertFields
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetKeyId" id="getKeyId"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getKeyId</span> (line <span class="line-number">411</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the current value of the object's primary key id.</p>
+<p class="description"><p>If the key is multi-key, this returns a unique string identifying itself  (a concatenation of the fields making up the PK).</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - string for multi-key PKs, integer/string for single-key PKs</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getKeyId
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetModifiedFields" id="getModifiedFields"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getModifiedFields</span> (line <span class="line-number">649</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get a list of all of this object's modified values.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> array - all modified values in [field_name] =&gt; [old_value] form</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">associative</span>
+		<span class="method-name">
+			getModifiedFields
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetPk" id="getPk"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getPk</span> (line <span class="line-number">431</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the primary key as an array of [field_name] =&gt; field_value pairs</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">since:</span> 2007-07-06</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getPk
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetUpdateFields" id="getUpdateFields"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getUpdateFields</span> (line <span class="line-number">821</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the fields that should be used for updating. This logic is  separate from the update method to make it easy to override the  behavior.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> array [field_name] =&gt; [field_value]</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">associative</span>
+		<span class="method-name">
+			getUpdateFields
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetValidationErrors" id="getValidationErrors"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getValidationErrors</span> (line <span class="line-number">959</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the validation errors set by `validateData()`.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getValidationErrors
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodhasKeyId" id="hasKeyId"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">hasKeyId</span> (line <span class="line-number">447</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns true if all the key fields that make up the primary key are set  to non-null values.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">todo:</span> If NULL is a valid value for a PK, this function needs an update.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			hasKeyId
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodhasModifiedFields" id="hasModifiedFields"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">hasModifiedFields</span> (line <span class="line-number">659</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns whether or not there are modified fields.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			hasModifiedFields
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodinflate" id="inflate"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">inflate</span> (line <span class="line-number">1130</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Inflate/Invigorate the object with data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			inflate
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$fieldsOrId</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$relatedEntities</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fieldsOrId</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$relatedEntities</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodinflateObject" id="inflateObject"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">inflateObject</span> (line <span class="line-number">1180</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This helper method for inflate() handles inflation of related objects.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			inflateObject
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$objectName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$objectData</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$additionalData</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$objectName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$objectData</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$additionalData</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodinitializeDefinitions" id="initializeDefinitions"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">initializeDefinitions</span> (line <span class="line-number">168</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the cough object's basic identity:</p>
+<p class="description"><p><ul><li><a href="../cough/CoughObject.html#var$objectDefinitions">$objectDefinitions</a></li><li>default values</li></ul></p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			initializeDefinitions
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodinsert" id="insert"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">insert</span> (line <span class="line-number">758</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Inserts a new row to the database and sets the object's key id with the  returned database insert id.</p>
+<p class="description"><p>If the object has a multi-key PK, then the key is not set after insert.</p><p>By default, only values that have been modified are used in the INSERT  statement, leaving it up to the database to set default values for the  other fields. To change this, override the <a href="../cough/CoughObject.html#methodgetInsertFields">getInsertFields()</a>  method.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			insert
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodinvalidateField" id="invalidateField"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">invalidateField</span> (line <span class="line-number">918</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Invalidates a field with an optional message.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			invalidateField
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$msg</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$fieldName</span><span class="var-description">: - field to invalidate</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$msg</span><span class="var-description">: - optional message to store of why data is invalid.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodisDataValid" id="isDataValid"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">isDataValid</span> (line <span class="line-number">945</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns true if the data is valid (i.e. no validation errors set),  otherwise it returns false.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isDataValid
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodisDeleted" id="isDeleted"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">isDeleted</span> (line <span class="line-number">869</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Specifies whether or not the object has been deleted from the database.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isDeleted
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodisEqualTo" id="isEqualTo"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">isEqualTo</span> (line <span class="line-number">304</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This will compare two CoughObjects and return true if they are of the  same type and have the same field values (excluding the primary key).</p>
+<p class="description"><p>Feel free to override this in sub classes for customized comparison.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isEqualTo
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$coughObject</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$coughObject</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodisFieldValid" id="isFieldValid"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">isFieldValid</span> (line <span class="line-number">930</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns true if the field is valid (i.e. no validation errors set),  otherwise it returns false.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isFieldValid
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$fieldName</span><span class="var-description">: - the field name to load.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodisInflated" id="isInflated"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">isInflated</span> (line <span class="line-number">398</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns whether or not the object is inflated (i.e. pulled from persistent  storage)</p>
+<p class="description"><p>This method returns the opposite of <a href="../cough/CoughObject.html#methodisNew">isNew()</a></p><p>The reason this method isn't called `isLoaded()` is because it's possible for  an object to become inflated from data that was not loaded from a database /  persistent storage.  It's meant to answer the question, &quot;Can I call the  getters on this object and expect to get meaningful values?&quot;</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodisNew">CoughObject::isNew()</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isInflated
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodisNew" id="isNew"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">isNew</span> (line <span class="line-number">379</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns whether or not the object is new (i.e. not in persistent storage)</p>
+<p class="description"><p>This method returns the opposite of <a href="../cough/CoughObject.html#methodisInflated">isInflated()</a></p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodisInflated">CoughObject::isInflated()</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isNew
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodnotifyChildrenOfKeyChange" id="notifyChildrenOfKeyChange"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">notifyChildrenOfKeyChange</span> (line <span class="line-number">366</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This method's job is to notify related collections (if any) of the key change.</p>
+<p class="description"><p>For example, if the schema is &quot;order has many order lines&quot; then on the  Order object the `notifyChildrenOfKeyChange` function might change the  order_id on all the order_line entities.  The code might look like:</p><p>foreach ($this-&gt;getOrderLine_Collection() as $orderLine) {          $orderLine-&gt;setOrderId($key['order_id']);      }</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			notifyChildrenOfKeyChange
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$pk</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$pk</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodresetModified" id="resetModified"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">resetModified</span> (line <span class="line-number">630</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Clear the list of modified fields and other modified flags.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			resetModified
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsave" id="save"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">save</span> (line <span class="line-number">676</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Creates a new entry if needed, otherwise it updates an existing one.</p>
+<p class="description"><p>During an update, it only updates the modified fields.  During an insert, it only inserts modified fields (leaving defaults up to  the database server).</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - the result of the create/update.</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			save
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsaveLoadedCollections" id="saveLoadedCollections"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">saveLoadedCollections</span> (line <span class="line-number">738</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Saves all the loaded collections (if it wasn't loaded there would be  nothing to save)</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			saveLoadedCollections
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsaveLoadedObjects" id="saveLoadedObjects"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">saveLoadedObjects</span> (line <span class="line-number">725</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Saves all the loaded objects (if it wasn't loaded there would be  nothing to save)</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			saveLoadedObjects
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetDerivedField" id="setDerivedField"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setDerivedField</span> (line <span class="line-number">596</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets a read-only field; It's usually a derived field from a complex  SQL query such as when overriding the getLoadSql() function.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">see:</span> getLoadSql()</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setDerivedField
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$fieldValue</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$fieldName</span><span class="var-description">: - the derived field name to set</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$fieldValue</span><span class="var-description">: - the value to store</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetField" id="setField"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setField</span> (line <span class="line-number">546</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the current value of $fieldName to $value.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setField
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$fieldName</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetFields" id="setFields"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setFields</span> (line <span class="line-number">559</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the current value of the all the object's defined fields equal to the values passed in the $fields associative array.</p>
+<p class="description"><p>Note: if a field passed in the fields associative array isn't in the class's defined fields, it will NOT BE SET.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setFields
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$fields</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$fields</span><span class="var-description">: - format of [field_name] =&gt; [new_value]</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetFieldsIfDifferent" id="setFieldsIfDifferent"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setFieldsIfDifferent</span> (line <span class="line-number">578</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets fields in the given hash, but only if they new values are different  from the existing values</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">since:</span> 2007-08-02</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setFieldsIfDifferent
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$fields</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$fields</span><span class="var-description">: - format of [field_name] =&gt; [new_value]</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetKeyId" id="setKeyId"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setKeyId</span> (line <span class="line-number">337</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the object's primary key id to the passed value.</p>
+<p class="description"><p>If key is multi-key:</p><p>* Call this with an array of [field_name] =&gt; [field_value] pairs to        set all values uniquely.</p><p>* Call this with a non-array value to set all keys to the same value.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setKeyId
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$id</span>, [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$notifyChildren</span> = <span class="var-default">true</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$id</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$notifyChildren</span><span class="var-description">: whether or not to notify children (collections) of the key change.  Think of it as a cascade update of the FKs.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetModifiedField" id="setModifiedField"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setModifiedField</span> (line <span class="line-number">640</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add a field to the list of modified fields</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setModifiedField
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$fieldName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$fieldName</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodshouldInsert" id="shouldInsert"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">shouldInsert</span> (line <span class="line-number">710</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Indicates whether or not a save should insert a new record or update an  existing one.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - true = insert new, false = update existing one</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			shouldInsert
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodupdate" id="update"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">update</span> (line <span class="line-number">799</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Updates the database with modified values, if any.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - true</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			update
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodvalidateData" id="validateData"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">validateData</span> (line <span class="line-number">889</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Validates data stored in the model. It is called automatically by `save`,  which will return false if this function sets any errors.</p>
+<p class="description"><p>If you pass it nothing, it will validate with the current data stored in  the object.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - result of <a href="../cough/CoughObject.html#methodisDataValid">isDataValid()</a></li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">see:</span> <a href="../cough/CoughObject.html#methodisDataValid">CoughObject::isDataValid()</a>, <a href="../cough/CoughObject.html#methodgetValidationErrors">CoughObject::getValidationErrors()</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			validateData
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">&$data</span> = <span class="var-default">null</span>], <span class="var-type">array</span>&nbsp;<span class="var-name">$data</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$data</span><span class="var-description">: - the data  to validate in [field_name] =&gt; [value] form.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$data</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__clone" id="__clone"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">__clone</span> (line <span class="line-number">277</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Clone only the non-primary key fields.</p>
+<p class="description"><p>Usage:      $newProduct = clone $product;</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Lewis Zhang</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__clone
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 22 Aug 2008 22:27:26 -0500 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.0</a>
+	</p>
+	</div></body>
+</html>

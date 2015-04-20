@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="rating" content="General">
+	<meta name="revisit-after" content="3 days">
+
+	{% if page.keywords %}
+		<meta name="keywords" content="{{ page.keywords | escape }}">
+	{% endif %}
+
+	{% if page.description %}
+		<meta name="description" content="{{ page.description | escape }}">
+	{% endif %}
+
+	<title>{{ page.title }}</title>
+
+	{% comment %}Default CSS for this layout{% endcomment %}
+	{% assign css = "global" | split: "," %}
+	{% assign js = "jquery-1.2.6.min" | split: "," %}
+	{% include static_assets.html %}
+
+	{% comment %}Custom CSS for a page, if set; should already be an array{% endcomment %}
+	{% assign css = page.css %}
+	{% assign js = page.js %}
+	{% include static_assets.html %}
+</head>
+<body>
+
+<div id="container">
+	<div class="lightvc_callout">
+		Like CoughPHP?<br />
+		Try <a href="http://lightvc.org/">LightVC</a>, an <abbr title="Model View Controller">MVC</abbr>.
+	</div>
+	
+	<a href="http://coughphp.anthonybush.com/"><img id="logo" alt="CoughPHP: Collection Handling Framework" src="{{ site.baseurl }}/images/logo.gif" /></a>
+	<div style="clear: both"></div>
+	
+	<ul id="navbar">
+		<li><a href="{{ site.baseurl }}/">what is cough?</a></li>
+		<li><a href="{{ site.baseurl }}/docs/1.1/">documentation</a></li>
+		<li><a href="{{ site.baseurl }}/downloads/">download</a></li>
+		<li><a href="{{ site.baseurl }}/support/">support</a></li>
+		<li style="margin: 0"><a href="{{ site.baseurl }}/blog/">blog</a></li>
+	</ul>
+	<div id="content">{{ content }}</div>
+	<div id="footer">
+		<p>
+			<em>Copyright 2005-{{ 'now' | date: "%Y" }} Anthony Bush, Richard Pistole, Tom Warmbrodt, Lewis Zhang. CoughPHP is open source protected by the FreeBSD License.</em>
+		</p>
+	</div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("{{ site.google_analytics_id }}");
+pageTracker._initData();
+pageTracker._trackPageview();
+$(document).ready(function() {
+	$('.track_link').click(function() {
+		pageTracker._trackPageview($(this).attr('href'));
+		return true;
+	});
+});
+</script>
+
+</body>
+</html>

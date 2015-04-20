@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class SchemaManipulator</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class SchemaManipulator</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Takes a schema (and config) and runs through the schema in an effort to  detect foreign keys that may have been missed (or simply weren't specified  at the database level).</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_schema---SchemaManipulator.class.php.html">/schema/SchemaManipulator.class.php</a> (line <span class="field">11</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																<div class="var-title">
+					<span class="var-type"><a href="../schema_generator/DatabaseSchemaGeneratorConfig.html">DatabaseSchemaGeneratorConfig</a></span>
+					<a href="#$config" title="details" class="var-name">$config</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$debug" title="details" class="var-name">$debug</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type"><a href="../schema/Schema.html">Schema</a></span>
+					<a href="#$schema" title="details" class="var-name">$schema</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$verbose" title="details" class="var-name">$verbose</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																												
+												<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$config</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#disableVerbose" title="details" class="method-name">disableVerbose</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#enableVerbose" title="details" class="method-name">enableVerbose</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#findTable" title="details" class="method-name">findTable</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableNameMatch</span>, <span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>&nbsp;<span class="var-name">$sourceTable</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#findTableInDatabase" title="details" class="method-name">findTableInDatabase</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableNameMatch</span>, <span class="var-type"><a href="../schema/SchemaDatabase.html">SchemaDatabase</a></span>&nbsp;<span class="var-name">$database</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#initConfig" title="details" class="method-name">initConfig</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$config</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#manipulateSchema" title="details" class="method-name">manipulateSchema</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$schema</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$config" id="$config"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type"><a href="../schema_generator/DatabaseSchemaGeneratorConfig.html">DatabaseSchemaGeneratorConfig</a></span>
+			<span class="var-name">$config</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">18</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Configuration object for this class</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$debug" id="$debug"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$debug</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">26</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$schema" id="$schema"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type"><a href="../schema/Schema.html">Schema</a></span>
+			<span class="var-name">$schema</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">33</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">A reference to the schema to manipulate</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$verbose" id="$verbose"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$verbose</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">25</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Whether or not to echo what's happening to the screen.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">41</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Construct with optional configuration parameters.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$config</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$config</span><span class="var-description">: - either an array of configuration variables or a pre-constructed DatabaseSchemaGeneratorConfig object.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddisableVerbose" id="disableVerbose"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">disableVerbose</span> (line <span class="line-number">78</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Disable verbose mode</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../schema/SchemaManipulator.html#var$verbose">SchemaManipulator::$verbose</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			disableVerbose
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodenableVerbose" id="enableVerbose"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">enableVerbose</span> (line <span class="line-number">68</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Enable verbose mode</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../schema/SchemaManipulator.html#var$verbose">SchemaManipulator::$verbose</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			enableVerbose
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodfindTable" id="findTable"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">findTable</span> (line <span class="line-number">189</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Scans the schema for the specified table name (or prefix + table name),  starting with the given database and only scanning other databases if  the table is not found there.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - SchemaTable if found, null if not</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			findTable
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableNameMatch</span>, <span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>&nbsp;<span class="var-name">$sourceTable</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableNameMatch</span>			</li>
+					<li>
+				<span class="var-type"><a href="../schema/SchemaTable.html">SchemaTable</a></span>
+				<span class="var-name">$sourceTable</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfindTableInDatabase" id="findTableInDatabase"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">findTableInDatabase</span> (line <span class="line-number">222</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Scans the specified database for the specified table name (using the  match_table_name_prefixes config setting to scan for more table names  in the event the given one is not found.)</p>
+<p class="description"><p>This is support method for <a href="../schema/SchemaManipulator.html#methodfindTable">findTable()</a>.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> - SchemaTable if found, null if not.</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			findTableInDatabase
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableNameMatch</span>, <span class="var-type"><a href="../schema/SchemaDatabase.html">SchemaDatabase</a></span>&nbsp;<span class="var-name">$database</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableNameMatch</span>			</li>
+					<li>
+				<span class="var-type"><a href="../schema/SchemaDatabase.html">SchemaDatabase</a></span>
+				<span class="var-name">$database</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodinitConfig" id="initConfig"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">initConfig</span> (line <span class="line-number">52</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Initialize the configuration object given an array or pre-constructed  configuration object.</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> Exception</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			initConfig
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$config</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$config</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodmanipulateSchema" id="manipulateSchema"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">manipulateSchema</span> (line <span class="line-number">93</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Scans the schema and manipulates it by detecting FKs adding them to  tables.</p>
+<p class="description"><p>It uses the id_to_table_regex config setting to find columns that might  be FKs, and uses match_table_name_prefixes to assist in locating a table  that matches the FK column name.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			manipulateSchema
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$schema</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$schema</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Wed, 12 Nov 2008 21:56:21 -0600 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.0</a>
+	</p>
+	</div></body>
+</html>

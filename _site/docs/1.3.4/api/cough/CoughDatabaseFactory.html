@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class CoughDatabaseFactory</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class CoughDatabaseFactory</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">A simple factory that provides access to an application's database objects.</p>
+<p class="description"><p>It should be dynamically initialized, and can hold mixed types of database  adapter objects.</p><p>EXAMPLE RETRIEVAL:</p><p><div class="src-code"><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$db&nbsp;</span>=&nbsp;<span class="src-id"><a href="../cough/CoughDatabaseFactory.html">CoughDatabaseFactory</a></span><span class="src-sym">::</span><a href="../cough/CoughDatabaseFactory.html#methodgetDatabase">getDatabase</a><span class="src-sym">(</span><span class="src-str">'alias1'</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$dbName&nbsp;</span>=&nbsp;<span class="src-id"><a href="../cough/CoughDatabaseFactory.html">CoughDatabaseFactory</a></span><span class="src-sym">::</span><a href="../cough/CoughDatabaseFactory.html#methodgetDatabaseName">getDatabaseName</a><span class="src-sym">(</span><span class="src-str">'alias1'</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+</ol></div></p><p>EXAMPLE INITIALIZATION:</p><p>Assuming we have:</p><p><div class="src-code"><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$configs&nbsp;</span>=&nbsp;<span class="src-key">array</span><span class="src-sym">(</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'db_name_hash'&nbsp;</span>=&gt;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-str">'alias1'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'actual_db_name'</span><span class="src-sym">)</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'adapter'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'as'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'driver'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'mysql'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'host'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'localhost'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'user'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'nobody'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'pass'&nbsp;</span>=&gt;&nbsp;<span class="src-str">''</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'port'&nbsp;</span>=&gt;&nbsp;<span class="src-num">3307</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">)</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'db_name_hash'&nbsp;</span>=&gt;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-str">'my_app'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'my_app'</span><span class="src-sym">)</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'adapter'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'as'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'driver'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'mysql'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'host'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'localhost'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'user'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'nobody'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'pass'&nbsp;</span>=&gt;&nbsp;<span class="src-str">''</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'port'&nbsp;</span>=&gt;&nbsp;<span class="src-num">3306</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">)</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+</ol></div></p><p>Option 1: Add one config at a time:</p><p><div class="src-code"><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-id"><a href="../cough/CoughDatabaseFactory.html">CoughDatabaseFactory</a></span><span class="src-sym">::</span><a href="../cough/CoughDatabaseFactory.html#methodaddConfig">addConfig</a><span class="src-sym">(</span><span class="src-var">$configs</span><span class="src-sym">[</span><span class="src-num">0</span><span class="src-sym">]</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-id"><a href="../cough/CoughDatabaseFactory.html">CoughDatabaseFactory</a></span><span class="src-sym">::</span><a href="../cough/CoughDatabaseFactory.html#methodaddConfig">addConfig</a><span class="src-sym">(</span><span class="src-var">$configs</span><span class="src-sym">[</span><span class="src-num">1</span><span class="src-sym">]</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+</ol></div></p><p>Option 2: Add all configs at once:</p><p><div class="src-code"><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-id"><a href="../cough/CoughDatabaseFactory.html">CoughDatabaseFactory</a></span><span class="src-sym">::</span><a href="../cough/CoughDatabaseFactory.html#methodsetConfigs">setConfigs</a><span class="src-sym">(</span><span class="src-var">$configs</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+</ol></div></p><p>The config array supports other parameters as well, but you shouldn't have to  use them.  See <a href="../cough/CoughDatabaseFactory.html#var$configs">$configs</a> for all available options.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush, Lewis Zhang</li>
+				<li><span class="field">see:</span> <a href="../cough/CoughDatabaseFactory.html#var$configs">CoughDatabaseFactory::$configs</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_cough---CoughDatabaseFactory.class.php.html">/cough/CoughDatabaseFactory.class.php</a> (line <span class="field">62</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+												<div class="var-title">
+					static <span class="var-type">array</span>
+					<a href="#$configs" title="details" class="var-name">$configs</a>
+				</div>
+																<div class="var-title">
+					static <span class="var-type">array</span>
+					<a href="#$databaseNames" title="details" class="var-name">$databaseNames</a>
+				</div>
+																<div class="var-title">
+					static <span class="var-type">array</span>
+					<a href="#$databases" title="details" class="var-name">$databases</a>
+				</div>
+																																							</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+												<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#addConfig" title="details" class="method-name">addConfig</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$config</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#addDatabase" title="details" class="method-name">addDatabase</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$alias</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$dbObject</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result"><a href="../cough/CoughDatabaseInterface.html">CoughDatabaseInterface</a></span>
+										<a href="#constructDatabaseByConfig" title="details" class="method-name">constructDatabaseByConfig</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$dbConfig</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">array</span>
+										<a href="#getConfigs" title="details" class="method-name">getConfigs</a>
+										()
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result"><a href="../cough/CoughDatabaseInterface.html">CoughDatabaseInterface</a>|null</span>
+										<a href="#getDatabase" title="details" class="method-name">getDatabase</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$alias</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#getDatabaseName" title="details" class="method-name">getDatabaseName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$alias</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">array</span>
+										<a href="#getDatabases" title="details" class="method-name">getDatabases</a>
+										()
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">array</span>
+										<a href="#getUniqueDatabases" title="details" class="method-name">getUniqueDatabases</a>
+										()
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#reset" title="details" class="method-name">reset</a>
+										()
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#setConfigs" title="details" class="method-name">setConfigs</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$configs</span>)
+									</div>
+								
+																																																																																				</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$configs" id="$configs"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			static <span class="var-type">array</span>
+			<span class="var-name">$configs</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">129</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of database config info.</p>
+<p class="description"><p>When a database is retrieved, if it is not already created, then it gets  created using the configuration info specified in this array, if that  info exists.</p><p>Format:</p><p><div class="src-code"><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;Which&nbsp;database&nbsp;adapter&nbsp;(DAL)&nbsp;to&nbsp;use.&nbsp;optional,&nbsp;default:&nbsp;as</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'adapter'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'as'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;Adapter&nbsp;class&nbsp;name&nbsp;prefix.&nbsp;optional,&nbsp;default:&nbsp;'Cough'&nbsp;plus&nbsp;the&nbsp;titlecase&nbsp;of&nbsp;adapter</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'adapter_class_prefix'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'CoughAs'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;Adapter&nbsp;location.&nbsp;optional,&nbsp;default:&nbsp;cough&nbsp;module&nbsp;directory&nbsp;plus&nbsp;&quot;dal&quot;&nbsp;plus&nbsp;adapter</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'adapter_class_path'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'/my/path/'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;Hash&nbsp;of&nbsp;aliases&nbsp;to&nbsp;actual&nbsp;database&nbsp;names.&nbsp;&nbsp;Most&nbsp;likely&nbsp;the&nbsp;alias</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;will&nbsp;be&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;database&nbsp;that&nbsp;generation&nbsp;took&nbsp;place&nbsp;on&nbsp;and&nbsp;the</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;actual&nbsp;database&nbsp;name&nbsp;will&nbsp;be&nbsp;the&nbsp;same.&nbsp;&nbsp;If&nbsp;a&nbsp;different&nbsp;environment</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;(e.g.&nbsp;production/test/dev)&nbsp;uses&nbsp;a&nbsp;different&nbsp;database&nbsp;name,&nbsp;then&nbsp;just</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;change&nbsp;the&nbsp;actual&nbsp;database&nbsp;name&nbsp;to&nbsp;that&nbsp;database&nbsp;in&nbsp;that&nbsp;environment's</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;config&nbsp;file,&nbsp;leaving&nbsp;the&nbsp;alias/key&nbsp;part&nbsp;of&nbsp;the&nbsp;hash&nbsp;alone.</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;required&nbsp;if&nbsp;old&nbsp;&quot;aliases&quot;&nbsp;param&nbsp;not&nbsp;given.</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'db_name_hash'&nbsp;</span>=&gt;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'alias1'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'actual_db_name1'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'alias2'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'actual_db_name2'</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">)</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;old&nbsp;way&nbsp;of&nbsp;specifying&nbsp;connection&nbsp;aliases&nbsp;did&nbsp;not&nbsp;include&nbsp;db&nbsp;name</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;remapping&nbsp;ability.&nbsp;Use&nbsp;&quot;db_name_hash&quot;&nbsp;instead.</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'aliases'&nbsp;</span>=&gt;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-str">'actual_db_name1'</span><span class="src-sym">,&nbsp;</span><span class="src-str">'actual_db_name2'</span><span class="src-sym">)</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">#&nbsp;the&nbsp;rest&nbsp;of&nbsp;these&nbsp;should&nbsp;be&nbsp;obvious</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'driver'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'mysql'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'host'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'localhost'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'user'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'nobody'</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'pass'&nbsp;</span>=&gt;&nbsp;<span class="src-str">''</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-str">'port'&nbsp;</span>=&gt;&nbsp;<span class="src-num">3306</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+</ol></div></p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$databaseNames" id="$databaseNames"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			static <span class="var-type">array</span>
+			<span class="var-name">$databaseNames</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">80</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Format:</p>
+<p class="description"><p>[alias] =&gt; [actual_db_name]</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$databases" id="$databases"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			static <span class="var-type">array</span>
+			<span class="var-name">$databases</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">71</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Format:</p>
+<p class="description"><p>[alias] =&gt; [CoughDatabaseInterface]</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodaddConfig" id="addConfig"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method addConfig</span> (line <span class="line-number">154</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds the database config for later use.  Make sure to specified the 'aliases'  or the 'db_name_hash' value.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">see:</span> <a href="../cough/CoughDatabaseFactory.html#var$configs">CoughDatabaseFactory::$configs</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addConfig
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$config</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$config</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodaddDatabase" id="addDatabase"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method addDatabase</span> (line <span class="line-number">194</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds the database object for the specified alias name.</p>
+<p class="description"><p>It's better to add configs b/c then a database object/connection won't be made  unless one is needed.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">see:</span> <a href="../cough/CoughDatabaseFactory.html#methodaddConfig">CoughDatabaseFactory::addConfig()</a>, <a href="../cough/CoughDatabaseFactory.html#methodsetConfigs">CoughDatabaseFactory::setConfigs()</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addDatabase
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$alias</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$dbObject</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$alias</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbObject</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodconstructDatabaseByConfig" id="constructDatabaseByConfig"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method constructDatabaseByConfig</span> (line <span class="line-number">267</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">returns the correct database adapter object</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> concrete class implementing CoughDatabaseInterface</li>
+				<li><span class="field">author:</span> Lewis Zhang, Anthony Bush</li>
+				<li><span class="field">see:</span> <a href="../cough/CoughDatabaseFactory.html#var$configs">CoughDatabaseFactory::$configs</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result"><a href="../cough/CoughDatabaseInterface.html">CoughDatabaseInterface</a></span>
+		<span class="method-name">
+			constructDatabaseByConfig
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$dbConfig</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbConfig</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetConfigs" id="getConfigs"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getConfigs</span> (line <span class="line-number">303</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get all the database configs CoughDatabaseFactory is currently aware of.</p>
+<p class="description"><p>Could be useful for debugging purposes.</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughDatabaseFactory.html#var$configs">CoughDatabaseFactory::$configs</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getConfigs
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetDatabase" id="getDatabase"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getDatabase</span> (line <span class="line-number">206</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get the database object for the specified alias</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result"><a href="../cough/CoughDatabaseInterface.html">CoughDatabaseInterface</a>|null</span>
+		<span class="method-name">
+			getDatabase
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$alias</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$alias</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$dbName</span><span class="var-description">: optional database name to select before returning the database object.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetDatabaseName" id="getDatabaseName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getDatabaseName</span> (line <span class="line-number">251</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get the actual database name for the specified alias.</p>
+<p class="description"><p>If no mapping exists, it returns the original alias value.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getDatabaseName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$alias</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$alias</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetDatabases" id="getDatabases"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getDatabases</span> (line <span class="line-number">315</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get all the currently constructed database objects.</p>
+<p class="description"><p>Could be useful for debugging purposes.</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../cough/CoughDatabaseFactory.html#var$databases">CoughDatabaseFactory::$databases</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getDatabases
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetUniqueDatabases" id="getUniqueDatabases"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getUniqueDatabases</span> (line <span class="line-number">341</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Same as getDatabases(), except it rolls up all aliases using the same  connection into one array entry.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> of objects that implement CoughDatabaseInterface</li>
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">since:</span> 2008-09-09</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getUniqueDatabases
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodreset" id="reset"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method reset</span> (line <span class="line-number">326</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Restore CoughDatabaseFactory to its initial state (no configs, no database  objects).</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			reset
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetConfigs" id="setConfigs"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method setConfigs</span> (line <span class="line-number">138</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets all the database configs at once.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Bush</li>
+				<li><span class="field">see:</span> <a href="../cough/CoughDatabaseFactory.html#var$configs">CoughDatabaseFactory::$configs</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setConfigs
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$configs</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$configs</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Wed, 12 Nov 2008 21:56:16 -0600 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.0</a>
+	</p>
+	</div></body>
+</html>
